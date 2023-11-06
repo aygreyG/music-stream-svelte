@@ -1,5 +1,6 @@
 import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma';
+import { createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
 import { readdir, lstat } from 'fs/promises';
@@ -60,17 +61,13 @@ export const load = async ({ locals }) => {
 export const actions: Actions = {
 	createsetup: async ({ locals, request }) => {
 		const form = await request.formData();
-		const folder = form.get('folder');
+		const folder = form.get('musicFolder');
 
-		if (!folder) {
+		if (!folder?.toString()) {
 			return fail(401, { error: 'folder is required' });
 		}
 
-		await prisma.serverSettings.create({
-			data: {
-				musicFolder: folder.toString()
-			}
-		});
+		const settings = await createServerSettings(folder.toString());
 
 		const username = form.get('username')?.toString();
 		const password = form.get('password')?.toString();
@@ -83,9 +80,10 @@ export const actions: Actions = {
 		}
 
 		try {
-			register(email, password, password, username);
+			await register(email, password, password, username, true);
+			settings.setupComplete = true;
 		} catch (err) {
-			return fail(401, { error: err?.message });
+			return fail(401, { error: (err as Error)?.message });
 		}
 	},
 	getchildren: async ({ request }) => {

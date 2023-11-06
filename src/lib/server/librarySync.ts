@@ -3,12 +3,18 @@ import prisma from './prisma';
 import * as mm from 'music-metadata';
 import { readdir, stat, writeFile, access } from 'fs/promises';
 import { join } from 'path';
+import { getServerSettings } from './serverSettings';
 
 let inProgress = false;
 let tracksCreated = 0;
 
-export async function runLibrarySync(settings: ServerSettings) {
-	if (inProgress || !settings.setupComplete) {
+export function getLibrarySyncInProgress() {
+	return inProgress;
+}
+
+export async function runLibrarySync() {
+	const settings = await getServerSettings();
+	if (inProgress || !settings?.setupComplete) {
 		return;
 	}
 
@@ -20,7 +26,7 @@ export async function runLibrarySync(settings: ServerSettings) {
 	const endTime = Date.now();
 
 	if (tracksCreated > 0) {
-		prisma.folderScan.create({
+		await prisma.folderScan.create({
 			data: {
 				scanLength: endTime - startTime,
 				serverSettings: { connect: { id: settings.id } },
@@ -28,6 +34,8 @@ export async function runLibrarySync(settings: ServerSettings) {
 			}
 		});
 	}
+
+	inProgress = false;
 }
 
 function sanitizeArtistName(artistName: string): string[] {

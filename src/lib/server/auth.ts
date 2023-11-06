@@ -37,7 +37,8 @@ export async function register(
 	email: string,
 	password: string,
 	passwordRepeat: string,
-	username: string
+	username: string,
+	admin = false
 ) {
 	const userWithEmail = await prisma.user.findUnique({ where: { email } });
 	const userWithUsername = await prisma.user.findUnique({ where: { username } });
@@ -52,7 +53,7 @@ export async function register(
 
 	try {
 		const passwordHash = await bcrypt.hash(password, 10);
-		return prisma.user.create({ data: { email, password: passwordHash, username } });
+		return prisma.user.create({ data: { email, password: passwordHash, username, admin } });
 	} catch (err) {
 		throw new Error('something went wrong');
 	}

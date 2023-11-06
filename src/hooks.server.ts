@@ -1,10 +1,9 @@
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { runLibrarySync } from '$lib/server/librarySync';
 import prisma from '$lib/server/prisma';
-import type { ServerSettings } from '@prisma/client';
+import { getServerSettings } from '$lib/server/serverSettings';
 import { redirect, type Handle } from '@sveltejs/kit';
 
-let serverSettings: ServerSettings | null = null;
 let startupRunning = false;
 
 async function runOnStartup() {
@@ -12,16 +11,14 @@ async function runOnStartup() {
 		return;
 	}
 	startupRunning = true;
-	const serverSettingsArr = await prisma.serverSettings.findMany();
 
-	if (!serverSettingsArr || serverSettingsArr.length === 0) {
+	const serverSettings = await getServerSettings();
+	if (!serverSettings || !serverSettings?.setupComplete) {
 		startupRunning = false;
 		return;
 	}
 
-	serverSettings = serverSettingsArr[0];
-
-	runLibrarySync(serverSettings);
+	runLibrarySync();
 
 	startupRunning = false;
 	return;
@@ -29,6 +26,7 @@ async function runOnStartup() {
 
 const handle: Handle = async ({ event, resolve }) => {
 	console.log(event.route.id);
+	const serverSettings = await getServerSettings();
 	if (startupRunning && !event.route.id?.startsWith('/loading')) {
 		throw redirect(303, '/loading');
 	}
