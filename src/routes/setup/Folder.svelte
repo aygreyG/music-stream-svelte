@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { applyAction, deserialize } from '$app/forms';
 	import type { FolderNode } from '$lib/shared/types';
+	import pickedFolder from '$lib/stores/folderPicker';
 	import type { ActionResult } from '@sveltejs/kit';
 
 	export let folderNode: FolderNode;
@@ -30,7 +31,7 @@
 
 			applyAction(result);
 		}
-
+		pickedFolder.set(folderNode);
 		opened = !opened;
 	}
 </script>
@@ -39,7 +40,7 @@
 	<input type="hidden" name="path" value={folderNode.path} />
 	{'>'.repeat(level)}
 	<button type="submit" disabled={loading}>
-		{folderNode.label}
+		{folderNode.label}{$pickedFolder === folderNode ? ' (selected)' : ''}
 	</button>
 </form>
 
