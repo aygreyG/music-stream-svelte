@@ -28,15 +28,15 @@ model User {
 }
 
 model Album {
-  id            String    @id @default(uuid())
+  id            String   @id @default(uuid())
   title         String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  releaseDate   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  releaseDate   String?
   albumArt      String?
   albumArtLarge String?
   albumArtistId String
-  albumArtist   Artist    @relation(fields: [albumArtistId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  albumArtist   Artist   @relation(fields: [albumArtistId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tracks        Track[]
 
   @@unique([title, albumArtistId])
@@ -109,7 +109,7 @@ model FolderScan {
   id               String         @id @default(uuid())
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
-  scanLength       Float
+  scanLength       Float /// The length of the scan in seconds
   newTracks        Int
   serverSettingsId String
   serverSettings   ServerSettings @relation(fields: [serverSettingsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
