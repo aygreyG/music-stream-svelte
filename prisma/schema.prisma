@@ -25,6 +25,10 @@ model User {
   updatedAt DateTime   @updatedAt
   listened  Listened[]
   playlists Playlist[]
+
+  @@index([email])
+  @@index([username])
+  @@index([id, username])
 }
 
 model Album {
@@ -40,6 +44,7 @@ model Album {
   tracks        Track[]
 
   @@unique([title, albumArtistId])
+  @@index([title, albumArtistId])
 }
 
 model Track {
@@ -56,6 +61,8 @@ model Track {
   listened    Listened[]
   playlists   Playlist[]
   tags        Tag[]
+
+  @@index([filePath])
 }
 
 model Artist {
@@ -65,6 +72,8 @@ model Artist {
   updatedAt DateTime @updatedAt
   tracks    Track[]
   albums    Album[]
+
+  @@index([name])
 }
 
 model Listened {
@@ -94,6 +103,8 @@ model Tag {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tracks    Track[]
+
+  @@index([name])
 }
 
 model ServerSettings {
