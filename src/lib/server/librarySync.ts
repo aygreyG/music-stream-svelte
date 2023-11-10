@@ -29,6 +29,16 @@ export async function runLibrarySync() {
 	console.log('Finished library sync at ' + new Date(endTime).toISOString());
 	console.log('Elapsed time: ' + elapsedSec + 's');
 
+	const { count } = await prisma.track.deleteMany({
+		where: {
+			updatedAt: {
+				lt: new Date(startTime)
+			}
+		}
+	});
+
+	console.log('Deleted ' + count + ' track(s)');
+
 	if (tracksCreated > 0) {
 		await prisma.folderScan.create({
 			data: {
