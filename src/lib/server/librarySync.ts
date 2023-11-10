@@ -1,7 +1,7 @@
 import type { Artist, ServerSettings } from '@prisma/client';
 import prisma from './prisma';
 import * as mm from 'music-metadata';
-import { readdir, stat, writeFile, access } from 'fs/promises';
+import { readdir, stat, writeFile, access, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings } from './serverSettings';
 
@@ -22,13 +22,17 @@ export async function runLibrarySync() {
 	inProgress = true;
 
 	const startTime = Date.now();
+	console.log('Starting library sync at ' + new Date(startTime).toISOString());
 	await walk(settings.musicFolder);
 	const endTime = Date.now();
+	const elapsedSec = Math.round((endTime - startTime) / 100) / 10;
+	console.log('Finished library sync at ' + new Date(endTime).toISOString());
+	console.log('Elapsed time: ' + elapsedSec + 's');
 
 	if (tracksCreated > 0) {
 		await prisma.folderScan.create({
 			data: {
-				scanLength: endTime - startTime,
+				scanLength: elapsedSec,
 				serverSettings: { connect: { id: settings.id } },
 				newTracks: tracksCreated
 			}
@@ -60,33 +64,47 @@ async function searchForAlbumFile(fileNames: string[], dir: string) {
 }
 
 async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist: Artist) {
+	const files = await readdir(dir);
+	const fileName = await searchForAlbumFile(files, dir);
+
+	if (fileName) {
+		return fileName;
+	}
+
+	const coversDir = join(dir, 'Covers');
+	if (
+		await access(coversDir)
+			.then(() => true)
+			.catch(() => false)
+	) {
+		const coverFiles = await readdir(coversDir);
+		const coverFile = await searchForAlbumFile(coverFiles, coversDir);
+
+		if (coverFile) {
+			return coverFile;
+		}
+	}
+
 	const albumArt = fileData.common.picture?.[0].data;
-	const albumArtType = fileData.common.picture?.[0].format;
-	const albumArtPath = join(dir, 'Covers', `${albumArtist.name}_${fileData.common.album}.jpg`);
+	const albumArtType = fileData.common.picture?.[0].format.split('/')[1];
+	const regex = / |\.|\[|\]|\\|\//g;
+	const albumArtPath = join(
+		dir,
+		'Covers',
+		`${albumArtist.name.replaceAll(regex, '_')}_${fileData.common.album?.replaceAll(
+			regex,
+			'_'
+		)}.${albumArtType}`
+	);
 
 	if (albumArt) {
-		await writeFile(albumArtPath, albumArt);
-		return albumArtPath;
-	} else {
-		const files = await readdir(dir);
-		const fileName = await searchForAlbumFile(files, dir);
-
-		if (fileName) {
-			return fileName;
-		}
-
-		const coversDir = join(dir, 'Covers');
-		if (
-			await access(coversDir)
-				.then(() => true)
-				.catch(() => false)
-		) {
-			const coverFiles = await readdir(coversDir);
-			const coverFile = await searchForAlbumFile(coverFiles, coversDir);
-
-			if (coverFile) {
-				return coverFile;
-			}
+		try {
+			const coversDir = join(dir, 'Covers');
+			await access(coversDir).catch(() => mkdir(coversDir));
+			await writeFile(albumArtPath, albumArt);
+			return albumArtPath;
+		} catch (err) {
+			console.error('Could not create album art file', err);
 		}
 	}
 
@@ -190,7 +208,12 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
 
 		return true;
 	} else {
-		track.updatedAt = new Date();
+		await prisma.track.update({
+			where: { id: track.id },
+			data: {
+				updatedAt: new Date()
+			}
+		});
 	}
 
 	return false;

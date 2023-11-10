@@ -81,7 +81,14 @@ export const actions: Actions = {
 
 		try {
 			await register(email, password, password, username, true);
-			settings.setupComplete = true;
+			await prisma.serverSettings.update({
+				data: {
+					setupComplete: true
+				},
+				where: {
+					id: settings.id
+				}
+			});
 		} catch (err) {
 			return fail(401, { error: (err as Error)?.message });
 		}

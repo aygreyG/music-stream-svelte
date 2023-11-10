@@ -1,3 +1,4 @@
+import { NODE_ENV } from '$env/static/private';
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { runLibrarySync } from '$lib/server/librarySync';
 import prisma from '$lib/server/prisma';
@@ -10,17 +11,21 @@ async function runOnStartup() {
 	if (startupRunning) {
 		return;
 	}
-	startupRunning = true;
 
+	startupRunning = true;
 	const serverSettings = await getServerSettings();
+
 	if (!serverSettings || !serverSettings?.setupComplete) {
 		startupRunning = false;
 		return;
 	}
 
-	runLibrarySync();
+	if (NODE_ENV === 'production') {
+		runLibrarySync();
+	}
 
 	startupRunning = false;
+
 	return;
 }
 
