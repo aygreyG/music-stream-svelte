@@ -79,6 +79,14 @@ export async function validateToken(authCookie: string) {
 		where: {
 			username: userInfo.username,
 			id: userInfo.id
+		},
+		select: {
+			id: true,
+			username: true,
+			admin: true,
+			email: true,
+			createdAt: true,
+			updatedAt: true
 		}
 	});
 
