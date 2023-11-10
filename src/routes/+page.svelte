@@ -9,6 +9,7 @@
 <p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
 {#if data.user}
 	<p>Logged in as {data.user.username}</p>
+	<a href="/dashboard">Dashboard</a>
 	{#if data.user.admin}
 		{#if message}
 			<p>{message}</p>
