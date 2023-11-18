@@ -21,8 +21,10 @@ export const GET = async ({ params, setHeaders }) => {
 			const imageType = album.albumArt.split('.').pop();
 
 			setHeaders({
-				'Content-Type': `image/${imageType}`
+				'Content-Type': `image/${imageType}`,
+				'Cache-Control': 'public, max-age=15552000'
 			});
+
 			return new Response(image);
 		} catch (err) {
 			console.log(err);

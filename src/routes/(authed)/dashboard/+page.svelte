@@ -2,9 +2,12 @@
 	export let data;
 </script>
 
-<div class="flex gap-4 p-2 items-center justify-center flex-wrap">
-	{#each data.albums as album}
-		<a class="w-40 h-40 overflow-hidden bg-zinc-900 rounded-md" href="/album/{album.id}">
+<div class="flex gap-8 items-center justify-center flex-wrap h-full overflow-auto p-2">
+	{#each data.albums as album (album.id)}
+		<a
+			class="md:w-40 md:h-40 h-36 w-36 xl:w-52 xl:h-52 overflow-hidden bg-zinc-900 rounded-md"
+			href="/album/{album.id}"
+		>
 			<img
 				class="absolute w-full h-full object-cover"
 				src={`/api/image/${album.id}`}

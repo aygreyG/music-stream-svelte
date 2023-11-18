@@ -57,23 +57,30 @@ export const GET = async ({ params, request, setHeaders }) => {
 		});
 	}
 
-	const audiostat = await stat(track.filePath);
-	const audioSize = audiostat.size;
-	const CHUNK_SIZE = 10 ** 6;
-	const start = Number(range.replace(/\D/g, ''));
-	const end = Math.min(start + CHUNK_SIZE, audioSize - 1);
-	const contentLength = end - start + 1;
+	try {
+		const audiostat = await stat(track.filePath);
+		const audioSize = audiostat.size;
+		const CHUNK_SIZE = 10 ** 6;
+		const start = Number(range.replace(/\D/g, ''));
+		const end = Math.min(start + CHUNK_SIZE, audioSize - 1);
+		const contentLength = end - start + 1;
 
-	setHeaders({
-		'Content-Range': `bytes ${start}-${end}/${audioSize}`,
-		'Accept-Ranges': 'bytes',
-		'Content-Length': contentLength.toString(),
-		'Content-Type': 'audio/*'
-	});
+		setHeaders({
+			'Content-Range': `bytes ${start}-${end}/${audioSize}`,
+			'Accept-Ranges': 'bytes',
+			'Content-Length': contentLength.toString(),
+			'Content-Type': 'audio/*'
+		});
 
-	const audioStream = createReadStream(track.filePath, { start, end });
+		const audioStream = createReadStream(track.filePath, { start, end });
 
-	return new Response(audioStream as any, {
-		status: 206
-	});
+		return new Response(audioStream as any, {
+			status: 206
+		});
+	} catch (e) {
+		console.error(e);
+		throw error(500, {
+			message: 'Internal server error'
+		});
+	}
 };

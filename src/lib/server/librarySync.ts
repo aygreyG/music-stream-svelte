@@ -39,6 +39,18 @@ export async function runLibrarySync() {
 
 	console.log('Deleted ' + count + ' track(s)');
 
+	if (count > 0) {
+		const { count: albumCount } = await prisma.album.deleteMany({
+			where: {
+				tracks: {
+					none: {}
+				}
+			}
+		});
+
+		console.log('Deleted ' + albumCount + ' album(s)');
+	}
+
 	if (tracksCreated > 0) {
 		await prisma.folderScan.create({
 			data: {
@@ -60,8 +72,8 @@ function sanitizeArtistName(artistName: string): string[] {
 	return artistNameSplit.map((artist) => artist.replaceAll(',', '').trim());
 }
 
-async function searchForAlbumFile(fileNames: string[], dir: string) {
-	const albumArtNames = ['front', 'art', 'albumart', 'cover', 'folder'];
+async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFileName?: string) {
+	const albumArtNames = ['front', 'art', 'albumart', 'cover', 'folder', albumArtFileName];
 	for (const fileName of fileNames) {
 		const fileExt = fileName.split('.').pop()?.toLowerCase();
 		if (fileExt === 'jpg' || fileExt === 'jpeg' || fileExt === 'png') {
@@ -74,21 +86,21 @@ async function searchForAlbumFile(fileNames: string[], dir: string) {
 }
 
 async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist: Artist) {
-	const files = await readdir(dir);
-	const fileName = await searchForAlbumFile(files, dir);
-
-	if (fileName) {
-		return fileName;
-	}
+	const regex = / |\.|\[|\]|\\|\//g;
+	const albumArtFileName = `${albumArtist.name.replaceAll(
+		regex,
+		'_'
+	)}_${fileData.common.album?.replaceAll(regex, '_')}`;
 
 	const coversDir = join(dir, 'Covers');
+
 	if (
 		await access(coversDir)
 			.then(() => true)
 			.catch(() => false)
 	) {
 		const coverFiles = await readdir(coversDir);
-		const coverFile = await searchForAlbumFile(coverFiles, coversDir);
+		const coverFile = await searchForAlbumFile(coverFiles, coversDir, albumArtFileName);
 
 		if (coverFile) {
 			return coverFile;
@@ -97,15 +109,7 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
 
 	const albumArt = fileData.common.picture?.[0].data;
 	const albumArtType = fileData.common.picture?.[0].format.split('/')[1];
-	const regex = / |\.|\[|\]|\\|\//g;
-	const albumArtPath = join(
-		dir,
-		'Covers',
-		`${albumArtist.name.replaceAll(regex, '_')}_${fileData.common.album?.replaceAll(
-			regex,
-			'_'
-		)}.${albumArtType}`
-	);
+	const albumArtPath = join(dir, 'Covers', `${albumArtFileName}.${albumArtType}`);
 
 	if (albumArt) {
 		try {
@@ -116,6 +120,13 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
 		} catch (err) {
 			console.error('Could not create album art file', err);
 		}
+	}
+
+	const files = await readdir(dir);
+	const fileName = await searchForAlbumFile(files, dir);
+
+	if (fileName) {
+		return fileName;
 	}
 
 	return null;
