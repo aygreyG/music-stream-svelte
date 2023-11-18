@@ -12,6 +12,8 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
+		"@iconify-json/fa6-solid": "^1.1.15",
+		"@iconify-json/ic": "^1.1.14",
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/kit": "^1.20.4",
 		"@types/bcryptjs": "^2.4.5",
@@ -31,6 +33,7 @@
 		"tailwindcss": "^3.3.5",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",
+		"unplugin-icons": "^0.17.3",
 		"vite": "^4.4.2"
 	},
 	"type": "module",
