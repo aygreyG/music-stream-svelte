@@ -65,9 +65,10 @@ export async function runLibrarySync() {
 }
 
 function sanitizeArtistName(artistName: string): string[] {
-	const artistNameSplit = artistName.split(
-		/ +(featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING) +|; +/
-	);
+	const regex = /(featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING|;)+/g;
+	const artistNameSplit = artistName
+		.split(regex)
+		.filter((artist) => artist !== '' && !artist.match(regex));
 
 	return artistNameSplit.map((artist) => artist.replaceAll(',', '').trim());
 }
