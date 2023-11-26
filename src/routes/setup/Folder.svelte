@@ -36,16 +36,18 @@
 	}
 </script>
 
-<form action="?/getchildren" style="display: block;" on:submit|preventDefault={onSubmit}>
-	<input type="hidden" name="path" value={folderNode.path} />
-	{'>'.repeat(level)}
-	<button type="submit" disabled={loading}>
-		{folderNode.label}{$pickedFolder === folderNode ? ' (selected)' : ''}
-	</button>
-</form>
+<div class="flex py-2 mx-2 flex-col border-l-zinc-300 border-l-2 ml-2">
+	<form class="flex items-center" action="?/getchildren" on:submit|preventDefault={onSubmit}>
+		<div class="w-3 h-px bg-zinc-300" />
+		<input type="hidden" name="path" value={folderNode.path} />
+		<button type="submit" disabled={loading}>
+			{folderNode.label}{$pickedFolder === folderNode ? ' (selected)' : ''}
+		</button>
+	</form>
 
-{#if opened}
-	{#each folderNode.children as folder}
-		<svelte:self folderNode={folder} level={level + 1} />
-	{/each}
-{/if}
+	{#if opened}
+		{#each folderNode.children as folder}
+			<svelte:self folderNode={folder} level={level + 1} />
+		{/each}
+	{/if}
+</div>

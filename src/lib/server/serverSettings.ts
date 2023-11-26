@@ -16,6 +16,19 @@ export async function createServerSettings(folderPath: string) {
 	return newSettings;
 }
 
+export async function completeServerSetup(sSettings: ServerSettings) {
+	const updatedSettings = await prisma.serverSettings.update({
+		where: {
+			id: sSettings.id
+		},
+		data: {
+			setupComplete: true
+		}
+	});
+
+	serverSettings = updatedSettings;
+}
+
 export async function getServerSettings() {
 	if (serverSettings) {
 		return serverSettings;

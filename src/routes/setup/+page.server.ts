@@ -1,6 +1,6 @@
 import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma';
-import { createServerSettings } from '$lib/server/serverSettings';
+import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
 import { readdir, lstat } from 'fs/promises';
@@ -81,14 +81,7 @@ export const actions: Actions = {
 
 		try {
 			await register(email, password, password, username, true);
-			await prisma.serverSettings.update({
-				data: {
-					setupComplete: true
-				},
-				where: {
-					id: settings.id
-				}
-			});
+			await completeServerSetup(settings);
 		} catch (err) {
 			return fail(401, { error: (err as Error)?.message });
 		}
