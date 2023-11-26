@@ -1,12 +1,15 @@
 import prisma from '$lib/server/prisma.js';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ locals, params, setHeaders, depends }) => {
+export const load = async ({ locals, params }) => {
 	const { id } = params;
 
 	const album = await prisma.album.findUnique({
 		where: { id: id },
-		include: { tracks: { include: { artists: true } }, albumArtist: true }
+		include: {
+			tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } },
+			albumArtist: true
+		}
 	});
 
 	if (!album) {

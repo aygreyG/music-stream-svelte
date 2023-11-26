@@ -31,7 +31,13 @@ export const GET = async ({ params, setHeaders }) => {
 			throw error(500, { message: 'Internal server error' });
 		}
 	} else {
-		// TODO: Return default album art
-		throw error(404, { message: 'Album art not found' });
+		const image = await readFile('static/album.png');
+
+		setHeaders({
+			'Content-Type': 'image/png',
+			'Cache-Control': 'no-cache'
+		});
+
+		return new Response(image);
 	}
 };

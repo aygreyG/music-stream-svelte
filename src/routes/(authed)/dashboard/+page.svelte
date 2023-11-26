@@ -9,14 +9,19 @@
 			href="/album/{album.id}"
 		>
 			<img
-				class="absolute w-full h-full object-cover"
+				class="w-full h-full object-cover rounded-lg"
 				src={`/api/image/${album.id}`}
-				alt={album.title}
+				alt={album.id.replaceAll('-', '')}
 			/>
-			<div class="bottom-0 left-0 absolute w-full text-center bg-zinc-900/80 text-sm">
-				<div class="whitespace-nowrap">{album.albumArtist.name}</div>
-				<div class="whitespace-nowrap">{album.title}</div>
-				<div class="whitespace-nowrap">{album.releaseDate}</div>
+			<div class="bottom-0 left-0 absolute w-full text-center flex justify-end flex-col gap-1 p-1">
+				<div
+					class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
+				>
+					{album.title}
+				</div>
+				<div class="whitespace-nowrap z-10 bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1">
+					{album.albumArtist.name}
+				</div>
 			</div>
 		</a>
 	{/each}
