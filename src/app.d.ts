@@ -4,25 +4,25 @@ import 'unplugin-icons/types/svelte';
 import type { SignedInUser } from '$lib/shared/types';
 
 declare global {
-	namespace App {
-		// interface Error {}
-		interface Locals {
-			user: SignedInUser | null;
-		}
-		// interface PageData {}
-		// interface Platform {}
-	}
+  namespace App {
+    // interface Error {}
+    interface Locals {
+      user: SignedInUser | null;
+    }
+    // interface PageData {}
+    // interface Platform {}
+  }
 
-	interface ViewTransition {
-		updateCallbackDone: Promise<void>;
-		ready: Promise<void>;
-		finished: Promise<void>;
-		skipTransition: () => void;
-	}
+  interface ViewTransition {
+    updateCallbackDone: Promise<void>;
+    ready: Promise<void>;
+    finished: Promise<void>;
+    skipTransition: () => void;
+  }
 
-	interface Document {
-		startViewTransition(updateCallback: () => Promise<void>): ViewTransition;
-	}
+  interface Document {
+    startViewTransition(updateCallback: () => Promise<void>): ViewTransition;
+  }
 }
 
 export {};

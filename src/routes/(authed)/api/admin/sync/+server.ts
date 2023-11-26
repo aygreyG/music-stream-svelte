@@ -2,11 +2,11 @@ import { getLibrarySyncInProgress, runLibrarySync } from '$lib/server/librarySyn
 import { error, json } from '@sveltejs/kit';
 
 export const POST = async () => {
-	if (getLibrarySyncInProgress()) {
-		throw error(400, { message: 'Library sync already in progress' });
-	}
+  if (getLibrarySyncInProgress()) {
+    throw error(400, { message: 'Library sync already in progress' });
+  }
 
-	runLibrarySync();
+  runLibrarySync();
 
-	return json({ message: 'Library sync started' });
+  return json({ message: 'Library sync started' });
 };

@@ -5,40 +5,40 @@ let serverSettings: ServerSettings | null = null;
 let requestedServerSettings = false;
 
 export async function createServerSettings(folderPath: string) {
-	const newSettings = await prisma.serverSettings.create({
-		data: {
-			musicFolder: folderPath
-		}
-	});
+  const newSettings = await prisma.serverSettings.create({
+    data: {
+      musicFolder: folderPath
+    }
+  });
 
-	serverSettings = newSettings;
+  serverSettings = newSettings;
 
-	return newSettings;
+  return newSettings;
 }
 
 export async function completeServerSetup(sSettings: ServerSettings) {
-	const updatedSettings = await prisma.serverSettings.update({
-		where: {
-			id: sSettings.id
-		},
-		data: {
-			setupComplete: true
-		}
-	});
+  const updatedSettings = await prisma.serverSettings.update({
+    where: {
+      id: sSettings.id
+    },
+    data: {
+      setupComplete: true
+    }
+  });
 
-	serverSettings = updatedSettings;
+  serverSettings = updatedSettings;
 }
 
 export async function getServerSettings() {
-	if (serverSettings) {
-		return serverSettings;
-	}
+  if (serverSettings) {
+    return serverSettings;
+  }
 
-	if (!requestedServerSettings) {
-		const settings = await prisma.serverSettings.findFirst();
-		serverSettings = settings;
-		requestedServerSettings = true;
-	}
+  if (!requestedServerSettings) {
+    const settings = await prisma.serverSettings.findFirst();
+    serverSettings = settings;
+    requestedServerSettings = true;
+  }
 
-	return serverSettings;
+  return serverSettings;
 }
