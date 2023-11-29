@@ -21,7 +21,11 @@
   </div>
   <div class="flex flex-col gap-6 p-4 pb-0 h-full">
     <div class="flex items-center justify-center md:justify-start gap-6">
-      <img class="w-40 h-40 rounded-md" src="/api/image/{data.album.id}" alt={data.album.title} />
+      <img
+        class="w-40 h-40 rounded-md object-cover"
+        src="/api/image/{data.album.id}"
+        alt={data.album.title}
+      />
       <div class="flex flex-col">
         <a class="hover:underline" href="/artist/{data.album.albumArtistId}">
           {data.album.albumArtist.name}
