@@ -221,13 +221,13 @@
     -webkit-appearance: none;
     appearance: none;
     border: 2px solid rgb(192 38 211);
-    box-shadow: -407px 0 0 400px rgb(192 38 211);
+    box-shadow: -10007px 0 0 10000px rgb(192 38 211);
     @apply w-4 h-4 bg-zinc-300 rounded-full;
   }
 
   input[type='range']::-moz-range-thumb {
     border: 2px solid rgb(192 38 211);
-    box-shadow: -407px 0 0 400px rgb(192 38 211);
+    box-shadow: -10007px 0 0 10000px rgb(192 38 211);
     @apply w-3 h-3 bg-zinc-300 rounded-full;
   }
 
