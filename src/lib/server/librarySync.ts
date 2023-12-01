@@ -59,6 +59,8 @@ export async function runLibrarySync() {
         newTracks: tracksCreated
       }
     });
+
+    console.log('Created ' + tracksCreated + ' track(s)');
   }
 
   inProgress = false;
