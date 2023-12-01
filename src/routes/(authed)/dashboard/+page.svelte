@@ -1,8 +1,22 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+
   export let data;
+  let container: HTMLDivElement;
+
+  onMount(() => {
+    const scroll = localStorage.getItem('dashboard-scroll');
+    if (scroll) {
+      container.scrollTop = parseInt(scroll);
+    }
+  });
 </script>
 
-<div class="flex gap-8 items-center justify-center flex-wrap h-full overflow-auto p-2">
+<div
+  class="flex gap-8 items-center justify-center flex-wrap h-full overflow-auto p-2"
+  bind:this={container}
+  on:scroll={() => localStorage.setItem('dashboard-scroll', container.scrollTop.toString())}
+>
   {#each data.albums as album (album.id)}
     <a
       class="md:w-40 md:h-40 h-36 w-36 xl:w-52 xl:h-52 overflow-hidden bg-zinc-900 rounded-md"
