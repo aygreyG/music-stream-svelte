@@ -1,4 +1,4 @@
-import { NODE_ENV } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { runLibrarySync } from '$lib/server/librarySync';
 import prisma from '$lib/server/prisma';
@@ -20,7 +20,7 @@ async function runOnStartup() {
     return;
   }
 
-  if (NODE_ENV === 'production') {
+  if (env.NODE_ENV === 'production') {
     runLibrarySync();
   }
 

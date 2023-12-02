@@ -1,5 +1,5 @@
 import prisma from '$lib/server/prisma.js';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { readFile } from 'fs/promises';
 
 export const GET = async ({ params, setHeaders }) => {
@@ -31,13 +31,10 @@ export const GET = async ({ params, setHeaders }) => {
       throw error(500, { message: 'Internal server error' });
     }
   } else {
-    const image = await readFile('static/album.png');
-
     setHeaders({
-      'Content-Type': 'image/png',
       'Cache-Control': 'no-cache'
     });
 
-    return new Response(image);
+    throw redirect(307, '/album.png');
   }
 };
