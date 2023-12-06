@@ -67,7 +67,7 @@
   });
 </script>
 
-<div class="h-full flex gap-2 w-full">
+<div class="h-full flex gap-1 w-full">
   <div class="hidden sm:block">
     <div class="overflow-hidden h-44 w-44 rounded-md bg-zinc-900/95">
       {#if $currentTrack}
@@ -82,14 +82,14 @@
           autoplay={$currentTrack.shouldBePlayed}
           on:ended={onEnded}
         />
-        <a href="/album/{$currentTrack.album.id}">
+        <a href="/album/{$currentTrack.album.id}" class="overflow-hidden rounded-md h-44 w-44 flex">
           <img
-            class="object-cover rounded-md w-full h-full"
+            class="object-cover rounded-lg w-full h-full"
             src="/api/image/{$currentTrack.album.id}"
             alt="Album Art"
           />
           <div
-            class="bottom-0 left-0 absolute w-full text-center flex justify-end flex-col gap-1 p-1"
+            class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
           >
             <a
               href="/album/{$currentTrack.album.id}"
