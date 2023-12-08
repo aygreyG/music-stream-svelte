@@ -12,17 +12,12 @@
     text: string;
   };
 
-  const navigationElements: NavigationElement[] = [
-    {
-      href: '/',
-      text: 'Home'
-    }
-  ];
+  const navigationElements: NavigationElement[] = [];
 
   const loggedInElements: NavigationElement[] = [
     {
-      href: '/dashboard',
-      text: 'Dashboard'
+      href: '/',
+      text: 'Home'
     },
     {
       href: '/logout',
