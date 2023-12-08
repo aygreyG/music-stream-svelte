@@ -1,7 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { runLibrarySync } from '$lib/server/librarySync';
-import prisma from '$lib/server/prisma';
 import { getServerSettings } from '$lib/server/serverSettings';
 import { redirect, type Handle } from '@sveltejs/kit';
 
@@ -64,16 +63,17 @@ const handle: Handle = async ({ event, resolve }) => {
     }
   }
 
-  if (event.route.id?.startsWith('/(unauthed)/') && event.locals.user) {
+  if (event.route.id?.startsWith('/(app)/(unauthed)') && event.locals.user) {
     throw redirect(303, '/');
   }
 
-  if (event.route.id?.startsWith('/(authed)/') && !event.locals.user) {
+  if (event.route.id?.startsWith('/(app)/(authed)') && !event.locals.user) {
     throw redirect(303, `/login?redirect_to=${event.url.pathname}${event.url.search}`);
   }
 
   if (
-    (event.route.id?.startsWith('/(authed)/admin') || event.route.id?.startsWith('/api/')) &&
+    (event.route.id?.startsWith('/(app)/(authed)/admin') ||
+      event.route.id?.startsWith('/(app)/(authed)/api')) &&
     !(event.locals.user && event.locals.user.admin)
   ) {
     throw redirect(303, '/');
