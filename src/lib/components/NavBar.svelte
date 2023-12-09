@@ -1,6 +1,5 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import { page } from '$app/stores';
   import type { SignedInUser } from '$lib/shared/types';
   import { previous, queue } from '$lib/stores/audioPlayer';
   import NavigationElement from './NavigationElement.svelte';
@@ -17,7 +16,11 @@
   const loggedInElements: NavigationElement[] = [
     {
       href: '/',
-      text: 'Home'
+      text: 'Albums'
+    },
+    {
+      href: '/artist',
+      text: 'Artists'
     },
     {
       href: '/logout',
