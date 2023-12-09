@@ -66,7 +66,7 @@
                     $currentTrack?.track.id !== track.id
                       ? playTrack(track, { ...album, albumArtist: data.artist }, true)
                       : null}
-                  class="flex h-10 hover:bg-gradient-to-r from-transparent via-zinc-600/10 to-transparent transition-colors w-full group items-center cursor-default"
+                  class="select-none flex h-10 hover:bg-gradient-to-r from-transparent via-zinc-600/10 to-transparent transition-colors w-full group items-center cursor-default"
                 >
                   <div class="w-10 flex items-center justify-center">
                     {#if $currentTrack?.track.id === track.id}
