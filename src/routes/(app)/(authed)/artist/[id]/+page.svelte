@@ -23,13 +23,13 @@
           </div>
           <a
             href="/album/{album.id}"
-            class="text-center bg-zinc-900/80 xl:h-64 h-52 overflow-hidden text-ellipsis whitespace-nowrap backdrop-blur-md py-2"
+            class="text-center bg-zinc-900/80 h-64 overflow-hidden text-ellipsis whitespace-nowrap backdrop-blur-md py-2"
             style="writing-mode: vertical-lr;"
           >
             {album.title}
           </a>
 
-          <div class="xl:h-64 h-52 overflow-y-auto overflow-x-hidden w-full">
+          <div class="h-64 overflow-y-auto overflow-x-hidden w-full">
             <div class="flex flex-col w-full">
               <div class="flex font-bold h-8 sticky top-0 left-0 z-10 w-full">
                 <div
