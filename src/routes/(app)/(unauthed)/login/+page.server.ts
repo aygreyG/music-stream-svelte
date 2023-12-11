@@ -41,6 +41,7 @@ export const actions = {
         secure: process.env.NODE_ENV == 'production',
         sameSite: 'strict'
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       return fail(401, {
         error: err?.message

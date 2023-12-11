@@ -1,4 +1,5 @@
 import { JWT_SECRET } from '$env/static/private';
+import type { Role } from '@prisma/client';
 import prisma from './prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -38,7 +39,7 @@ export async function register(
   password: string,
   passwordRepeat: string,
   username: string,
-  admin = false
+  role: Role = 'USER'
 ) {
   const userWithEmail = await prisma.user.findUnique({ where: { email } });
   const userWithUsername = await prisma.user.findUnique({ where: { username } });
@@ -53,7 +54,7 @@ export async function register(
 
   try {
     const passwordHash = await bcrypt.hash(password, 10);
-    return prisma.user.create({ data: { email, password: passwordHash, username, admin } });
+    return prisma.user.create({ data: { email, password: passwordHash, username, role } });
   } catch (err) {
     throw new Error('something went wrong');
   }
@@ -83,7 +84,7 @@ export async function validateToken(authCookie: string) {
     select: {
       id: true,
       username: true,
-      admin: true,
+      role: true,
       email: true,
       createdAt: true,
       updatedAt: true

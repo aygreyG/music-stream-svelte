@@ -47,7 +47,7 @@
       <p class="font-bold">Welcome {user.username}</p>
     {/if}
     {#if user}
-      {#if user?.admin}
+      {#if user?.role === 'ADMIN' || user?.role === 'OWNER'}
         {#each adminElements as el}
           <NavigationElement {...el} />
         {/each}
@@ -68,12 +68,12 @@
     {/if}
   </div>
   <div class="bg-zinc-900/95 p-2 rounded-md min-h-fit h-full overflow-auto">
-    {#each $previous as { album, track }}
+    {#each $previous as { track }}
       <div>
         {track.artists.map((a) => a.name).join(', ')} - {track.title}
       </div>
     {/each}
-    {#each $queue as { album, track }}
+    {#each $queue as { track }}
       <div>
         {track.artists.map((a) => a.name).join(', ')} - {track.title}
       </div>
