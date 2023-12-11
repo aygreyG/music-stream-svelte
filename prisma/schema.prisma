@@ -63,6 +63,7 @@ model Track {
 model Artist {
   id        String   @id @default(uuid())
   name      String   @unique
+  sanitized String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tracks    Track[]

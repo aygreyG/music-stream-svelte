@@ -66,13 +66,23 @@ export async function runLibrarySync() {
   inProgress = false;
 }
 
-function sanitizeArtistName(artistName: string): string[] {
+function breakFeatures(artistName: string): string[] {
   const regex = /(featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING|;)+/g;
   const artistNameSplit = artistName
     .split(regex)
     .filter((artist) => artist !== '' && !artist.match(regex));
 
-  return artistNameSplit.map((artist) => artist.replaceAll(',', '').trim());
+  return artistNameSplit.map((artist) => artist.trim());
+}
+
+function sanitizeArtistName(artist: string) {
+  return artist
+    .replaceAll(',', '')
+    .replaceAll("'", '')
+    .replaceAll('&', 'and')
+    .replaceAll('+', 'and')
+    .trim()
+    .toLowerCase();
 }
 
 async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFileName?: string) {
@@ -150,7 +160,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
 
     const allArtists = data.common.artists;
     const artistSet = new Set<string>();
-    const albumArtistName = data.common.albumartist || sanitizeArtistName(allArtists[0])[0];
+    const albumArtistName = data.common.albumartist || breakFeatures(allArtists[0])[0];
     const allGenres = data.common.genre || [];
     const genres: string[] = [];
 
@@ -162,13 +172,13 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
       await prisma.$transaction(
         async (tx) => {
           const albumArtist = await tx.artist.upsert({
-            where: { name: albumArtistName },
-            create: { name: albumArtistName },
+            where: { sanitized: sanitizeArtistName(albumArtistName) },
+            create: { name: albumArtistName, sanitized: sanitizeArtistName(albumArtistName) },
             update: { updatedAt: new Date() }
           });
 
           allArtists.forEach((artist) => {
-            sanitizeArtistName(artist).forEach((a) => artistSet.add(a));
+            breakFeatures(artist).forEach((a) => artistSet.add(a));
           });
 
           let album = await tx.album.findUnique({
@@ -210,8 +220,8 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
               trackNumber: data.common.track.no || album.tracks.length + 1,
               artists: {
                 connectOrCreate: Array.from(artistSet).map((artistName) => ({
-                  where: { name: artistName },
-                  create: { name: artistName }
+                  where: { sanitized: sanitizeArtistName(artistName) },
+                  create: { name: artistName, sanitized: sanitizeArtistName(artistName) }
                 }))
               },
               tags: {
