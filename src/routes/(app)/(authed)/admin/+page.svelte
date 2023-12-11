@@ -3,6 +3,7 @@
   import UserElement from './UserElement.svelte';
 
   export let data;
+  let message: string | null = null;
 </script>
 
 <div class="flex flex-col gap-2 p-2 overflow-auto h-full">
@@ -10,8 +11,22 @@
 
   <div class="flex justify-between items-center p-4 rounded-md bg-zinc-600/10">
     <div>Start library sync</div>
+    {#if message}
+      <div class="text-fuchsia-600">{message}</div>
+    {/if}
     <button
       class="bg-sky-600 hover:bg-sky-700 rounded-md py-1 px-4 font-semibold transition-colors"
+      on:click={async () => {
+        const re = await fetch('/api/admin/sync', {
+          method: 'POST'
+        });
+
+        const response = await re.json();
+        message = response.message;
+        setTimeout(() => {
+          message = null;
+        }, 2000);
+      }}
     >
       Start
     </button>
