@@ -27,12 +27,12 @@
         alt={data.album.title}
       />
       <div class="flex flex-col">
-        <a class="hover:underline" href="/artist/{data.album.albumArtistId}">
-          {data.album.albumArtist.name}
-        </a>
         <div>
           {data.album.title}
         </div>
+        <a class="hover:underline" href="/artist/{data.album.albumArtistId}">
+          {data.album.albumArtist.name}
+        </a>
         <div>
           {data.album.releaseDate}
         </div>
