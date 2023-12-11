@@ -73,7 +73,7 @@ const handle: Handle = async ({ event, resolve }) => {
 
   if (
     (event.route.id?.startsWith('/(app)/(authed)/admin') ||
-      event.route.id?.startsWith('/(app)/(authed)/api')) &&
+      event.route.id?.startsWith('/(app)/(authed)/api/admin')) &&
     !(event.locals.user && event.locals.user.admin)
   ) {
     throw redirect(303, '/');

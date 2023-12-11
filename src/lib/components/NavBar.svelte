@@ -11,7 +11,12 @@
     text: string;
   };
 
-  const navigationElements: NavigationElement[] = [];
+  const adminElements: NavigationElement[] = [
+    {
+      href: '/admin',
+      text: 'Admin'
+    }
+  ];
 
   const loggedInElements: NavigationElement[] = [
     {
@@ -41,10 +46,12 @@
     {#if user}
       <p class="font-bold">Welcome {user.username}</p>
     {/if}
-    {#each navigationElements as el}
-      <NavigationElement {...el} />
-    {/each}
     {#if user}
+      {#if user?.admin}
+        {#each adminElements as el}
+          <NavigationElement {...el} />
+        {/each}
+      {/if}
       {#each loggedInElements as el}
         {#if el.href === '/logout'}
           <form method="POST" action="/logout" use:enhance>
