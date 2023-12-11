@@ -4,7 +4,7 @@
   export let data;
 </script>
 
-<div class="h-full flex flex-col items-center px-4">
+<div class="h-full flex flex-col items-center px-4 overflow-auto">
   <h1 class="text-xl text-center font-bold p-4">Login</h1>
 
   <form
