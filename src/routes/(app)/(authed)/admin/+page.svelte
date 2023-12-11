@@ -67,9 +67,11 @@
     </form>
   </div>
 
-  <div class="flex flex-col bg-zinc-600/10 rounded-md">
-    {#each data.users as usr (usr.id)}
-      <UserElement user={usr} />
-    {/each}
-  </div>
+  {#if data.users}
+    <div class="flex flex-col bg-zinc-600/10 rounded-md">
+      {#each data.users as usr (usr.id)}
+        <UserElement user={usr} />
+      {/each}
+    </div>
+  {/if}
 </div>
