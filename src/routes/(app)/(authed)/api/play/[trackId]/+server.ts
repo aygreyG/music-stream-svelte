@@ -74,6 +74,7 @@ export const GET = async ({ params, request, setHeaders }) => {
 
     const audioStream = createReadStream(track.filePath, { start, end });
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return new Response(audioStream as any, {
       status: 206
     });

@@ -1,4 +1,4 @@
-import type { Artist, ServerSettings } from '@prisma/client';
+import type { Artist } from '@prisma/client';
 import prisma from './prisma';
 import * as mm from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir } from 'fs/promises';
@@ -146,7 +146,7 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
 }
 
 async function checkDB(filePath: string, dir: string): Promise<boolean> {
-  let track = await prisma.track.findUnique({ where: { filePath } });
+  const track = await prisma.track.findUnique({ where: { filePath } });
 
   if (!track) {
     const data = await mm.parseFile(filePath);

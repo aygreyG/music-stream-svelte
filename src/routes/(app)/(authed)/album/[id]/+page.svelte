@@ -2,9 +2,7 @@
   import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import RoundMoreVert from 'virtual:icons/ic/round-more-vert';
-  import RoundEdit from 'virtual:icons/ic/round-edit';
-  import RoundFavorite from 'virtual:icons/ic/round-favorite';
-  import { currentTrack, paused, playAlbum, playTrack } from '$lib/stores/audioPlayer.js';
+  import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
 
   export let data;
 </script>

@@ -4,7 +4,7 @@ import { fail } from '@sveltejs/kit';
 
 export const actions = {
   create: async ({ request, locals }) => {
-    if (!locals.user?.admin) {
+    if (locals.user?.role === 'USER') {
       return fail(403, { error: 'You must be an admin to access this page' });
     }
 
@@ -19,9 +19,10 @@ export const actions = {
     }
 
     try {
-      await register(email, password, password, username, admin);
+      await register(email, password, password, username, admin ? 'ADMIN' : 'USER');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      return fail(400, { error: err.message });
+      return fail(400, { error: err?.message });
     }
 
     return {
@@ -29,7 +30,7 @@ export const actions = {
     };
   },
   update: async ({ request, locals }) => {
-    if (!locals.user?.admin) {
+    if (locals.user?.role === 'USER') {
       return fail(403, { error: 'You must be an admin to access this page' });
     }
 
@@ -60,10 +61,10 @@ export const actions = {
         data: {
           email,
           username,
-          admin
+          role: admin ? 'ADMIN' : 'USER'
         }
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       return fail(400, { error: "Couldn't update user" });
     }
@@ -73,7 +74,7 @@ export const actions = {
     };
   },
   delete: async ({ request, locals }) => {
-    if (!locals.user?.admin) {
+    if (locals.user?.role === 'USER') {
       return fail(403, { error: 'You must be an admin to access this page' });
     }
 
@@ -87,10 +88,15 @@ export const actions = {
     try {
       await prisma.user.delete({
         where: {
-          id
+          id,
+          AND: {
+            NOT: {
+              role: 'OWNER'
+            }
+          }
         }
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       return fail(400, { error: "Couldn't delete user" });
     }
@@ -102,13 +108,13 @@ export const actions = {
 };
 
 export const load = async ({ locals }) => {
-  if (!locals.user?.admin) {
+  if (locals.user?.role === 'USER') {
     return fail(403, { error: 'You must be an admin to access this page' });
   }
 
   const users = await prisma.user.findMany({
-    where: { id: { not: locals.user?.id } },
-    select: { id: true, email: true, username: true, admin: true, createdAt: true, updatedAt: true }
+    where: { id: { not: locals.user?.id }, AND: { NOT: { role: 'OWNER' } } },
+    select: { id: true, email: true, username: true, role: true, createdAt: true, updatedAt: true }
   });
 
   return {

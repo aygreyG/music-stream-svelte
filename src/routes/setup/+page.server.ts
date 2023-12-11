@@ -1,5 +1,4 @@
 import { register } from '$lib/server/auth.js';
-import prisma from '$lib/server/prisma';
 import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
@@ -32,7 +31,7 @@ async function getSubFolders(dir: string): Promise<FolderNode[]> {
   return subFolders;
 }
 
-export const load = async ({ locals }) => {
+export const load = async () => {
   const musicFolders: FolderNode[] = [];
 
   const dir = '/';
@@ -59,7 +58,7 @@ export const load = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-  createsetup: async ({ locals, request }) => {
+  createsetup: async ({ request }) => {
     const form = await request.formData();
     const folder = form.get('musicFolder');
 
@@ -80,7 +79,7 @@ export const actions: Actions = {
     }
 
     try {
-      await register(email, password, password, username, true);
+      await register(email, password, password, username, 'OWNER');
       await completeServerSetup(settings);
     } catch (err) {
       return fail(401, { error: (err as Error)?.message });
