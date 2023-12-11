@@ -60,9 +60,9 @@
   <button
     class="w-36 bg-emerald-600 hover:bg-emerald-700 rounded-md py-1 px-2 font-semibold text-white disabled:hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
     type="submit"
-    disabled={user.username === username && user.email === email && admin
-      ? user.role !== 'ADMIN'
-      : user.role === 'ADMIN'}
+    disabled={user.username === username &&
+      user.email === email &&
+      ((admin && user.role === 'ADMIN') || (!admin && user.role === 'USER'))}
   >
     Update
   </button>
