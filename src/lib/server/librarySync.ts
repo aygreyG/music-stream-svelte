@@ -1,17 +1,52 @@
 import type { Artist } from '@prisma/client';
 import prisma from './prisma';
 import * as mm from 'music-metadata';
-import { readdir, stat, writeFile, access, mkdir } from 'fs/promises';
+import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings } from './serverSettings';
 
 let inProgress = false;
 let tracksCreated = 0;
 
+/**
+ * Retrieves the current status of the library synchronization process.
+ */
 export function getLibrarySyncInProgress() {
   return inProgress;
 }
 
+/**
+ * Runs a full library synchronization process.
+ * Deletes all existing tracks, albums, and artists from the database
+ * and then initiates a new library synchronization.
+ */
+export async function runFullLibrarySync() {
+  const settings = await getServerSettings();
+  if (inProgress || !settings?.setupComplete) {
+    return;
+  }
+
+  inProgress = true;
+
+  await prisma.$transaction(
+    async (tx) => {
+      await tx.track.deleteMany();
+      await tx.album.deleteMany();
+      await tx.artist.deleteMany();
+    },
+    { maxWait: 5000, timeout: 10000 }
+  );
+
+  inProgress = false;
+
+  runLibrarySync();
+}
+
+/**
+ * Runs the library synchronization process.
+ * This function synchronizes the music library by walking through the music folder,
+ * deleting outdated tracks and albums, and creating new tracks.
+ */
 export async function runLibrarySync() {
   const settings = await getServerSettings();
   if (inProgress || !settings?.setupComplete) {
@@ -66,6 +101,9 @@ export async function runLibrarySync() {
   inProgress = false;
 }
 
+/**
+ * Breaks up artist names that have multiple artists in them
+ */
 function breakFeatures(artistName: string): string[] {
   const regex = /(featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING|;)+/g;
   const artistNameSplit = artistName
@@ -85,6 +123,9 @@ function sanitizeArtistName(artist: string) {
     .toLowerCase();
 }
 
+/**
+ * Searches for an album file in a directory based on the given file names and album art file name.
+ */
 async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFileName?: string) {
   const albumArtNames = ['front', 'art', 'albumart', 'cover', 'folder', albumArtFileName];
   for (const fileName of fileNames) {
@@ -120,6 +161,7 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
     }
   }
 
+  // get album art from metadata
   const albumArt = fileData.common.picture?.[0].data;
   const albumArtType = fileData.common.picture?.[0].format.split('/')[1];
   const albumArtPath = join(dir, 'Covers', `${albumArtFileName}.${albumArtType}`);
@@ -135,11 +177,22 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
     }
   }
 
+  // get album art from directory
   const files = await readdir(dir);
   const fileName = await searchForAlbumFile(files, dir);
 
   if (fileName) {
-    return fileName;
+    try {
+      const coversDir = join(dir, 'Covers');
+      await access(coversDir).catch(() => mkdir(coversDir));
+      const buffer = await readFile(fileName);
+      const extension = fileName.split('.').pop();
+      const pathToWrite = join(coversDir, albumArtFileName) + '.' + extension;
+      await writeFile(pathToWrite, buffer);
+      return pathToWrite;
+    } catch (err) {
+      console.error('Could not create album art file', err);
+    }
   }
 
   return null;
@@ -266,6 +319,7 @@ function checkFileName(fileName: string) {
 }
 
 async function walk(dir: string) {
+  const allowedExtensions = ['flac', 'wav', 'mp3'];
   const files = await readdir(dir);
 
   for (const file of files) {
@@ -280,7 +334,7 @@ async function walk(dir: string) {
 
     if (fileStat.isDirectory()) {
       await walk(filePath);
-    } else if (fileStat.isFile() && ['flac', 'wav', 'mp3'].includes(extension)) {
+    } else if (fileStat.isFile() && allowedExtensions.includes(extension)) {
       if (await checkDB(filePath, dir)) {
         tracksCreated++;
       }

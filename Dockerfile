@@ -1,4 +1,4 @@
-FROM node:18-bullseye-slim AS builder
+FROM node:20-bullseye-slim AS builder
 WORKDIR /app
 ARG JWT_SECRET
 ENV JWT_SECRET=$JWT_SECRET
@@ -9,7 +9,7 @@ RUN npx prisma generate
 RUN npm run build
 RUN npm prune --production
 
-FROM gcr.io/distroless/nodejs:18
+FROM gcr.io/distroless/nodejs20-debian11
 WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/
