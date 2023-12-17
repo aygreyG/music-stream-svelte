@@ -18,6 +18,7 @@ export const load = async ({ locals, params }) => {
 
   return {
     user: locals.user,
-    album
+    album,
+    title: `${album.title} - ${album.albumArtist.name}`
   };
 };

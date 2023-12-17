@@ -15,7 +15,8 @@ export const load = ({ request, url }) => {
   }
 
   return {
-    redirectTo
+    redirectTo,
+    title: 'Login'
   };
 };
 

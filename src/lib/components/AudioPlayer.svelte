@@ -173,6 +173,7 @@
               step="0.01"
               bind:value={currentTime}
               disabled={!duration}
+              aria-label="Progress bar"
             />
             <div class="timer">{durationString}</div>
           </div>
@@ -183,18 +184,21 @@
                 class="text-2xl transition-colors"
                 class:text-fuchsia-600={shuffle}
                 class:text-zinc-400={!shuffle}
+                aria-label="Shuffle"
               >
                 <RoundShuffle />
               </button>
               <button
                 on:click={playPrevious}
                 class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
+                aria-label="Previous"
               >
                 <RoundSkipPrevious />
               </button>
               <button
                 on:click={togglePlay}
                 class="text-6xl text-zinc-400 active:text-zinc-600 transition-colors"
+                aria-label="Toggle play"
               >
                 {#if $paused}
                   <RoundPlayCircleOutline />
@@ -205,6 +209,7 @@
               <button
                 on:click={playNext}
                 class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
+                aria-label="Next"
               >
                 <RoundSkipNext />
               </button>
@@ -213,13 +218,14 @@
                 class="text-2xl transition-colors"
                 class:text-fuchsia-600={repeat}
                 class:text-zinc-400={!repeat}
+                aria-label="Repeat"
               >
                 <RoundRepeat />
               </button>
             </div>
             <div
               class="sm:flex hidden gap-2 items-center lg:absolute right-0"
-              on:mousewheel={updateVolume}
+              on:wheel={updateVolume}
             >
               <button
                 on:click={() => {
@@ -230,6 +236,7 @@
                     volume = 0;
                   }
                 }}
+                aria-label="Mute"
               >
                 {#if volume === 0}
                   <RoundVolumeOff class="text-3xl text-zinc-400" />
@@ -241,7 +248,14 @@
                   <RoundVolumeUp class="text-3xl text-zinc-400" />
                 {/if}
               </button>
-              <input type="range" min="0" max="1" step="0.01" bind:value={volume} />
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                bind:value={volume}
+                aria-label="Volume bar"
+              />
             </div>
           </div>
         </div>

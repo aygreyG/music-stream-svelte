@@ -9,7 +9,9 @@ declare global {
     interface Locals {
       user: SignedInUser | null;
     }
-    // interface PageData {}
+    interface PageData {
+      title?: string;
+    }
     // interface Platform {}
   }
 
