@@ -57,13 +57,64 @@
 
   $: if (currentTime) {
     currentString = new Date(currentTime * 1000).toISOString().slice(14, 19);
+
+    if (navigator.mediaSession) {
+      navigator.mediaSession.setPositionState({
+        duration,
+        playbackRate: player.playbackRate,
+        position: currentTime
+      });
+    }
   } else {
     currentString = '--:--';
   }
 
   currentTrack.subscribe((val) => {
-    if (val && !val.shouldBePlayed) {
-      $paused = true;
+    if (val) {
+      if (!val.shouldBePlayed) {
+        $paused = true;
+      }
+
+      if (navigator.mediaSession) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: val.track.title,
+          artist: val.track.artists.map((a) => a.name).join(', '),
+          album: val.album.title,
+          artwork: [
+            {
+              src: `/api/image/${val.album.id}/l/avif`,
+              sizes: '300x300',
+              type: 'image/avif'
+            },
+            {
+              src: `/api/image/${val.album.id}/l/webp`,
+              sizes: '300x300',
+              type: 'image/webp'
+            },
+            {
+              src: `/api/image/${val.album.id}/l`,
+              sizes: '300x300',
+              type: `image/${val.album.albumArt?.split('.').pop()}`
+            }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          togglePlay();
+        });
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+          togglePlay();
+        });
+
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+          playPrevious();
+        });
+
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+          playNext();
+        });
+      }
     }
   });
 </script>
