@@ -119,6 +119,7 @@ export const load = async ({ locals }) => {
 
   return {
     user: locals.user,
-    users
+    users,
+    title: 'Admin dashboard'
   };
 };

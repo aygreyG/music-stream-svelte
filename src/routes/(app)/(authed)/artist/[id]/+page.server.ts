@@ -27,6 +27,7 @@ export const load = async ({ locals, params }) => {
 
   return {
     user: locals.user,
-    artist
+    artist,
+    title: artist.name
   };
 };

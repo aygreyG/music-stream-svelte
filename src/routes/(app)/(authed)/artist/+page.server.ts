@@ -5,6 +5,7 @@ export const load = async ({ locals }) => {
 
   return {
     user: locals.user,
-    artists
+    artists,
+    title: 'Artists'
   };
 };

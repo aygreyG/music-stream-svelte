@@ -53,7 +53,8 @@ export const load = async () => {
   }
 
   return {
-    musicFolders
+    musicFolders,
+    title: 'Setup'
   };
 };
 
