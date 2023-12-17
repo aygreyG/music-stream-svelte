@@ -11,6 +11,7 @@
   import RoundShuffle from 'virtual:icons/ic/round-shuffle';
   import type { SignedInUser } from '$lib/shared/types';
   import { currentTrack, playNext, paused, playPrevious } from '$lib/stores/audioPlayer';
+  import AlbumImage from './AlbumImage.svelte';
 
   export let user: SignedInUser | null = null;
 
@@ -83,11 +84,7 @@
           on:ended={onEnded}
         />
         <a href="/album/{$currentTrack.album.id}" class="overflow-hidden rounded-md h-44 w-44 flex">
-          <img
-            class="object-cover rounded-lg w-full h-full"
-            src="/api/image/{$currentTrack.album.id}"
-            alt="Album Art"
-          />
+          <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
           <div
             class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
           >

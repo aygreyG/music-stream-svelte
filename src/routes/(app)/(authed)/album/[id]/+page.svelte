@@ -3,6 +3,7 @@
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import RoundMoreVert from 'virtual:icons/ic/round-more-vert';
   import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
+  import AlbumImage from '$lib/components/AlbumImage.svelte';
 
   export let data;
 </script>
@@ -11,19 +12,15 @@
   <div
     class="absolute top-0 left-0 w-full h-full after:content-[''] after:w-full after:h-full after:absolute after:top-0 after:left-0 after:backdrop-blur-sm"
   >
-    <img
-      class="object-cover h-full w-full opacity-5"
-      src="/api/image/{data.album.id}"
-      alt="Album Art Backdrop"
-    />
+    <div class="h-full w-full opacity-5">
+      <AlbumImage alt="Backdrop for {data.album.title}" id={data.album.id} maxSize="s" />
+    </div>
   </div>
   <div class="flex flex-col gap-6 p-4 pb-0 h-full">
     <div class="flex items-center justify-center md:justify-start gap-6">
-      <img
-        class="w-40 h-40 rounded-md object-cover"
-        src="/api/image/{data.album.id}"
-        alt={data.album.title}
-      />
+      <div class="w-40 h-40 rounded-md overflow-hidden">
+        <AlbumImage alt={data.album.title} id={data.album.id} />
+      </div>
       <div class="flex flex-col">
         <div>
           {data.album.title}
@@ -119,17 +116,13 @@
                       </button>
                     {/if}
                   {:else}
-                    <img
-                      class="object-cover h-10 w-10 rounded-md sm:hidden"
-                      src="/api/image/{data.album.id}"
-                      alt={data.album.title}
-                    />
+                    <div class="h-10 w-10 rounded-md sm:hidden overflow-hidden">
+                      <AlbumImage alt={data.album.title} id={data.album.id} maxSize="s" />
+                    </div>
                   {/if}
-                  <img
-                    class="object-cover h-10 w-10 rounded-md hidden sm:block"
-                    src="/api/image/{data.album.id}"
-                    alt={data.album.title}
-                  />
+                  <div class="h-10 w-10 rounded-md hidden sm:block overflow-hidden">
+                    <AlbumImage alt={data.album.title} id={data.album.id} maxSize="s" />
+                  </div>
                   {track.title}
                 </div>
               </td>

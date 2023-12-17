@@ -2,6 +2,7 @@
   import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
   import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
+  import AlbumImage from '$lib/components/AlbumImage.svelte';
   export let data;
 </script>
 
@@ -15,11 +16,9 @@
           <div
             class="absolute top-0 left-0 w-full h-full after:content-[''] after:w-full after:h-full after:absolute after:top-0 after:left-0 after:backdrop-blur-sm after:rounded-md"
           >
-            <img
-              class="object-cover h-full w-full opacity-5"
-              src="/api/image/{album.id}"
-              alt="Album Art Backdrop"
-            />
+            <div class="h-full w-full opacity-5">
+              <AlbumImage alt="Backdrop for {album.title}" id={album.id} maxSize="s" />
+            </div>
           </div>
           <a
             href="/album/{album.id}"
@@ -159,11 +158,11 @@
             >
               <RoundPlayCircleFilled class="text-3xl transition-colors" />
             </button>
-            <img
-              class="group-hover:opacity-20 absolute top-0 left-0 z-0 object-cover h-10 w-10 rounded-md"
-              src="/api/image/{track.album.id}"
-              alt={track.album.title}
-            />
+            <div
+              class="group-hover:opacity-20 absolute top-0 left-0 z-0 h-10 w-10 rounded-md overflow-hidden"
+            >
+              <AlbumImage alt={track.album.title} id={track.album.id} maxSize="s" />
+            </div>
           {/if}
         </div>
         <div class="w-[40%] pl-2 overflow-hidden text-ellipsis whitespace-nowrap">
