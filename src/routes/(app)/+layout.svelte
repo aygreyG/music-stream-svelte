@@ -1,7 +1,7 @@
 <script lang="ts">
   import AudioPlayer from '$lib/components/AudioPlayer.svelte';
   import NavBar from '$lib/components/NavBar.svelte';
-  import { fly } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
 
   export let data;
 </script>
@@ -12,8 +12,8 @@
     {#key data.url}
       <div
         class="w-full h-full"
-        in:fly={{ opacity: 0, delay: 200, duration: 200 }}
-        out:fly={{ opacity: 0, duration: 200 }}
+        in:fade={{ delay: 200, duration: 200 }}
+        out:fade={{ duration: 200 }}
       >
         <slot />
       </div>
