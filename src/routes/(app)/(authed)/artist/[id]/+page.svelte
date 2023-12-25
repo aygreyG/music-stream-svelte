@@ -13,12 +13,8 @@
     <div class="flex flex-wrap w-full gap-2 justify-center items-center">
       {#each data.artist.albums as album (album.id)}
         <div class="flex gap-0.5 xl:w-[calc(50%-0.5rem)] w-full rounded-md overflow-hidden">
-          <div
-            class="absolute top-0 left-0 w-full h-full after:content-[''] after:w-full after:h-full after:absolute after:top-0 after:left-0 after:backdrop-blur-sm after:rounded-md"
-          >
-            <div class="h-full w-full opacity-5">
-              <AlbumImage alt="Backdrop for {album.title}" id={album.id} maxSize="s" />
-            </div>
+          <div class="absolute top-0 left-0 h-full w-full opacity-10">
+            <AlbumImage blur alt="Backdrop for {album.title}" id={album.id} maxSize="s" />
           </div>
           <a
             href="/album/{album.id}"
