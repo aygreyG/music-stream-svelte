@@ -8,7 +8,8 @@ type ImageExtension = 'avif' | 'webp' | '';
 export async function getImage(
   album: AlbumWithArt,
   size: ExtendedImageSize = '',
-  imageExt: ImageExtension = ''
+  imageExt: ImageExtension = '',
+  blur: boolean = false
 ) {
   let extension: string = imageExt;
 
@@ -16,10 +17,9 @@ export async function getImage(
     extension = album.albumArt.split('.').pop() as string;
   }
 
-  const imagePath = `${album.albumArt.substring(
-    0,
-    album.albumArt.lastIndexOf('.')
-  )}_${size}.${extension}`;
+  const imagePath = `${album.albumArt.substring(0, album.albumArt.lastIndexOf('.'))}_${size}${
+    blur ? '_blur' : ''
+  }.${extension}`;
 
   if (
     await access(imagePath)
@@ -31,13 +31,19 @@ export async function getImage(
       imageBuffer: await readFile(imagePath)
     };
   } else {
-    const imageBuffer = await createImage(album.albumArt, imagePath, extension, size);
+    const imageBuffer = await createImage(album.albumArt, imagePath, extension, size, blur);
 
     return { extension, imageBuffer };
   }
 }
 
-async function createImage(from: string, to: string, extension: string, size: ExtendedImageSize) {
+async function createImage(
+  from: string,
+  to: string,
+  extension: string,
+  size: ExtendedImageSize,
+  blur: boolean
+) {
   const file = await readFile(from);
 
   const image = sharp(file);
@@ -59,6 +65,8 @@ async function createImage(from: string, to: string, extension: string, size: Ex
       image.resize({ width: 300, height: 300 });
       break;
   }
+
+  if (blur) image.blur(3);
 
   const imageBuffer = await image.toBuffer();
 

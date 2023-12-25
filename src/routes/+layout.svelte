@@ -1,19 +1,6 @@
 <script lang="ts">
-  import { onNavigate } from '$app/navigation';
   import { page } from '$app/stores';
   import '../app.css';
-
-  onNavigate((navigation) => {
-    if (!document.startViewTransition || navigation.from?.route.id === navigation.to?.route.id)
-      return;
-
-    return new Promise((resolve) => {
-      document.startViewTransition(async () => {
-        resolve();
-        await navigation.complete;
-      });
-    });
-  });
 </script>
 
 <svelte:head>
