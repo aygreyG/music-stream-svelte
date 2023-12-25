@@ -9,10 +9,8 @@
 </script>
 
 <div class="flex flex-col overflow-hidden h-full">
-  <div class="absolute top-0 left-0 w-full h-full">
-    <div class="h-full w-full opacity-10">
-      <AlbumImage blur alt="Backdrop for {data.album.title}" id={data.album.id} maxSize="s" />
-    </div>
+  <div class="absolute top-0 left-0 h-full w-full opacity-10">
+    <AlbumImage blur alt="Backdrop for {data.album.title}" id={data.album.id} maxSize="s" />
   </div>
   <div class="flex flex-col gap-6 p-4 pb-0 h-full">
     <div class="flex items-center justify-center md:justify-start gap-6">
