@@ -105,10 +105,12 @@ export async function runLibrarySync() {
  * Breaks up artist names that have multiple artists in them
  */
 function breakFeatures(artistName: string): string[] {
-  const regex = / (featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING|;) /g;
+  const regex = /(featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING|;) /g;
+  const regexWithoutSpace =
+    /(featuring|\+|feat\.|feat|Feat|Feat.|FEAT|FEAT.|Featuring|FEATURING|;)/g;
   const artistNameSplit = artistName
     .split(regex)
-    .filter((artist) => artist !== '' && !artist.match(regex));
+    .filter((artist) => artist !== '' && !artist.match(regexWithoutSpace));
 
   return artistNameSplit.map((artist) => artist.trim());
 }
