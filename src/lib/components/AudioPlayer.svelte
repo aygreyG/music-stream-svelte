@@ -12,6 +12,8 @@
   import type { SignedInUser } from '$lib/shared/types';
   import { currentTrack, playNext, paused, playPrevious } from '$lib/stores/audioPlayer';
   import AlbumImage from './AlbumImage.svelte';
+  import { fly } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
 
   export let user: SignedInUser | null = null;
 
@@ -24,7 +26,6 @@
   let currentString = '--:--';
   let repeat = false;
   let shuffle = false;
-
   function togglePlay() {
     if (!$currentTrack) {
       return;
@@ -134,28 +135,36 @@
           autoplay={$currentTrack.shouldBePlayed}
           on:ended={onEnded}
         />
-        <a href="/album/{$currentTrack.album.id}" class="overflow-hidden rounded-md h-44 w-44 flex">
-          <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
-          <div
-            class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
+
+        {#key $currentTrack.track.id}
+          <a
+            in:fly={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
+            out:fly={{ duration: 300, easing: quintOut, x: 20 }}
+            href="/album/{$currentTrack.album.id}"
+            class="overflow-hidden rounded-md h-44 w-44 flex"
           >
-            <a
-              href="/album/{$currentTrack.album.id}"
-              class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
-            >
-              {$currentTrack.track.title}
-            </a>
+            <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
             <div
-              class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1"
+              class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
             >
-              {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                <a class="hover:underline" href="/artist/{artist.id}">
-                  {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
-                </a>
-              {/each}
+              <a
+                href="/album/{$currentTrack.album.id}"
+                class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
+              >
+                {$currentTrack.track.title}
+              </a>
+              <div
+                class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1"
+              >
+                {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                  <a class="hover:underline" href="/artist/{artist.id}">
+                    {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
+                  </a>
+                {/each}
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
+        {/key}
       {/if}
     </div>
   </div>

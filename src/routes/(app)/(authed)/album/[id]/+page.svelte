@@ -14,7 +14,7 @@
   </div>
   <div class="flex flex-col gap-6 p-4 pb-0 h-full">
     <div class="flex items-center justify-center md:justify-start gap-6">
-      <div class="w-40 h-40 rounded-md overflow-hidden">
+      <div class="w-32 h-32 rounded-md overflow-hidden">
         <AlbumImage alt={data.album.title} id={data.album.id} />
       </div>
       <div class="flex flex-col">
@@ -54,11 +54,6 @@
         <tbody class="overflow-y-auto h-full select-none">
           {#each data.album.tracks as track (track.id)}
             <tr
-              on:click={() => {
-                if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-                  playTrack(track, data.album, true);
-                }
-              }}
               on:dblclick={() => playTrack(track, data.album, true)}
               class="cursor-pointer sm:cursor-auto group"
             >
@@ -93,7 +88,14 @@
                   </button>
                 {/if}
               </td>
-              <td class="group-hover:bg-zinc-600/5">
+              <td
+                class="group-hover:bg-zinc-600/5"
+                on:click={() => {
+                  if (matchMedia('(hover: none), (pointer: coarse)').matches) {
+                    playTrack(track, data.album, true);
+                  }
+                }}
+              >
                 <div class="flex items-center p-1 gap-2">
                   {#if $currentTrack?.track.id === track.id}
                     {#if $paused}
@@ -129,7 +131,14 @@
                   </a>
                 {/each}
               </td>
-              <td class="group-hover:bg-gradient-to-r to-transparent from-zinc-600/5 p-1">
+              <td
+                class="group-hover:bg-gradient-to-r to-transparent from-zinc-600/5 p-1"
+                on:click={() => {
+                  if (matchMedia('(hover: none), (pointer: coarse)').matches) {
+                    playTrack(track, data.album, true);
+                  }
+                }}
+              >
                 {new Date(track.length * 1000).toISOString().slice(14, 19)}
               </td>
             </tr>

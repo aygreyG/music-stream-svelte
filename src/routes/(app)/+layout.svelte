@@ -4,6 +4,7 @@
   import { fade } from 'svelte/transition';
 
   export let data;
+  let transitionduration = 200;
 </script>
 
 <div class="flex gap-1 h-[calc(100%-11rem)] pb-1">
@@ -12,8 +13,8 @@
     {#key data.url}
       <div
         class="w-full h-full"
-        in:fade={{ delay: 200, duration: 200 }}
-        out:fade={{ duration: 200 }}
+        in:fade={{ delay: transitionduration, duration: transitionduration }}
+        out:fade={{ duration: transitionduration }}
       >
         <slot />
       </div>
