@@ -138,7 +138,7 @@
 
         {#key $currentTrack.track.id}
           <a
-            in:fly={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
+            in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
             out:fly={{ duration: 300, easing: quintOut, x: 20 }}
             href="/album/{$currentTrack.album.id}"
             class="overflow-hidden rounded-md h-44 w-44 flex"

@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { observeVisibility } from '$lib/observeVisibility.js';
   import { onMount } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
+  import ArtistRow from './ArtistRow.svelte';
 
   export let data;
   let animate: boolean = false;
+  let scrolled = false;
 
   onMount(() => {
     animate = true;
@@ -18,15 +21,9 @@
     <div class="text-center font-bold text-xl p-4">There are no artists 🫤</div>
   {/if}
 
-  <div class="flex flex-col h-full overflow-auto text-lg">
+  <div class="flex flex-col h-full overflow-auto text-lg" on:scroll={() => (scrolled = true)}>
     {#each data.artists as artist, index (artist.id)}
-      {#if animate}
-        <a
-          class="hover:bg-gradient-to-r transition-colors from-zinc-600/10 p-2 pl-4"
-          in:fly={{ duration: 300, easing: quintOut, x: -20, delay: 50 * index }}
-          href="/artist/{artist.id}">{artist.name}</a
-        >
-      {/if}
+      <ArtistRow {artist} {index} {scrolled} />
     {/each}
   </div>
 </div>

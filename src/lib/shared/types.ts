@@ -1,4 +1,4 @@
-import type { Album, User } from '@prisma/client';
+import type { Album, Artist, User } from '@prisma/client';
 
 export type SignedInUser = Omit<User, 'password'>;
 
@@ -16,3 +16,4 @@ export function isValidImageSize(size: string): size is ImageSize {
 }
 
 export type AlbumWithArt = Album & { albumArt: string };
+export type AlbumWithArtist = Album & { albumArtist: Artist };
