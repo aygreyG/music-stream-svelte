@@ -1,5 +1,14 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import { fly } from 'svelte/transition';
+
   export let data;
+  let animate: boolean = false;
+
+  onMount(() => {
+    animate = true;
+  });
 </script>
 
 <div class="h-full flex flex-col overflow-hidden">
@@ -10,11 +19,14 @@
   {/if}
 
   <div class="flex flex-col h-full overflow-auto text-lg">
-    {#each data.artists as artist}
-      <a
-        class="hover:bg-gradient-to-r transition-colors from-zinc-600/10 p-2 pl-4"
-        href="/artist/{artist.id}">{artist.name}</a
-      >
+    {#each data.artists as artist, index (artist.id)}
+      {#if animate}
+        <a
+          class="hover:bg-gradient-to-r transition-colors from-zinc-600/10 p-2 pl-4"
+          in:fly={{ duration: 300, easing: quintOut, x: -20, delay: 50 * index }}
+          href="/artist/{artist.id}">{artist.name}</a
+        >
+      {/if}
     {/each}
   </div>
 </div>
