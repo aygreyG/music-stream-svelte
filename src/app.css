@@ -12,11 +12,13 @@
     Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 18px;
   @apply bg-gradient-to-b from-fuchsia-600 via-indigo-600 to-cyan-400 text-zinc-300;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(39, 39, 42) transparent;
 }
 
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
-  @apply w-1 h-1;
+  @apply w-1.5 h-1;
 }
 
 ::-webkit-scrollbar-track {

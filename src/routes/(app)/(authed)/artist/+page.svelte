@@ -1,17 +1,8 @@
 <script lang="ts">
-  import { observeVisibility } from '$lib/observeVisibility.js';
-  import { onMount } from 'svelte';
-  import { quintOut } from 'svelte/easing';
-  import { fly } from 'svelte/transition';
   import ArtistRow from './ArtistRow.svelte';
 
   export let data;
-  let animate: boolean = false;
   let scrolled = false;
-
-  onMount(() => {
-    animate = true;
-  });
 </script>
 
 <div class="h-full flex flex-col overflow-hidden">

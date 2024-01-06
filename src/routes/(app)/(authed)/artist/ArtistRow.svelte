@@ -21,7 +21,7 @@
   >
 {:else}
   <a
-    class="hover:bg-gradient-to-r transition-colors from-zinc-600/10 p-2 pl-4 opacity-0"
+    class="p-2 pl-4 opacity-0"
     use:observeVisibility={{
       onVisible: () => {
         animate = true;

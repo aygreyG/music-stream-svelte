@@ -1,12 +1,24 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { createEventDispatcher } from 'svelte';
 
   export let href: string;
   export let text: string;
+  export let icon: any;
 
   $: currentPage = $page.url.pathname;
+
+  const dispatch = createEventDispatcher();
 </script>
 
 <div>
-  <a class="transition-colors" class:text-fuchsia-600={href === currentPage} {href}>{text}</a>
+  <a
+    on:click={() => dispatch('clickedelement')}
+    class="flex items-center gap-2 transition-colors max-sm:text-2xl"
+    class:text-fuchsia-600={href === currentPage}
+    {href}
+  >
+    <svelte:component this={icon} />
+    {text}
+  </a>
 </div>

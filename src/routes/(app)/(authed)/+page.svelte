@@ -5,7 +5,6 @@
   export let data;
   let container: HTMLDivElement;
   let firstVisibleElement: number;
-  let lastVisibleElement: number;
   let foundScroll = false;
   let scrolled = false;
 

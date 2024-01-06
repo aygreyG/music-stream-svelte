@@ -17,10 +17,7 @@
 
 <div class="h-full overflow-auto p-2">
   {#if animate}
-    <h1
-      in:fly={{ duration: 500, x: -20, easing: quintOut }}
-      class="text-2xl text-center font-bold p-2"
-    >
+    <h1 class="text-2xl text-center font-bold p-2">
       {data.artist.name}
     </h1>
     {#if data.artist.albums.length > 0}
