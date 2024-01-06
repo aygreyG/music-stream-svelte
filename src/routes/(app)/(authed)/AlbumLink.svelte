@@ -49,7 +49,7 @@
   </a>
 {:else}
   <div
-    class="md:w-40 md:h-40 h-36 w-36 xl:w-52 xl:h-52 overflow-hidden bg-zinc-900 rounded-md opacity-0"
+    class="md:w-40 md:h-40 h-36 w-36 xl:w-52 xl:h-52 overflow-hidden opacity-0"
     use:observeVisibility={{
       onVisible: () => {
         animate = true;

@@ -12,7 +12,7 @@
   import type { SignedInUser } from '$lib/shared/types';
   import { currentTrack, playNext, paused, playPrevious } from '$lib/stores/audioPlayer';
   import AlbumImage from './AlbumImage.svelte';
-  import { fly } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
 
   export let user: SignedInUser | null = null;
@@ -26,6 +26,7 @@
   let currentString = '--:--';
   let repeat = false;
   let shuffle = false;
+
   function togglePlay() {
     if (!$currentTrack) {
       return;
@@ -121,151 +122,190 @@
 </script>
 
 <div class="h-full flex gap-1 w-full">
-  <div class="hidden sm:block">
-    <div class="overflow-hidden h-44 w-44 rounded-md bg-zinc-900/95">
-      {#if $currentTrack}
-        <audio
-          preload="metadata"
-          src="/api/play/{$currentTrack.track.id}"
-          bind:currentTime
-          bind:duration
-          bind:paused={$paused}
-          bind:this={player}
-          bind:volume
-          autoplay={$currentTrack.shouldBePlayed}
-          on:ended={onEnded}
-        />
+  <div class="max-sm:hidden flex-none overflow-hidden h-44 w-44 rounded-md bg-zinc-900/95">
+    {#if $currentTrack}
+      <audio
+        preload="metadata"
+        src="/api/play/{$currentTrack.track.id}"
+        bind:currentTime
+        bind:duration
+        bind:paused={$paused}
+        bind:this={player}
+        bind:volume
+        autoplay={$currentTrack.shouldBePlayed}
+        on:ended={onEnded}
+      />
 
-        {#key $currentTrack.track.id}
-          <a
-            in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
-            out:fly={{ duration: 300, easing: quintOut, x: 20 }}
-            href="/album/{$currentTrack.album.id}"
-            class="overflow-hidden rounded-md h-44 w-44 flex"
+      {#key $currentTrack.track.id}
+        <a
+          in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
+          out:fly={{ duration: 300, easing: quintOut, x: 20 }}
+          href="/album/{$currentTrack.album.id}"
+          class="overflow-hidden rounded-md h-44 w-44 flex"
+        >
+          <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
+          <div
+            class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
           >
-            <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
-            <div
-              class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
+            <a
+              href="/album/{$currentTrack.album.id}"
+              class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
             >
-              <a
-                href="/album/{$currentTrack.album.id}"
-                class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
-              >
-                {$currentTrack.track.title}
-              </a>
-              <div
-                class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1"
-              >
-                {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                  <a class="hover:underline" href="/artist/{artist.id}">
-                    {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
-                  </a>
-                {/each}
-              </div>
+              {$currentTrack.track.title}
+            </a>
+            <div
+              class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1"
+            >
+              {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                <a class="hover:underline" href="/artist/{artist.id}">
+                  {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
+                </a>
+              {/each}
             </div>
-          </a>
-        {/key}
-      {/if}
-    </div>
+          </div>
+        </a>
+      {/key}
+    {/if}
   </div>
   <div class="h-full p-2 w-full bg-zinc-900/95 rounded-md">
     {#if user}
-      <div class="flex h-full w-full gap-4 px-2">
-        <div class="flex flex-col justify-around h-full w-full">
-          <div class="flex justify-between gap-2 items-center whitespace-nowrap sm:order-2">
-            <div class="timer">{currentString}</div>
+      <div class="flex flex-col px-2 justify-around h-full w-full">
+        <div class="sm:hidden w-full flex gap-2">
+          <div class="flex-none w-10 h-10 bg-zinc-900 rounded-md overflow-clip">
+            {#if $currentTrack}
+              {#key $currentTrack.track.id}
+                <a
+                  in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
+                  out:fade|global={{ duration: 300, easing: quintOut }}
+                  href="/album/{$currentTrack.album.id}"
+                  class="h-10 w-10 flex"
+                >
+                  <AlbumImage
+                    alt={$currentTrack.album.title}
+                    id={$currentTrack.album.id}
+                    maxSize="s"
+                  />
+                </a>
+              {/key}
+            {/if}
+          </div>
+          {#if $currentTrack}
+            {#key $currentTrack.track.id}
+              <div
+                in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
+                out:fade|global={{ duration: 300, easing: quintOut }}
+                class="flex h-10 overflow-clip flex-col"
+              >
+                <a href="/album/{$currentTrack.album.id}">
+                  {$currentTrack.track.title}
+                </a>
+                <div class="text-xs">
+                  {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                    <a class="hover:underline" href="/artist/{artist.id}">
+                      {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
+                    </a>
+                  {/each}
+                  <a href="/album/{$currentTrack.album.id}">
+                    - {$currentTrack.album.title}
+                  </a>
+                </div>
+              </div>
+            {/key}
+          {/if}
+        </div>
+        <div class="flex justify-between gap-2 items-center whitespace-nowrap sm:order-2">
+          <div class="timer">{currentString}</div>
+          <input
+            class="w-full"
+            type="range"
+            min="0"
+            max={duration}
+            step="0.01"
+            bind:value={currentTime}
+            disabled={!duration}
+            aria-label="Progress bar"
+          />
+          <div class="timer">{durationString}</div>
+        </div>
+        <div class="flex gap-2 justify-center sm:justify-around lg:justify-center items-center">
+          <div class="flex gap-4">
+            <button
+              on:click={() => (shuffle = !shuffle)}
+              class="text-2xl transition-colors"
+              class:text-fuchsia-600={shuffle}
+              class:text-zinc-400={!shuffle}
+              aria-label="Shuffle"
+            >
+              <RoundShuffle />
+            </button>
+            <button
+              on:click={playPrevious}
+              class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
+              aria-label="Previous"
+            >
+              <RoundSkipPrevious />
+            </button>
+            <button
+              on:click={togglePlay}
+              class="text-6xl text-zinc-400 active:text-zinc-600 transition-colors"
+              aria-label="Toggle play"
+            >
+              {#if $paused}
+                <RoundPlayCircleOutline />
+              {:else}
+                <RoundPauseCircleOutline />
+              {/if}
+            </button>
+            <button
+              on:click={playNext}
+              class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
+              aria-label="Next"
+            >
+              <RoundSkipNext />
+            </button>
+            <button
+              on:click={() => (repeat = !repeat)}
+              class="text-2xl transition-colors"
+              class:text-fuchsia-600={repeat}
+              class:text-zinc-400={!repeat}
+              aria-label="Repeat"
+            >
+              <RoundRepeat />
+            </button>
+          </div>
+          <div
+            class="sm:flex hidden gap-2 items-center lg:absolute right-0"
+            on:wheel={updateVolume}
+          >
+            <button
+              on:click={() => {
+                if (volume === 0) {
+                  volume = prevVolume;
+                } else {
+                  prevVolume = volume;
+                  volume = 0;
+                }
+              }}
+              aria-label="Mute"
+            >
+              {#if volume === 0}
+                <RoundVolumeOff class="text-3xl text-zinc-400" />
+              {:else if volume < 0.3}
+                <RoundVolumeMute class="text-3xl text-zinc-400" />
+              {:else if volume < 0.7}
+                <RoundVolumeDown class="text-3xl text-zinc-400" />
+              {:else}
+                <RoundVolumeUp class="text-3xl text-zinc-400" />
+              {/if}
+            </button>
             <input
-              class="w-full"
               type="range"
               min="0"
-              max={duration}
+              max="1"
               step="0.01"
-              bind:value={currentTime}
-              disabled={!duration}
-              aria-label="Progress bar"
+              bind:value={volume}
+              aria-label="Volume bar"
             />
-            <div class="timer">{durationString}</div>
-          </div>
-          <div class="flex gap-2 justify-center sm:justify-around lg:justify-center items-center">
-            <div class="flex gap-4">
-              <button
-                on:click={() => (shuffle = !shuffle)}
-                class="text-2xl transition-colors"
-                class:text-fuchsia-600={shuffle}
-                class:text-zinc-400={!shuffle}
-                aria-label="Shuffle"
-              >
-                <RoundShuffle />
-              </button>
-              <button
-                on:click={playPrevious}
-                class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
-                aria-label="Previous"
-              >
-                <RoundSkipPrevious />
-              </button>
-              <button
-                on:click={togglePlay}
-                class="text-6xl text-zinc-400 active:text-zinc-600 transition-colors"
-                aria-label="Toggle play"
-              >
-                {#if $paused}
-                  <RoundPlayCircleOutline />
-                {:else}
-                  <RoundPauseCircleOutline />
-                {/if}
-              </button>
-              <button
-                on:click={playNext}
-                class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
-                aria-label="Next"
-              >
-                <RoundSkipNext />
-              </button>
-              <button
-                on:click={() => (repeat = !repeat)}
-                class="text-2xl transition-colors"
-                class:text-fuchsia-600={repeat}
-                class:text-zinc-400={!repeat}
-                aria-label="Repeat"
-              >
-                <RoundRepeat />
-              </button>
-            </div>
-            <div
-              class="sm:flex hidden gap-2 items-center lg:absolute right-0"
-              on:wheel={updateVolume}
-            >
-              <button
-                on:click={() => {
-                  if (volume === 0) {
-                    volume = prevVolume;
-                  } else {
-                    prevVolume = volume;
-                    volume = 0;
-                  }
-                }}
-                aria-label="Mute"
-              >
-                {#if volume === 0}
-                  <RoundVolumeOff class="text-3xl text-zinc-400" />
-                {:else if volume < 0.3}
-                  <RoundVolumeMute class="text-3xl text-zinc-400" />
-                {:else if volume < 0.7}
-                  <RoundVolumeDown class="text-3xl text-zinc-400" />
-                {:else}
-                  <RoundVolumeUp class="text-3xl text-zinc-400" />
-                {/if}
-              </button>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                bind:value={volume}
-                aria-label="Volume bar"
-              />
-            </div>
           </div>
         </div>
       </div>

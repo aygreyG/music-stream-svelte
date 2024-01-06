@@ -129,7 +129,7 @@
                   <td
                     class="group-hover:bg-zinc-600/5"
                     on:click={() => {
-                      if (matchMedia('(hover: none), (pointer: coarse)').matches) {
+                      if (matchMedia('(max-width: 640px)').matches) {
                         playTrack(track, data.album, true);
                       }
                     }}
