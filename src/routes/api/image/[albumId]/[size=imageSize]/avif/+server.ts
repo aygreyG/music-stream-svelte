@@ -36,6 +36,6 @@ export const GET = async ({ params, setHeaders, url }) => {
       'Cache-Control': 'no-cache'
     });
 
-    throw redirect(307, '/album.png');
+    throw redirect(307, blur ? '/album_sm_blur.png' : '/album.png');
   }
 };
