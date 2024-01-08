@@ -56,49 +56,4 @@
   {#each data.albums as album, index (album.id)}
     <AlbumLink {album} {index} first={firstVisibleElement} />
   {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
-  {#each data.albums as album, index (album.id)}
-    <AlbumLink {album} {index} first={firstVisibleElement} />
-  {/each}
 </div>
