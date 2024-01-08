@@ -152,11 +152,11 @@
                           </button>
                         {/if}
                       {:else}
-                        <div class="h-10 w-10 rounded-md sm:hidden overflow-hidden">
+                        <div class="flex-none h-10 w-10 rounded-md sm:hidden overflow-hidden">
                           <AlbumImage alt={data.album.title} id={data.album.id} maxSize="s" />
                         </div>
                       {/if}
-                      <div class="h-10 w-10 rounded-md hidden sm:block overflow-hidden">
+                      <div class="flex-none h-10 w-10 rounded-md hidden sm:block overflow-hidden">
                         <AlbumImage alt={data.album.title} id={data.album.id} maxSize="s" />
                       </div>
                       {track.title}

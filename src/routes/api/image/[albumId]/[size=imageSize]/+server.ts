@@ -3,8 +3,9 @@ import prisma from '$lib/server/prisma.js';
 import { isValidImageSize, type AlbumWithArt } from '$lib/shared/types.js';
 import { error, redirect } from '@sveltejs/kit';
 
-export const GET = async ({ params, setHeaders }) => {
+export const GET = async ({ params, setHeaders, url }) => {
   const { albumId, size } = params;
+  const blur = !!url.searchParams.get('blur');
 
   const album = await prisma.album.findUnique({
     where: {
@@ -18,7 +19,7 @@ export const GET = async ({ params, setHeaders }) => {
 
   if (album.albumArt) {
     try {
-      const { extension, imageBuffer } = await getImage(album as AlbumWithArt, size);
+      const { extension, imageBuffer } = await getImage(album as AlbumWithArt, size, '', blur);
 
       setHeaders({
         'Content-Type': `image/${extension}`,
@@ -35,6 +36,6 @@ export const GET = async ({ params, setHeaders }) => {
       'Cache-Control': 'no-cache'
     });
 
-    throw redirect(307, '/album.png');
+    throw redirect(307, blur ? '/album_sm_blur.png' : '/album.png');
   }
 };

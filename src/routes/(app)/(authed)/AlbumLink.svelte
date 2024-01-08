@@ -33,17 +33,26 @@
       <AlbumImage alt={album.title} id={album.id} />
     </div>
     <div class="bottom-0 left-0 absolute w-full text-center flex justify-end flex-col gap-1 p-1">
-      <div
-        class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
-        class:hidden={outrostarted}
-      >
-        {album.title}
+      <div class="whitespace-nowrap z-10 rounded-md overflow-hidden" class:hidden={outrostarted}>
+        <div class="absolute xl:-top-40 md:-top-28 -top-24 -left-1 h-fit w-[calc(100%+0.5rem)]">
+          <AlbumImage alt={album.title} id={album.id} maxSize="s" blur />
+        </div>
+        <div class="bg-zinc-900/80 h-full px-1 w-full overflow-hidden text-ellipsis">
+          {album.title}
+        </div>
       </div>
       <div
-        class="whitespace-nowrap z-10 bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1"
+        class="whitespace-nowrap text-ellipsis overflow-hidden z-10 rounded-md text-xs"
         class:hidden={outrostarted}
       >
-        {album.albumArtist.name}
+        <div
+          class="absolute xl:-top-48 md:-top-36 -top-[7.75rem] -left-1 h-fit w-[calc(100%+0.5rem)]"
+        >
+          <AlbumImage alt={album.title} id={album.id} maxSize="s" blur />
+        </div>
+        <div class="bg-zinc-900/80 h-full text-ellipsis overflow-hidden w-full px-1">
+          {album.albumArtist.name}
+        </div>
       </div>
     </div>
   </a>
