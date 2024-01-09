@@ -14,14 +14,16 @@
   import AlbumImage from './AlbumImage.svelte';
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
 
   export let user: SignedInUser | null = null;
 
   let player: HTMLAudioElement;
   let currentTime = 0;
   let duration: number;
-  let volume = 0.1;
-  let prevVolume = volume;
+  let volume: number;
+  let prevVolume = 0;
   let durationString = '--:--';
   let currentString = '--:--';
   let repeat = false;
@@ -71,6 +73,10 @@
     currentString = '--:--';
   }
 
+  $: if (volume && browser) {
+    localStorage.setItem('player-volume', volume.toString());
+  }
+
   currentTrack.subscribe((val) => {
     if (val) {
       if (!val.shouldBePlayed) {
@@ -117,6 +123,16 @@
           playNext();
         });
       }
+    }
+  });
+
+  onMount(() => {
+    const vol = localStorage.getItem('player-volume');
+
+    if (vol) {
+      volume = parseFloat(vol);
+    } else {
+      volume = 0.3;
     }
   });
 </script>
