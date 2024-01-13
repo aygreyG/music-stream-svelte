@@ -14,7 +14,7 @@
   });
 </script>
 
-<div class="h-full w-full bg-zinc-900/95 rounded-md flex items-center justify-center text-2xl">
-  <RoundRefresh class="animate-spin w-8 h-8 ml-2" />
+<div class="flex h-full w-full items-center justify-center rounded-md bg-zinc-900/95 text-2xl">
+  <RoundRefresh class="ml-2 h-8 w-8 animate-spin" />
   The server is loading please wait...
 </div>
