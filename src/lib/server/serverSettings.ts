@@ -35,9 +35,14 @@ export async function getServerSettings() {
   }
 
   if (!requestedServerSettings) {
-    const settings = await prisma.serverSettings.findFirst();
-    serverSettings = settings;
-    requestedServerSettings = true;
+    try {
+      const settings = await prisma.serverSettings.findFirst();
+      serverSettings = settings;
+      requestedServerSettings = true;
+    } catch (err) {
+      console.error('Error getting server settings: ');
+      console.error(err);
+    }
   }
 
   return serverSettings;
