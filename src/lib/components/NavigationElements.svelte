@@ -55,7 +55,7 @@
 </script>
 
 {#if user}
-  <p class="font-bold max-sm:text-3xl max-sm:p-4 max-sm:whitespace-nowrap">
+  <p class="font-bold max-sm:whitespace-nowrap max-sm:p-4 max-sm:text-3xl">
     Welcome {user.username}
   </p>
   {#if user.role === 'ADMIN' || user.role === 'OWNER'}

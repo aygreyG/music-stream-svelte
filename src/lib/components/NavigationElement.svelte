@@ -15,7 +15,7 @@
   <a
     on:click={() => dispatch('clickedelement')}
     class="flex items-center gap-2 transition-colors max-sm:text-2xl"
-    class:text-fuchsia-600={href === currentPage}
+    class:text-fuchsia-600={currentPage.replaceAll('/', '') === href.replaceAll('/', '')}
     {href}
   >
     <svelte:component this={icon} />
