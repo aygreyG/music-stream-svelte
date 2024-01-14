@@ -13,7 +13,7 @@ export const load = async ({ locals, params }) => {
   });
 
   if (!album) {
-    throw error(404, 'Album not found');
+    error(404, 'Album not found');
   }
 
   return {

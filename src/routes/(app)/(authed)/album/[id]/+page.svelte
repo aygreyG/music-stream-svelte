@@ -20,22 +20,22 @@
 </script>
 
 {#key data.album.id}
-  <div class="absolute top-0 left-0 w-full flex flex-col overflow-hidden h-full">
+  <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
     {#if animate}
       <div
         in:fade|global={{ duration: 500, easing: cubicInOut }}
-        class="absolute top-0 left-0 h-full w-full opacity-10"
+        class="absolute left-0 top-0 h-full w-full opacity-10"
       >
         <AlbumImage blur alt="Backdrop for {data.album.title}" id={data.album.id} maxSize="s" />
       </div>
     {/if}
-    <div class="flex flex-col gap-6 p-4 pb-0 h-full">
+    <div class="flex h-full flex-col gap-6 p-4 pb-0">
       <div
-        class="flex items-center justify-center md:justify-start gap-6"
+        class="flex items-center justify-center gap-6 md:justify-start"
         in:fade|global={{ duration: 500, easing: cubicInOut }}
       >
         <div
-          class="w-32 h-32 rounded-md overflow-hidden"
+          class="h-32 w-32 overflow-hidden rounded-md"
           class:z-20={albumAnimating}
           in:receive|global={{ key: `album-image-${data.album.id}` }}
           on:introstart={() => (albumAnimating = true)}
@@ -54,40 +54,40 @@
             {data.album.releaseDate}
           </div>
         </div>
-        <div class="absolute top-0 right-0 bg-zinc-600/20 gap-2 flex rounded-md">
+        <div class="absolute right-0 top-0 flex gap-2 rounded-md bg-zinc-600/20">
           <button>
             <RoundMoreVert
-              class="text-3xl text-fuchsia-600/70 hover:text-fuchsia-600 transition-colors"
+              class="text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
             />
           </button>
         </div>
       </div>
 
       <div class="h-full w-full overflow-auto pb-2">
-        <table class="table-auto w-full">
+        <table class="w-full table-auto">
           <thead>
             {#if animate}
               <tr
                 in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 100 }}
-                class="sticky top-0 text-left left-0 z-10"
+                class="sticky left-0 top-0 z-10 text-left"
               >
                 <th
-                  class="p-1 text-center rounded-md bg-zinc-900/80 backdrop-blur-md border-e-2 border-e-transparent hidden sm:table-cell"
+                  class="hidden rounded-md border-e-2 border-e-transparent bg-zinc-900/80 p-1 text-center backdrop-blur-md sm:table-cell"
                 >
                   #
                 </th>
-                <th class="p-1 rounded-s-md bg-zinc-900/80 backdrop-blur-md">Title</th>
-                <th class="p-1 bg-zinc-900/80 backdrop-blur-md">Artist</th>
-                <th class="rounded-e-md p-1 bg-zinc-900/80 backdrop-blur-md">Length</th>
+                <th class="rounded-s-md bg-zinc-900/80 p-1 backdrop-blur-md">Title</th>
+                <th class="bg-zinc-900/80 p-1 backdrop-blur-md">Artist</th>
+                <th class="rounded-e-md bg-zinc-900/80 p-1 backdrop-blur-md">Length</th>
               </tr>
             {/if}
           </thead>
-          <tbody class="overflow-y-auto h-full select-none">
+          <tbody class="h-full select-none overflow-y-auto">
             {#each data.album.tracks as track, index (track.id)}
               {#if animate}
                 <tr
                   on:dblclick={() => playTrack(track, data.album, true)}
-                  class="cursor-pointer sm:cursor-auto group"
+                  class="group cursor-pointer sm:cursor-auto"
                   in:fly|global={{
                     duration: 300,
                     easing: quintOut,
@@ -96,30 +96,30 @@
                   }}
                 >
                   <td
-                    class="hidden w-10 sm:table-cell group-hover:bg-gradient-to-r from-transparent to-zinc-600/5"
+                    class="hidden w-10 from-transparent to-zinc-600/5 group-hover:bg-gradient-to-r sm:table-cell"
                   >
                     {#if $currentTrack?.track.id === track.id}
                       {#if $paused}
                         <button
-                          class="text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center"
+                          class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
                           on:click={() => ($paused = false)}
                         >
                           <RoundPlayCircleFilled class="text-3xl transition-colors" />
                         </button>
                       {:else}
                         <button
-                          class="text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center"
+                          class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
                           on:click={() => ($paused = true)}
                         >
                           <RoundPauseCircleOutline class="text-3xl transition-colors" />
                         </button>
                       {/if}
                     {:else}
-                      <div class="group-hover:hidden group-target:hidden text-center">
+                      <div class="text-center group-target:hidden group-hover:hidden">
                         {track.trackNumber}
                       </div>
                       <button
-                        class="hidden group-target:flex group-hover:flex text-zinc-600 hover:text-fuchsia-600 items-center justify-center"
+                        class="hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-target:flex group-hover:flex"
                         on:click={() => playTrack(track, data.album, true)}
                       >
                         <RoundPlayCircleFilled class="text-3xl transition-colors" />
@@ -134,35 +134,35 @@
                       }
                     }}
                   >
-                    <div class="flex items-center p-1 gap-2">
+                    <div class="flex items-center gap-2 p-1">
                       {#if $currentTrack?.track.id === track.id}
                         {#if $paused}
                           <button
-                            class="sm:hidden text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center w-10 h-10 justify-center"
+                            class="flex h-10 w-10 items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600 sm:hidden"
                             on:click={() => ($paused = false)}
                           >
                             <RoundPlayCircleFilled class="text-3xl transition-colors" />
                           </button>
                         {:else}
                           <button
-                            class="sm:hidden text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center w-10 h-10"
+                            class="flex h-10 w-10 items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600 sm:hidden"
                             on:click={() => ($paused = true)}
                           >
                             <RoundPauseCircleOutline class="text-3xl transition-colors" />
                           </button>
                         {/if}
                       {:else}
-                        <div class="flex-none h-10 w-10 rounded-md sm:hidden overflow-hidden">
+                        <div class="h-10 w-10 flex-none overflow-hidden rounded-md sm:hidden">
                           <AlbumImage alt={data.album.title} id={data.album.id} maxSize="s" />
                         </div>
                       {/if}
-                      <div class="flex-none h-10 w-10 rounded-md hidden sm:block overflow-hidden">
+                      <div class="hidden h-10 w-10 flex-none overflow-hidden rounded-md sm:block">
                         <AlbumImage alt={data.album.title} id={data.album.id} maxSize="s" />
                       </div>
                       {track.title}
                     </div>
                   </td>
-                  <td class="group-hover:bg-zinc-600/5 p-1">
+                  <td class="p-1 group-hover:bg-zinc-600/5">
                     {#each track.artists.sort( (a, b) => (a.name !== data.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                       <a class="hover:underline" href="/artist/{artist.id}">
                         {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
@@ -170,7 +170,7 @@
                     {/each}
                   </td>
                   <td
-                    class="group-hover:bg-gradient-to-r to-transparent from-zinc-600/5 p-1"
+                    class="from-zinc-600/5 to-transparent p-1 group-hover:bg-gradient-to-r"
                     on:click={() => {
                       if (matchMedia('(hover: none), (pointer: coarse)').matches) {
                         playTrack(track, data.album, true);

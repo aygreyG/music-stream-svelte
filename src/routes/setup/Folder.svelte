@@ -36,9 +36,9 @@
   }
 </script>
 
-<div class="flex py-2 mx-2 flex-col border-l-zinc-300 border-l-2 ml-2">
+<div class="mx-2 ml-2 flex flex-col border-l-2 border-l-zinc-300 py-2">
   <form class="flex items-center" action="?/getchildren" on:submit|preventDefault={onSubmit}>
-    <div class="w-3 h-px bg-zinc-300" />
+    <div class="h-px w-3 bg-zinc-300" />
     <input type="hidden" name="path" value={folderNode.path} />
     <button type="submit" disabled={loading}>
       {folderNode.label}{$pickedFolder === folderNode ? ' (selected)' : ''}

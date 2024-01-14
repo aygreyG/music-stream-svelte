@@ -21,7 +21,7 @@
 
 {#if animate}
   <a
-    class="md:w-40 md:h-40 h-36 w-36 xl:w-52 xl:h-52 overflow-hidden bg-zinc-900 rounded-md"
+    class="h-36 w-36 overflow-hidden rounded-md bg-zinc-900 md:h-40 md:w-40 xl:h-52 xl:w-52"
     class:z-20={outrostarted}
     href="/album/{album.id}"
     in:fly={{ duration: 500, delay, easing: quintOut, x: -20 }}
@@ -32,25 +32,25 @@
     <div>
       <AlbumImage alt={album.title} id={album.id} />
     </div>
-    <div class="bottom-0 left-0 absolute w-full text-center flex justify-end flex-col gap-1 p-1">
-      <div class="whitespace-nowrap z-10 rounded-md overflow-hidden" class:hidden={outrostarted}>
-        <div class="absolute xl:-top-40 md:-top-28 -top-24 -left-1 h-fit w-[calc(100%+0.5rem)]">
+    <div class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center">
+      <div class="z-10 overflow-hidden whitespace-nowrap rounded-md" class:hidden={outrostarted}>
+        <div class="absolute -left-1 -top-24 h-fit w-[calc(100%+0.5rem)] md:-top-28 xl:-top-40">
           <AlbumImage alt={album.title} id={album.id} maxSize="s" blur />
         </div>
-        <div class="bg-zinc-900/80 h-full px-1 w-full overflow-hidden text-ellipsis">
+        <div class="h-full w-full overflow-hidden text-ellipsis bg-zinc-900/80 px-1">
           {album.title}
         </div>
       </div>
       <div
-        class="whitespace-nowrap text-ellipsis overflow-hidden z-10 rounded-md text-xs"
+        class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md text-xs"
         class:hidden={outrostarted}
       >
         <div
-          class="absolute xl:-top-48 md:-top-36 -top-[7.75rem] -left-1 h-fit w-[calc(100%+0.5rem)]"
+          class="absolute -left-1 -top-[7.75rem] h-fit w-[calc(100%+0.5rem)] md:-top-36 xl:-top-48"
         >
           <AlbumImage alt={album.title} id={album.id} maxSize="s" blur />
         </div>
-        <div class="bg-zinc-900/80 h-full text-ellipsis overflow-hidden w-full px-1">
+        <div class="h-full w-full overflow-hidden text-ellipsis bg-zinc-900/80 px-1">
           {album.albumArtist.name}
         </div>
       </div>
@@ -58,7 +58,7 @@
   </a>
 {:else}
   <div
-    class="md:w-40 md:h-40 h-36 w-36 xl:w-52 xl:h-52 overflow-hidden opacity-0"
+    class="h-36 w-36 overflow-hidden opacity-0 md:h-40 md:w-40 xl:h-52 xl:w-52"
     use:observeVisibility={{
       onVisible: () => {
         animate = true;

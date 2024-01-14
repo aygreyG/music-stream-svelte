@@ -40,7 +40,8 @@ export const actions = {
         maxAge: data.maxAge,
         httpOnly: true,
         secure: process.env.NODE_ENV == 'production',
-        sameSite: 'strict'
+        sameSite: 'strict',
+        path: '/'
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -51,6 +52,6 @@ export const actions = {
 
     const refer = url.searchParams.get('redirect_to');
 
-    throw redirect(303, refer ? refer : '/');
+    redirect(303, refer ? refer : '/');
   }
 };

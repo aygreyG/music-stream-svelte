@@ -22,7 +22,7 @@ export const load = async ({ locals, params }) => {
   });
 
   if (!artist) {
-    throw error(404, 'Artist not found');
+    error(404, 'Artist not found');
   }
 
   return {

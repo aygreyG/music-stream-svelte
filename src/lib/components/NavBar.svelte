@@ -10,32 +10,34 @@
   let open: boolean = false;
 </script>
 
-<div class="w-4/12 xl:w-3/12 sm:flex flex-col h-full gap-1 hidden">
-  <div class="bg-zinc-900/95 p-4 rounded-md flex flex-col gap-2">
+<div class="hidden h-full w-4/12 flex-col gap-1 sm:flex xl:w-3/12">
+  <div class="flex flex-col gap-2 rounded-md bg-zinc-900/95 p-4">
     <NavigationElements {user} />
   </div>
-  <div class="bg-zinc-900/95 p-2 rounded-md min-h-fit h-full overflow-auto">
-    {#each $previous as { track }}
-      <div>
-        {track.artists.map((a) => a.name).join(', ')} - {track.title}
-      </div>
-    {/each}
-    {#each $queue as { track }}
-      <div>
-        {track.artists.map((a) => a.name).join(', ')} - {track.title}
-      </div>
-    {/each}
+  <div class="h-full min-h-fit overflow-auto rounded-md bg-zinc-900/95 p-2">
+    {#if user}
+      {#each $previous as { track }}
+        <div>
+          {track.artists.map((a) => a.name).join(', ')} - {track.title}
+        </div>
+      {/each}
+      {#each $queue as { track }}
+        <div>
+          {track.artists.map((a) => a.name).join(', ')} - {track.title}
+        </div>
+      {/each}
+    {/if}
   </div>
 </div>
 
 <div
-  class="z-30 shadow-md sm:hidden flex items-center justify-center absolute top-4 -left-1 bg-zinc-800/90 backdrop-blur-md rounded-e-md"
+  class="absolute -left-1 top-4 z-30 flex items-center justify-center rounded-e-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
 >
   <button on:click={() => (open = !open)}>
     {#if open}
-      <RoundClose class="text-4xl text-fuchsia-600/70 hover:text-fuchsia-600 transition-colors" />
+      <RoundClose class="text-4xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600" />
     {:else}
-      <RoundMenu class="text-4xl text-fuchsia-600/70 hover:text-fuchsia-600 transition-colors" />
+      <RoundMenu class="text-4xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600" />
     {/if}
   </button>
 </div>
@@ -43,10 +45,10 @@
 {#if open}
   <div
     transition:slide={{ axis: 'x', duration: 500 }}
-    class="overflow-y-auto overflow-x-clip backdrop-blur-md absolute top-0 left-0 h-[calc(100%-0.25rem)] w-full bg-zinc-900/80 z-20 rounded-md"
+    class="absolute left-0 top-0 z-20 h-[calc(100%-0.25rem)] w-full overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md"
   >
     <div
-      class="flex flex-col justify-center h-full items-center"
+      class="flex h-full flex-col items-center justify-center"
       transition:fade|global={{ duration: 200 }}
     >
       <NavigationElements on:clickedelement={() => (open = false)} {user} />

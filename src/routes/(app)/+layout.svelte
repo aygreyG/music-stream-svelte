@@ -5,9 +5,9 @@
   export let data;
 </script>
 
-<div class="flex gap-1 h-[calc(100%-11rem)] pb-1">
+<div class="flex h-[calc(100%-11rem)] gap-1 pb-1">
   <NavBar user={data.user} />
-  <div class="sm:w-8/12 xl:w-9/12 w-full bg-zinc-900/95 rounded-md h-full overflow-hidden">
+  <div class="h-full w-full overflow-hidden rounded-md bg-zinc-900/95 sm:w-8/12 xl:w-9/12">
     <slot />
   </div>
 </div>
