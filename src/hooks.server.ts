@@ -32,7 +32,7 @@ const handle: Handle = async ({ event, resolve }) => {
   console.log(event.route.id);
   const serverSettings = await getServerSettings();
   if (startupRunning && !event.route.id?.startsWith('/loading')) {
-    throw redirect(303, '/loading');
+    redirect(303, '/loading');
   }
 
   if (
@@ -40,7 +40,7 @@ const handle: Handle = async ({ event, resolve }) => {
     !event.route.id?.startsWith('/setup') &&
     !startupRunning
   ) {
-    throw redirect(303, '/setup');
+    redirect(303, '/setup');
   }
 
   if (
@@ -48,7 +48,7 @@ const handle: Handle = async ({ event, resolve }) => {
     serverSettings?.setupComplete &&
     !startupRunning
   ) {
-    throw redirect(303, '/');
+    redirect(303, '/');
   }
 
   const authToken = event.cookies.get(AUTH_COOKIE);
@@ -59,16 +59,16 @@ const handle: Handle = async ({ event, resolve }) => {
       event.locals.user = user;
     } catch (err) {
       event.locals.user = null;
-      event.cookies.delete(AUTH_COOKIE);
+      event.cookies.delete(AUTH_COOKIE, { path: '/' });
     }
   }
 
   if (event.route.id?.startsWith('/(app)/(unauthed)') && event.locals.user) {
-    throw redirect(303, '/');
+    redirect(303, '/');
   }
 
   if (event.route.id?.startsWith('/(app)/(authed)') && !event.locals.user) {
-    throw redirect(303, `/login?redirect_to=${event.url.pathname}${event.url.search}`);
+    redirect(303, `/login?redirect_to=${event.url.pathname}${event.url.search}`);
   }
 
   if (
@@ -76,7 +76,7 @@ const handle: Handle = async ({ event, resolve }) => {
       event.route.id?.startsWith('/(app)/(authed)/api/admin')) &&
     (!event.locals.user || event.locals.user.role === 'USER')
   ) {
-    throw redirect(303, '/');
+    redirect(303, '/');
   }
 
   return await resolve(event);

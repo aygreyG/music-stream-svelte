@@ -12,7 +12,7 @@ export const GET = async ({ params, setHeaders }) => {
   });
 
   if (!album) {
-    throw error(404, { message: 'Album not found' });
+    error(404, { message: 'Album not found' });
   }
 
   if (album.albumArt) {
@@ -28,13 +28,13 @@ export const GET = async ({ params, setHeaders }) => {
       return new Response(image);
     } catch (err) {
       console.log(err);
-      throw error(500, { message: 'Internal server error' });
+      error(500, { message: 'Internal server error' });
     }
   } else {
     setHeaders({
       'Cache-Control': 'no-cache'
     });
 
-    throw redirect(307, '/album.png');
+    redirect(307, '/album.png');
   }
 };

@@ -2,7 +2,7 @@ import { AUTH_COOKIE } from '$lib/server/auth';
 import { redirect, type Actions } from '@sveltejs/kit';
 
 export async function load() {
-  throw redirect(307, '/');
+  redirect(307, '/');
 }
 
 export const actions: Actions = {
@@ -10,11 +10,12 @@ export const actions: Actions = {
     cookies.delete(AUTH_COOKIE, {
       httpOnly: true,
       secure: process.env.NODE_ENV == 'production',
-      sameSite: 'strict'
+      sameSite: 'strict',
+      path: '/'
     });
 
     const referer = request.headers.get('referer');
 
-    throw redirect(303, referer ?? '/');
+    redirect(303, referer ?? '/');
   }
 };

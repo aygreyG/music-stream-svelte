@@ -17,52 +17,52 @@
 
 <div class="h-full overflow-auto p-2">
   {#if animate}
-    <h1 class="text-2xl text-center font-bold p-2">
+    <h1 class="p-2 text-center text-2xl font-bold">
       {data.artist.name}
     </h1>
     {#if data.artist.albums.length > 0}
       <div
-        class="text-lg font-bold p-1"
+        class="p-1 text-lg font-bold"
         in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 50 }}
       >
         Albums:
       </div>
-      <div class="flex flex-wrap w-full gap-2 justify-center items-center">
+      <div class="flex w-full flex-wrap items-center justify-center gap-2">
         {#each data.artist.albums as album, index (album.id)}
           {@const delayForAlbum = 100 + index * 50}
           <div
             in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: delayForAlbum }}
-            class="flex gap-0.5 xl:w-[calc(50%-0.5rem)] w-full rounded-md overflow-hidden"
+            class="flex w-full gap-0.5 overflow-hidden rounded-md xl:w-[calc(50%-0.5rem)]"
           >
             <div
-              class="absolute top-0 left-0 h-full w-full opacity-10"
+              class="absolute left-0 top-0 h-full w-full opacity-10"
               in:fade|global={{ delay: delayForAlbum, duration: 500, easing: cubicInOut }}
             >
               <AlbumImage blur alt="Backdrop for {album.title}" id={album.id} maxSize="s" />
             </div>
             <a
               href="/album/{album.id}"
-              class="text-center bg-zinc-900/80 h-64 overflow-hidden text-ellipsis whitespace-nowrap backdrop-blur-md py-2"
+              class="h-64 overflow-hidden text-ellipsis whitespace-nowrap bg-zinc-900/80 py-2 text-center backdrop-blur-md"
               style="writing-mode: vertical-lr;"
             >
               {album.title}
             </a>
 
-            <div class="h-64 overflow-y-auto overflow-x-hidden w-full">
-              <div class="flex flex-col w-full">
-                <div class="flex font-bold h-8 sticky top-0 left-0 z-10 w-full">
+            <div class="h-64 w-full overflow-y-auto overflow-x-hidden">
+              <div class="flex w-full flex-col">
+                <div class="sticky left-0 top-0 z-10 flex h-8 w-full font-bold">
                   <div
-                    class="w-10 flex items-center justify-center rounded-md bg-zinc-900/80 backdrop-blur-md mr-0.5"
+                    class="mr-0.5 flex w-10 items-center justify-center rounded-md bg-zinc-900/80 backdrop-blur-md"
                   >
                     #
                   </div>
                   <div
-                    class="w-[calc(65%-1.25rem)] flex items-center justify-start rounded-s-md bg-zinc-900/80 backdrop-blur-md pl-2"
+                    class="flex w-[calc(65%-1.25rem)] items-center justify-start rounded-s-md bg-zinc-900/80 pl-2 backdrop-blur-md"
                   >
                     Title
                   </div>
                   <div
-                    class="w-[calc(35%-1.25rem)] flex items-center justify-start rounded-e-md bg-zinc-900/80 backdrop-blur-md pl-2"
+                    class="flex w-[calc(35%-1.25rem)] items-center justify-start rounded-e-md bg-zinc-900/80 pl-2 backdrop-blur-md"
                   >
                     Length
                   </div>
@@ -85,31 +85,31 @@
                       $currentTrack?.track.id !== track.id
                         ? playTrack(track, { ...album, albumArtist: data.artist }, true)
                         : null}
-                    class="select-none flex h-10 hover:bg-gradient-to-r from-transparent via-zinc-600/10 to-transparent transition-colors w-full group items-center cursor-default"
+                    class="group flex h-10 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
                   >
-                    <div class="w-10 flex items-center justify-center">
+                    <div class="flex w-10 items-center justify-center">
                       {#if $currentTrack?.track.id === track.id}
                         {#if $paused}
                           <button
-                            class="text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center"
+                            class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
                             on:click={() => ($paused = false)}
                           >
                             <RoundPlayCircleFilled class="text-3xl transition-colors" />
                           </button>
                         {:else}
                           <button
-                            class="text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center"
+                            class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
                             on:click={() => ($paused = true)}
                           >
                             <RoundPauseCircleOutline class="text-3xl transition-colors" />
                           </button>
                         {/if}
                       {:else}
-                        <div class="group-hover:hidden group-target:hidden text-center w-10">
+                        <div class="w-10 text-center group-target:hidden group-hover:hidden">
                           {track.trackNumber}
                         </div>
                         <button
-                          class="hidden group-target:flex group-hover:flex text-zinc-600 hover:text-fuchsia-600 items-center justify-center"
+                          class="hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-target:flex group-hover:flex"
                           on:click={() =>
                             playTrack(track, { ...album, albumArtist: data.artist }, true)}
                         >
@@ -118,7 +118,7 @@
                       {/if}
                     </div>
                     <div
-                      class="w-[calc(65%-1.25rem)] pl-2 overflow-hidden text-ellipsis whitespace-nowrap"
+                      class="w-[calc(65%-1.25rem)] overflow-hidden text-ellipsis whitespace-nowrap pl-2"
                     >
                       {track.title}
                     </div>
@@ -141,7 +141,7 @@
           easing: quintOut,
           delay: 50 + data.artist.albums.length * 50
         }}
-        class="text-lg font-bold p-1"
+        class="p-1 text-lg font-bold"
       >
         Featured on {data.artist.tracks.length} track{#if data.artist.tracks.length > 1}s{/if}:
       </div>
@@ -166,20 +166,20 @@
           }}
           on:dblclick={() =>
             $currentTrack?.track.id !== track.id ? playTrack(track, track.album, true) : null}
-          class="flex h-11 hover:bg-gradient-to-r from-transparent via-zinc-600/10 to-transparent transition-colors w-full group items-center cursor-default select-none"
+          class="group flex h-11 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
         >
-          <div class="w-10 h-10 flex items-center justify-center">
+          <div class="flex h-10 w-10 items-center justify-center">
             {#if $currentTrack?.track.id === track.id}
               {#if $paused}
                 <button
-                  class="text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center z-10"
+                  class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
                   on:click={() => ($paused = false)}
                 >
                   <RoundPlayCircleFilled class="text-3xl transition-colors" />
                 </button>
               {:else}
                 <button
-                  class="text-fuchsia-600/70 hover:text-fuchsia-600 flex items-center justify-center z-10"
+                  class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
                   on:click={() => ($paused = true)}
                 >
                   <RoundPauseCircleOutline class="text-3xl transition-colors" />
@@ -187,24 +187,24 @@
               {/if}
             {:else}
               <button
-                class="hidden group-hover:flex text-zinc-600 hover:text-fuchsia-600 items-center justify-center z-10"
+                class="z-10 hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-hover:flex"
                 on:click={() => playTrack(track, track.album, true)}
               >
                 <RoundPlayCircleFilled class="text-3xl transition-colors" />
               </button>
               <div
-                class="group-hover:opacity-20 absolute top-0 left-0 z-0 h-10 w-10 rounded-md overflow-hidden"
+                class="absolute left-0 top-0 z-0 h-10 w-10 overflow-hidden rounded-md group-hover:opacity-20"
               >
                 <AlbumImage alt={track.album.title} id={track.album.id} maxSize="s" />
               </div>
             {/if}
           </div>
-          <div class="w-[40%] pl-2 overflow-hidden text-ellipsis whitespace-nowrap">
+          <div class="w-[40%] overflow-hidden text-ellipsis whitespace-nowrap pl-2">
             {track.title}
           </div>
           <a
             href="/album/{track.album.id}"
-            class="w-[35%] overflow-hidden whitespace-nowrap text-ellipsis hover:underline pl-2"
+            class="w-[35%] overflow-hidden text-ellipsis whitespace-nowrap pl-2 hover:underline"
           >
             {track.album.title}
           </a>

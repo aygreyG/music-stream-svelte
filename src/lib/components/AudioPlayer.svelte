@@ -137,9 +137,9 @@
   });
 </script>
 
-<div class="h-full flex gap-1 w-full">
-  <div class="max-sm:hidden flex-none overflow-hidden h-44 w-44 rounded-md bg-zinc-900/95">
-    {#if $currentTrack}
+<div class="flex h-full w-full gap-1">
+  <div class="h-44 w-44 flex-none overflow-hidden rounded-md bg-zinc-900/95 max-sm:hidden">
+    {#if $currentTrack && user}
       <audio
         preload="metadata"
         src="/api/play/{$currentTrack.track.id}"
@@ -157,20 +157,20 @@
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
           href="/album/{$currentTrack.album.id}"
-          class="overflow-hidden rounded-md h-44 w-44 flex"
+          class="flex h-44 w-44 overflow-hidden rounded-md"
         >
           <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
           <div
-            class="bottom-0 left-0 absolute text-center flex justify-end flex-col gap-1 p-1 w-full"
+            class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
           >
             <a
               href="/album/{$currentTrack.album.id}"
-              class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md px-1"
+              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
             >
               {$currentTrack.track.title}
             </a>
             <div
-              class="whitespace-nowrap z-10 text-ellipsis overflow-hidden bg-zinc-900/80 backdrop-blur-sm rounded-md text-xs px-1"
+              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
             >
               {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 <a class="hover:underline" href="/artist/{artist.id}">
@@ -183,18 +183,18 @@
       {/key}
     {/if}
   </div>
-  <div class="h-full p-2 w-full bg-zinc-900/95 rounded-md">
+  <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
     {#if user}
-      <div class="flex flex-col px-2 justify-around h-full w-full">
-        <div class="sm:hidden w-full flex gap-2">
-          <div class="flex-none w-10 h-10 bg-zinc-900 rounded-md overflow-clip">
+      <div class="flex h-full w-full flex-col justify-around px-2">
+        <div class="flex w-full gap-2 sm:hidden">
+          <div class="h-10 w-10 flex-none overflow-clip rounded-md bg-zinc-900">
             {#if $currentTrack}
               {#key $currentTrack.track.id}
                 <a
                   in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                   out:fade|global={{ duration: 300, easing: quintOut }}
                   href="/album/{$currentTrack.album.id}"
-                  class="h-10 w-10 flex"
+                  class="flex h-10 w-10"
                 >
                   <AlbumImage
                     alt={$currentTrack.album.title}
@@ -210,7 +210,7 @@
               <div
                 in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                 out:fade|global={{ duration: 300, easing: quintOut }}
-                class="flex h-10 overflow-clip flex-col"
+                class="flex h-10 flex-col overflow-clip"
               >
                 <a href="/album/{$currentTrack.album.id}">
                   {$currentTrack.track.title}
@@ -229,7 +229,7 @@
             {/key}
           {/if}
         </div>
-        <div class="flex justify-between gap-2 items-center whitespace-nowrap sm:order-2">
+        <div class="flex items-center justify-between gap-2 whitespace-nowrap sm:order-2">
           <div class="timer">{currentString}</div>
           <input
             class="w-full"
@@ -243,7 +243,7 @@
           />
           <div class="timer">{durationString}</div>
         </div>
-        <div class="flex gap-2 justify-center sm:justify-around lg:justify-center items-center">
+        <div class="flex items-center justify-center gap-2 sm:justify-around lg:justify-center">
           <div class="flex gap-4">
             <button
               on:click={() => (shuffle = !shuffle)}
@@ -256,14 +256,14 @@
             </button>
             <button
               on:click={playPrevious}
-              class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
+              class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Previous"
             >
               <RoundSkipPrevious />
             </button>
             <button
               on:click={togglePlay}
-              class="text-6xl text-zinc-400 active:text-zinc-600 transition-colors"
+              class="text-6xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Toggle play"
             >
               {#if $paused}
@@ -274,7 +274,7 @@
             </button>
             <button
               on:click={playNext}
-              class="text-3xl text-zinc-400 active:text-zinc-600 transition-colors"
+              class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Next"
             >
               <RoundSkipNext />
@@ -290,7 +290,7 @@
             </button>
           </div>
           <div
-            class="sm:flex hidden gap-2 items-center lg:absolute right-0"
+            class="right-0 hidden items-center gap-2 sm:flex lg:absolute"
             on:wheel={updateVolume}
           >
             <button
@@ -333,15 +333,15 @@
   input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
-    @apply h-4 rounded-full bg-zinc-600 cursor-pointer outline-none overflow-hidden;
+    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600 outline-none;
   }
 
   input[type='range']::-webkit-slider-runnable-track {
-    @apply bg-zinc-600 rounded-full h-4;
+    @apply h-4 rounded-full bg-zinc-600;
   }
 
   input[type='range']::-moz-range-track {
-    @apply bg-zinc-600 rounded-full h-4;
+    @apply h-4 rounded-full bg-zinc-600;
   }
 
   input[type='range']::-webkit-slider-thumb {
@@ -349,13 +349,13 @@
     appearance: none;
     border: 2px solid rgb(192 38 211);
     box-shadow: -10007px 0 0 10000px rgb(192 38 211);
-    @apply w-4 h-4 bg-zinc-300 rounded-full;
+    @apply h-4 w-4 rounded-full bg-zinc-300;
   }
 
   input[type='range']::-moz-range-thumb {
     border: 2px solid rgb(192 38 211);
     box-shadow: -10007px 0 0 10000px rgb(192 38 211);
-    @apply w-3 h-3 bg-zinc-300 rounded-full;
+    @apply h-3 w-3 rounded-full bg-zinc-300;
   }
 
   input[type='range']:focus {

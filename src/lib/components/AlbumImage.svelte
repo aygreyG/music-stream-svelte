@@ -7,12 +7,12 @@
   export let blur: boolean = false;
 </script>
 
-<picture class="w-full h-full flex">
+<picture class="flex h-full w-full">
   {#if maxSize === 's'}
     <source type="image/avif" srcset="/api/image/{id}/s/avif{blur ? '?blur=true' : ''} 150w" />
     <source type="image/webp" srcset="/api/image/{id}/s/webp{blur ? '?blur=true' : ''} 150w" />
     <img
-      class="w-full h-full object-cover"
+      class="h-full w-full object-cover"
       src="/api/image/{id}/s{blur ? '?blur=true' : ''}"
       {alt}
     />
@@ -30,7 +30,7 @@
         : ''} 200w"
     />
     <img
-      class="w-full h-full object-cover"
+      class="h-full w-full object-cover"
       src="/api/image/{id}/s{blur ? '?blur=true' : ''}"
       srcset="/api/image/{id}/s{blur ? '?blur=true' : ''} 150w, /api/image/{id}/m{blur
         ? '?blur=true'
@@ -51,7 +51,7 @@
         : ''} 200w, /api/image/{id}/l/webp{blur ? '?blur=true' : ''} 300w"
     />
     <img
-      class="w-full h-full object-cover"
+      class="h-full w-full object-cover"
       src="/api/image/{id}/s{blur ? '?blur=true' : ''}"
       srcset="/api/image/{id}/s{blur ? '?blur=true' : ''} 150w, /api/image/{id}/m{blur
         ? '?blur=true'

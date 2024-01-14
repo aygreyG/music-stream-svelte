@@ -7,7 +7,7 @@ import { error, json } from '@sveltejs/kit';
 
 export const POST = async ({ url }) => {
   if (getLibrarySyncInProgress()) {
-    throw error(400, { message: 'Library sync already in progress' });
+    error(400, { message: 'Library sync already in progress' });
   }
 
   const reset = url.searchParams.get('reset');

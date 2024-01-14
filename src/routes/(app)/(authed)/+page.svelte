@@ -38,7 +38,7 @@
 </script>
 
 <div
-  class="flex gap-8 items-center justify-center flex-wrap h-full overflow-auto p-2"
+  class="flex h-full flex-wrap items-center justify-center gap-8 overflow-auto p-2"
   bind:this={container}
   on:scroll={() => {
     localStorage.setItem('dashboard-scroll', container.scrollTop.toString());

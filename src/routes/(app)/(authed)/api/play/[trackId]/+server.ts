@@ -21,9 +21,7 @@ async function getTrack(trackId: string) {
   });
 
   if (!track) {
-    throw error(404, {
-      message: 'Track not found'
-    });
+    return null;
   }
 
   cache.set(trackId, { ...track, lastAccessed: new Date() });
@@ -44,7 +42,7 @@ export const GET = async ({ params, request, setHeaders }) => {
   const track = await getTrack(trackId);
 
   if (!track) {
-    throw error(404, {
+    error(404, {
       message: 'Track not found'
     });
   }
@@ -52,7 +50,7 @@ export const GET = async ({ params, request, setHeaders }) => {
   const range = request.headers.get('Range');
 
   if (!range) {
-    throw error(400, {
+    error(400, {
       message: 'Range header not found'
     });
   }
@@ -80,7 +78,7 @@ export const GET = async ({ params, request, setHeaders }) => {
     });
   } catch (e) {
     console.error(e);
-    throw error(500, {
+    error(500, {
       message: 'Internal server error'
     });
   }

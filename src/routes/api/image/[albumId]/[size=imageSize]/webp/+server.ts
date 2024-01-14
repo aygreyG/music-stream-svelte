@@ -14,7 +14,7 @@ export const GET = async ({ params, setHeaders, url }) => {
   });
 
   if (!album || !isValidImageSize(size)) {
-    throw error(404, { message: 'Album not found' });
+    error(404, { message: 'Album not found' });
   }
 
   if (album.albumArt) {
@@ -29,13 +29,13 @@ export const GET = async ({ params, setHeaders, url }) => {
       return new Response(imageBuffer);
     } catch (err) {
       console.log(err);
-      throw error(500, { message: 'Internal server error' });
+      error(500, { message: 'Internal server error' });
     }
   } else {
     setHeaders({
       'Cache-Control': 'no-cache'
     });
 
-    throw redirect(307, blur ? '/album_sm_blur.png' : '/album.png');
+    redirect(307, blur ? '/album_sm_blur.png' : '/album.png');
   }
 };

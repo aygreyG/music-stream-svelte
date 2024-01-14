@@ -15,7 +15,7 @@
 
 {#if animate}
   <a
-    class="hover:bg-gradient-to-r transition-colors from-zinc-600/10 p-2 pl-4"
+    class="from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
     in:fly={{ duration: 300, easing: quintOut, x: -20, delay }}
     href="/artist/{artist.id}">{artist.name}</a
   >
