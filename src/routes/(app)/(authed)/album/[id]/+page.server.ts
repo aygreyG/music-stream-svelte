@@ -1,8 +1,10 @@
 import prisma from '$lib/server/prisma.js';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ locals, params, depends }) => {
   const { id } = params;
+
+  depends('album:art');
 
   const album = await prisma.album.findUnique({
     where: { id: id },
