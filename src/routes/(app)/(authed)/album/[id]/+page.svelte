@@ -106,7 +106,7 @@
             {data.album.albumArtist.name}
           </a>
           <div>
-            {data.album.releaseDate}
+            {data.album.releaseDate || ''}
           </div>
         </div>
       </div>
