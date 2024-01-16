@@ -46,6 +46,8 @@ model Album {
 
   @@unique([title, albumArtistId])
   @@index([title, albumArtistId])
+  @@index([title])
+  @@index([releaseDate])
 }
 
 model Track {

@@ -8,7 +8,7 @@ export const load = async ({ locals, params }) => {
     where: { id: id },
     include: {
       albums: {
-        orderBy: { releaseDate: 'asc' },
+        orderBy: { releaseDate: { sort: 'asc', nulls: 'last' } },
         include: { tracks: { orderBy: { trackNumber: 'asc' }, include: { artists: true } } }
       },
       tracks: {
