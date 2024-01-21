@@ -31,7 +31,7 @@
 </div>
 
 <div
-  class="absolute -left-1 top-4 z-30 flex items-center justify-center rounded-e-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
+  class="absolute -left-1 top-4 z-50 flex items-center justify-center rounded-e-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
 >
   <button on:click={() => (open = !open)}>
     {#if open}
@@ -45,7 +45,7 @@
 {#if open}
   <div
     transition:slide={{ axis: 'x', duration: 500 }}
-    class="absolute left-0 top-0 z-20 h-[calc(100%-0.25rem)] w-full overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md"
+    class="absolute left-0 top-0 z-40 h-[calc(100%-0.25rem)] w-full overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md"
   >
     <div
       class="flex h-full flex-col items-center justify-center"

@@ -4,6 +4,7 @@ import { writable } from 'svelte/store';
 type AlbumType = Prisma.AlbumGetPayload<{
   include: { albumArtist: true; tracks: { include: { artists: true } } };
 }>;
+
 type TrackType = Prisma.TrackGetPayload<{ include: { artists: true } }>;
 
 export const queue = writable<{ track: TrackType; album: AlbumType }[]>([]);

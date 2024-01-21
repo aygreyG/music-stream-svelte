@@ -6,20 +6,28 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import { crossfade } from '$lib/transitions/crossfade';
+  import { onMount } from 'svelte';
   const [send, receive] = crossfade;
 
   export let album: AlbumWithArtist;
   export let index: number;
-  export let first: number | undefined;
+  export let first: number | undefined = undefined;
+  export let autoAnimate: boolean = false;
 
   let animate: boolean = false;
   let outrostarted: boolean = false;
   let delay = 30 * index;
 
-  $: first ? (delay = Math.abs(index - first) * 30) : (delay = 30 * index);
+  $: first !== undefined ? (delay = Math.abs(index - first) * 30) : (delay = 30 * index);
+
+  onMount(() => {
+    if (autoAnimate) {
+      animate = true;
+    }
+  });
 </script>
 
-{#if animate}
+{#if animate || autoAnimate}
   <a
     class="h-36 w-36 overflow-hidden rounded-md bg-zinc-900 md:h-40 md:w-40 xl:h-52 xl:w-52"
     class:z-20={outrostarted}

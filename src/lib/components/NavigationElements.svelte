@@ -3,6 +3,7 @@
   import { createEventDispatcher } from 'svelte';
   import RoundLougout from 'virtual:icons/ic/round-logout';
   import RoundLogin from 'virtual:icons/ic/round-login';
+  import RoundSearch from 'virtual:icons/ic/round-search';
   import RoundAdminPanelSettings from 'virtual:icons/ic/round-admin-panel-settings';
   import MusicArtistFill from 'virtual:icons/iconamoon/music-artist-fill';
   import MusicAlbumFill from 'virtual:icons/iconamoon/music-album-fill';
@@ -26,6 +27,11 @@
   ];
 
   const loggedInElements: NavigationElementType[] = [
+    {
+      href: '/search',
+      text: 'Search',
+      icon: RoundSearch
+    },
     {
       href: '/',
       text: 'Albums',
