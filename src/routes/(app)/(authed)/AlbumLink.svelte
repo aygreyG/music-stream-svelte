@@ -6,7 +6,6 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import { crossfade } from '$lib/transitions/crossfade';
-  import { onMount } from 'svelte';
   const [send, receive] = crossfade;
 
   export let album: AlbumWithArtist;
