@@ -10,7 +10,7 @@
   import { fade, fly } from 'svelte/transition';
   import { cubicIn, cubicInOut, quintOut } from 'svelte/easing';
   import { crossfade } from '$lib/transitions/crossfade';
-  import type { AlbumReleaseSearchResult, Release } from '$lib/shared/types.js';
+  import type { AlbumReleaseSearchResult } from '$lib/shared/types.js';
   import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
   const [send, receive] = crossfade;
   import RoundRefresh from 'virtual:icons/ic/round-refresh';

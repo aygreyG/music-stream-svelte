@@ -10,13 +10,13 @@
 
   export let album: AlbumWithArtist;
   export let index: number;
-  export let first: number | undefined;
+  export let first: number | undefined = undefined;
 
   let animate: boolean = false;
   let outrostarted: boolean = false;
   let delay = 30 * index;
 
-  $: first ? (delay = Math.abs(index - first) * 30) : (delay = 30 * index);
+  $: first !== undefined ? (delay = Math.abs(index - first) * 30) : (delay = 30 * index);
 </script>
 
 {#if animate}
