@@ -81,7 +81,7 @@
   {#if data?.success && data?.results && !searching}
     <div
       out:fade|global={{ duration }}
-      class="px-8 py-1 text-xs text-white/70 transition-shadow"
+      class="px-8 py-1 text-xs text-white/70 transition-shadow duration-300"
       class:shadow-md={scrolled}
     >
       Results for: "{data.query}"

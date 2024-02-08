@@ -87,7 +87,10 @@ export async function validateToken(authCookie: string) {
       role: true,
       email: true,
       createdAt: true,
-      updatedAt: true
+      updatedAt: true,
+      playlists: {
+        include: { tracks: true }
+      }
     }
   });
 

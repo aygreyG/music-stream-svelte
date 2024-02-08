@@ -3,6 +3,8 @@
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import RoundEdit from 'virtual:icons/ic/round-edit';
   import RoundClose from 'virtual:icons/ic/round-close';
+  import RoundFavorite from 'virtual:icons/ic/round-favorite';
+  import RoundFavoriteBorder from 'virtual:icons/ic/round-favorite-border';
   import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { searchForAlbumRelease } from '$lib/shared/fetchAlbumArt.js';
@@ -15,11 +17,16 @@
   const [send, receive] = crossfade;
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
   import { invalidate } from '$app/navigation';
+  import type { Track } from '@prisma/client';
+  import { enhance } from '$app/forms';
+  import { flip } from 'svelte/animate';
 
   export let data;
   let animate: boolean = false;
   let albumAnimating: boolean = false;
   let editModalOpen: boolean = false;
+  let playlistModalOpen: boolean = false;
+  let playlistModalTrack: Track;
   let releaseResponse: Promise<AlbumReleaseSearchResult>;
   let albumArtLoading: boolean = false;
 
@@ -28,6 +35,11 @@
       releaseResponse = searchForAlbumRelease(data.album.albumArtist.name, data.album.title);
     }
     editModalOpen = true;
+  }
+
+  function openPlaylistModal(track: Track) {
+    playlistModalTrack = track;
+    playlistModalOpen = true;
   }
 
   async function chooseAlbumArt({ detail: { releaseId } }: CustomEvent<{ releaseId: string }>) {
@@ -126,7 +138,7 @@
                 </th>
                 <th class="rounded-s-md bg-zinc-900/80 p-1 backdrop-blur-md">Title</th>
                 <th class="bg-zinc-900/80 p-1 backdrop-blur-md">Artist</th>
-                <th class="rounded-e-md bg-zinc-900/80 p-1 backdrop-blur-md">Length</th>
+                <th class="rounded-e-md bg-zinc-900/80 p-1 text-center backdrop-blur-md">Length</th>
               </tr>
             {/if}
           </thead>
@@ -228,7 +240,7 @@
                     {/each}
                   </td>
                   <td
-                    class="from-zinc-600/5 to-transparent p-1 group-hover:bg-gradient-to-r"
+                    class="from-zinc-600/5 to-transparent p-1 text-center group-hover:hidden group-hover:bg-gradient-to-r"
                     on:click={() => {
                       if (matchMedia('(hover: none), (pointer: coarse)').matches) {
                         playTrack(track, data.album, true);
@@ -236,6 +248,20 @@
                     }}
                   >
                     {new Date(track.length * 1000).toISOString().slice(14, 19)}
+                  </td>
+                  <td
+                    class="hidden from-zinc-600/5 to-transparent p-1 group-hover:table-cell group-hover:bg-gradient-to-r"
+                  >
+                    <button
+                      on:click={() => openPlaylistModal(track)}
+                      class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-fuchsia-600"
+                    >
+                      {#if track.playlists.length > 0}
+                        <RoundFavorite class="text-2xl transition-colors" />
+                      {:else}
+                        <RoundFavoriteBorder class="text-2xl transition-colors" />
+                      {/if}
+                    </button>
                   </td>
                 </tr>
               {/if}
@@ -296,6 +322,89 @@
               </div>
             {/if}
           {/await}
+        {/if}
+      </div>
+    </div>
+  {/if}
+
+  {#if playlistModalOpen}
+    <div
+      transition:fade={{ duration: 200, easing: cubicIn }}
+      class="absolute left-0 top-0 z-10 h-full w-full bg-zinc-900/5 backdrop-blur-sm"
+    >
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div
+        class="absolute left-0 top-0 h-full w-full"
+        on:click={() => (playlistModalOpen = !playlistModalOpen)}
+      />
+      <div
+        class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95"
+      >
+        <div class="flex items-center justify-between">
+          <div class="w-full text-center text-xl font-bold">
+            Add "{playlistModalTrack.title}" to playlist
+          </div>
+          <div
+            class="flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
+          >
+            <button on:click={() => (playlistModalOpen = !playlistModalOpen)}>
+              <RoundClose
+                class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
+              />
+            </button>
+          </div>
+        </div>
+
+        {#if data.user}
+          <div class="flex flex-col items-center gap-2 p-2">
+            {#each data.user.playlists as playlist (playlist.id)}
+              <form
+                class="flex w-full items-center justify-between rounded-md border-none bg-zinc-600 px-2 py-1"
+                method="POST"
+                use:enhance
+                animate:flip
+                action="?/addtoplaylist"
+              >
+                <div>{playlist.name}</div>
+                <input type="hidden" name="playlistid" value={playlist.id} />
+                <input type="hidden" name="trackid" value={playlistModalTrack.id} />
+                <button type="submit" class="group">
+                  {#if playlist.tracks.some((t) => t.id === playlistModalTrack.id)}
+                    <input type="hidden" name="remove" value={true} />
+                    <RoundFavorite class="text-2xl transition-colors hover:text-fuchsia-600" />
+                  {:else}
+                    <RoundFavorite
+                      class="text-2xl text-fuchsia-600 opacity-0 transition-all group-hover:opacity-100"
+                    />
+                    <RoundFavoriteBorder
+                      class="absolute left-0 top-0 text-2xl transition-all group-hover:opacity-0"
+                    />
+                  {/if}
+                </button>
+              </form>
+            {/each}
+
+            <form
+              use:enhance
+              class="flex w-full justify-between rounded-md border-none bg-zinc-600"
+              method="POST"
+              action="?/addplaylist"
+            >
+              <input type="hidden" name="trackid" value={playlistModalTrack.id} />
+              <input
+                class="flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+                type="text"
+                name="playlistname"
+              />
+              <button
+                class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+                type="submit"
+              >
+                Add
+              </button>
+            </form>
+          </div>
         {/if}
       </div>
     </div>

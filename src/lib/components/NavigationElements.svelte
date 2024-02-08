@@ -5,6 +5,7 @@
   import RoundLogin from 'virtual:icons/ic/round-login';
   import RoundSearch from 'virtual:icons/ic/round-search';
   import RoundAdminPanelSettings from 'virtual:icons/ic/round-admin-panel-settings';
+  import RoundPlaylistPlay from 'virtual:icons/ic/round-playlist-play';
   import MusicArtistFill from 'virtual:icons/iconamoon/music-artist-fill';
   import MusicAlbumFill from 'virtual:icons/iconamoon/music-album-fill';
   import { enhance } from '$app/forms';
@@ -43,6 +44,11 @@
       icon: MusicArtistFill
     },
     {
+      href: '/playlist',
+      text: 'Playlists',
+      icon: RoundPlaylistPlay
+    },
+    {
       href: '/logout',
       text: 'Logout',
       icon: RoundLougout
@@ -71,7 +77,7 @@
   {/if}
   {#each loggedInElements as el}
     {#if el.href === '/logout'}
-      <form method="POST" action="/logout" use:enhance>
+      <form class="max-sm:px-16" method="POST" action="/logout" use:enhance>
         <button
           class="flex items-center justify-center gap-2 max-sm:text-2xl"
           on:click={() => dispatch('clickedelement')}
