@@ -50,3 +50,33 @@ export const load = async ({ locals, params }) => {
     title: `Playlist${playlist ? ` - ${playlist.name}` : ''}`
   };
 };
+
+export const actions = {
+  remove: async ({ locals, request, params }) => {
+    const formData = await request.formData();
+    const trackId = formData.get('trackId')?.toString();
+    const playlistId = params.id;
+
+    if (!trackId || !playlistId || !locals.user) {
+      return error(400, 'Invalid request');
+    }
+
+    const playlist = await prisma.playlist.update({
+      where: {
+        id: playlistId,
+        userId: locals.user.id
+      },
+      data: {
+        tracks: {
+          disconnect: {
+            id: trackId
+          }
+        }
+      }
+    });
+
+    return {
+      playlist
+    };
+  }
+};

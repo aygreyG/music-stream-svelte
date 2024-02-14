@@ -3,6 +3,7 @@
   import { fade, fly } from 'svelte/transition';
   import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
+  import HeartOff from 'virtual:icons/iconamoon/heart-off';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { crossfade } from '$lib/transitions/crossfade';
   import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
@@ -73,9 +74,9 @@
         duration: 500,
         x: -20,
         easing: quintOut,
-        delay: 30 * index
+        delay: 30 * index + 250
       }}
-      animate:flip
+      animate:flip={{ duration: 100 }}
       tabindex="0"
       role="button"
       on:keydown={(e) => {
@@ -87,11 +88,12 @@
           playTrack(track, track.album, true);
         }
       }}
-      on:dblclick={() =>
-        $currentTrack?.track.id !== track.id ? playTrack(track, track.album, true) : null}
-      class="group flex h-12 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent ps-2 transition-colors hover:bg-gradient-to-r"
+      on:dblclick={() => {
+        if ($currentTrack?.track.id !== track.id) playTrack(track, track.album, true);
+      }}
+      class="group flex h-12 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent px-2 transition-colors hover:bg-gradient-to-r"
     >
-      <div class="flex h-10 w-10 items-center justify-center">
+      <div class="flex h-10 w-10 flex-none items-center justify-center">
         {#if $currentTrack?.track.id === track.id}
           {#if $paused}
             <button
@@ -122,7 +124,7 @@
           </div>
         {/if}
       </div>
-      <div class="w-[45%] pl-2">
+      <div class="w-[calc(50%-2rem)] flex-none pl-2">
         <div class="overflow-hidden text-ellipsis whitespace-nowrap">{track.title}</div>
         <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-white/70">
           {#each track.artists.sort( (a, b) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
@@ -134,17 +136,23 @@
       </div>
       <a
         href="/album/{track.album.id}"
-        class="w-[calc(30%-0.5rem)] overflow-hidden text-ellipsis whitespace-nowrap pl-2 hover:underline"
+        class="w-[calc(35%-2.5rem)] flex-none overflow-hidden text-ellipsis whitespace-nowrap pl-2 hover:underline"
       >
         {track.album.title}
       </a>
-      <div class="w-[calc(25%-2.5rem)] pl-2">
+      <div class="w-[calc(15%)] flex-none pl-2">
         {new Date(track.length * 1000).toISOString().slice(14, 19)}
       </div>
-      <div>
+      <div class="w-8 flex-none">
         <form use:enhance action="?/remove" method="POST">
           <input type="hidden" name="trackId" value={track.id} />
-          <button type="submit"> Remove </button>
+          <button
+            class="flex h-full w-full items-center justify-center"
+            title="Remove"
+            type="submit"
+          >
+            <HeartOff class="text-2xl text-zinc-600 hover:text-fuchsia-600" />
+          </button>
         </form>
       </div>
     </div>

@@ -3,8 +3,8 @@
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import RoundEdit from 'virtual:icons/ic/round-edit';
   import RoundClose from 'virtual:icons/ic/round-close';
-  import RoundFavorite from 'virtual:icons/ic/round-favorite';
-  import RoundFavoriteBorder from 'virtual:icons/ic/round-favorite-border';
+  import HeartFill from 'virtual:icons/iconamoon/heart-fill';
+  import Heart from 'virtual:icons/iconamoon/heart';
   import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { searchForAlbumRelease } from '$lib/shared/fetchAlbumArt.js';
@@ -257,9 +257,9 @@
                       class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-fuchsia-600"
                     >
                       {#if track.playlists.length > 0}
-                        <RoundFavorite class="text-2xl transition-colors" />
+                        <HeartFill class="text-2xl transition-colors" />
                       {:else}
-                        <RoundFavoriteBorder class="text-2xl transition-colors" />
+                        <Heart class="text-2xl transition-colors" />
                       {/if}
                     </button>
                   </td>
@@ -398,12 +398,12 @@
                 <button type="submit" class="group">
                   {#if playlist.tracks.some((t) => t.id === playlistModalTrack.id)}
                     <input type="hidden" name="remove" value={true} />
-                    <RoundFavorite class="text-2xl transition-colors hover:text-fuchsia-600" />
+                    <HeartFill class="text-2xl transition-colors hover:text-fuchsia-600" />
                   {:else}
-                    <RoundFavorite
+                    <HeartFill
                       class="text-2xl text-fuchsia-600 opacity-0 transition-all group-hover:opacity-100"
                     />
-                    <RoundFavoriteBorder
+                    <Heart
                       class="absolute left-0 top-0 text-2xl transition-all group-hover:opacity-0"
                     />
                   {/if}
