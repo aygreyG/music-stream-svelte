@@ -4,6 +4,7 @@
   import RoundAdd from 'virtual:icons/ic/round-add';
   import { enhance } from '$app/forms';
   import PlaylistElement from './PlaylistElement.svelte';
+  import { fade } from 'svelte/transition';
 
   export let data;
   export let form;
@@ -17,7 +18,10 @@
   );
 </script>
 
-<div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
+<div
+  out:fade|global={{ duration: 150 }}
+  class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden"
+>
   <div class="px-4 pt-1 text-center text-xl font-bold">Playlists</div>
 
   <div

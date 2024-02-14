@@ -10,7 +10,10 @@ export const load = async ({ locals, params, depends }) => {
     where: { id: id },
     include: {
       tracks: {
-        include: { artists: true, playlists: { where: { userId: locals.user?.id } } },
+        include: {
+          artists: true,
+          playlists: { where: { userId: locals.user?.id }, orderBy: { createdAt: 'desc' } }
+        },
         orderBy: { trackNumber: 'asc' }
       },
       albumArtist: true

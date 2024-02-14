@@ -2,6 +2,7 @@
   import { enhance } from '$app/forms';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import type { PlaylistWithTracks } from '$lib/shared/types';
+  import { crossfade } from '$lib/transitions/crossfade';
   import type { Album } from '@prisma/client';
   import { fade } from 'svelte/transition';
 
@@ -12,6 +13,7 @@
   let nameInput: HTMLInputElement;
   let playlistName: string = playlist.name;
   let deleteClicked = false;
+  const [send, receive] = crossfade;
 
   for (const track of playlist.tracks) {
     if (!albumSet.find((a) => a.id === track.album.id)) {
@@ -58,6 +60,7 @@
   <a
     href="/playlist/{playlist.id}"
     class="flex h-2/3 w-full flex-none items-center justify-center px-2 pt-2"
+    out:send|global={{ key: playlist.id, duration: 300 }}
   >
     {#if albumSet.length > 0}
       {#if albumSet.length === 1}
