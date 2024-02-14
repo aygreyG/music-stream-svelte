@@ -1,4 +1,5 @@
 <script lang="ts">
+  import PlaylistImage from '$lib/components/PlaylistImage.svelte';
   import { quintOut } from 'svelte/easing';
   import { fade, fly } from 'svelte/transition';
   import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
@@ -19,44 +20,7 @@
     class="flex h-36 w-36 flex-none items-center justify-center px-2 pt-2 md:h-40 md:w-40 xl:h-52 xl:w-52"
     in:receive|global={{ key: data.playlist.id, duration: 300 }}
   >
-    {#if data.albumSet.length > 0}
-      {#if data.albumSet.length === 1}
-        <div class="aspect-square h-full overflow-clip rounded-md">
-          <AlbumImage alt={data.albumSet[0].title} id={data.albumSet[0].id} maxSize="s" />
-        </div>
-      {:else}
-        <div class="flex aspect-square h-full flex-wrap">
-          <div
-            class="aspect-square w-1/2 overflow-clip rounded-tl-md bg-zinc-600/20 bg-clip-content pb-0.5 pr-0.5"
-          >
-            <AlbumImage alt={data.albumSet[0].title} id={data.albumSet[0].id} maxSize="s" />
-          </div>
-          <div
-            class="aspect-square w-1/2 overflow-clip rounded-tr-md bg-zinc-600/20 bg-clip-content pb-0.5 pl-0.5"
-          >
-            {#if data.albumSet.length > 1}
-              <AlbumImage alt={data.albumSet[1].title} id={data.albumSet[1].id} maxSize="s" />
-            {/if}
-          </div>
-          <div
-            class="aspect-square w-1/2 overflow-clip rounded-bl-md bg-zinc-600/20 bg-clip-content pr-0.5 pt-0.5"
-          >
-            {#if data.albumSet.length > 2}
-              <AlbumImage alt={data.albumSet[2].title} id={data.albumSet[2].id} maxSize="s" />
-            {/if}
-          </div>
-          <div
-            class="aspect-square w-1/2 overflow-clip rounded-br-md bg-zinc-600/20 bg-clip-content pl-0.5 pt-0.5"
-          >
-            {#if data.albumSet.length > 3}
-              <AlbumImage alt={data.albumSet[3].title} id={data.albumSet[3].id} maxSize="s" />
-            {/if}
-          </div>
-        </div>
-      {/if}
-    {:else}
-      <div class="aspect-square h-full overflow-clip rounded-md bg-zinc-600/20"></div>
-    {/if}
+    <PlaylistImage albumSet={data.albumSet} />
   </div>
 
   <div
