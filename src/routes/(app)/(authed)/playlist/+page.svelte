@@ -46,7 +46,13 @@
     bind:this={container}
     on:scroll={() => (scrolled = container.scrollTop > 0)}
   >
-    <form action="?/add" method="POST" use:enhance>
+    <form
+      action="?/add"
+      method="POST"
+      use:enhance={() => {
+        searchString = '';
+      }}
+    >
       <button
         type="submit"
         class="flex h-36 w-36 items-center justify-center rounded-md bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
@@ -56,7 +62,7 @@
     </form>
 
     {#each filtered as playlist (playlist.id)}
-      <div class="h-36 w-36 md:h-40 md:w-40 xl:h-52 xl:w-52" animate:flip={{ duration: 100 }}>
+      <div class="h-36 w-36 md:h-40 md:w-40 xl:h-52 xl:w-52" animate:flip={{ duration: 200 }}>
         <PlaylistElement selected={form?.playlist.id === playlist.id} {playlist} />
       </div>
     {/each}

@@ -62,7 +62,9 @@
     class="flex h-2/3 w-full flex-none items-center justify-center px-2 pt-2"
     out:send|global={{ key: playlist.id, duration: 300 }}
   >
-    <PlaylistImage {albumSet} />
+    <div class="aspect-square h-full overflow-clip rounded-md">
+      <PlaylistImage {albumSet} />
+    </div>
   </a>
 
   <input
@@ -75,7 +77,7 @@
   />
   <div class="flex w-full items-center justify-center text-sm text-white">
     <button
-      disabled={playlistName === playlist.name}
+      disabled={playlistName === playlist.name || playlistName === ''}
       class="w-1/2 bg-green-600 disabled:cursor-not-allowed disabled:opacity-50"
     >
       Update
