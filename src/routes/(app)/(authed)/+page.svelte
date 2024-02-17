@@ -57,7 +57,7 @@
 
   <div
     out:fade|global={{ duration: 250 }}
-    class="z-20 flex w-full flex-col px-8 py-1 transition-shadow"
+    class="z-20 flex w-full flex-col px-8 py-1 transition-shadow duration-300"
     class:shadow-md={scrolledFromTop}
   >
     <label class="flex w-full items-center rounded-md">

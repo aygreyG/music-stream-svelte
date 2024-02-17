@@ -1,6 +1,22 @@
-import type { Album, Artist, User } from '@prisma/client';
+import type { Album, Artist, Prisma } from '@prisma/client';
 
-export type SignedInUser = Omit<User, 'password'>;
+export type SignedInUser = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    username: true;
+    role: true;
+    email: true;
+    createdAt: true;
+    updatedAt: true;
+    playlists: {
+      include: { tracks: true };
+    };
+  };
+}>;
+
+export type PlaylistWithTracks = Prisma.PlaylistGetPayload<{
+  include: { tracks: { include: { album: true } } };
+}>;
 
 export type FolderNode = {
   label: string;

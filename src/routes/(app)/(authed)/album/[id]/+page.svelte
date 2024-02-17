@@ -1,33 +1,45 @@
 <script lang="ts">
-  import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
-  import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import RoundEdit from 'virtual:icons/ic/round-edit';
   import RoundClose from 'virtual:icons/ic/round-close';
-  import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
+  import HeartFill from 'virtual:icons/iconamoon/heart-fill';
+  import Heart from 'virtual:icons/iconamoon/heart';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { searchForAlbumRelease } from '$lib/shared/fetchAlbumArt.js';
   import { onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
-  import { cubicIn, cubicInOut, quintOut } from 'svelte/easing';
+  import { fade } from 'svelte/transition';
+  import { cubicIn, cubicInOut } from 'svelte/easing';
   import { crossfade } from '$lib/transitions/crossfade';
   import type { AlbumReleaseSearchResult } from '$lib/shared/types.js';
   import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
   const [send, receive] = crossfade;
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
   import { invalidate } from '$app/navigation';
+  import type { Track } from '@prisma/client';
+  import { enhance } from '$app/forms';
+  import { flip } from 'svelte/animate';
+  import TrackRow from '$lib/components/TrackRow.svelte';
 
   export let data;
   let animate: boolean = false;
   let albumAnimating: boolean = false;
   let editModalOpen: boolean = false;
+  let playlistModalOpen: boolean = false;
+  let playlistModalTrack: Track;
   let releaseResponse: Promise<AlbumReleaseSearchResult>;
   let albumArtLoading: boolean = false;
+  let container: HTMLDivElement;
+  let scrolled = false;
 
   async function openEditModal() {
     if (!releaseResponse) {
       releaseResponse = searchForAlbumRelease(data.album.albumArtist.name, data.album.title);
     }
     editModalOpen = true;
+  }
+
+  function openPlaylistModal(track: Track) {
+    playlistModalTrack = track;
+    playlistModalOpen = true;
   }
 
   async function chooseAlbumArt({ detail: { releaseId } }: CustomEvent<{ releaseId: string }>) {
@@ -69,9 +81,10 @@
         />
       </div>
     {/if}
-    <div class="flex h-full flex-col gap-6 p-4 pb-0">
+    <div class="flex h-full flex-col">
       <div
-        class="flex items-center justify-center gap-6 md:justify-start"
+        class="flex items-center justify-center gap-6 p-4 transition-shadow md:justify-start"
+        class:shadow-md={scrolled}
         in:fade|global={{ duration: 500, easing: cubicInOut }}
       >
         <div
@@ -111,137 +124,28 @@
         </div>
       </div>
 
-      <div class="h-full w-full overflow-auto pb-2">
-        <table class="w-full table-auto">
-          <thead>
-            {#if animate}
-              <tr
-                in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 100 }}
-                class="sticky left-0 top-0 z-10 text-left"
+      <div
+        class="flex h-full flex-col overflow-auto"
+        bind:this={container}
+        on:scroll={() => (scrolled = container?.scrollTop > 0)}
+      >
+        {#each data.album.tracks as track, index (track.id)}
+          <div class="w-full flex-none">
+            <TrackRow track={{ ...track, album: data.album }} delay={250 + index * 30}>
+              <button
+                on:click={() => openPlaylistModal(track)}
+                slot="button"
+                class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-fuchsia-600"
               >
-                <th
-                  class="hidden rounded-md border-e-2 border-e-transparent bg-zinc-900/80 p-1 text-center backdrop-blur-md sm:table-cell"
-                >
-                  #
-                </th>
-                <th class="rounded-s-md bg-zinc-900/80 p-1 backdrop-blur-md">Title</th>
-                <th class="bg-zinc-900/80 p-1 backdrop-blur-md">Artist</th>
-                <th class="rounded-e-md bg-zinc-900/80 p-1 backdrop-blur-md">Length</th>
-              </tr>
-            {/if}
-          </thead>
-          <tbody class="h-full select-none overflow-y-auto">
-            {#each data.album.tracks as track, index (track.id)}
-              {#if animate}
-                <tr
-                  on:dblclick={() => playTrack(track, data.album, true)}
-                  class="group cursor-pointer sm:cursor-auto"
-                  in:fly|global={{
-                    duration: 300,
-                    easing: quintOut,
-                    x: -20,
-                    delay: 100 + 50 * index
-                  }}
-                >
-                  <td
-                    class="hidden w-10 from-transparent to-zinc-600/5 group-hover:bg-gradient-to-r sm:table-cell"
-                  >
-                    {#if $currentTrack?.track.id === track.id}
-                      {#if $paused}
-                        <button
-                          class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
-                          on:click={() => ($paused = false)}
-                        >
-                          <RoundPlayCircleFilled class="text-3xl transition-colors" />
-                        </button>
-                      {:else}
-                        <button
-                          class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
-                          on:click={() => ($paused = true)}
-                        >
-                          <RoundPauseCircleOutline class="text-3xl transition-colors" />
-                        </button>
-                      {/if}
-                    {:else}
-                      <div class="text-center group-target:hidden group-hover:hidden">
-                        {track.trackNumber}
-                      </div>
-                      <button
-                        class="hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-target:flex group-hover:flex"
-                        on:click={() => playTrack(track, data.album, true)}
-                      >
-                        <RoundPlayCircleFilled class="text-3xl transition-colors" />
-                      </button>
-                    {/if}
-                  </td>
-                  <td
-                    class="group-hover:bg-zinc-600/5"
-                    on:click={() => {
-                      if (matchMedia('(max-width: 640px)').matches) {
-                        playTrack(track, data.album, true);
-                      }
-                    }}
-                  >
-                    <div class="flex items-center gap-2 p-1">
-                      {#if $currentTrack?.track.id === track.id}
-                        {#if $paused}
-                          <button
-                            class="flex h-10 w-10 items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600 sm:hidden"
-                            on:click={() => ($paused = false)}
-                          >
-                            <RoundPlayCircleFilled class="text-3xl transition-colors" />
-                          </button>
-                        {:else}
-                          <button
-                            class="flex h-10 w-10 items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600 sm:hidden"
-                            on:click={() => ($paused = true)}
-                          >
-                            <RoundPauseCircleOutline class="text-3xl transition-colors" />
-                          </button>
-                        {/if}
-                      {:else}
-                        <div class="h-10 w-10 flex-none overflow-hidden rounded-md sm:hidden">
-                          <AlbumImage
-                            key={data.album.updatedAt.toISOString()}
-                            alt={data.album.title}
-                            id={data.album.id}
-                            maxSize="s"
-                          />
-                        </div>
-                      {/if}
-                      <div class="hidden h-10 w-10 flex-none overflow-hidden rounded-md sm:block">
-                        <AlbumImage
-                          key={data.album.updatedAt.toISOString()}
-                          alt={data.album.title}
-                          id={data.album.id}
-                          maxSize="s"
-                        />
-                      </div>
-                      {track.title}
-                    </div>
-                  </td>
-                  <td class="p-1 group-hover:bg-zinc-600/5">
-                    {#each track.artists.sort( (a, b) => (a.name !== data.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                      <a class="hover:underline" href="/artist/{artist.id}">
-                        {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
-                      </a>
-                    {/each}
-                  </td>
-                  <td
-                    class="from-zinc-600/5 to-transparent p-1 group-hover:bg-gradient-to-r"
-                    on:click={() => {
-                      if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-                        playTrack(track, data.album, true);
-                      }
-                    }}
-                  >
-                    {new Date(track.length * 1000).toISOString().slice(14, 19)}
-                  </td>
-                </tr>
-              {/if}
-            {/each}
-          </tbody>
-        </table>
+                {#if track.playlists.length > 0}
+                  <HeartFill class="text-2xl transition-colors" />
+                {:else}
+                  <Heart class="text-2xl transition-colors" />
+                {/if}
+              </button>
+            </TrackRow>
+          </div>
+        {/each}
       </div>
     </div>
   </div>
@@ -296,6 +200,95 @@
               </div>
             {/if}
           {/await}
+        {/if}
+      </div>
+    </div>
+  {/if}
+
+  {#if playlistModalOpen}
+    <div
+      transition:fade={{ duration: 200, easing: cubicIn }}
+      class="absolute left-0 top-0 z-10 h-full w-full bg-zinc-900/5 backdrop-blur-sm"
+    >
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <div
+        class="absolute left-0 top-0 h-full w-full"
+        on:click={() => (playlistModalOpen = !playlistModalOpen)}
+      />
+      <div
+        class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
+      >
+        <div class="flex items-center justify-between">
+          <div class="w-full px-4 pt-4 text-center text-xl font-bold">
+            Add "{playlistModalTrack.title}" to playlist
+          </div>
+          <div
+            class="absolute right-0 top-0 flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
+          >
+            <button on:click={() => (playlistModalOpen = !playlistModalOpen)}>
+              <RoundClose
+                class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
+              />
+            </button>
+          </div>
+        </div>
+
+        {#if data.user}
+          <div class="flex flex-col items-center gap-2 p-4">
+            <form
+              use:enhance
+              class="flex w-full max-w-lg justify-between rounded-md border-none bg-zinc-600"
+              method="POST"
+              action="?/addplaylist"
+            >
+              <input type="hidden" name="trackid" value={playlistModalTrack.id} />
+              <input
+                class="w-full flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+                type="text"
+                autocomplete="off"
+                placeholder="New playlist"
+                name="playlistname"
+                required
+              />
+              <button
+                class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+                type="submit"
+              >
+                Add
+              </button>
+            </form>
+
+            {#each data.user.playlists as playlist (playlist.id)}
+              <form
+                class="flex w-full max-w-lg items-center justify-between rounded-md border-none bg-zinc-600 px-2 py-1"
+                method="POST"
+                use:enhance
+                animate:flip={{ duration: 100 }}
+                action="?/addtoplaylist"
+              >
+                <div class="flex w-full items-center justify-between pr-2">
+                  <div>{playlist.name}</div>
+                  <div>({playlist.tracks.length})</div>
+                </div>
+                <input type="hidden" name="playlistid" value={playlist.id} />
+                <input type="hidden" name="trackid" value={playlistModalTrack.id} />
+                <button type="submit" class="group">
+                  {#if playlist.tracks.some((t) => t.id === playlistModalTrack.id)}
+                    <input type="hidden" name="remove" value={true} />
+                    <HeartFill class="text-2xl transition-colors hover:text-fuchsia-600" />
+                  {:else}
+                    <HeartFill
+                      class="text-2xl text-fuchsia-600 opacity-0 transition-all group-hover:opacity-100"
+                    />
+                    <Heart
+                      class="absolute left-0 top-0 text-2xl transition-all group-hover:opacity-0"
+                    />
+                  {/if}
+                </button>
+              </form>
+            {/each}
+          </div>
         {/if}
       </div>
     </div>

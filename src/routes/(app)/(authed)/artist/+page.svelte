@@ -22,7 +22,10 @@
   {#if data.artists.length === 0}
     <div class="p-4 pt-1 text-center text-xl font-bold">There are no artists 🫤</div>
   {:else}
-    <div class="flex w-full flex-col px-8 py-1 transition-shadow" class:shadow-md={scrolledFromTop}>
+    <div
+      class="flex w-full flex-col px-8 py-1 transition-shadow duration-300"
+      class:shadow-md={scrolledFromTop}
+    >
       <label class="flex w-full items-center rounded-md backdrop-blur-md">
         <input
           class="w-full rounded-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"

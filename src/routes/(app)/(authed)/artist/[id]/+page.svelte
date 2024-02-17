@@ -6,6 +6,7 @@
   import { onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import { cubicInOut, quintOut } from 'svelte/easing';
+  import TrackRow from '$lib/components/TrackRow.svelte';
 
   export let data;
   let animate = false;
@@ -68,27 +69,45 @@
                   </div>
                 </div>
 
-                {#each album.tracks as track (track.id)}
+                {#each album.tracks as track, index (track.id)}
                   <div
                     tabindex="0"
                     role="button"
                     on:keydown={(e) => {
-                      if (e.key === 'Enter' && $currentTrack?.track.id !== track.id)
-                        playTrack(track, { ...album, albumArtist: data.artist }, true);
+                      if (e.key === 'Enter' && $currentTrack?.id !== track.id)
+                        playTrack(
+                          album.tracks.map((t) => ({
+                            ...t,
+                            album: { ...album, albumArtist: data.artist }
+                          })),
+                          index
+                        );
                     }}
                     on:click={() => {
                       if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-                        playTrack(track, { ...album, albumArtist: data.artist }, true);
+                        playTrack(
+                          album.tracks.map((t) => ({
+                            ...t,
+                            album: { ...album, albumArtist: data.artist }
+                          })),
+                          index
+                        );
                       }
                     }}
                     on:dblclick={() =>
-                      $currentTrack?.track.id !== track.id
-                        ? playTrack(track, { ...album, albumArtist: data.artist }, true)
+                      $currentTrack?.id !== track.id
+                        ? playTrack(
+                            album.tracks.map((t) => ({
+                              ...t,
+                              album: { ...album, albumArtist: data.artist }
+                            })),
+                            index
+                          )
                         : null}
                     class="group flex h-10 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
                   >
                     <div class="flex w-10 items-center justify-center">
-                      {#if $currentTrack?.track.id === track.id}
+                      {#if $currentTrack?.id === track.id}
                         {#if $paused}
                           <button
                             class="flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
@@ -111,7 +130,13 @@
                         <button
                           class="hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-target:flex group-hover:flex"
                           on:click={() =>
-                            playTrack(track, { ...album, albumArtist: data.artist }, true)}
+                            playTrack(
+                              album.tracks.map((t) => ({
+                                ...t,
+                                album: { ...album, albumArtist: data.artist }
+                              })),
+                              index
+                            )}
                         >
                           <RoundPlayCircleFilled class="text-3xl transition-colors" />
                         </button>
@@ -146,72 +171,7 @@
         Featured on {data.artist.tracks.length} track{#if data.artist.tracks.length > 1}s{/if}:
       </div>
       {#each data.artist.tracks as track, index (track.id)}
-        <div
-          in:fly|global={{
-            duration: 500,
-            x: -20,
-            easing: quintOut,
-            delay: 50 + data.artist.albums.length * 50 + index * 50
-          }}
-          tabindex="0"
-          role="button"
-          on:keydown={(e) => {
-            if (e.key === 'Enter' && $currentTrack?.track.id !== track.id)
-              playTrack(track, track.album, true);
-          }}
-          on:click={() => {
-            if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-              playTrack(track, track.album, true);
-            }
-          }}
-          on:dblclick={() =>
-            $currentTrack?.track.id !== track.id ? playTrack(track, track.album, true) : null}
-          class="group flex h-11 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
-        >
-          <div class="flex h-10 w-10 items-center justify-center">
-            {#if $currentTrack?.track.id === track.id}
-              {#if $paused}
-                <button
-                  class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
-                  on:click={() => ($paused = false)}
-                >
-                  <RoundPlayCircleFilled class="text-3xl transition-colors" />
-                </button>
-              {:else}
-                <button
-                  class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
-                  on:click={() => ($paused = true)}
-                >
-                  <RoundPauseCircleOutline class="text-3xl transition-colors" />
-                </button>
-              {/if}
-            {:else}
-              <button
-                class="z-10 hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-hover:flex"
-                on:click={() => playTrack(track, track.album, true)}
-              >
-                <RoundPlayCircleFilled class="text-3xl transition-colors" />
-              </button>
-              <div
-                class="absolute left-0 top-0 z-0 h-10 w-10 overflow-hidden rounded-md group-hover:opacity-20"
-              >
-                <AlbumImage alt={track.album.title} id={track.album.id} maxSize="s" />
-              </div>
-            {/if}
-          </div>
-          <div class="w-[40%] overflow-hidden text-ellipsis whitespace-nowrap pl-2">
-            {track.title}
-          </div>
-          <a
-            href="/album/{track.album.id}"
-            class="w-[35%] overflow-hidden text-ellipsis whitespace-nowrap pl-2 hover:underline"
-          >
-            {track.album.title}
-          </a>
-          <div class="w-[calc(25%-2.5rem)] pl-2">
-            {new Date(track.length * 1000).toISOString().slice(14, 19)}
-          </div>
-        </div>
+        <TrackRow {track} delay={30 * index} />
       {/each}
     {/if}
   {/if}

@@ -1,125 +1,48 @@
 import type { Prisma } from '@prisma/client';
 import { writable } from 'svelte/store';
 
-type AlbumType = Prisma.AlbumGetPayload<{
-  include: { albumArtist: true; tracks: { include: { artists: true } } };
+type TrackType = Prisma.TrackGetPayload<{
+  include: { artists: true; album: { include: { albumArtist: true } } };
 }>;
 
-type TrackType = Prisma.TrackGetPayload<{ include: { artists: true } }>;
-
-export const queue = writable<{ track: TrackType; album: AlbumType }[]>([]);
-
-export const previous = writable<{ track: TrackType; album: AlbumType }[]>([]);
-
-export const currentTrack = writable<{
-  track: TrackType;
-  album: AlbumType;
-  shouldBePlayed: boolean;
-} | null>(null);
-
 export const paused = writable(true);
+export const currentTrack = writable<TrackType | null>(null);
 
-export async function playTrack(track: TrackType, album: AlbumType, shouldBePlayed = true) {
-  if (shouldBePlayed) {
-    currentTrack.update((t) => {
-      if (t) {
-        previous.update((p) => [...p, t]);
-      }
+const queueContext = writable<TrackType[]>([]);
+const queueContextIndex = writable<number>(0);
 
-      return { track, album, shouldBePlayed };
-    });
-  } else {
-    queue.update((q) => {
-      if (q.length === 0) {
-        currentTrack.set({ track, album, shouldBePlayed });
-        return q;
-      }
-
-      return [...q, { track, album }];
-    });
-  }
+export async function playTrack(context: TrackType[], index: number) {
+  queueContextIndex.set(index);
+  queueContext.set(context);
+  currentTrack.set(context[index]);
 }
 
 export async function playNext() {
-  queue.update((q) => {
-    if (q.length === 0) {
-      currentTrack.update((t) => {
-        if (t) {
-          const nextTrack = t.album.tracks.find(
-            (track) => track.trackNumber === t.track.trackNumber + 1
-          );
+  queueContextIndex.update((i) => {
+    let newIndex = i;
 
-          if (nextTrack) {
-            previous.update((p) => [...p, t]);
-            return {
-              track: nextTrack,
-              album: t.album,
-              shouldBePlayed: true
-            };
-          }
-        }
-
-        return t;
-      });
-
-      return q;
-    }
-
-    const [next, ...rest] = q;
-    currentTrack.update((t) => {
-      if (t) {
-        previous.update((p) => [...p, t]);
+    queueContext.subscribe((context) => {
+      if (i + 1 < context.length) {
+        newIndex++;
+        currentTrack.set(context[newIndex]);
       }
-
-      return {
-        track: next.track,
-        album: next.album,
-        shouldBePlayed: true
-      };
     });
-    return rest;
+
+    return newIndex;
   });
 }
 
 export async function playPrevious() {
-  previous.update((p) => {
-    if (p.length === 0) {
-      currentTrack.update((t) => {
-        if (t) {
-          const previousTrack = t.album.tracks.find(
-            (track) => track.trackNumber === t.track.trackNumber - 1
-          );
+  queueContextIndex.update((i) => {
+    let newIndex = i;
 
-          if (previousTrack) {
-            return {
-              track: previousTrack,
-              album: t.album,
-              shouldBePlayed: true
-            };
-          }
-        }
+    queueContext.subscribe((context) => {
+      if (i - 1 >= 0) {
+        newIndex--;
+        currentTrack.set(context[newIndex]);
+      }
+    });
 
-        return t;
-      });
-
-      return p;
-    }
-
-    const previousTrack = p.pop();
-
-    if (previousTrack) {
-      currentTrack.set({
-        track: previousTrack.track,
-        album: previousTrack.album,
-        shouldBePlayed: true
-      });
-    }
-
-    return p;
+    return newIndex;
   });
-}
-
-export async function playAlbum(album: AlbumType) {
-  queue.set(album.tracks.map((track) => ({ track, album })));
-  playNext();
 }

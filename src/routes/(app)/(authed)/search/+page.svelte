@@ -1,15 +1,12 @@
 <script lang="ts">
   import RoundSearch from 'virtual:icons/ic/round-search';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
-  import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
-  import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import AlbumLink from '../AlbumLink.svelte';
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
-  import AlbumImage from '$lib/components/AlbumImage.svelte';
-  import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer';
   import { flip } from 'svelte/animate';
   import { tick } from 'svelte';
+  import TrackRow from '$lib/components/TrackRow.svelte';
 
   export let data;
 
@@ -81,7 +78,7 @@
   {#if data?.success && data?.results && !searching}
     <div
       out:fade|global={{ duration }}
-      class="px-8 py-1 text-xs text-white/70 transition-shadow"
+      class="px-8 py-1 text-xs text-white/70 transition-shadow duration-300"
       class:shadow-md={scrolled}
     >
       Results for: "{data.query}"
@@ -107,82 +104,13 @@
         >
           Tracks:
         </div>
-        {#each data.results.tracks as track, index (track.id)}
-          <div
-            in:fly|global={{
-              duration: 500,
-              x: -20,
-              easing: quintOut,
-              delay: 30 * index
-            }}
-            animate:flip={{ duration: 500 }}
-            tabindex="0"
-            role="button"
-            on:keydown={(e) => {
-              if (e.key === 'Enter' && $currentTrack?.track.id !== track.id)
-                playTrack(track, track.album, true);
-            }}
-            on:click={() => {
-              if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-                playTrack(track, track.album, true);
-              }
-            }}
-            on:dblclick={() =>
-              $currentTrack?.track.id !== track.id ? playTrack(track, track.album, true) : null}
-            class="group flex h-12 w-full cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent ps-2 transition-colors hover:bg-gradient-to-r"
-          >
-            <div class="flex h-10 w-10 items-center justify-center">
-              {#if $currentTrack?.track.id === track.id}
-                {#if $paused}
-                  <button
-                    class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
-                    on:click={() => ($paused = false)}
-                  >
-                    <RoundPlayCircleFilled class="text-3xl transition-colors" />
-                  </button>
-                {:else}
-                  <button
-                    class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
-                    on:click={() => ($paused = true)}
-                  >
-                    <RoundPauseCircleOutline class="text-3xl transition-colors" />
-                  </button>
-                {/if}
-              {:else}
-                <button
-                  class="z-10 hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-hover:flex"
-                  on:click={() => playTrack(track, track.album, true)}
-                >
-                  <RoundPlayCircleFilled class="text-3xl transition-colors" />
-                </button>
-                <div
-                  class="absolute left-0 top-0 z-0 h-10 w-10 overflow-hidden rounded-md group-hover:opacity-20"
-                >
-                  <AlbumImage alt={track.album.title} id={track.album.id} maxSize="s" />
-                </div>
-              {/if}
+        <div class="flex w-full flex-col">
+          {#each data.results.tracks as track, index (track.id)}
+            <div class="w-full flex-none" animate:flip>
+              <TrackRow {track} delay={250 + index * 30} />
             </div>
-            <div class="w-[45%] pl-2">
-              <div class="overflow-hidden text-ellipsis whitespace-nowrap">{track.title}</div>
-              <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-white/70">
-                {#each track.artists.sort( (a, b) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                  <a class="hover:underline" href="/artist/{artist.id}">
-                    {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
-                  </a>
-                {/each}
-              </div>
-            </div>
-            <a
-              href="/album/{track.album.id}"
-              class="w-[calc(30%-0.5rem)] overflow-hidden text-ellipsis whitespace-nowrap pl-2 hover:underline"
-            >
-              {track.album.title}
-            </a>
-            <div class="w-[calc(25%-2.5rem)] pl-2">
-              {new Date(track.length * 1000).toISOString().slice(14, 19)}
-            </div>
-          </div>
-        {/each}
+          {/each}
+        </div>
         {#if type !== 'track' && data.results.tracks.length < data.total.tracks}
           <button class="pb-2 pl-2 hover:underline" on:click={() => setType('track')}>
             Show all results

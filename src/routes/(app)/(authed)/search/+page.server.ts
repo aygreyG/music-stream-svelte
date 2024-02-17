@@ -41,7 +41,12 @@ export const load = async ({ url }) => {
       tracks = await prisma.track.findMany({
         where: { title: { contains: query, mode: 'insensitive' } },
         include: {
-          album: { include: { albumArtist: true, tracks: { include: { artists: true } } } },
+          album: {
+            include: {
+              albumArtist: true,
+              tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
+            }
+          },
           artists: true
         }
       });
@@ -67,7 +72,12 @@ export const load = async ({ url }) => {
         where: { title: { contains: query, mode: 'insensitive' } },
         take: 10,
         include: {
-          album: { include: { albumArtist: true, tracks: { include: { artists: true } } } },
+          album: {
+            include: {
+              albumArtist: true,
+              tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
+            }
+          },
           artists: true
         }
       });
