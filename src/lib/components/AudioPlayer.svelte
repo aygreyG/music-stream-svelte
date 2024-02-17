@@ -79,14 +79,10 @@
 
   currentTrack.subscribe((val) => {
     if (val) {
-      if (!val.shouldBePlayed) {
-        $paused = true;
-      }
-
       if (navigator.mediaSession) {
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: val.track.title,
-          artist: val.track.artists.map((a) => a.name).join(', '),
+          title: val.title,
+          artist: val.artists.map((a) => a.name).join(', '),
           album: val.album.title,
           artwork: [
             {
@@ -142,17 +138,17 @@
     {#if $currentTrack && user}
       <audio
         preload="metadata"
-        src="/api/play/{$currentTrack.track.id}"
+        src="/api/play/{$currentTrack.id}"
         bind:currentTime
         bind:duration
         bind:paused={$paused}
         bind:this={player}
         bind:volume
-        autoplay={$currentTrack.shouldBePlayed}
+        autoplay={true}
         on:ended={onEnded}
       />
 
-      {#key $currentTrack.track.id}
+      {#key $currentTrack.id}
         <a
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
@@ -167,14 +163,14 @@
               href="/album/{$currentTrack.album.id}"
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
             >
-              {$currentTrack.track.title}
+              {$currentTrack.title}
             </a>
             <div
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
             >
-              {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+              {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 <a class="hover:underline" href="/artist/{artist.id}">
-                  {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
+                  {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
                 </a>
               {/each}
             </div>
@@ -189,7 +185,7 @@
         <div class="flex w-full gap-2 sm:hidden">
           <div class="h-10 w-10 flex-none overflow-clip rounded-md bg-zinc-900">
             {#if $currentTrack}
-              {#key $currentTrack.track.id}
+              {#key $currentTrack.id}
                 <a
                   in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                   out:fade|global={{ duration: 300, easing: quintOut }}
@@ -206,7 +202,7 @@
             {/if}
           </div>
           {#if $currentTrack}
-            {#key $currentTrack.track.id}
+            {#key $currentTrack.id}
               <div
                 in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                 out:fade|global={{ duration: 300, easing: quintOut }}
@@ -216,12 +212,12 @@
                   class="overflow-hidden text-ellipsis whitespace-nowrap"
                   href="/album/{$currentTrack.album.id}"
                 >
-                  {$currentTrack.track.title}
+                  {$currentTrack.title}
                 </a>
                 <div class="text-xs">
-                  {#each $currentTrack.track.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                  {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                     <a class="hover:underline" href="/artist/{artist.id}">
-                      {artist.name}{#if $currentTrack.track.artists.length > 1 && index != $currentTrack.track.artists.length - 1},{/if}
+                      {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
                     </a>
                   {/each}
                   <a href="/album/{$currentTrack.album.id}">
@@ -250,7 +246,8 @@
           <div class="flex gap-4">
             <button
               on:click={() => (shuffle = !shuffle)}
-              class="text-2xl transition-colors"
+              class="text-2xl opacity-15 transition-colors"
+              disabled
               class:text-fuchsia-600={shuffle}
               class:text-zinc-400={!shuffle}
               aria-label="Shuffle"

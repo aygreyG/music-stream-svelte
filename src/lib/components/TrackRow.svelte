@@ -17,6 +17,13 @@
   export let track: TrackRowType;
   export let index: number | null = null;
   export let delay: number = (index || 0) * 30;
+  export let handleClick: () => void = () => {
+    playTrack(
+      track.album.tracks.map((t) => ({ ...t, album: track.album })),
+      track.album.tracks.findIndex((t) => t.id === track.id)
+    );
+  };
+
   let mainWidth = 'w-[calc(100%-6rem)]';
 
   $: indexed = index !== null;
@@ -40,11 +47,10 @@
   tabindex="0"
   role="button"
   on:keydown={(e) => {
-    if (e.key === 'Enter' && $currentTrack?.track.id !== track.id)
-      playTrack(track, track.album, true);
+    if (e.key === 'Enter' && $currentTrack?.id !== track.id) handleClick();
   }}
   on:dblclick={() => {
-    if ($currentTrack?.track.id !== track.id) playTrack(track, track.album, true);
+    if ($currentTrack?.id !== track.id) handleClick();
   }}
   class="group flex h-14 w-full flex-none cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
   class:px-4={!indexed}
@@ -55,7 +61,7 @@
     <div
       on:click={() => {
         if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-          playTrack(track, track.album, true);
+          handleClick();
         }
       }}
       class="flex h-full w-8 items-center justify-center"
@@ -69,7 +75,7 @@
   {/if}
 
   <div class="flex h-12 w-12 flex-none items-center justify-center">
-    {#if $currentTrack?.track.id === track.id}
+    {#if $currentTrack?.id === track.id}
       {#if $paused}
         <button
           class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
@@ -88,7 +94,7 @@
     {:else}
       <button
         class="z-10 hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-hover:flex"
-        on:click={() => playTrack(track, track.album, true)}
+        on:click={() => handleClick()}
       >
         <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
       </button>
@@ -104,7 +110,7 @@
     <button
       on:click={() => {
         if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-          playTrack(track, track.album, true);
+          handleClick();
         }
       }}
       class="w-full cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-start"
@@ -127,7 +133,7 @@
   <button
     on:click={() => {
       if (matchMedia('(hover: none), (pointer: coarse)').matches) {
-        playTrack(track, track.album, true);
+        handleClick();
       }
     }}
     class="w-14 flex-none cursor-default pl-2 text-sm"

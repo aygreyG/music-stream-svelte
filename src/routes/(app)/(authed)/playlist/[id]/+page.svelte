@@ -6,6 +6,7 @@
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { enhance } from '$app/forms';
   import HeartOff from 'virtual:icons/iconamoon/heart-off';
+  import { playTrack } from '$lib/stores/audioPlayer.js';
 
   export let data;
   const [send, receive] = crossfade;
@@ -45,7 +46,13 @@
   >
     {#each data.playlist.tracks as track, index (track.id)}
       <div class="w-full flex-none" animate:flip={{ duration: 250 }}>
-        <TrackRow {track} delay={250 + index * 30}>
+        <TrackRow
+          handleClick={() => {
+            playTrack(data.playlist.tracks, index);
+          }}
+          {track}
+          delay={250 + index * 30}
+        >
           <form use:enhance slot="button" action="?/remove" method="POST">
             <input type="hidden" name="trackId" value={track.id} />
             <button
