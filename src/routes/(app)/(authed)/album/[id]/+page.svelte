@@ -217,10 +217,10 @@
         on:click={() => (playlistModalOpen = !playlistModalOpen)}
       />
       <div
-        class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95"
+        class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
       >
         <div class="flex items-center justify-between">
-          <div class="w-full px-8 text-center text-xl font-bold">
+          <div class="w-full px-4 pt-4 text-center text-xl font-bold">
             Add "{playlistModalTrack.title}" to playlist
           </div>
           <div
@@ -235,16 +235,16 @@
         </div>
 
         {#if data.user}
-          <div class="flex flex-col items-center gap-2 px-4 py-2">
+          <div class="flex flex-col items-center gap-2 p-4">
             <form
               use:enhance
-              class="flex w-full justify-between rounded-md border-none bg-zinc-600"
+              class="flex w-full max-w-lg justify-between rounded-md border-none bg-zinc-600"
               method="POST"
               action="?/addplaylist"
             >
               <input type="hidden" name="trackid" value={playlistModalTrack.id} />
               <input
-                class="flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+                class="w-full flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
                 type="text"
                 autocomplete="off"
                 placeholder="New playlist"
@@ -261,7 +261,7 @@
 
             {#each data.user.playlists as playlist (playlist.id)}
               <form
-                class="flex w-full items-center justify-between rounded-md border-none bg-zinc-600 px-2 py-1"
+                class="flex w-full max-w-lg items-center justify-between rounded-md border-none bg-zinc-600 px-2 py-1"
                 method="POST"
                 use:enhance
                 animate:flip={{ duration: 100 }}
