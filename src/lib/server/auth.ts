@@ -89,7 +89,6 @@ export async function validateToken(authCookie: string) {
       createdAt: true,
       updatedAt: true,
       playlists: {
-        include: { tracks: true },
         orderBy: { createdAt: 'desc' }
       }
     }
