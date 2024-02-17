@@ -212,7 +212,10 @@
                 out:fade|global={{ duration: 300, easing: quintOut }}
                 class="flex h-10 flex-col overflow-clip"
               >
-                <a href="/album/{$currentTrack.album.id}">
+                <a
+                  class="overflow-hidden text-ellipsis whitespace-nowrap"
+                  href="/album/{$currentTrack.album.id}"
+                >
                   {$currentTrack.track.title}
                 </a>
                 <div class="text-xs">

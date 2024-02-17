@@ -5,6 +5,8 @@
   import type { Album } from '@prisma/client';
   import { fade } from 'svelte/transition';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
+  import RoundCheckCircle from 'virtual:icons/ic/round-check-circle';
+  import TrashFill from 'virtual:icons/iconamoon/trash-fill';
 
   export let playlist: PlaylistWithTracks;
   export let selected: boolean = false;
@@ -44,7 +46,7 @@
 
         setTimeout(() => {
           deleteClicked = false;
-        }, 2000);
+        }, 1500);
 
         cancel();
       }
@@ -59,7 +61,7 @@
 
   <a
     href="/playlist/{playlist.id}"
-    class="flex h-2/3 w-full flex-none items-center justify-center px-2 pt-2"
+    class="flex h-3/4 w-full flex-none items-center justify-center px-2 pt-2"
     out:send|global={{ key: playlist.id, duration: 300 }}
   >
     <div class="aspect-square h-full overflow-clip rounded-md">
@@ -67,27 +69,41 @@
     </div>
   </a>
 
-  <input
-    type="text"
-    autocomplete="off"
-    bind:this={nameInput}
-    bind:value={playlistName}
-    name="name"
-    class="w-11/12 overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-1 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
-  />
-  <div class="flex w-full items-center justify-center text-sm text-white">
-    <button
-      disabled={playlistName === playlist.name || playlistName === ''}
-      class="w-1/2 bg-green-600 disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      Update
-    </button>
-    <button class="w-1/2 bg-rose-700" formaction="?/delete" type="submit">
-      {#if deleteClicked}
-        <div in:fade>Sure?</div>
-      {:else}
-        <div in:fade>Delete</div>
-      {/if}
-    </button>
+  <div class="my-2 w-full px-2 text-center">
+    <input
+      type="text"
+      autocomplete="off"
+      bind:this={nameInput}
+      bind:value={playlistName}
+      name="name"
+      class="w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-6 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+      on:blur={() => {
+        if (playlistName === '') {
+          playlistName = playlist.name;
+        }
+      }}
+    />
+
+    {#if playlistName !== playlist.name && playlistName !== ''}
+      <button transition:fade={{ duration: 200 }} class="absolute bottom-0 right-2" type="submit">
+        <RoundCheckCircle class="text-xl text-green-600/80" />
+      </button>
+    {:else}
+      <button
+        class="absolute bottom-0 right-2 text-rose-700/80"
+        formaction="?/delete"
+        type="submit"
+      >
+        {#if deleteClicked}
+          <div in:fade={{ duration: 200 }}>
+            <RoundCheckCircle class="text-xl" />
+          </div>
+        {:else}
+          <div in:fade={{ duration: 200 }}>
+            <TrashFill class="text-xl" />
+          </div>
+        {/if}
+      </button>
+    {/if}
   </div>
 </form>

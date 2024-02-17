@@ -1,10 +1,14 @@
 <script lang="ts">
   import { observeVisibility } from '$lib/observeVisibility';
-  import type { Artist } from '@prisma/client';
+  import type { Prisma } from '@prisma/client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
 
-  export let artist: Artist;
+  type ArtistRowType = Prisma.ArtistGetPayload<{
+    include: { _count: { select: { albums: true; tracks: true } } };
+  }>;
+
+  export let artist: ArtistRowType;
   export let index: number;
   export let scrolled: boolean;
 
@@ -15,18 +19,46 @@
 
 {#if animate}
   <a
-    class="from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
+    class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
     in:fly={{ duration: 300, easing: quintOut, x: -20, delay }}
-    href="/artist/{artist.id}">{artist.name}</a
+    href="/artist/{artist.id}"
   >
+    <div>
+      {artist.name}
+    </div>
+    <div>
+      (
+      {#if artist._count.albums > 0}
+        {artist._count.albums} album{#if artist._count.albums > 1}s{/if}
+      {/if}
+      {#if artist._count.tracks > 0}
+        {artist._count.tracks} track{#if artist._count.tracks > 1}s{/if}
+      {/if}
+      )
+    </div>
+  </a>
 {:else}
   <a
-    class="p-2 pl-4 opacity-0"
+    class="flex justify-between p-2 pl-4 opacity-0"
     use:observeVisibility={{
       onVisible: () => {
         animate = true;
       }
     }}
-    href="/artist/{artist.id}">{artist.name}</a
+    href="/artist/{artist.id}"
   >
+    <div>
+      {artist.name}
+    </div>
+    <div>
+      (
+      {#if artist._count.albums > 0}
+        {artist._count.albums} album{#if artist._count.albums > 1}s{/if}
+      {/if}
+      {#if artist._count.tracks > 0}
+        {artist._count.tracks} track{#if artist._count.tracks > 1}s{/if}
+      {/if}
+      )
+    </div>
+  </a>
 {/if}
