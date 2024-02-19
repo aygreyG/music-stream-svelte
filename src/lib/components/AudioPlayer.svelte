@@ -214,7 +214,7 @@
                 >
                   {$currentTrack.title}
                 </a>
-                <div class="text-xs">
+                <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs">
                   {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                     <a class="hover:underline" href="/artist/{artist.id}">
                       {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}

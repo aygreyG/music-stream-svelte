@@ -23,7 +23,7 @@
   out:fade|global={{ duration: 150 }}
   class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden"
 >
-  <div out:fade|global={{ duration: 250 }} class="px-4 pt-1 text-center text-xl font-bold">
+  <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
     Playlists
   </div>
 

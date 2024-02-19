@@ -236,6 +236,10 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
             breakFeatures(artist).forEach((a) => artistSet.add(a));
           });
 
+          if (artistSet.size === 0) {
+            artistSet.add(albumArtistName);
+          }
+
           let album = await tx.album.findUnique({
             where: {
               title_albumArtistId: {

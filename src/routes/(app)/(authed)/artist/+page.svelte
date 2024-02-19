@@ -17,7 +17,7 @@
 </script>
 
 <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
-  <div class="px-4 pt-1 text-center text-xl font-bold">Artists</div>
+  <div class="p-4 pb-0 text-center text-xl font-bold">Artists</div>
 
   {#if data.artists.length === 0}
     <div class="p-4 pt-1 text-center text-xl font-bold">There are no artists 🫤</div>
