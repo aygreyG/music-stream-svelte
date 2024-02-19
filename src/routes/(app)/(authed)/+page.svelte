@@ -53,7 +53,9 @@
 </script>
 
 <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
-  <div out:fade|global={{ duration: 250 }} class="pt-1 text-center text-xl font-bold">Albums</div>
+  <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
+    Albums
+  </div>
 
   <div
     out:fade|global={{ duration: 250 }}

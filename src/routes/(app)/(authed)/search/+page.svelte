@@ -28,7 +28,7 @@
 </script>
 
 <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
-  <div out:fade|global={{ duration }} class="pt-1 text-center text-xl font-bold">Search</div>
+  <div out:fade|global={{ duration }} class="p-4 pb-0 text-center text-xl font-bold">Search</div>
 
   <form out:fade|global={{ duration }} bind:this={formElement} class="z-20 flex px-8 pt-1">
     <label class="flex w-2/3 items-center border-e border-zinc-500">

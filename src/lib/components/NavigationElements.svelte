@@ -79,7 +79,7 @@
     {#if el.href === '/logout'}
       <form class="max-sm:px-16" method="POST" action="/logout" use:enhance>
         <button
-          class="flex items-center justify-center gap-2 max-sm:text-2xl"
+          class="flex w-full items-center justify-start gap-2 max-sm:text-2xl"
           on:click={() => dispatch('clickedelement')}
           type="submit"
         >
