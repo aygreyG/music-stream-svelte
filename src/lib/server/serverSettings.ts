@@ -1,5 +1,6 @@
 import type { ServerSettings } from '@prisma/client';
 import prisma from './prisma';
+import { runLibrarySync } from './librarySync';
 
 let serverSettings: ServerSettings | null = null;
 let requestedServerSettings = false;
@@ -27,6 +28,7 @@ export async function completeServerSetup(sSettings: ServerSettings) {
   });
 
   serverSettings = updatedSettings;
+  runLibrarySync();
 }
 
 export async function getServerSettings() {

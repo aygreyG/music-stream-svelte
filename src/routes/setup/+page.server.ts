@@ -1,4 +1,5 @@
 import { register } from '$lib/server/auth.js';
+import prisma from '$lib/server/prisma';
 import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
@@ -16,7 +17,7 @@ async function getSubFolders(dir: string): Promise<FolderNode[]> {
       const stats = await lstat(path);
       if (stats.isDirectory()) {
         const folderName = path.split('/').pop()!;
-        // const subSubFolders = await getSubFolders(path);
+
         subFolders.push({
           label: folderName,
           children: [],
@@ -34,6 +35,12 @@ async function getSubFolders(dir: string): Promise<FolderNode[]> {
 export const load = async () => {
   const musicFolders: FolderNode[] = [];
 
+  const owner = await prisma.user.findFirst({
+    where: {
+      role: 'OWNER'
+    }
+  });
+
   const dir = '/';
 
   try {
@@ -44,8 +51,7 @@ export const load = async () => {
       const stats = await lstat(path);
       if (stats.isDirectory()) {
         const folderName = path.split('/').pop()!;
-        const subFolders = await getSubFolders(path);
-        musicFolders.push({ label: folderName, path, children: subFolders });
+        musicFolders.push({ label: folderName, path, children: [] });
       }
     }
   } catch (err) {
@@ -54,7 +60,8 @@ export const load = async () => {
 
   return {
     musicFolders,
-    title: 'Setup'
+    title: 'Setup',
+    hasOwner: !!owner
   };
 };
 
@@ -68,6 +75,15 @@ export const actions: Actions = {
     }
 
     const settings = await createServerSettings(folder.toString());
+    const owner = await prisma.user.findFirst({
+      where: {
+        role: 'OWNER'
+      }
+    });
+
+    if (owner) {
+      return completeServerSetup(settings);
+    }
 
     const username = form.get('username')?.toString();
     const password = form.get('password')?.toString();
@@ -83,6 +99,11 @@ export const actions: Actions = {
       await register(email, password, password, username, 'OWNER');
       await completeServerSetup(settings);
     } catch (err) {
+      prisma.serverSettings.delete({
+        where: {
+          id: settings.id
+        }
+      });
       return fail(401, { error: (err as Error)?.message });
     }
   },
@@ -94,5 +115,12 @@ export const actions: Actions = {
     return {
       body: subFolders
     };
+  },
+  deleteowner: async () => {
+    await prisma.user.deleteMany({
+      where: {
+        role: 'OWNER'
+      }
+    });
   }
 };
