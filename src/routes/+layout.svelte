@@ -1,6 +1,26 @@
 <script lang="ts">
   import { page } from '$app/stores';
+  import { onMount } from 'svelte';
   import '../app.css';
+
+  async function detectSWUpdate() {
+    const registration = await navigator.serviceWorker.ready;
+
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+
+      newWorker?.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed') {
+          if (confirm('A new version of the app is available. Reload to update?')) {
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+            location.reload();
+          }
+        }
+      });
+    });
+  }
+
+  onMount(() => detectSWUpdate());
 </script>
 
 <svelte:head>
