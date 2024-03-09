@@ -2,7 +2,7 @@
   "name": "Music Stream Svelte",
   "short_name": "MSV",
   "start_url": "/",
-  "display": "minimal-ui",
+  "display": "standalone",
   "theme_color": "#c026d3",
   "description": "A music streaming app built with Svelte",
   "icons": [
