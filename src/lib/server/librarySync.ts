@@ -129,7 +129,14 @@ function sanitizeArtistName(artist: string) {
  * Searches for an album file in a directory based on the given file names and album art file name.
  */
 async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFileName?: string) {
-  const albumArtNames = ['front', 'art', 'albumart', 'cover', 'folder', albumArtFileName];
+  const albumArtNames = [
+    'front',
+    'art',
+    'albumart',
+    'cover',
+    'folder',
+    albumArtFileName?.toLowerCase()
+  ];
   for (const fileName of fileNames) {
     const fileExt = fileName.split('.').pop()?.toLowerCase();
     if (fileExt === 'jpg' || fileExt === 'jpeg' || fileExt === 'png') {
