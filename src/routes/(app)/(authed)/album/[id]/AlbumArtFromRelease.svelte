@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { vibrate } from '$lib/actions/vibrate';
   import { getAlbumArtUrl } from '$lib/shared/fetchAlbumArt';
   import type { Release } from '$lib/shared/types';
   import { createEventDispatcher } from 'svelte';
@@ -25,12 +26,16 @@
       class="bg-fuchsia-600 hover:bg-fuchsia-700 disabled:cursor-not-allowed disabled:bg-fuchsia-800 disabled:opacity-80 disabled:hover:bg-fuchsia-800"
       on:click={() => (showImage = true)}
       disabled={showImage}
+      use:vibrate={{ mute: showImage }}
     >
       Show Image
     </button>
     <button
       class="bg-fuchsia-600 hover:bg-fuchsia-700"
-      on:click={() => dispatch('choosen', { releaseId: release.id })}>Choose Image</button
+      on:click={() => dispatch('choosen', { releaseId: release.id })}
+      use:vibrate
     >
+      Choose Image
+    </button>
   </div>
 </div>

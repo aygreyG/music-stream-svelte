@@ -16,11 +16,13 @@
   import { quintOut } from 'svelte/easing';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let user: SignedInUser | null = null;
 
   let player: HTMLAudioElement;
   let currentTime = 0;
+  let prevTime = 0;
   let duration: number;
   let volume: number;
   let prevVolume = 0;
@@ -40,6 +42,7 @@
   function onEnded() {
     if (repeat) {
       player.currentTime = 0;
+      prevTime = 0;
       player.play();
     } else {
       playNext();
@@ -239,6 +242,17 @@
             bind:value={currentTime}
             disabled={!duration}
             aria-label="Progress bar"
+            on:input={() => {
+              if (
+                navigator &&
+                matchMedia('(prefers-reduced-motion: no-preference)').matches &&
+                matchMedia('(hover: none), (pointer: coarse)').matches &&
+                Math.abs(currentTime - prevTime) > 0.5
+              ) {
+                prevTime = currentTime;
+                navigator.vibrate(1);
+              }
+            }}
           />
           <div class="timer">{durationString}</div>
         </div>
@@ -258,6 +272,7 @@
               on:click={playPrevious}
               class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Previous"
+              use:vibrate
             >
               <RoundSkipPrevious />
             </button>
@@ -265,6 +280,7 @@
               on:click={togglePlay}
               class="text-6xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Toggle play"
+              use:vibrate={{ mute: $currentTrack === null }}
             >
               {#if $paused}
                 <RoundPlayCircleOutline />
@@ -276,6 +292,7 @@
               on:click={playNext}
               class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Next"
+              use:vibrate
             >
               <RoundSkipNext />
             </button>
@@ -285,6 +302,7 @@
               class:text-fuchsia-600={repeat}
               class:text-zinc-400={!repeat}
               aria-label="Repeat"
+              use:vibrate
             >
               <RoundRepeat />
             </button>
@@ -303,6 +321,7 @@
                 }
               }}
               aria-label="Mute"
+              use:vibrate
             >
               {#if volume === 0}
                 <RoundVolumeOff class="text-3xl text-zinc-400" />
@@ -320,6 +339,7 @@
               max="1"
               step="0.01"
               bind:value={volume}
+              class="w-full"
               aria-label="Volume bar"
             />
           </div>

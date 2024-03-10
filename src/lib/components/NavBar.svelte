@@ -6,6 +6,7 @@
   import NavigationElements from './NavigationElements.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let user: SignedInUser | null = null;
   let open: boolean = false;
@@ -45,7 +46,7 @@
 <div
   class="absolute -left-1 top-4 z-50 flex items-center justify-center rounded-e-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
 >
-  <button on:click={() => (open = !open)}>
+  <button use:vibrate on:click={() => (open = !open)}>
     {#if open}
       <RoundClose class="text-4xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600" />
     {:else}

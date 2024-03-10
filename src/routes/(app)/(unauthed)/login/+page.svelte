@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { vibrate } from '$lib/actions/vibrate.js';
 
   export let data;
 </script>
@@ -33,6 +34,7 @@
     <button
       class="mt-2 w-full self-center rounded-md bg-fuchsia-600 px-4 py-1 font-semibold hover:bg-fuchsia-700"
       type="submit"
+      use:vibrate
     >
       Login
     </button>

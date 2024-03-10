@@ -6,6 +6,7 @@
   import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import AlbumImage from './AlbumImage.svelte';
+  import { vibrate } from '$lib/actions/vibrate';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     include: {
@@ -52,6 +53,7 @@
   on:dblclick={() => {
     if ($currentTrack?.id !== track.id) handleClick();
   }}
+  use:vibrate
   class="group flex h-14 w-full flex-none cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
   class:px-4={!indexed}
 >
@@ -65,6 +67,7 @@
         }
       }}
       class="flex h-full w-8 items-center justify-center"
+      use:vibrate
     >
       {#if track.trackNumber !== null}
         {track.trackNumber}
@@ -80,6 +83,7 @@
         <button
           class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
           on:click={() => ($paused = false)}
+          use:vibrate
         >
           <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
         </button>
@@ -87,6 +91,7 @@
         <button
           class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
           on:click={() => ($paused = true)}
+          use:vibrate
         >
           <RoundPauseCircleOutline class="text-center text-3xl transition-colors" />
         </button>
@@ -95,6 +100,7 @@
       <button
         class="z-10 hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-hover:flex"
         on:click={() => handleClick()}
+        use:vibrate
       >
         <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
       </button>
@@ -114,6 +120,7 @@
         }
       }}
       class="w-full cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-start"
+      use:vibrate
     >
       {track.title}
     </button>
@@ -137,6 +144,7 @@
       }
     }}
     class="w-14 flex-none cursor-default pl-2 text-sm"
+    use:vibrate
   >
     {new Date(track.length * 1000).toISOString().slice(14, 19)}
   </button>

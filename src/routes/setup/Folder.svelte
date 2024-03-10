@@ -8,6 +8,7 @@
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
   import { slide } from 'svelte/transition';
   import { tick } from 'svelte';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let folderNode: FolderNode;
   export let level = 0;
@@ -52,6 +53,7 @@
       class="flex w-full transition-colors hover:text-zinc-400"
       type="submit"
       disabled={loading}
+      use:vibrate
     >
       <div class:text-fuchsia-600={$pickedFolder === folderNode}>
         {#if loading}

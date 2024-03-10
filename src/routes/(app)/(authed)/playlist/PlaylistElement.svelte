@@ -7,6 +7,7 @@
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
   import RoundCheckCircle from 'virtual:icons/ic/round-check-circle';
   import TrashFill from 'virtual:icons/iconamoon/trash-fill';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let playlist: PlaylistWithTracks;
   export let selected: boolean = false;
@@ -85,7 +86,12 @@
     />
 
     {#if playlistName !== playlist.name && playlistName !== ''}
-      <button transition:fade={{ duration: 200 }} class="absolute bottom-0 right-2" type="submit">
+      <button
+        use:vibrate
+        transition:fade={{ duration: 200 }}
+        class="absolute bottom-0 right-2"
+        type="submit"
+      >
         <RoundCheckCircle class="text-xl text-green-600/80" />
       </button>
     {:else}
@@ -93,6 +99,7 @@
         class="absolute bottom-0 right-2 text-rose-700/80"
         formaction="?/delete"
         type="submit"
+        use:vibrate
       >
         {#if deleteClicked}
           <div in:fade={{ duration: 200 }}>

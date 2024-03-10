@@ -4,6 +4,7 @@
   import '../app.css';
 
   async function detectSWUpdate() {
+    if (!('serviceWorker' in navigator)) return;
     const registration = await navigator.serviceWorker.ready;
 
     registration.addEventListener('updatefound', () => {
@@ -20,7 +21,9 @@
     });
   }
 
-  onMount(() => detectSWUpdate());
+  onMount(() => {
+    detectSWUpdate();
+  });
 </script>
 
 <svelte:head>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { vibrate } from '$lib/actions/vibrate';
   import type { User } from '@prisma/client';
   type UserWithoutPassword = Omit<User, 'password'>;
   import { fade } from 'svelte/transition';
@@ -63,12 +64,14 @@
     disabled={user.username === username &&
       user.email === email &&
       ((admin && user.role === 'ADMIN') || (!admin && user.role === 'USER'))}
+    use:vibrate
   >
     Update
   </button>
   <button
     class="w-36 rounded-md bg-rose-600 px-2 py-1 font-semibold text-white transition-all hover:bg-rose-700"
     formaction="?/delete"
+    use:vibrate
   >
     {#if deleteClicked}
       <div in:fade>Sure?</div>

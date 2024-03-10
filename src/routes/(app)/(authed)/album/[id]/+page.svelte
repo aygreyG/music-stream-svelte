@@ -18,6 +18,7 @@
   import { enhance } from '$app/forms';
   import { flip } from 'svelte/animate';
   import TrackRow from '$lib/components/TrackRow.svelte';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let data;
   let animate: boolean = false;
@@ -103,7 +104,7 @@
             <div
               class="absolute bottom-0 left-0 flex gap-2 rounded-bl-md rounded-tr-md bg-zinc-900/80 backdrop-blur-sm transition-all group-hover:opacity-100 sm:opacity-0"
             >
-              <button on:click={openEditModal}>
+              <button use:vibrate on:click={openEditModal}>
                 <RoundEdit
                   class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
                 />
@@ -133,6 +134,7 @@
           <div class="w-full flex-none">
             <TrackRow track={{ ...track, album: data.album }} delay={250 + index * 30}>
               <button
+                use:vibrate
                 on:click={() => openPlaylistModal(track)}
                 slot="button"
                 class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-fuchsia-600"
@@ -169,7 +171,7 @@
           <div
             class="flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
           >
-            <button on:click={() => (editModalOpen = !editModalOpen)}>
+            <button use:vibrate on:click={() => (editModalOpen = !editModalOpen)}>
               <RoundClose
                 class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
               />
@@ -226,7 +228,7 @@
           <div
             class="absolute right-0 top-0 flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
           >
-            <button on:click={() => (playlistModalOpen = !playlistModalOpen)}>
+            <button use:vibrate on:click={() => (playlistModalOpen = !playlistModalOpen)}>
               <RoundClose
                 class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
               />
@@ -254,6 +256,7 @@
               <button
                 class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
                 type="submit"
+                use:vibrate
               >
                 Add
               </button>
@@ -273,7 +276,7 @@
                 </div>
                 <input type="hidden" name="playlistid" value={playlist.id} />
                 <input type="hidden" name="trackid" value={playlistModalTrack.id} />
-                <button type="submit" class="group">
+                <button type="submit" class="group" use:vibrate>
                   {#if playlist.tracks.some((t) => t.id === playlistModalTrack.id)}
                     <input type="hidden" name="remove" value={true} />
                     <HeartFill class="text-2xl transition-colors hover:text-fuchsia-600" />

@@ -7,6 +7,7 @@
   import { flip } from 'svelte/animate';
   import { tick } from 'svelte';
   import TrackRow from '$lib/components/TrackRow.svelte';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let data;
 
@@ -71,6 +72,7 @@
       type="submit"
       class="flex items-center justify-center rounded-e-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600 disabled:cursor-not-allowed disabled:opacity-50"
       disabled={!searchString}
+      use:vibrate={{ mute: !searchString }}
     >
       <RoundSearch class="text-xl" />
     </button>
@@ -112,7 +114,7 @@
           {/each}
         </div>
         {#if type !== 'track' && data.results.tracks.length < data.total.tracks}
-          <button class="pb-2 pl-2 hover:underline" on:click={() => setType('track')}>
+          <button use:vibrate class="pb-2 pl-2 hover:underline" on:click={() => setType('track')}>
             Show all results
           </button>
         {/if}
@@ -131,7 +133,7 @@
           {/each}
         </div>
         {#if type !== 'album' && data.results.albums.length < data.total.albums}
-          <button class="pb-2 pl-2 hover:underline" on:click={() => setType('album')}>
+          <button use:vibrate class="pb-2 pl-2 hover:underline" on:click={() => setType('album')}>
             Show all results
           </button>
         {/if}
@@ -169,7 +171,7 @@
           {/each}
         </div>
         {#if type !== 'artist' && data.results.artists.length < data.total.artists}
-          <button class="pb-2 pl-2 hover:underline" on:click={() => setType('artist')}>
+          <button use:vibrate class="pb-2 pl-2 hover:underline" on:click={() => setType('artist')}>
             Show all results
           </button>
         {/if}
