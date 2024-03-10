@@ -10,6 +10,7 @@
   import MusicAlbumFill from 'virtual:icons/iconamoon/music-album-fill';
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let user: SignedInUser | null = null;
 
@@ -82,6 +83,7 @@
           class="flex w-full items-center justify-start gap-2 max-sm:text-2xl"
           on:click={() => dispatch('clickedelement')}
           type="submit"
+          use:vibrate
         >
           <svelte:component this={el.icon} />
           {el.text}

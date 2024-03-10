@@ -6,6 +6,7 @@
   import PlaylistElement from './PlaylistElement.svelte';
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let data;
   export let form;
@@ -61,6 +62,7 @@
         in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
         type="submit"
         class="flex h-36 w-36 items-center justify-center rounded-md bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
+        use:vibrate
       >
         <RoundAdd class="text-3xl text-zinc-600" />
       </button>

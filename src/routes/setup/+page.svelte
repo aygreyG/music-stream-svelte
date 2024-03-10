@@ -5,6 +5,7 @@
   import Folder from './Folder.svelte';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let data;
   let err: string | null = null;
@@ -52,8 +53,11 @@
           <div class="w-full p-2 text-lg font-bold">Database has an owner account already</div>
           <button
             class="whitespace-nowrap rounded-md bg-rose-600 px-2 py-1 text-xs font-semibold text-white transition-all hover:bg-rose-700"
-            formaction="?/deleteowner">Delete Owner</button
+            formaction="?/deleteowner"
+            use:vibrate
           >
+            Delete Owner
+          </button>
         </div>
       {:else}
         <div class="w-full p-2 text-lg font-bold">Create an owner account</div>
@@ -122,6 +126,7 @@
         <button
           class="m-2 rounded-md bg-fuchsia-600 px-2 py-1 font-bold text-zinc-300 transition-colors hover:bg-fuchsia-700"
           type="submit"
+          use:vibrate
         >
           Finish setup
         </button>

@@ -5,6 +5,7 @@
   import { quintOut } from 'svelte/easing';
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
+  import { vibrate } from '$lib/actions/vibrate';
 
   export let data;
   let message: string | null = null;
@@ -41,6 +42,7 @@
               message = null;
             }, 2000);
           }}
+          use:vibrate
         >
           Start
         </button>
@@ -63,6 +65,7 @@
               message = null;
             }, 2000);
           }}
+          use:vibrate
         >
           Start
         </button>
@@ -122,8 +125,11 @@
         </label>
         <button
           class="mt-2 w-full self-center rounded-md bg-fuchsia-600 px-4 py-1 font-semibold transition-colors hover:bg-fuchsia-700"
-          type="submit">Create</button
+          type="submit"
+          use:vibrate
         >
+          Create
+        </button>
       </form>
     </div>
 

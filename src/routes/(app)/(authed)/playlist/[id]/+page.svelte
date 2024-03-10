@@ -7,6 +7,7 @@
   import { enhance } from '$app/forms';
   import HeartOff from 'virtual:icons/iconamoon/heart-off';
   import { playTrack } from '$lib/stores/audioPlayer.js';
+  import { vibrate } from '$lib/actions/vibrate.js';
 
   export let data;
   const [send, receive] = crossfade;
@@ -59,6 +60,7 @@
               class="flex h-full w-full items-center justify-center"
               title="Remove"
               type="submit"
+              use:vibrate
             >
               <HeartOff class="text-2xl text-zinc-600 hover:text-fuchsia-600" />
             </button>

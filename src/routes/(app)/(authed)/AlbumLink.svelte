@@ -6,6 +6,7 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import { crossfade } from '$lib/transitions/crossfade';
+  import { vibrate } from '$lib/actions/vibrate';
   const [send, receive] = crossfade;
 
   export let album: AlbumWithArtist;
@@ -21,6 +22,7 @@
 
 {#if animate}
   <a
+    use:vibrate
     class="h-36 w-36 overflow-hidden rounded-md bg-zinc-900 md:h-40 md:w-40 xl:h-52 xl:w-52"
     class:z-20={outrostarted}
     href="/album/{album.id}"
