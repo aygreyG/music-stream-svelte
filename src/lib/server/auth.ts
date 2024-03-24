@@ -1,8 +1,8 @@
-import { JWT_SECRET } from '$env/static/private';
 import type { Role } from '@prisma/client';
 import prisma from './prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { getServerSettings } from './serverSettings';
 
 export const AUTH_COOKIE = 'access_token';
 const TOKEN_VALID_TIME = 24 * 60 * 60;
@@ -19,12 +19,18 @@ export async function login(username: string, password: string) {
     throw new Error('invalid credentials');
   }
 
+  const serverSettings = await getServerSettings();
+
+  if (!serverSettings?.jwtSecret) {
+    throw new Error('jwt secret not set');
+  }
+
   const jwtPayload: JwtPayload = {
     id: user.id,
     username: user.username
   };
 
-  const token = jwt.sign(jwtPayload, JWT_SECRET, {
+  const token = jwt.sign(jwtPayload, serverSettings.jwtSecret, {
     expiresIn: '1d'
   });
 
@@ -67,8 +73,14 @@ export async function validateToken(authCookie: string) {
     throw new Error('bad token');
   }
 
+  const serverSettings = await getServerSettings();
+
+  if (!serverSettings?.jwtSecret) {
+    throw new Error('jwt secret not set');
+  }
+
   const token = cookieSplit[1];
-  const payload = jwt.verify(token, JWT_SECRET);
+  const payload = jwt.verify(token, serverSettings.jwtSecret);
 
   if (typeof payload === 'string') {
     throw new Error('something went wrong');

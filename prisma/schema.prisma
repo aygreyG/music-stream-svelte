@@ -117,6 +117,7 @@ model ServerSettings {
   updatedAt     DateTime     @updatedAt
   musicFolder   String
   setupComplete Boolean      @default(false)
+  jwtSecret     String       @default(cuid())
   folderScans   FolderScan[]
 }
 
