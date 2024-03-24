@@ -1,6 +1,7 @@
 import type { ServerSettings } from '@prisma/client';
 import prisma from './prisma';
 import { runLibrarySync } from './librarySync';
+import crypto from 'node:crypto';
 
 let serverSettings: ServerSettings | null = null;
 let requestedServerSettings = false;
@@ -8,7 +9,8 @@ let requestedServerSettings = false;
 export async function createServerSettings(folderPath: string) {
   const newSettings = await prisma.serverSettings.create({
     data: {
-      musicFolder: folderPath
+      musicFolder: folderPath,
+      jwtSecret: crypto.randomBytes(32).toString('hex')
     }
   });
 
