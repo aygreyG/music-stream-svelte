@@ -17,6 +17,7 @@
   let playlistName: string = playlist.name;
   let deleteClicked = false;
   const [send, receive] = crossfade;
+  let timeout: string | number | NodeJS.Timeout | undefined;
 
   for (const track of playlist.tracks) {
     if (!albumSet.find((a) => a.id === track.album.id)) {
@@ -51,6 +52,8 @@
 
         cancel();
       }
+    } else {
+      clearTimeout(timeout);
     }
 
     return async ({ update }) => {
@@ -81,6 +84,12 @@
       on:blur={() => {
         if (playlistName === '') {
           playlistName = playlist.name;
+        } else {
+          timeout = setTimeout(() => {
+            if (playlistName !== playlist.name) {
+              playlistName = playlist.name;
+            }
+          }, 100);
         }
       }}
     />

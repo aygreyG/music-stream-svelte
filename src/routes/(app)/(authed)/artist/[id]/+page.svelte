@@ -19,13 +19,14 @@
 
 <div class="h-full overflow-auto p-2">
   {#if animate}
-    <h1 class="p-2 text-center text-2xl font-bold">
+    <h1 out:fade|global={{ duration: 250 }} class="p-2 text-center text-2xl font-bold">
       {data.artist.name}
     </h1>
     {#if data.artist.albums.length > 0}
       <div
         class="p-1 text-lg font-bold"
         in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 50 }}
+        out:fade|global={{ duration: 250 }}
       >
         Albums:
       </div>

@@ -44,7 +44,7 @@
 </div>
 
 <div
-  class="absolute -left-1 top-4 z-50 flex items-center justify-center rounded-e-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
+  class="absolute -right-1 top-24 z-50 flex items-center justify-center rounded-s-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
 >
   <button use:vibrate on:click={() => (open = !open)}>
     {#if open}
@@ -55,16 +55,19 @@
   </button>
 </div>
 
-{#if open}
-  <div
-    transition:slide={{ axis: 'x', duration: 500 }}
-    class="absolute left-0 top-0 z-40 flex h-[calc(100%-0.25rem)] w-full justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md"
-  >
+<div
+  class="absolute top-0 z-40 flex h-full justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300"
+  class:w-full={open}
+  class:left-0={open}
+  class:w-0={!open}
+  class:left-full={!open}
+>
+  {#if open}
     <div
       class="flex h-full flex-col items-stretch justify-center"
-      transition:fade|global={{ duration: 200 }}
+      transition:fade|global={{ duration: 300 }}
     >
       <NavigationElements on:clickedelement={() => (open = false)} {user} />
     </div>
-  </div>
-{/if}
+  {/if}
+</div>

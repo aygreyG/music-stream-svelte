@@ -89,7 +89,7 @@
         in:fade|global={{ duration: 500, easing: cubicInOut }}
       >
         <div
-          class="group h-32 w-32 overflow-clip rounded-md"
+          class="group h-32 w-32 flex-none overflow-clip rounded-md"
           class:z-20={albumAnimating}
           in:receive|global={{ key: `album-image-${data.album.id}` }}
           on:introstart={() => (albumAnimating = true)}

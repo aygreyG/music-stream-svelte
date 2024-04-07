@@ -5,7 +5,7 @@
   export let data;
 </script>
 
-<div class="flex h-[calc(100%-11rem)] gap-1 pb-1">
+<div class="mb-1 flex h-[calc(100%-11rem)] gap-1 rounded-md">
   <NavBar user={data.user} />
   <div class="h-full w-full overflow-hidden rounded-md bg-zinc-900/95 sm:w-8/12 xl:w-9/12">
     <slot />
