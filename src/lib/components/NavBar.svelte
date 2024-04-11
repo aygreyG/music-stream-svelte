@@ -56,7 +56,7 @@
 </div>
 
 <div
-  class="absolute top-0 z-40 flex h-full justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300"
+  class="absolute top-0 z-40 flex h-[calc(100%-0.25rem)] justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300"
   class:w-full={open}
   class:left-0={open}
   class:w-0={!open}
