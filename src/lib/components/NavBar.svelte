@@ -36,7 +36,11 @@
       on:transitionend={() => (playlistTransitioning = false)}
       class="flex h-full min-h-fit flex-col overflow-auto rounded-md bg-zinc-900/95 p-4"
     >
-      <div class="flex flex-none flex-col">
+      <div
+        on:transitionstart|stopPropagation
+        on:transitionend|stopPropagation
+        class="flex flex-none flex-col"
+      >
         <div transition:fly|global={{ duration: 300, x: -20 }} class="font-bold">Playlists</div>
         {#each user.playlists as playlist, index (playlist.id)}
           {#if animate}
