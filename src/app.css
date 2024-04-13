@@ -24,7 +24,7 @@
   @apply bg-gradient-to-b from-fuchsia-600 via-indigo-600 to-cyan-400 text-zinc-300;
 }
 
-@media (min-width: 1921px) or (min-height: 1300px) {
+@media (min-width: 1921px) or ((min-height: 1300px) and (min-width: 1200px)) {
   :root {
     font-size: 24px;
   }

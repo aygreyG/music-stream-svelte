@@ -38,20 +38,20 @@
 
 {#if animate}
   <a
-    class="flex justify-between from-zinc-600/10 px-4 py-2 transition-colors hover:bg-gradient-to-r"
+    class="flex justify-between gap-2 from-zinc-600/10 px-4 py-2 transition-colors hover:bg-gradient-to-r"
     in:fly={{ duration: 300, easing: quintOut, x: -20, delay }}
     href="/artist/{artist.id}"
   >
     <div>
       {artist.name}
     </div>
-    <div>
+    <div class="max-[500px]:hidden">
       {trackAndAlbumCount}
     </div>
   </a>
 {:else}
   <a
-    class="flex justify-between p-2 pl-4 opacity-0"
+    class="flex justify-between gap-2 p-2 pl-4 opacity-0"
     use:observeVisibility={{
       onVisible: () => {
         animate = true;

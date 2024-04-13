@@ -7,24 +7,37 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { vibrate } from '$lib/actions/vibrate';
+  import { currentTrack } from '$lib/stores/audioPlayer';
+  import { quintOut } from 'svelte/easing';
+  import AlbumImage from './AlbumImage.svelte';
 
   export let user: SignedInUser | null = null;
   let open: boolean = false;
   let animate = false;
+  let playlistTransitioning = false;
 
   onMount(() => {
     animate = true;
   });
 </script>
 
-<div class="hidden h-full w-4/12 flex-col gap-1 sm:flex xl:w-3/12">
-  <div class="flex flex-col gap-2 rounded-md bg-zinc-900/95 p-4">
+<div class="hidden h-full w-48 flex-none flex-col gap-1 sm:flex md:w-60">
+  <div
+    class="flex flex-col gap-2 rounded-md bg-zinc-900/95 p-4"
+    class:h-full={!(user && user.playlists.length > 0 && !playlistTransitioning)}
+  >
     <NavigationElements {user} />
   </div>
-  <div class="flex h-full min-h-fit flex-col overflow-auto rounded-md bg-zinc-900/95 p-4">
-    {#if user && user.playlists.length > 0}
+
+  {#if user && user.playlists.length > 0}
+    <div
+      transition:fade={{ duration: 300 }}
+      on:transitionstart={() => (playlistTransitioning = true)}
+      on:transitionend={() => (playlistTransitioning = false)}
+      class="flex h-full min-h-fit flex-col overflow-auto rounded-md bg-zinc-900/95 p-4"
+    >
       <div class="flex flex-none flex-col">
-        <div class="font-bold">Playlists</div>
+        <div transition:fly|global={{ duration: 300, x: -20 }} class="font-bold">Playlists</div>
         {#each user.playlists as playlist, index (playlist.id)}
           {#if animate}
             <a
@@ -39,6 +52,40 @@
           {/if}
         {/each}
       </div>
+    </div>
+  {/if}
+
+  <div class="size-48 flex-none overflow-hidden rounded-md bg-zinc-900/95 max-sm:hidden md:size-60">
+    {#if $currentTrack && user}
+      {#key $currentTrack.id}
+        <a
+          in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
+          out:fly={{ duration: 300, easing: quintOut, x: 20 }}
+          href="/album/{$currentTrack.album.id}"
+          class="flex h-full w-full overflow-hidden rounded-md"
+        >
+          <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
+          <div
+            class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
+          >
+            <a
+              href="/album/{$currentTrack.album.id}"
+              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
+            >
+              {$currentTrack.title}
+            </a>
+            <div
+              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
+            >
+              {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                <a class="hover:underline" href="/artist/{artist.id}">
+                  {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
+                </a>
+              {/each}
+            </div>
+          </div>
+        </a>
+      {/key}
     {/if}
   </div>
 </div>
@@ -56,7 +103,7 @@
 </div>
 
 <div
-  class="absolute top-0 z-40 flex h-[calc(100%-0.25rem)] justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300"
+  class="absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300"
   class:w-full={open}
   class:left-0={open}
   class:w-0={!open}

@@ -137,51 +137,19 @@
 </script>
 
 <div class="flex h-full w-full gap-1">
-  <div class="h-44 w-44 flex-none overflow-hidden rounded-md bg-zinc-900/95 max-sm:hidden">
-    {#if $currentTrack && user}
-      <audio
-        preload="metadata"
-        src="/api/play/{$currentTrack.id}"
-        bind:currentTime
-        bind:duration
-        bind:paused={$paused}
-        bind:this={player}
-        bind:volume
-        autoplay={true}
-        on:ended={onEnded}
-      />
-
-      {#key $currentTrack.id}
-        <a
-          in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
-          out:fly={{ duration: 300, easing: quintOut, x: 20 }}
-          href="/album/{$currentTrack.album.id}"
-          class="flex h-44 w-44 overflow-hidden rounded-md"
-        >
-          <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
-          <div
-            class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
-          >
-            <a
-              href="/album/{$currentTrack.album.id}"
-              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
-            >
-              {$currentTrack.title}
-            </a>
-            <div
-              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
-            >
-              {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                <a class="hover:underline" href="/artist/{artist.id}">
-                  {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
-                </a>
-              {/each}
-            </div>
-          </div>
-        </a>
-      {/key}
-    {/if}
-  </div>
+  {#if $currentTrack && user}
+    <audio
+      preload="metadata"
+      src="/api/play/{$currentTrack.id}"
+      bind:currentTime
+      bind:duration
+      bind:paused={$paused}
+      bind:this={player}
+      bind:volume
+      autoplay={true}
+      on:ended={onEnded}
+    />
+  {/if}
   <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
     {#if user}
       <div class="flex h-full w-full flex-col justify-around px-2">
