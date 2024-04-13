@@ -12,7 +12,7 @@
   import type { SignedInUser } from '$lib/shared/types';
   import { currentTrack, playNext, paused, playPrevious } from '$lib/stores/audioPlayer';
   import AlbumImage from './AlbumImage.svelte';
-  import { fade, fly } from 'svelte/transition';
+  import { fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
