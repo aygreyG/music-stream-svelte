@@ -32,12 +32,12 @@
     id={index.toString()}
   >
     <div>
-      <AlbumImage alt={album.title} id={album.id} />
+      <AlbumImage artId={album.albumArtId} alt={album.title} id={album.id} />
     </div>
     <div class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center">
       <div class="z-10 overflow-hidden whitespace-nowrap rounded-md" class:hidden={outrostarted}>
         <div class="absolute -left-1 -top-24 h-fit w-[calc(100%+0.5rem)] md:-top-28 xl:-top-40">
-          <AlbumImage alt={album.title} id={album.id} maxSize="s" blur />
+          <AlbumImage alt={album.title} artId={album.albumArtId} id={album.id} maxSize="s" blur />
         </div>
         <div class="h-full w-full overflow-hidden text-ellipsis bg-zinc-900/80 px-1">
           {album.title}
@@ -50,7 +50,7 @@
         <div
           class="absolute -left-1 -top-[7.75rem] h-fit w-[calc(100%+0.5rem)] md:-top-36 xl:-top-48"
         >
-          <AlbumImage alt={album.title} id={album.id} maxSize="s" blur />
+          <AlbumImage alt={album.title} id={album.id} artId={album.albumArtId} maxSize="s" blur />
         </div>
         <div class="h-full w-full overflow-hidden text-ellipsis bg-zinc-900/80 px-1">
           {album.albumArtist.name}

@@ -260,6 +260,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
           });
 
           if (!album) {
+            const albumArt = await getAlbumArt(dir, data, albumArtist);
             album = await tx.album.create({
               data: {
                 title: data.common.album as string,
@@ -267,7 +268,8 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
                 albumArtist: {
                   connect: { id: albumArtist.id }
                 },
-                albumArt: await getAlbumArt(dir, data, albumArtist)
+                albumArt,
+                albumArtId: albumArt ? crypto.randomUUID() : null
               },
               include: {
                 tracks: true

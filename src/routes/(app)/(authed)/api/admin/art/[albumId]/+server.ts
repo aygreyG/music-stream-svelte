@@ -52,7 +52,8 @@ export const POST = async ({ request, params }) => {
             id: albumId
           },
           data: {
-            albumArt: join(coversDir, `${albumArtFileName}.${ext}`)
+            albumArt: join(coversDir, `${albumArtFileName}.${ext}`),
+            albumArtId: crypto.randomUUID()
           }
         });
 

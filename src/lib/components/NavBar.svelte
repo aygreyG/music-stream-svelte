@@ -68,7 +68,11 @@
           href="/album/{$currentTrack.album.id}"
           class="flex h-full w-full overflow-hidden rounded-md"
         >
-          <AlbumImage alt={$currentTrack.album.title} id={$currentTrack.album.id} />
+          <AlbumImage
+            alt={$currentTrack.album.title}
+            id={$currentTrack.album.id}
+            artId={$currentTrack.album.albumArtId}
+          />
           <div
             class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
           >
@@ -86,6 +90,10 @@
                   {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
                 </a>
               {/each}
+              -
+              <a class="hover:underline" href="/artist/${$currentTrack.album.id}">
+                {$currentTrack.album.title}
+              </a>
             </div>
           </div>
         </a>

@@ -107,7 +107,12 @@
       <div
         class="absolute left-0 top-0 z-0 h-12 w-12 overflow-hidden rounded-md group-hover:opacity-20"
       >
-        <AlbumImage alt={track.album.title} id={track.album.id} maxSize="s" />
+        <AlbumImage
+          alt={track.album.title}
+          artId={track.album.albumArtId}
+          id={track.album.id}
+          maxSize="s"
+        />
       </div>
     {/if}
   </div>

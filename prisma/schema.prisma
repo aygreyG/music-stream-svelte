@@ -39,7 +39,7 @@ model Album {
   updatedAt     DateTime @updatedAt
   releaseDate   String?
   albumArt      String?
-  albumArtLarge String?
+  albumArtId    String?
   albumArtistId String
   albumArtist   Artist   @relation(fields: [albumArtistId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   tracks        Track[]

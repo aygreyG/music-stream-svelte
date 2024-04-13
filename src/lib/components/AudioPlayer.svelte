@@ -89,17 +89,17 @@
           album: val.album.title,
           artwork: [
             {
-              src: `/api/image/${val.album.id}/l/avif`,
+              src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/avif`,
               sizes: '300x300',
               type: 'image/avif'
             },
             {
-              src: `/api/image/${val.album.id}/l/webp`,
+              src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/webp`,
               sizes: '300x300',
               type: 'image/webp'
             },
             {
-              src: `/api/image/${val.album.id}/l`,
+              src: `/api/image/${val.album.id}/${val.album.albumArtId}/l`,
               sizes: '300x300',
               type: `image/${val.album.albumArt?.split('.').pop()}`
             }
@@ -166,6 +166,7 @@
                   <AlbumImage
                     alt={$currentTrack.album.title}
                     id={$currentTrack.album.id}
+                    artId={$currentTrack.album.albumArtId}
                     maxSize="s"
                   />
                 </a>

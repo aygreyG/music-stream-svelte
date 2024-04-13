@@ -78,6 +78,7 @@
           blur
           alt="Backdrop for {data.album.title}"
           id={data.album.id}
+          artId={data.album.albumArtId}
           maxSize="s"
         />
       </div>
@@ -99,6 +100,7 @@
             key={data.album.updatedAt.toISOString()}
             alt={data.album.title}
             id={data.album.id}
+            artId={data.album.albumArtId}
           />
           {#if !albumAnimating && data.user?.role !== 'USER'}
             <div

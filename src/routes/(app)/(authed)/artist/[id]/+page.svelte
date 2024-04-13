@@ -1,11 +1,7 @@
 <script lang="ts">
-  import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer.js';
-  import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
-  import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
-  import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { onMount } from 'svelte';
   import { fade, fly } from 'svelte/transition';
-  import { cubicInOut, quintOut } from 'svelte/easing';
+  import { quintOut } from 'svelte/easing';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import AlbumLink from '../../AlbumLink.svelte';
 
