@@ -3,11 +3,12 @@ import { error, redirect } from '@sveltejs/kit';
 import { readFile } from 'fs/promises';
 
 export const GET = async ({ params, setHeaders }) => {
-  const { albumId } = params;
+  const { albumId, albumArtId } = params;
 
   const album = await prisma.album.findUnique({
     where: {
-      id: albumId
+      id: albumId,
+      albumArtId
     }
   });
 

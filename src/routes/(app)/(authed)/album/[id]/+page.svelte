@@ -19,6 +19,7 @@
   import { flip } from 'svelte/animate';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { vibrate } from '$lib/actions/vibrate';
+  import { currentTrack } from '$lib/stores/audioPlayer';
 
   export let data;
   let animate: boolean = false;
@@ -57,6 +58,12 @@
     albumArtLoading = false;
 
     if (response.ok) {
+      // Handling if the currently playing track is from the same album
+      if ($currentTrack && $currentTrack.albumId === data.album.id) {
+        const responseJson = await response.json();
+        $currentTrack.album.albumArtId = responseJson.albumArtId;
+      }
+
       await invalidate('album:art');
     }
   }
@@ -78,6 +85,7 @@
           blur
           alt="Backdrop for {data.album.title}"
           id={data.album.id}
+          artId={data.album.albumArtId}
           maxSize="s"
         />
       </div>
@@ -99,6 +107,7 @@
             key={data.album.updatedAt.toISOString()}
             alt={data.album.title}
             id={data.album.id}
+            artId={data.album.albumArtId}
           />
           {#if !albumAnimating && data.user?.role !== 'USER'}
             <div
@@ -166,7 +175,9 @@
       <div
         class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95"
       >
-        <div class="flex items-center justify-between">
+        <div
+          class="sticky left-0 top-0 z-20 flex w-full items-center justify-between bg-inherit backdrop-blur-sm"
+        >
           <div class="w-full text-center text-xl font-bold">Edit album art</div>
           <div
             class="flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"

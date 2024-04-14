@@ -47,16 +47,18 @@ export const POST = async ({ request, params }) => {
         const ext = albumArt.headers.get('content-type')?.split('/')[1] || 'jpg';
         const buffer = Buffer.from(await albumArt.arrayBuffer());
         await writeFile(join(coversDir, `${albumArtFileName}.${ext}`), buffer);
+        const albumArtId = crypto.randomUUID();
         await prisma.album.update({
           where: {
             id: albumId
           },
           data: {
-            albumArt: join(coversDir, `${albumArtFileName}.${ext}`)
+            albumArt: join(coversDir, `${albumArtFileName}.${ext}`),
+            albumArtId
           }
         });
 
-        return json({ message: 'Album art fetched' });
+        return json({ message: 'Album art fetched', albumArtId });
       } catch (e) {
         console.error(e);
         error(500, { message: 'Failed to fetch album art' });
