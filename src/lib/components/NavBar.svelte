@@ -60,7 +60,7 @@
   {/if}
 
   <div
-    class="max-sm:hidden size-48 flex-none overflow-hidden rounded-md bg-zinc-900/95 md:size-60 h-sm:size-48"
+    class="hidden size-48 flex-none overflow-hidden rounded-md bg-zinc-900/95 sm:block md:size-60 h-sm:size-48"
   >
     {#if $currentTrack && user}
       {#key $currentTrack.id}
@@ -117,7 +117,7 @@
 </div>
 
 <div
-  class="absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300"
+  class="absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-y-auto overflow-x-clip rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300 sm:hidden"
   class:w-full={open}
   class:left-0={open}
   class:w-0={!open}

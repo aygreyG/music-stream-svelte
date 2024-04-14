@@ -15,7 +15,7 @@
 <div>
   <a
     on:click={() => dispatch('clickedelement')}
-    class="flex items-center gap-2 transition-colors max-sm:px-16 max-sm:text-2xl"
+    class="flex items-center gap-2 px-16 text-2xl transition-colors sm:px-0 sm:text-base"
     class:text-fuchsia-600={currentPage.replaceAll('/', '') === href.replaceAll('/', '')}
     {href}
     use:vibrate

@@ -68,7 +68,7 @@
 </script>
 
 {#if user}
-  <p class="font-bold max-sm:whitespace-nowrap max-sm:p-4 max-sm:text-3xl">
+  <p class="whitespace-nowrap p-4 text-3xl font-bold sm:whitespace-normal sm:p-0 sm:text-base">
     Welcome {user.username}
   </p>
   {#if user.role === 'ADMIN' || user.role === 'OWNER'}
@@ -78,9 +78,9 @@
   {/if}
   {#each loggedInElements as el}
     {#if el.href === '/logout'}
-      <form class="max-sm:px-16" method="POST" action="/logout" use:enhance>
+      <form class="px-16 sm:px-0" method="POST" action="/logout" use:enhance>
         <button
-          class="flex w-full items-center justify-start gap-2 max-sm:text-2xl"
+          class="flex w-full items-center justify-start gap-2 text-2xl sm:text-base"
           on:click={() => dispatch('clickedelement')}
           type="submit"
           use:vibrate

@@ -13,7 +13,7 @@
     <div class="h-full w-full overflow-hidden rounded-md bg-zinc-900/95">
       <slot />
     </div>
-    <div class="max-sm:h-44 flex-none sm:h-28">
+    <div class="h-44 flex-none sm:h-28">
       <AudioPlayer user={data.user} />
     </div>
   </div>
