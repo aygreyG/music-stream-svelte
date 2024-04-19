@@ -40,6 +40,7 @@ This is a self-hosted music streaming service that allows you to stream the musi
 
 ## Prequisites
 
+- Only Linux is supported unless you use the docker image
 - Proper metadata for your music files (artist, album, title)
 - Album covers are fetched from MusicBrainz API, so it's recommended to have the correct album and artist names
 - Music files must be stored in a directory that is accessible and modifiable by the server
