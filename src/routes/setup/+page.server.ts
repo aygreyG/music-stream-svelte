@@ -1,4 +1,5 @@
 import { register } from '$lib/server/auth.js';
+import { env } from '$env/dynamic/private';
 import prisma from '$lib/server/prisma';
 import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
@@ -41,7 +42,12 @@ export const load = async () => {
     }
   });
 
-  const dir = '/';
+  const dir = env.MUSIC_PATH || '/';
+  const defaultFolder: FolderNode = {
+    label: dir !== '/' ? dir.split('/').pop()! : '/',
+    path: dir,
+    children: []
+  };
 
   try {
     const files = await readdir(dir);
@@ -51,17 +57,18 @@ export const load = async () => {
       const stats = await lstat(path);
       if (stats.isDirectory()) {
         const folderName = path.split('/').pop()!;
-        musicFolders.push({ label: folderName, path, children: [] });
+        musicFolders.push({ label: folderName, path, children: [], parent: defaultFolder });
       }
     }
+    defaultFolder.children = musicFolders;
   } catch (err) {
     console.error(`Error reading directory ${dir}: ${err}`);
   }
 
   return {
-    musicFolders,
     title: 'Setup',
-    hasOwner: !!owner
+    hasOwner: !!owner,
+    defaultFolder
   };
 };
 

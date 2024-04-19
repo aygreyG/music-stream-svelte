@@ -16,6 +16,10 @@
 
   onMount(() => {
     scrolledToBottom = container.scrollTop < container.scrollHeight - container.clientHeight - 10;
+
+    if (data.defaultFolder.path !== '/') {
+      pickedFolder.set(data.defaultFolder);
+    }
   });
 </script>
 
@@ -113,9 +117,13 @@
           }}
           class="flex flex-col overflow-auto"
         >
-          {#each data.musicFolders as folder}
-            <Folder folderNode={folder} />
-          {/each}
+          {#if data.defaultFolder.path !== '/'}
+            <Folder folderNode={data.defaultFolder} />
+          {:else}
+            {#each data.defaultFolder.children as folder}
+              <Folder folderNode={folder} />
+            {/each}
+          {/if}
         </div>
       </div>
 
