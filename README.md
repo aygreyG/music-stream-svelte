@@ -1,38 +1,103 @@
-# create-svelte
+# Music Stream Svelte
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Table of Contents
 
-## Creating a project
+- [What is this?](#what-is-this)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Prequisites](#prequisites)
+- [Installation](#installation)
+  - [Docker](#docker)
+  - [Manual](#manual)
 
-If you're seeing this, you've probably already done this step. Congrats!
+---
+
+## What is this?
+
+This is a self-hosted music streaming service that allows you to stream the music stored on your computer/home server to any device.
+
+---
+
+## Tech Stack
+
+- [SvelteKit (TypeScript)](https://kit.svelte.dev/)
+- [TailwindCSS](https://tailwindcss.com/)
+- [Prisma (PostgreSQL)](https://www.prisma.io/)
+
+## Features
+
+- Responsive design
+- User authentication
+- Streaming music
+- Playlists
+- Search
+- Album covers through [MusicBrainz API](https://musicbrainz.org/doc/MusicBrainz_API)
+
+---
+
+## Prequisites
+
+- Proper metadata for your music files (artist, album, title)
+- Album covers are fetched from MusicBrainz API, so it's recommended to have the correct album and artist names
+- Music files must be stored in a directory that is accessible and modifiable by the server
+- Music files must be of the following formats: `mp3`, `flac`, `wav`
+- No folder that contains music files should start with a `.` or `-`
+
+---
+
+## Installation
+
+### Docker
+
+- Install PostgreSQL and create a database
+- Install Docker
+- With `docker run`
+
+> make sure to replace `/path/to/music` with the path to your music directory and `postgresql://user:password@host:port/dbname` with your database URL
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+docker run -d \
+  -p 3000:3000 \
+  -v /path/to/music:/music \
+  -e DATABASE_URL=postgresql://user:password@host:port/dbname \
+  aygreyg/svelte-music-stream
 ```
 
-## Developing
+- if you want the server to be accessible from localhost add `-e ORIGIN=http://localhost:3000`
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Manual
+
+- Install Node.js
+- Install PostgreSQL and create a database
+- Clone the repository
+- Install dependencies and generate prisma client:
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+npm install && npx prisma generate
 ```
 
-## Building
-
-To create a production version of your app:
+- Build the project:
 
 ```bash
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+- If you want to remove unused dependencies run:
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```bash
+npm prune --production
+```
+
+- Make `start.sh` executable:
+
+```bash
+chmod +x start.sh
+```
+
+- If you only want to expose an explicit folder use `MUSIC_PATH=/path/to/music`
+- If you want the server to be accessible from localhost add `ORIGIN=http://localhost:3000`
+- Start the server with
+
+```bash
+DATABASE_URL=postgresql://user:password@host:port/dbname ./start.sh
+```

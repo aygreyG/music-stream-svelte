@@ -11,8 +11,8 @@ COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/
 COPY /prisma prisma
 COPY package.json .
-COPY entrypoint.sh entrypoint.sh
-RUN chmod +x entrypoint.sh
+COPY start.sh start.sh
+RUN chmod +x start.sh
 EXPOSE 3000
 ENV NODE_ENV=production
-ENTRYPOINT [ "/app/entrypoint.sh" ]
+ENTRYPOINT [ "/app/start.sh" ]
