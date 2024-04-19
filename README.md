@@ -16,6 +16,9 @@
 
 This is a self-hosted music streaming service that allows you to stream the music stored on your computer/home server to any device.
 
+![music-streamer2](https://github.com/aygreyG/music-stream-svelte/assets/78927537/24a847ef-46d4-455d-b187-985d7624892d)
+
+
 ---
 
 ## Tech Stack
