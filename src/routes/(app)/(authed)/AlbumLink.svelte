@@ -59,8 +59,10 @@
     </div>
   </a>
 {:else}
-  <div
+  <a
     class="h-36 w-36 overflow-hidden opacity-0 md:h-40 md:w-40 xl:h-52 xl:w-52"
+    aria-label="{album.title} by {album.albumArtist.name}"
+    href="/album/{album.id}"
     use:observeVisibility={{
       onVisible: () => {
         animate = true;
