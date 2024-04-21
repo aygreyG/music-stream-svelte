@@ -4,7 +4,6 @@
   import HeartFill from 'virtual:icons/iconamoon/heart-fill';
   import Heart from 'virtual:icons/iconamoon/heart';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
-  import { searchForAlbumRelease } from '$lib/shared/fetchAlbumArt.js';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
   import { cubicIn, cubicInOut } from 'svelte/easing';
@@ -34,7 +33,16 @@
 
   async function openEditModal() {
     if (!releaseResponse) {
-      releaseResponse = searchForAlbumRelease(data.album.albumArtist.name, data.album.title);
+      releaseResponse = fetch('/api/admin/search-art', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          artist: data.album.albumArtist.name,
+          album: data.album.title
+        })
+      }).then((res) => res.json() as Promise<AlbumReleaseSearchResult>);
     }
     editModalOpen = true;
   }
@@ -199,15 +207,15 @@
             <div class="flex h-full w-full items-center justify-center">
               <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-fuchsia-600" />
             </div>
-          {:then rresponse}
-            {#if rresponse.releases.length === 0}
+          {:then { releases }}
+            {#if releases.length === 0}
               <div class="flex h-full w-full flex-col items-center justify-center gap-2">
                 <div class="text-2xl font-bold">No results found</div>
                 <div class="text-xl">Try searching for something else</div>
               </div>
             {:else}
               <div class="flex flex-wrap items-center justify-center gap-2">
-                {#each rresponse.releases as release}
+                {#each releases as release}
                   <AlbumArtFromRelease on:choosen={chooseAlbumArt} {release} />
                 {/each}
               </div>

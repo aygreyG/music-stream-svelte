@@ -18,7 +18,6 @@ This is a self-hosted music streaming service that allows you to stream the musi
 
 ![music-streamer2](https://github.com/aygreyG/music-stream-svelte/assets/78927537/24a847ef-46d4-455d-b187-985d7624892d)
 
-
 ---
 
 ## Tech Stack
@@ -50,6 +49,12 @@ This is a self-hosted music streaming service that allows you to stream the musi
 ---
 
 ## Installation
+
+### After installation
+
+- The server will be running on port `3000`
+- If it is a new installation, you will be redirected to the setup page
+- Create an owner account and make sure to give a real email address (it is used for MusicBrainz API request headers)
 
 ### Docker
 
