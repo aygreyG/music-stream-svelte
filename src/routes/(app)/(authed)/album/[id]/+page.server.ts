@@ -1,5 +1,7 @@
 import prisma from '$lib/server/prisma.js';
 import { error } from '@sveltejs/kit';
+import { access, mkdir, rm, writeFile } from 'fs/promises';
+import { join } from 'path';
 
 export const load = async ({ locals, params, depends }) => {
   const { id } = params;
@@ -106,5 +108,70 @@ export const actions = {
     return {
       playlist
     };
+  },
+  uploadart: async ({ request, params }) => {
+    const { id } = params;
+    const formData = await request.formData();
+    const file = formData.get('artfile') as File;
+
+    if (!file) {
+      return;
+    }
+
+    const album = await prisma.album.findUnique({
+      where: {
+        id
+      },
+      include: {
+        tracks: true,
+        albumArtist: true
+      }
+    });
+
+    if (album && album.tracks.length > 0) {
+      const dir = album.tracks[0].filePath.substring(0, album.tracks[0].filePath.lastIndexOf('/'));
+      const coversDir = join(dir, 'Covers');
+      const regex = / |\.|\[|\]|\\|\//g;
+      const albumArtFileName = `${album.albumArtist.name.replaceAll(
+        regex,
+        '_'
+      )}_${album.title?.replaceAll(regex, '_')}`;
+
+      try {
+        if (
+          await access(coversDir)
+            .then(() => false)
+            .catch(() => true)
+        ) {
+          await mkdir(coversDir);
+        } else {
+          await rm(coversDir, { recursive: true });
+          await mkdir(coversDir);
+        }
+
+        const buffer = Buffer.from(await file.arrayBuffer());
+        await writeFile(
+          join(coversDir, `${albumArtFileName}.${file.name.split('.').pop()}`),
+          buffer
+        );
+        const albumArtId = crypto.randomUUID();
+        await prisma.album.update({
+          where: {
+            id
+          },
+          data: {
+            albumArt: join(coversDir, `${albumArtFileName}.${file.name.split('.').pop()}`),
+            albumArtId
+          }
+        });
+
+        return { message: 'Album art fetched', albumArtId };
+      } catch (e) {
+        console.error(e);
+        return { message: 'Failed to fetch album art' };
+      }
+    } else {
+      return { message: 'Album not found' };
+    }
   }
 };

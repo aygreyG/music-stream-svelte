@@ -5,14 +5,13 @@ const COVER_ART_URL = 'https://coverartarchive.org/release/';
 const APP_NAME = 'SvelteMusicStreamer';
 
 export async function searchForAlbumRelease(
-  artist: string,
-  album: string,
+  query: string,
   ownerEmail: string,
   offset: number = 0,
   limit: number = 10
 ) {
   const response = await fetch(
-    `${API_URL}release?query=${album} AND artist:${artist}&fmt=json&limit=${limit}&offset=${offset}`,
+    `${API_URL}release?query=${query.replaceAll('&', 'and')}&fmt=json&limit=${limit}&offset=${offset}`,
     {
       headers: {
         'User-Agent': `${APP_NAME} ( ${ownerEmail} )`
