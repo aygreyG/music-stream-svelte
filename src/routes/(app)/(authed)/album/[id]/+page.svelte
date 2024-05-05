@@ -1,24 +1,18 @@
 <script lang="ts">
   import RoundEdit from 'virtual:icons/ic/round-edit';
-  import RoundClose from 'virtual:icons/ic/round-close';
   import HeartFill from 'virtual:icons/iconamoon/heart-fill';
   import Heart from 'virtual:icons/iconamoon/heart';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
-  import { cubicIn, cubicInOut } from 'svelte/easing';
+  import { cubicInOut } from 'svelte/easing';
   import { crossfade } from '$lib/transitions/crossfade';
-  import type { AlbumReleaseSearchResult } from '$lib/shared/types.js';
-  import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
   const [send, receive] = crossfade;
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
-  import { invalidate } from '$app/navigation';
   import type { Track } from '@prisma/client';
-  import { enhance } from '$app/forms';
-  import { flip } from 'svelte/animate';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import { currentTrack } from '$lib/stores/audioPlayer';
+  import PlaylistModal from './PlaylistModal.svelte';
+  import EditModal from './EditModal.svelte';
 
   export let data;
   let animate: boolean = false;
@@ -26,54 +20,13 @@
   let editModalOpen: boolean = false;
   let playlistModalOpen: boolean = false;
   let playlistModalTrack: Track;
-  let releaseResponse: Promise<AlbumReleaseSearchResult>;
-  let albumArtLoading: boolean = false;
+
   let container: HTMLDivElement;
   let scrolled = false;
-
-  async function openEditModal() {
-    if (!releaseResponse) {
-      releaseResponse = fetch('/api/admin/search-art', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          artist: data.album.albumArtist.name,
-          album: data.album.title
-        })
-      }).then((res) => res.json() as Promise<AlbumReleaseSearchResult>);
-    }
-    editModalOpen = true;
-  }
 
   function openPlaylistModal(track: Track) {
     playlistModalTrack = track;
     playlistModalOpen = true;
-  }
-
-  async function chooseAlbumArt({ detail: { releaseId } }: CustomEvent<{ releaseId: string }>) {
-    albumArtLoading = true;
-    const response = await fetch(`/api/admin/art/${data.album.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ releaseId })
-    });
-
-    editModalOpen = false;
-    albumArtLoading = false;
-
-    if (response.ok) {
-      // Handling if the currently playing track is from the same album
-      if ($currentTrack && $currentTrack.albumId === data.album.id) {
-        const responseJson = await response.json();
-        $currentTrack.album.albumArtId = responseJson.albumArtId;
-      }
-
-      await invalidate('album:art');
-    }
   }
 
   onMount(() => {
@@ -119,9 +72,13 @@
           />
           {#if !albumAnimating && data.user?.role !== 'USER'}
             <div
-              class="absolute bottom-0 left-0 flex gap-2 rounded-bl-md rounded-tr-md bg-zinc-900/80 backdrop-blur-sm transition-all group-hover:opacity-100 sm:opacity-0"
+              class="absolute bottom-0 left-0 flex gap-2 rounded-bl-md rounded-tr-md bg-zinc-900/80 backdrop-blur-sm transition-all focus-within:opacity-100 group-hover:opacity-100 sm:opacity-0"
             >
-              <button use:vibrate on:click={openEditModal}>
+              <button
+                use:vibrate
+                on:click={() => (editModalOpen = true)}
+                aria-label="Edit album art"
+              >
                 <RoundEdit
                   class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
                 />
@@ -169,150 +126,14 @@
     </div>
   </div>
 
+  <PlaylistModal
+    on:close={() => (playlistModalOpen = false)}
+    open={playlistModalOpen}
+    user={data.user}
+    track={playlistModalTrack}
+  />
+
   {#if editModalOpen}
-    <div
-      transition:fade={{ duration: 200, easing: cubicIn }}
-      class="absolute left-0 top-0 z-10 h-full w-full bg-zinc-900/5 backdrop-blur-sm"
-    >
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        class="absolute left-0 top-0 h-full w-full"
-        on:click={() => (editModalOpen = !editModalOpen)}
-      />
-      <div
-        class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95"
-      >
-        <div
-          class="sticky left-0 top-0 z-20 flex w-full items-center justify-between bg-inherit backdrop-blur-sm"
-        >
-          <div class="w-full text-center text-xl font-bold">Edit album art</div>
-          <div
-            class="flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
-          >
-            <button use:vibrate on:click={() => (editModalOpen = !editModalOpen)}>
-              <RoundClose
-                class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
-              />
-            </button>
-          </div>
-        </div>
-
-        {#if albumArtLoading}
-          <div class="flex h-full w-full items-center justify-center">
-            <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-fuchsia-600" />
-          </div>
-        {:else}
-          {#await releaseResponse}
-            <div class="flex h-full w-full items-center justify-center">
-              <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-fuchsia-600" />
-            </div>
-          {:then { releases }}
-            {#if releases.length === 0}
-              <div class="flex h-full w-full flex-col items-center justify-center gap-2">
-                <div class="text-2xl font-bold">No results found</div>
-                <div class="text-xl">Try searching for something else</div>
-              </div>
-            {:else}
-              <div class="flex flex-wrap items-center justify-center gap-2">
-                {#each releases as release}
-                  <AlbumArtFromRelease on:choosen={chooseAlbumArt} {release} />
-                {/each}
-              </div>
-            {/if}
-          {/await}
-        {/if}
-      </div>
-    </div>
-  {/if}
-
-  {#if playlistModalOpen}
-    <div
-      transition:fade={{ duration: 200, easing: cubicIn }}
-      class="absolute left-0 top-0 z-10 h-full w-full bg-zinc-900/5 backdrop-blur-sm"
-    >
-      <!-- svelte-ignore a11y-no-static-element-interactions -->
-      <!-- svelte-ignore a11y-click-events-have-key-events -->
-      <div
-        class="absolute left-0 top-0 h-full w-full"
-        on:click={() => (playlistModalOpen = !playlistModalOpen)}
-      />
-      <div
-        class="absolute left-0 top-0 m-6 h-[calc(100%-3rem)] w-[calc(100%-3rem)] overflow-auto rounded-md bg-zinc-900/95 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
-      >
-        <div class="flex items-center justify-between">
-          <div class="w-full px-4 pt-4 text-center text-xl font-bold">
-            Add "{playlistModalTrack.title}" to playlist
-          </div>
-          <div
-            class="absolute right-0 top-0 flex items-center justify-center rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
-          >
-            <button use:vibrate on:click={() => (playlistModalOpen = !playlistModalOpen)}>
-              <RoundClose
-                class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
-              />
-            </button>
-          </div>
-        </div>
-
-        {#if data.user}
-          <div class="flex flex-col items-center gap-2 p-4">
-            <form
-              use:enhance
-              class="flex w-full max-w-lg justify-between rounded-md border-none bg-zinc-600"
-              method="POST"
-              action="?/addplaylist"
-            >
-              <input type="hidden" name="trackid" value={playlistModalTrack.id} />
-              <input
-                class="w-full flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
-                type="text"
-                autocomplete="off"
-                placeholder="New playlist"
-                name="playlistname"
-                required
-              />
-              <button
-                class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
-                type="submit"
-                use:vibrate
-              >
-                Add
-              </button>
-            </form>
-
-            {#each data.user.playlists as playlist (playlist.id)}
-              <form
-                class="flex w-full max-w-lg items-center justify-between rounded-md border-none bg-zinc-600 px-2 py-1"
-                method="POST"
-                use:enhance
-                animate:flip={{ duration: 100 }}
-                action="?/addtoplaylist"
-              >
-                <div class="flex w-full items-center justify-between pr-2">
-                  <div>{playlist.name}</div>
-                  <div>({playlist.tracks.length})</div>
-                </div>
-                <input type="hidden" name="playlistid" value={playlist.id} />
-                <input type="hidden" name="trackid" value={playlistModalTrack.id} />
-                <button type="submit" class="group" use:vibrate>
-                  {#if playlist.tracks.some((t) => t.id === playlistModalTrack.id)}
-                    <input type="hidden" name="remove" value={true} />
-                    <HeartFill class="text-2xl transition-colors hover:text-fuchsia-600" />
-                  {:else}
-                    <HeartFill
-                      class="text-2xl text-fuchsia-600 opacity-0 transition-all group-hover:opacity-100"
-                    />
-                    <Heart
-                      class="absolute left-0 top-0 text-2xl transition-all group-hover:opacity-0"
-                    />
-                  {/if}
-                </button>
-              </form>
-            {/each}
-          </div>
-        {/if}
-      </div>
-    </div>
+    <EditModal on:close={() => (editModalOpen = false)} album={data.album} />
   {/if}
 {/key}

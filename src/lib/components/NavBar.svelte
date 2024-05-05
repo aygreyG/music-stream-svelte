@@ -10,6 +10,7 @@
   import { currentTrack } from '$lib/stores/audioPlayer';
   import { quintOut } from 'svelte/easing';
   import AlbumImage from './AlbumImage.svelte';
+  import { beforeNavigate } from '$app/navigation';
 
   export let user: SignedInUser | null = null;
   let open: boolean = false;
@@ -18,6 +19,13 @@
 
   onMount(() => {
     animate = true;
+  });
+
+  beforeNavigate((navigation) => {
+    if (open) {
+      navigation.cancel();
+      open = false;
+    }
   });
 </script>
 

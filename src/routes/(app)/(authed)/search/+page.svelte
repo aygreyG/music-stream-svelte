@@ -56,7 +56,7 @@
     <label class="flex w-1/3 items-center border-e border-zinc-500">
       <select
         name="type"
-        class="w-full border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full border-none bg-zinc-600 py-1 outline-none transition-all focus:ring-2 focus:ring-fuchsia-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
         on:change={() => {
           if (searchString) formElement.requestSubmit();
         }}
