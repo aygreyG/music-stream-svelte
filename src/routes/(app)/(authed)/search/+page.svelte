@@ -38,7 +38,7 @@
         autofocus
         required
         placeholder="Search"
-        class="w-full rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         on:input={() => {
@@ -56,7 +56,7 @@
     <label class="flex w-1/3 items-center border-e border-zinc-500">
       <select
         name="type"
-        class="w-full border-none bg-zinc-600 py-1 outline-none transition-all focus:ring-2 focus:ring-fuchsia-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full border-none bg-zinc-600 py-1 outline-none transition-all focus:ring-2 focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary"
         on:change={() => {
           if (searchString) formElement.requestSubmit();
         }}
@@ -70,7 +70,7 @@
     </label>
     <button
       type="submit"
-      class="flex items-center justify-center rounded-e-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600 disabled:cursor-not-allowed disabled:opacity-50"
+      class="flex items-center justify-center rounded-e-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
       disabled={!searchString}
       use:vibrate={{ mute: !searchString }}
     >
@@ -95,7 +95,7 @@
   >
     {#if searching}
       <div class="flex h-full w-full items-center justify-center">
-        <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-fuchsia-600" />
+        <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-primary" />
       </div>
     {/if}
     {#if data?.success && data?.results && !searching}

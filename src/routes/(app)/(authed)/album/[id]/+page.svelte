@@ -80,7 +80,7 @@
                 aria-label="Edit album art"
               >
                 <RoundEdit
-                  class="p-1 text-3xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600"
+                  class="p-1 text-3xl text-primary/70 transition-colors hover:text-primary"
                 />
               </button>
             </div>
@@ -111,7 +111,7 @@
                 use:vibrate
                 on:click={() => openPlaylistModal(track)}
                 slot="button"
-                class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-fuchsia-600"
+                class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-primary"
               >
                 {#if track.playlists.length > 0}
                   <HeartFill class="text-2xl transition-colors" />

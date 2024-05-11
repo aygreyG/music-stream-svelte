@@ -231,7 +231,7 @@
               on:click={() => (shuffle = !shuffle)}
               class="text-2xl opacity-15 transition-colors"
               disabled
-              class:text-fuchsia-600={shuffle}
+              class:text-primary={shuffle}
               class:text-zinc-400={!shuffle}
               aria-label="Shuffle"
             >
@@ -268,7 +268,7 @@
             <button
               on:click={() => (repeat = !repeat)}
               class="text-2xl transition-colors"
-              class:text-fuchsia-600={repeat}
+              class:text-primary={repeat}
               class:text-zinc-400={!repeat}
               aria-label="Repeat"
               use:vibrate
@@ -336,14 +336,14 @@
   input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    border: 2px solid rgb(192 38 211);
-    box-shadow: -10007px 0 0 10000px rgb(192 38 211);
+    border: 2px solid rgb(var(--color-primary));
+    box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
     @apply h-4 w-4 rounded-full bg-zinc-300;
   }
 
   input[type='range']::-moz-range-thumb {
-    border: 2px solid rgb(192 38 211);
-    box-shadow: -10007px 0 0 10000px rgb(192 38 211);
+    border: 2px solid rgb(var(--color-primary));
+    box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
     @apply h-3 w-3 rounded-full bg-zinc-300;
   }
 

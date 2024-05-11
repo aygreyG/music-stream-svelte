@@ -87,11 +87,11 @@
       enctype="multipart/form-data"
       method="POST"
       action="?/uploadart"
-      class="flex w-full max-w-4xl justify-between px-6 py-4"
+      class="flex w-full max-w-4xl flex-col justify-between gap-4 px-6 py-4 lg:flex-row lg:gap-0"
     >
       <input accept="image/*" name="artfile" type="file" required />
       <button
-        class="flex items-center justify-center rounded-md bg-fuchsia-600 px-4 transition-colors hover:bg-fuchsia-700 focus-visible:bg-fuchsia-700"
+        class="flex items-center justify-center rounded-md bg-primary px-4 transition-colors hover:bg-primary/80 focus-visible:bg-primary/80"
         type="submit"
         use:vibrate
       >
@@ -101,13 +101,13 @@
 
     <div class="flex w-full max-w-4xl px-6 py-1">
       <input
-        class="w-full text-ellipsis rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full text-ellipsis rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={albumArtQuery}
         on:keydown={(e) => e.key === 'Enter' && searchArt()}
       />
       <button
-        class="flex items-center justify-center rounded-e-md border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600 disabled:cursor-not-allowed disabled:opacity-50"
+        class="flex items-center justify-center rounded-e-md border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         on:click={searchArt}
         use:vibrate
         disabled={albumArtQuery === '' || albumArtLoading}
@@ -119,7 +119,7 @@
     <div class="w-full max-w-4xl px-6 pb-2 text-xs text-zinc-300">
       Options for searching album art
       <a
-        class="underline transition-colors hover:text-fuchsia-600"
+        class="underline transition-colors hover:text-primary"
         href="https://musicbrainz.org/doc/MusicBrainz_API/Search#Release"
         target="_blank">here</a
       >.
@@ -128,12 +128,12 @@
 
   {#if albumArtLoading}
     <div class="flex h-full w-full items-center justify-center">
-      <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-fuchsia-600" />
+      <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-primary" />
     </div>
   {:else}
     {#await releaseResponse}
       <div class="flex h-full w-full items-center justify-center">
-        <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-fuchsia-600" />
+        <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-primary" />
       </div>
     {:then response}
       {#if !response}

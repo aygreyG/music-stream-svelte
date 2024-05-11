@@ -1,3 +1,12 @@
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgba(var(${variableName}), ${opacityValue})`;
+    }
+    return `rgb(var(${variableName}))`;
+  };
+}
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
@@ -13,6 +22,25 @@ export default {
         'h-sm': {
           raw: '(max-height: 560px)'
         }
+      },
+      textColor: {
+        primary: withOpacity('--color-primary'),
+        accessible: withOpacity('--color-accessible')
+      },
+      backgroundColor: {
+        primary: withOpacity('--color-primary')
+      },
+      borderColor: {
+        primary: withOpacity('--color-primary')
+      },
+      ringColor: {
+        primary: withOpacity('--color-primary')
+      },
+      outlineColor: {
+        primary: withOpacity('--color-primary')
+      },
+      borderRadius: {
+        md: 'var(--rounding)'
       }
     }
   },

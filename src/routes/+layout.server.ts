@@ -1,5 +1,45 @@
-export const load = async ({ locals }) => {
+import prisma from '$lib/server/prisma.js';
+import { defaultTheme } from '$lib/shared/theme.js';
+import type { Theme } from '@prisma/client';
+
+export const load = async ({ locals, depends }) => {
+  depends('mainLayout');
+  let theme: Theme;
+
+  if (locals.user?.themes && locals.user.themes.length > 0) {
+    theme = locals.user.themes[0];
+  } else {
+    const owner = await prisma.user.findFirst({
+      where: {
+        role: 'OWNER'
+      },
+      select: {
+        id: true,
+        themes: {
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
+
+    if (owner?.themes && owner.themes.length > 0) {
+      theme = owner.themes[0];
+    } else if (owner) {
+      theme = await prisma.theme.create({
+        data: {
+          user: {
+            connect: {
+              id: owner.id
+            }
+          }
+        }
+      });
+    } else {
+      theme = defaultTheme;
+    }
+  }
+
   return {
-    user: locals.user
+    user: locals.user,
+    theme
   };
 };

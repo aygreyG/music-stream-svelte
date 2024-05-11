@@ -35,7 +35,7 @@
   >
     <label class="flex w-full items-center rounded-md backdrop-blur-md">
       <input
-        class="w-full rounded-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full rounded-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         name="search"

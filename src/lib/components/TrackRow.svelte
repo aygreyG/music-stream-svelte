@@ -81,7 +81,7 @@
     {#if $currentTrack?.id === track.id}
       {#if $paused}
         <button
-          class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
+          class="z-10 flex items-center justify-center text-primary/70 hover:text-primary"
           on:click={() => ($paused = false)}
           use:vibrate
         >
@@ -89,7 +89,7 @@
         </button>
       {:else}
         <button
-          class="z-10 flex items-center justify-center text-fuchsia-600/70 hover:text-fuchsia-600"
+          class="z-10 flex items-center justify-center text-primary/70 hover:text-primary"
           on:click={() => ($paused = true)}
           use:vibrate
         >
@@ -98,7 +98,7 @@
       {/if}
     {:else}
       <button
-        class="z-10 hidden items-center justify-center text-zinc-600 hover:text-fuchsia-600 group-hover:flex"
+        class="z-10 hidden items-center justify-center text-zinc-600 hover:text-primary group-hover:flex"
         on:click={() => handleClick()}
         use:vibrate
       >

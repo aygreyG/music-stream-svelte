@@ -56,7 +56,7 @@
               href="/playlist/{playlist.id}"
               transition:fly|global={{ duration: 300, x: -20, delay: 30 * index }}
               class="transition-colors"
-              class:text-fuchsia-600={$page.url.pathname.replaceAll('/', '') ===
+              class:text-primary={$page.url.pathname.replaceAll('/', '') ===
                 `playlist${playlist.id}`}
             >
               {playlist.name}
@@ -117,9 +117,9 @@
 >
   <button use:vibrate on:click={() => (open = !open)}>
     {#if open}
-      <RoundClose class="text-4xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600" />
+      <RoundClose class="text-4xl text-primary/70 transition-colors hover:text-primary" />
     {:else}
-      <RoundMenu class="text-4xl text-fuchsia-600/70 transition-colors hover:text-fuchsia-600" />
+      <RoundMenu class="text-4xl text-primary/70 transition-colors hover:text-primary" />
     {/if}
   </button>
 </div>

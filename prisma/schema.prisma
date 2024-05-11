@@ -26,6 +26,7 @@ model User {
   updatedAt DateTime   @updatedAt
   listened  Listened[]
   playlists Playlist[]
+  themes    Theme[]
 
   @@index([email])
   @@index([username])
@@ -129,4 +130,26 @@ model FolderScan {
   newTracks        Int
   serverSettingsId String
   serverSettings   ServerSettings @relation(fields: [serverSettingsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum GradientAngle {
+  to_bottom
+  to_top
+  to_left
+  to_right
+}
+
+model Theme {
+  id                  String        @id @default(uuid())
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  primary             String        @default("#c026d3")
+  rounding            Int           @default(15)
+  gradientStart       String        @default("#c026d3")
+  gradientMiddle      String        @default("#4f46e5")
+  gradientEnd         String        @default("#22d3ee")
+  gradientMiddlePoint Int           @default(50)
+  gradientAngle       GradientAngle @default(to_bottom)
+  userId              String
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

@@ -8,6 +8,7 @@
   import RoundPlaylistPlay from 'virtual:icons/ic/round-playlist-play';
   import MusicArtistFill from 'virtual:icons/iconamoon/music-artist-fill';
   import MusicAlbumFill from 'virtual:icons/iconamoon/music-album-fill';
+  import ProfileFill from 'virtual:icons/iconamoon/profile-fill';
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
   import { vibrate } from '$lib/actions/vibrate';
@@ -29,6 +30,11 @@
   ];
 
   const loggedInElements: NavigationElementType[] = [
+    {
+      href: '/profile',
+      text: 'Profile',
+      icon: ProfileFill
+    },
     {
       href: '/search',
       text: 'Search',
