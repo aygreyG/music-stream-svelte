@@ -80,7 +80,7 @@
       bind:this={nameInput}
       bind:value={playlistName}
       name="name"
-      class="w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-6 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+      class="w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-6 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
       on:blur={() => {
         if (playlistName === '') {
           playlistName = playlist.name;

@@ -26,7 +26,7 @@
 <div class="flex h-full flex-col items-center rounded-md bg-zinc-900/95 p-4">
   {#if loading}
     <div class="flex h-full w-full items-center justify-center">
-      <RoundRefresh class="text-5xl text-fuchsia-600 motion-safe:animate-spin" />
+      <RoundRefresh class="text-5xl text-primary motion-safe:animate-spin" />
       <div class="text-3xl font-bold">Loading...</div>
     </div>
   {:else}
@@ -69,7 +69,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div>Username</div>
           <input
-            class="w-full rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             name="username"
             autocomplete="off"
             required
@@ -79,7 +79,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div>Email</div>
           <input
-            class="w-full rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="email"
             name="email"
             autocomplete="off"
@@ -90,7 +90,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div>Password</div>
           <input
-            class="w-full rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="password"
             name="password"
             required
@@ -132,7 +132,7 @@
         class:shadow-md-top={scrolledToBottom}
       >
         <button
-          class="m-2 rounded-md bg-fuchsia-600 px-2 py-1 font-bold text-zinc-300 transition-colors hover:bg-fuchsia-700"
+          class="m-2 rounded-md bg-primary px-2 py-1 font-bold text-zinc-300 transition-colors hover:bg-primary/80"
           type="submit"
           use:vibrate
         >

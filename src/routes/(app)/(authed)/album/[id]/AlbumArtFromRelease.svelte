@@ -23,7 +23,7 @@
   <div>{release.title}</div>
   <div class="m-2 flex overflow-clip rounded-md text-sm font-bold">
     <button
-      class="bg-fuchsia-600 hover:bg-fuchsia-700 disabled:cursor-not-allowed disabled:bg-fuchsia-800 disabled:opacity-80 disabled:hover:bg-fuchsia-800"
+      class="bg-primary hover:bg-primary/80 disabled:bg-primary/65 disabled:hover:bg-primary/65 disabled:cursor-not-allowed disabled:opacity-80"
       on:click={() => (showImage = true)}
       disabled={showImage}
       use:vibrate={{ mute: showImage }}
@@ -31,7 +31,7 @@
       Show Image
     </button>
     <button
-      class="bg-fuchsia-600 hover:bg-fuchsia-700"
+      class="bg-primary hover:bg-primary/80"
       on:click={() => dispatch('choosen', { releaseId: release.id })}
       use:vibrate
     >

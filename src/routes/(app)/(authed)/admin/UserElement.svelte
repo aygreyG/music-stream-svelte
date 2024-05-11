@@ -37,13 +37,13 @@
   }}
 >
   <input
-    class="w-1/2 rounded-md border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+    class="w-1/2 rounded-md border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
     type="text"
     bind:value={username}
     name="username"
   />
   <input
-    class="w-1/2 rounded-md border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+    class="w-1/2 rounded-md border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
     type="email"
     bind:value={email}
     name="email"
@@ -51,7 +51,7 @@
   <label class="flex items-center gap-1">
     <div>Admin:</div>
     <input
-      class="rounded border-zinc-300/50 bg-zinc-600 text-fuchsia-600 transition-colors focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-fuchsia-600/50"
+      class="rounded border-zinc-300/10 bg-zinc-600/20 text-primary transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-primary/50"
       type="checkbox"
       name="admin"
       bind:checked={admin}

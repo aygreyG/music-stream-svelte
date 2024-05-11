@@ -2,6 +2,25 @@
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import '../app.css';
+  import { getAccessibleColor, getRGBColor } from '$lib/utils';
+  import currentTheme from '$lib/stores/themeStore';
+
+  export let data;
+
+  $: {
+    currentTheme.set(data.theme);
+  }
+
+  $: styleArr = [
+    getRGBColor($currentTheme.primary, 'primary'),
+    getRGBColor(getAccessibleColor($currentTheme.primary), 'accessible'),
+    getRGBColor($currentTheme.gradientStart, 'gradient-start'),
+    getRGBColor($currentTheme.gradientMiddle, 'gradient-middle'),
+    getRGBColor($currentTheme.gradientEnd, 'gradient-end'),
+    `--gradient-angle: ${$currentTheme.gradientAngle.replaceAll('_', ' ')};`,
+    `--gradient-middle-point: ${$currentTheme.gradientMiddlePoint}%;`,
+    `--rounding: ${$currentTheme.rounding}px;`
+  ];
 
   async function detectSWUpdate() {
     if (!('serviceWorker' in navigator)) return;
@@ -27,10 +46,11 @@
 </script>
 
 <svelte:head>
+  <meta name="theme-color" content={$currentTheme.primary} />
   <title>{$page.data.title ? $page.data.title + ' | ' : ''}Svelte Music Streamer</title>
 </svelte:head>
 
-<div class="flex h-[100dvh] w-full justify-center">
+<div class="bg-theme-gradient flex h-[100dvh] w-full justify-center" style={styleArr.join(' ')}>
   <div class="flex h-full w-full flex-col overflow-hidden p-1">
     <slot />
   </div>

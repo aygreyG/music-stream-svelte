@@ -27,7 +27,7 @@
       >
         <div>Start library sync</div>
         {#if message}
-          <div class="text-fuchsia-600">{message}</div>
+          <div class="text-primary">{message}</div>
         {/if}
         <button
           class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
@@ -91,7 +91,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
-            class="w-full rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             name="username"
             required
           />
@@ -99,7 +99,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
-            class="w-full rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="email"
             name="email"
             required
@@ -108,7 +108,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
-            class="w-full rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="password"
             name="password"
             required
@@ -117,14 +117,14 @@
         <label class="flex gap-2">
           <div class="text-sm font-bold text-zinc-400">Admin</div>
           <input
-            class="my-auto rounded border-zinc-300/50 bg-zinc-600 text-fuchsia-600 transition-colors focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-fuchsia-600/50"
+            class="my-auto rounded border-zinc-300/10 bg-zinc-600/20 text-primary transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-primary/50"
             type="checkbox"
             name="admin"
             id="admin"
           />
         </label>
         <button
-          class="mt-2 w-full self-center rounded-md bg-fuchsia-600 px-4 py-1 font-semibold transition-colors hover:bg-fuchsia-700"
+          class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80"
           type="submit"
           use:vibrate
         >

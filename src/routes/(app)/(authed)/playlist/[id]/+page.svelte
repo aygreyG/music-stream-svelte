@@ -62,7 +62,7 @@
               type="submit"
               use:vibrate
             >
-              <HeartOff class="text-2xl text-zinc-600 hover:text-fuchsia-600" />
+              <HeartOff class="text-2xl text-zinc-600 hover:text-primary" />
             </button>
           </form>
         </TrackRow>

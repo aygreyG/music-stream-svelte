@@ -24,7 +24,7 @@
       >
         <input type="hidden" name="trackid" value={track.id} />
         <input
-          class="w-full flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+          class="w-full flex-grow rounded-s-md border-none bg-zinc-600 p-2 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
           type="text"
           autocomplete="off"
           placeholder="New playlist"
@@ -32,7 +32,7 @@
           required
         />
         <button
-          class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+          class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
           type="submit"
           use:vibrate
         >
@@ -57,10 +57,10 @@
           <button type="submit" class="group" use:vibrate>
             {#if playlist.tracks.some((t) => t.id === track.id)}
               <input type="hidden" name="remove" value={true} />
-              <HeartFill class="text-2xl transition-colors hover:text-fuchsia-600" />
+              <HeartFill class="text-2xl transition-colors hover:text-primary" />
             {:else}
               <HeartFill
-                class="text-2xl text-fuchsia-600 opacity-0 transition-all group-hover:opacity-100"
+                class="text-2xl text-primary opacity-0 transition-all group-hover:opacity-100"
               />
               <Heart class="absolute left-0 top-0 text-2xl transition-all group-hover:opacity-0" />
             {/if}

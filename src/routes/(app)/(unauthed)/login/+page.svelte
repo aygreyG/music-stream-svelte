@@ -17,7 +17,7 @@
     <label class="flex flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Username</div>
       <input
-        class="rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         name="username"
         required
       />
@@ -25,14 +25,14 @@
     <label class="flex flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Password</div>
       <input
-        class="rounded-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-fuchsia-600"
+        class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="password"
         name="password"
         required
       />
     </label>
     <button
-      class="mt-2 w-full self-center rounded-md bg-fuchsia-600 px-4 py-1 font-semibold hover:bg-fuchsia-700"
+      class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold hover:bg-primary/80"
       type="submit"
       use:vibrate
     >
