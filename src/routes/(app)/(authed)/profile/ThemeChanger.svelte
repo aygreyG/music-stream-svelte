@@ -271,6 +271,7 @@
     {#if !owner && ownerTheme}
       <button
         class="w-full rounded-md bg-lime-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
+        use:vibrate
         on:click|preventDefault={resetToOwner}
         disabled={loading}
       >
@@ -289,6 +290,7 @@
 
     <button
       class="w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
+      use:vibrate
       on:click|preventDefault={resetToDefault}
       disabled={loading}
     >

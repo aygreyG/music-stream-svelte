@@ -135,7 +135,19 @@ export const actions = {
 
     // If the user is not the owner and the new theme is the owner's then delete the user's theme
     if (locals.user?.role !== 'OWNER') {
-      const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: 'OWNER' } } });
+      const ownerTheme = await prisma.theme.findFirst({
+        where: { user: { role: 'OWNER' } },
+        select: {
+          primary: true,
+          rounding: true,
+          gradientStart: true,
+          gradientMiddle: true,
+          gradientEnd: true,
+          gradientMiddlePoint: true,
+          gradientAngle: true
+        }
+      });
+
       if (isObjectEqual(ownerTheme, themeForm)) {
         await prisma.theme.deleteMany({ where: { userId: locals.user?.id } });
         return {
