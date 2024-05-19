@@ -12,6 +12,7 @@
   let syncResponse: { message: string; type: 'full' | 'normal' } | null = null;
   let animate = false;
   let loading = false;
+  let timeout: string | number | NodeJS.Timeout | undefined;
 
   onMount(() => {
     animate = true;
@@ -40,7 +41,8 @@
 
             const response = await re.json();
             syncResponse = { message: response.message, type: 'normal' };
-            setTimeout(() => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
               syncResponse = null;
             }, 2000);
           }}
@@ -66,7 +68,8 @@
 
             const response = await re.json();
             syncResponse = { message: response.message, type: 'full' };
-            setTimeout(() => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
               syncResponse = null;
             }, 2000);
           }}
