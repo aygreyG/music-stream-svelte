@@ -14,11 +14,17 @@
   let searchString = data.query || '';
   let type = data.type || 'all';
   let formElement: HTMLFormElement;
-  let searching = false;
+  let loading = false;
   let timeout: NodeJS.Timeout;
   let duration = 250;
   let container: HTMLDivElement;
   let scrolled = false;
+
+  $: {
+    if (data.query) {
+      tick().then(() => (loading = false));
+    }
+  }
 
   async function setType(newType: string) {
     type = newType;
@@ -31,14 +37,19 @@
 <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
   <div out:fade|global={{ duration }} class="p-4 pb-0 text-center text-xl font-bold">Search</div>
 
-  <form out:fade|global={{ duration }} bind:this={formElement} class="z-20 flex px-8 pt-1">
-    <label class="flex w-2/3 items-center border-e border-zinc-500">
+  <form
+    out:fade|global={{ duration }}
+    bind:this={formElement}
+    class="z-20 flex px-8 pt-1"
+    on:submit={() => (loading = true)}
+  >
+    <label class="flex w-2/3 items-center border-e border-zinc-500/50">
       <!-- svelte-ignore a11y-autofocus -->
       <input
         autofocus
         required
         placeholder="Search"
-        class="w-full rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-s-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         on:input={() => {
@@ -53,10 +64,10 @@
         autocomplete="off"
       />
     </label>
-    <label class="flex w-1/3 items-center border-e border-zinc-500">
+    <label class="flex w-1/3 items-center border-e border-zinc-500/50">
       <select
         name="type"
-        class="w-full border-none bg-zinc-600 py-1 outline-none transition-all focus:ring-2 focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus:ring-2 focus:ring-primary focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         on:change={() => {
           if (searchString) formElement.requestSubmit();
         }}
@@ -70,16 +81,15 @@
     </label>
     <button
       type="submit"
-      class="flex items-center justify-center rounded-e-md bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
-      disabled={!searchString}
+      class="flex items-center justify-center rounded-e-md bg-zinc-600/30 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:text-white/20 disabled:hover:bg-zinc-600/30"
+      disabled={!searchString || loading}
       use:vibrate={{ mute: !searchString }}
     >
       <RoundSearch class="text-xl" />
     </button>
   </form>
-  {#if data?.success && data?.results && !searching}
+  {#if data?.success && data?.results}
     <div
-      out:fade|global={{ duration }}
       class="px-8 py-1 text-xs text-white/70 transition-shadow duration-300"
       class:shadow-md={scrolled}
     >
@@ -93,12 +103,7 @@
     on:scroll={() => (scrolled = container?.scrollTop > 0)}
     out:fade={{ duration: 200 }}
   >
-    {#if searching}
-      <div class="flex h-full w-full items-center justify-center">
-        <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-primary" />
-      </div>
-    {/if}
-    {#if data?.success && data?.results && !searching}
+    {#if data?.success && data?.results}
       {#if data.results.tracks.length > 0}
         <div
           out:fade|global={{ duration }}

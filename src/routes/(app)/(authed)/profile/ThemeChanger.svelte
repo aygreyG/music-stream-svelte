@@ -101,7 +101,7 @@
   <div class="font-bold text-zinc-400">Background gradient</div>
 
   <div class="flex gap-10">
-    <label class="w-full">
+    <label class="flex w-full flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Middle point</div>
       <input
         class="w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
@@ -113,7 +113,7 @@
         required
       />
     </label>
-    <label class="w-full">
+    <label class="flex w-full flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Angle</div>
       <select
         class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
@@ -130,7 +130,7 @@
   </div>
 
   <div>
-    <div class="flex justify-between">
+    <div class="flex justify-between pb-1">
       <label class="text-sm font-bold text-zinc-400" for="startcolor">Start color</label>
       <label class="text-sm font-bold text-zinc-400" for="middlecolor">Middle color</label>
       <label class="text-sm font-bold text-zinc-400" for="endcolor">End color</label>

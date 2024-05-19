@@ -68,7 +68,9 @@
         </TrackRow>
       </div>
     {:else}
-      <div class="text-white/70 text-xl px-4">There are no tracks in this playlist</div>
+      <div class="text-white/70 text-center text-xl px-4">
+        There are no tracks in this playlist.
+      </div>
     {/each}
   </div>
 </div>

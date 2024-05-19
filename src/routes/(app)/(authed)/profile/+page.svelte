@@ -4,12 +4,15 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import ThemeChanger from './ThemeChanger.svelte';
+  import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
   export let data;
   export let form;
 
   let deleteClicked = false;
   let deleteTimeout: string | number | NodeJS.Timeout | undefined;
+
+  let loading = false;
 </script>
 
 <div class="flex h-full flex-col gap-2 overflow-auto p-2">
@@ -24,12 +27,14 @@
       method="POST"
       action="?/update"
       use:enhance={() => {
+        loading = true;
         return async ({ update }) => {
           await update({ reset: false });
+          loading = false;
         };
       }}
     >
-      <label>
+      <label class="flex flex-col gap-1">
         <div class="text-sm font-bold text-zinc-400">Username</div>
         <input
           autocomplete="username"
@@ -40,7 +45,7 @@
           required
         />
       </label>
-      <label>
+      <label class="flex flex-col gap-1">
         <div class="text-sm font-bold text-zinc-400">Email</div>
         <input
           id="email"
@@ -52,16 +57,23 @@
           required
         />
       </label>
+      <button
+        class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
+        type="submit"
+        use:vibrate
+        disabled={loading}
+      >
+        {#if loading}
+          <div class="flex items-center justify-center">
+            <RoundRefresh class="animate-spin text-xl" />
+          </div>
+        {:else}
+          Update
+        {/if}
+      </button>
       {#if form?.error && form.action === 'update'}
         <div class="text-sm font-bold text-red-500">{form.error}</div>
       {/if}
-      <button
-        class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80"
-        type="submit"
-        use:vibrate
-      >
-        Update
-      </button>
     </form>
   </div>
 
@@ -80,9 +92,15 @@
       class="flex w-full max-w-lg select-none flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
       method="POST"
       action="?/changepassword"
-      use:enhance
+      use:enhance={() => {
+        loading = true;
+        return async ({ update }) => {
+          await update();
+          loading = false;
+        };
+      }}
     >
-      <label>
+      <label class="flex flex-col gap-1">
         <div class="text-sm font-bold text-zinc-400">Current password</div>
         <input
           autocomplete="current-password"
@@ -93,7 +111,7 @@
           required
         />
       </label>
-      <label>
+      <label class="flex flex-col gap-1">
         <div class="text-sm font-bold text-zinc-400">New password</div>
         <input
           id="newpassword"
@@ -104,7 +122,7 @@
           required
         />
       </label>
-      <label>
+      <label class="flex flex-col gap-1">
         <div class="text-sm font-bold text-zinc-400">Repeat new password</div>
         <input
           id="repeatpassword"
@@ -119,11 +137,18 @@
         <div class="text-sm font-bold text-red-500">{form.error}</div>
       {/if}
       <button
-        class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80"
+        class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
         type="submit"
         use:vibrate
+        disabled={loading}
       >
-        Update
+        {#if loading}
+          <div class="flex items-center justify-center">
+            <RoundRefresh class="animate-spin text-xl" />
+          </div>
+        {:else}
+          Update
+        {/if}
       </button>
     </form>
   </div>

@@ -17,6 +17,7 @@
   let trackAndAlbumCount = '(';
   $: scrolled ? (delay = 0) : (delay = 30 * index);
   $: {
+    trackAndAlbumCount = '(';
     if (artist._count.albums > 0) {
       trackAndAlbumCount += `${artist._count.albums} album`;
       if (artist._count.albums > 1) {
@@ -63,14 +64,7 @@
       {artist.name}
     </div>
     <div>
-      (
-      {#if artist._count.albums > 0}
-        {artist._count.albums} album{#if artist._count.albums > 1}s{/if}
-      {/if}
-      {#if artist._count.tracks > 0}
-        {artist._count.tracks} track{#if artist._count.tracks > 1}s{/if}
-      {/if}
-      )
+      {trackAndAlbumCount}
     </div>
   </a>
 {/if}
