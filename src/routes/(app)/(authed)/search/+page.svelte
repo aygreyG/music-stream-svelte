@@ -20,6 +20,9 @@
   let container: HTMLDivElement;
   let scrolled = false;
 
+  // TODO: Reset loading state when we get a response,
+  // this is hacky and should be changed in the future if possible
+  // related issue: https://github.com/aygreyG/music-stream-svelte/issues/118
   $: {
     if (data.query) {
       tick().then(() => (loading = false));
@@ -85,7 +88,11 @@
       disabled={!searchString || loading}
       use:vibrate={{ mute: !searchString }}
     >
-      <RoundSearch class="text-xl" />
+      {#if loading}
+        <RoundRefresh class="animate-spin text-xl" />
+      {:else}
+        <RoundSearch class="text-xl" />
+      {/if}
     </button>
   </form>
   {#if data?.success && data?.results}
@@ -113,7 +120,7 @@
         </div>
         <div class="flex w-full flex-col">
           {#each data.results.tracks as track, index (track.id)}
-            <div class="w-full flex-none" animate:flip>
+            <div class="w-full flex-none" animate:flip={{ duration: 500, easing: quintOut }}>
               <TrackRow {track} delay={250 + index * 30} />
             </div>
           {/each}
@@ -156,7 +163,7 @@
             <a
               class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
               in:fly|global={{ duration: 500, easing: quintOut, x: -20, delay: 30 * index }}
-              animate:flip={{ duration: 500 }}
+              animate:flip={{ duration: 500, easing: quintOut }}
               href="/artist/{artist.id}"
             >
               <div>
