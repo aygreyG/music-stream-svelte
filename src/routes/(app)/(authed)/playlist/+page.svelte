@@ -7,6 +7,7 @@
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { vibrate } from '$lib/actions/vibrate';
+  import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
   export let data;
   export let form;
@@ -14,6 +15,7 @@
   let searchString = '';
   let scrolled = false;
   let container: HTMLDivElement;
+  let loading = false;
 
   $: filtered = data.playlists.filter((playlist) =>
     playlist.name.toLowerCase().includes(searchString.toLowerCase())
@@ -35,7 +37,7 @@
   >
     <label class="flex w-full items-center rounded-md backdrop-blur-md">
       <input
-        class="w-full rounded-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         name="search"
@@ -55,7 +57,13 @@
       action="?/add"
       method="POST"
       use:enhance={() => {
+        loading = true;
         searchString = '';
+
+        return async ({ update }) => {
+          await update();
+          loading = false;
+        };
       }}
     >
       <button
@@ -63,8 +71,13 @@
         type="submit"
         class="flex h-36 w-36 items-center justify-center rounded-md bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
         use:vibrate
+        disabled={loading}
       >
-        <RoundAdd class="text-3xl text-zinc-600" />
+        {#if loading}
+          <RoundRefresh class="animate-spin text-3xl text-zinc-600" />
+        {:else}
+          <RoundAdd class="text-3xl text-zinc-600" />
+        {/if}
       </button>
     </form>
 

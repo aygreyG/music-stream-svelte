@@ -6,10 +6,13 @@
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
   import { vibrate } from '$lib/actions/vibrate';
+  import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
   export let data;
-  let message: string | null = null;
+  let syncResponse: { message: string; type: 'full' | 'normal' } | null = null;
   let animate = false;
+  let loading = false;
+  let timeout: string | number | NodeJS.Timeout | undefined;
 
   onMount(() => {
     animate = true;
@@ -26,8 +29,8 @@
         class="flex items-center justify-between bg-zinc-600/10 p-4"
       >
         <div>Start library sync</div>
-        {#if message}
-          <div class="text-primary">{message}</div>
+        {#if syncResponse && syncResponse.type === 'normal'}
+          <div class="text-primary">{syncResponse.message}</div>
         {/if}
         <button
           class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
@@ -37,9 +40,10 @@
             });
 
             const response = await re.json();
-            message = response.message;
-            setTimeout(() => {
-              message = null;
+            syncResponse = { message: response.message, type: 'normal' };
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+              syncResponse = null;
             }, 2000);
           }}
           use:vibrate
@@ -52,6 +56,9 @@
         class="flex items-center justify-between bg-zinc-600/10 p-4"
       >
         <div>Full reset & sync</div>
+        {#if syncResponse && syncResponse.type === 'full'}
+          <div class="text-primary">{syncResponse.message}</div>
+        {/if}
         <button
           class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
           on:click={async () => {
@@ -60,9 +67,10 @@
             });
 
             const response = await re.json();
-            message = response.message;
-            setTimeout(() => {
-              message = null;
+            syncResponse = { message: response.message, type: 'full' };
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+              syncResponse = null;
             }, 2000);
           }}
           use:vibrate
@@ -86,7 +94,13 @@
         class="flex w-full max-w-lg select-none flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
         method="POST"
         action="?/create"
-        use:enhance
+        use:enhance={() => {
+          loading = true;
+          return async ({ update }) => {
+            await update();
+            loading = false;
+          };
+        }}
       >
         <label>
           <div class="text-sm font-bold text-zinc-400">Username</div>
@@ -124,11 +138,18 @@
           />
         </label>
         <button
-          class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80"
+          class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:opacity-50 disabled:hover:bg-primary"
           type="submit"
           use:vibrate
+          disabled={loading}
         >
-          Create
+          {#if loading}
+            <div class="flex items-center justify-center">
+              <RoundRefresh class="animate-spin text-xl" />
+            </div>
+          {:else}
+            Create
+          {/if}
         </button>
       </form>
     </div>
@@ -137,7 +158,7 @@
       <div class="flex flex-col rounded-md">
         {#each data.users as usr, index (usr.id)}
           <div
-            class="bg-zinc-600/10"
+            class="overflow-clip bg-zinc-600/10"
             class:rounded-t-md={index === 0}
             class:rounded-b-md={index === data.users.length - 1}
             in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 + 100 * index }}

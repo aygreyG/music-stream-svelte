@@ -14,7 +14,7 @@
 
 <form
   action="?/update"
-  class="flex items-center gap-1 rounded-md p-1 hover:bg-zinc-600/10"
+  class="flex items-center gap-1 p-1 transition-all hover:bg-zinc-600/10"
   method="POST"
   use:enhance={({ action, cancel }) => {
     if (action.search === '?/delete') {
@@ -48,7 +48,7 @@
     bind:value={email}
     name="email"
   />
-  <label class="flex items-center gap-1">
+  <label class="mr-3 flex items-center gap-1">
     <div>Admin:</div>
     <input
       class="rounded border-zinc-300/10 bg-zinc-600/20 text-primary transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-primary/50"

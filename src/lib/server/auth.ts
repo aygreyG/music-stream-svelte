@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import { getServerSettings } from './serverSettings';
 
 export const AUTH_COOKIE = 'access_token';
-const TOKEN_VALID_TIME = 24 * 60 * 60;
+const TOKEN_VALID_TIME = 7 * 24 * 60 * 60;
 
 interface JwtPayload {
   id: string;
@@ -31,7 +31,7 @@ export async function login(username: string, password: string) {
   };
 
   const token = jwt.sign(jwtPayload, serverSettings.jwtSecret, {
-    expiresIn: '1d'
+    expiresIn: TOKEN_VALID_TIME
   });
 
   return {

@@ -1,18 +1,28 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate.js';
+  import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
   export let data;
+  export let form;
+
+  let loading = false;
 </script>
 
 <div class="flex h-full flex-col items-center overflow-auto px-4">
   <h1 class="p-4 text-center text-xl font-bold">Login</h1>
 
   <form
-    class="flex w-full max-w-lg flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
+    class="flex w-full max-w-lg flex-col gap-2 rounded-md bg-zinc-600/10 p-4 transition-all"
     method="POST"
     action="?&redirect_to={data.redirectTo ?? ''}"
-    use:enhance
+    use:enhance={() => {
+      loading = true;
+      return async ({ update }) => {
+        await update({ reset: false });
+        loading = false;
+      };
+    }}
   >
     <label class="flex flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Username</div>
@@ -31,12 +41,25 @@
         required
       />
     </label>
+
     <button
-      class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold hover:bg-primary/80"
+      class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:opacity-50 disabled:hover:bg-primary"
       type="submit"
       use:vibrate
+      disabled={loading}
     >
-      Login
+      {#if loading}
+        <div class="flex items-center justify-center">
+          <RoundRefresh class="animate-spin text-xl" />
+        </div>
+      {:else}
+        Login
+      {/if}
     </button>
+    {#if form?.error}
+      <div class="text-sm font-bold text-red-500">
+        {`${form.error.charAt(0).toUpperCase()}${form.error.slice(1)}.`}
+      </div>
+    {/if}
   </form>
 </div>
