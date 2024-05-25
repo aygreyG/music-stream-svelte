@@ -67,6 +67,10 @@ model Track {
   tags        Tag[]
 
   @@index([filePath])
+  @@index([albumId])
+  @@index([trackNumber])
+  @@index([title])
+  @@index([albumId, trackNumber])
 }
 
 model Artist {
