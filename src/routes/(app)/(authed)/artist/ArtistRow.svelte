@@ -46,7 +46,7 @@
     <div>
       {artist.name}
     </div>
-    <div class="max-[500px]:hidden">
+    <div class="text-balance text-right">
       {trackAndAlbumCount}
     </div>
   </a>

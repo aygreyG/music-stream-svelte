@@ -2,28 +2,16 @@
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
   import TrackRow from '$lib/components/TrackRow.svelte';
-  import type { Prisma } from '@prisma/client';
+  import type { SearchTrack } from '$lib/shared/types';
   import { createEventDispatcher } from 'svelte';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
-  type TrackType = Prisma.TrackGetPayload<{
-    include: {
-      album: {
-        include: {
-          albumArtist: true;
-          tracks: { include: { artists: true }; orderBy: { trackNumber: 'asc' } };
-        };
-      };
-      artists: true;
-    };
-  }>;
-
   export let startIndex: number = 0;
   export let total: number;
-  export let tracks: TrackType[];
+  export let tracks: SearchTrack[];
   export let query: string;
   export let type: string;
   let requestCanceller: () => void;

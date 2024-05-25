@@ -3,14 +3,12 @@
   import AlbumLink from '../AlbumLink.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import { createEventDispatcher } from 'svelte';
-  import type { Prisma } from '@prisma/client';
   import { enhance } from '$app/forms';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
-
-  type AlbumType = Prisma.AlbumGetPayload<{ include: { albumArtist: true } }>;
+  import type { SearchAlbum } from '$lib/shared/types';
 
   export let total: number;
-  export let albums: AlbumType[];
+  export let albums: SearchAlbum[];
   export let query: string;
   export let type: string;
   export let startIndex: number = 0;

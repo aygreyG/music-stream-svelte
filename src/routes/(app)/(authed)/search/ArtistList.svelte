@@ -1,19 +1,15 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
-  import type { Prisma } from '@prisma/client';
+  import type { SearchArtist } from '$lib/shared/types';
   import { createEventDispatcher } from 'svelte';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade, fly } from 'svelte/transition';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
-  type ArtistType = Prisma.ArtistGetPayload<{
-    include: { _count: { select: { albums: true; tracks: true } } };
-  }>;
-
   export let total: number;
-  export let artists: ArtistType[];
+  export let artists: SearchArtist[];
   export let query: string;
   export let type: string;
   export let startIndex: number = 0;

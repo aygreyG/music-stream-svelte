@@ -28,6 +28,26 @@ export type FolderNode = {
   parent?: FolderNode;
 };
 
+export type SearchTrack = Prisma.TrackGetPayload<{
+  include: {
+    album: {
+      include: {
+        albumArtist: true;
+        tracks: { include: { artists: true }; orderBy: { trackNumber: 'asc' } };
+      };
+    };
+    artists: true;
+  };
+}>;
+
+export type SearchAlbum = Prisma.AlbumGetPayload<{
+  include: { albumArtist: true };
+}>;
+
+export type SearchArtist = Prisma.ArtistGetPayload<{
+  include: { _count: { select: { albums: true; tracks: true } } };
+}>;
+
 export type ImageSize = 's' | 'm' | 'l';
 
 export function isValidImageSize(size: string): size is ImageSize {
