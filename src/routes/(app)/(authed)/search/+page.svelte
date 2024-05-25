@@ -1,13 +1,12 @@
 <script lang="ts">
   import RoundSearch from 'virtual:icons/ic/round-search';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
-  import AlbumLink from '../AlbumLink.svelte';
-  import { fade, fly } from 'svelte/transition';
-  import { quintOut } from 'svelte/easing';
-  import { flip } from 'svelte/animate';
+  import { fade } from 'svelte/transition';
   import { tick } from 'svelte';
-  import TrackRow from '$lib/components/TrackRow.svelte';
   import { vibrate } from '$lib/actions/vibrate';
+  import TrackList from './TrackList.svelte';
+  import AlbumList from './AlbumList.svelte';
+  import ArtistList from './ArtistList.svelte';
 
   export let data;
 
@@ -19,6 +18,7 @@
   let duration = 250;
   let container: HTMLDivElement;
   let scrolled = false;
+  let startIndex = 0;
 
   // TODO: Reset loading state when we get a response,
   // this is hacky and should be changed in the future if possible
@@ -29,9 +29,16 @@
     }
   }
 
+  $: {
+    if (type) {
+      startIndex = 0;
+    }
+  }
+
   async function setType(newType: string) {
     type = newType;
     searchString = data.query || '';
+    // waiting for dom to update before submitting the form
     await tick();
     if (searchString) formElement.requestSubmit();
   }
@@ -44,12 +51,16 @@
     out:fade|global={{ duration }}
     bind:this={formElement}
     class="z-20 flex px-8 pt-1"
-    on:submit={() => (loading = true)}
+    on:submit={() => {
+      if (searchString && searchString !== data.query) {
+        loading = true;
+      }
+    }}
+    data-sveltekit-replacestate
+    data-sveltekit-keepfocus
   >
     <label class="flex w-2/3 items-center border-e border-zinc-500/50">
-      <!-- svelte-ignore a11y-autofocus -->
       <input
-        autofocus
         required
         placeholder="Search"
         class="w-full rounded-s-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
@@ -77,9 +88,9 @@
         bind:value={type}
       >
         <option value="all">All</option>
-        <option value="artist">Artist</option>
-        <option value="album">Album</option>
         <option value="track">Track</option>
+        <option value="album">Album</option>
+        <option value="artist">Artist</option>
       </select>
     </label>
     <button
@@ -112,81 +123,48 @@
   >
     {#if data?.success && data?.results}
       {#if data.results.tracks.length > 0}
-        <div
-          out:fade|global={{ duration }}
-          class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
-        >
-          Tracks:
-        </div>
-        <div class="flex w-full flex-col">
-          {#each data.results.tracks as track, index (track.id)}
-            <div class="w-full flex-none" animate:flip={{ duration: 500, easing: quintOut }}>
-              <TrackRow {track} delay={250 + index * 30} />
-            </div>
-          {/each}
-        </div>
-        {#if type !== 'track' && data.results.tracks.length < data.total.tracks}
-          <button use:vibrate class="pb-2 pl-2 hover:underline" on:click={() => setType('track')}>
-            Show all results
-          </button>
-        {/if}
+        <TrackList
+          query={data.query}
+          total={data.total.tracks}
+          tracks={data.results.tracks}
+          {startIndex}
+          {type}
+          on:tracksloaded={({ detail }) => {
+            startIndex = data.results.tracks.length - 1;
+            data.results.tracks = [...data.results.tracks, ...detail.tracks];
+          }}
+          on:typechange={() => setType('track')}
+        />
       {/if}
 
       {#if data.results.albums.length > 0}
-        <div
-          out:fade|global={{ duration }}
-          class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
-        >
-          Albums:
-        </div>
-        <div class="flex flex-wrap items-center justify-center gap-8 p-2">
-          {#each data.results.albums as album, index (album.id)}
-            <AlbumLink {album} {index} />
-          {/each}
-        </div>
-        {#if type !== 'album' && data.results.albums.length < data.total.albums}
-          <button use:vibrate class="pb-2 pl-2 hover:underline" on:click={() => setType('album')}>
-            Show all results
-          </button>
-        {/if}
+        <AlbumList
+          query={data.query}
+          total={data.total.albums}
+          albums={data.results.albums}
+          {startIndex}
+          {type}
+          on:albumsloaded={({ detail }) => {
+            startIndex = data.results.albums.length - 1;
+            data.results.albums = [...data.results.albums, ...detail.albums];
+          }}
+          on:typechange={() => setType('album')}
+        />
       {/if}
 
       {#if data.results.artists.length > 0}
-        <div
-          out:fade|global={{ duration }}
-          class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
-        >
-          Artists:
-        </div>
-        <div class="flex w-full flex-col">
-          {#each data.results.artists as artist, index (artist.id)}
-            <a
-              class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
-              in:fly|global={{ duration: 500, easing: quintOut, x: -20, delay: 30 * index }}
-              animate:flip={{ duration: 500, easing: quintOut }}
-              href="/artist/{artist.id}"
-            >
-              <div>
-                {artist.name}
-              </div>
-              <div>
-                (
-                {#if artist._count.albums > 0}
-                  {artist._count.albums} album{#if artist._count.albums > 1}s{/if}
-                {/if}
-                {#if artist._count.tracks > 0}
-                  {artist._count.tracks} track{#if artist._count.tracks > 1}s{/if}
-                {/if}
-                )
-              </div>
-            </a>
-          {/each}
-        </div>
-        {#if type !== 'artist' && data.results.artists.length < data.total.artists}
-          <button use:vibrate class="pb-2 pl-2 hover:underline" on:click={() => setType('artist')}>
-            Show all results
-          </button>
-        {/if}
+        <ArtistList
+          query={data.query}
+          total={data.total.artists}
+          artists={data.results.artists}
+          {startIndex}
+          {type}
+          on:artistsloaded={({ detail }) => {
+            startIndex = data.results.artists.length - 1;
+            data.results.artists = [...data.results.artists, ...detail.artists];
+          }}
+          on:typechange={() => setType('artist')}
+        />
       {/if}
     {/if}
     {#if data?.success === false}

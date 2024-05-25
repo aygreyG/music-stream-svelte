@@ -308,7 +308,7 @@
               max="1"
               step="0.01"
               bind:value={volume}
-              class="w-full"
+              class="w-full max-w-32"
               aria-label="Volume bar"
             />
           </div>

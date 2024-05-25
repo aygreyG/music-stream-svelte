@@ -1,106 +1,129 @@
 import prisma from '$lib/server/prisma.js';
+import type { SearchAlbum, SearchArtist, SearchTrack } from '$lib/shared/types.js';
 import type { Prisma } from '@prisma/client';
 
-type TrackType = Prisma.TrackGetPayload<{
-  include: {
-    album: { include: { albumArtist: true; tracks: { include: { artists: true } } } };
-    artists: true;
+const MAX_ALL_RESULTS = 8;
+const MAX_TYPE_RESULTS = 50;
+
+function getTrackArgs(
+  query: string,
+  skip: number = 0,
+  take: number = MAX_TYPE_RESULTS
+): Prisma.TrackFindManyArgs {
+  return {
+    where: { title: { contains: query, mode: 'insensitive' } },
+    skip,
+    take,
+    include: {
+      album: {
+        include: {
+          albumArtist: true,
+          tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
+        }
+      },
+      artists: true
+    },
+    orderBy: [{ albumId: 'asc' }, { trackNumber: 'asc' }]
   };
-}>;
+}
 
-type AlbumType = Prisma.AlbumGetPayload<{
-  include: { albumArtist: true };
-}>;
+function getAlbumArgs(
+  query: string,
+  skip: number = 0,
+  take: number = MAX_TYPE_RESULTS
+): Prisma.AlbumFindManyArgs {
+  return {
+    where: { title: { contains: query, mode: 'insensitive' } },
+    skip,
+    take,
+    include: { albumArtist: true },
+    orderBy: { title: 'asc' }
+  };
+}
 
-type ArtistType = Prisma.ArtistGetPayload<{
-  include: { _count: { select: { albums: true; tracks: true } } };
-}>;
+function getArtistArgs(
+  query: string,
+  skip: number = 0,
+  take: number = MAX_TYPE_RESULTS
+): Prisma.ArtistFindManyArgs {
+  return {
+    where: { name: { contains: query, mode: 'insensitive' } },
+    skip,
+    take,
+    include: { _count: { select: { albums: true, tracks: true } } },
+    orderBy: { name: 'asc' }
+  };
+}
+
+function sanitizeQuery(query?: string) {
+  if (!query) {
+    return null;
+  }
+
+  return query.replaceAll('_', '\\_').replaceAll('%', '\\%').trim();
+}
 
 export const load = async ({ url }) => {
-  const query = url.searchParams
-    .get('query')
-    ?.toString()
-    .replaceAll('_', '\\_')
-    .replaceAll('%', '\\%')
-    .trim();
+  const query = sanitizeQuery(url.searchParams.get('query')?.toString());
   const type = url.searchParams.get('type')?.toString();
 
   if (!query) {
     return { title: 'Search' };
   }
 
-  let tracks: TrackType[] = [];
-  let artists: ArtistType[] = [];
-  let albums: AlbumType[] = [];
+  let tracks: SearchTrack[] = [];
+  let artists: SearchArtist[] = [];
+  let albums: SearchAlbum[] = [];
   let totalTracks = 0;
   let totalArtists = 0;
   let totalAlbums = 0;
 
   switch (type) {
     case 'track':
-      tracks = await prisma.track.findMany({
-        where: { title: { contains: query, mode: 'insensitive' } },
-        include: {
-          album: {
-            include: {
-              albumArtist: true,
-              tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
-            }
-          },
-          artists: true
-        }
-      });
-      totalTracks = tracks.length;
-      break;
-    case 'artist':
-      artists = await prisma.artist.findMany({
-        where: { name: { contains: query, mode: 'insensitive' } },
-        include: { _count: { select: { albums: true, tracks: true } } }
-      });
-      totalArtists = artists.length;
-      break;
-    case 'album':
-      albums = await prisma.album.findMany({
-        where: { title: { contains: query, mode: 'insensitive' } },
-        include: { albumArtist: true }
-      });
-      totalAlbums = albums.length;
-      break;
-    case 'all':
-    default:
-      tracks = await prisma.track.findMany({
-        where: { title: { contains: query, mode: 'insensitive' } },
-        take: 10,
-        include: {
-          album: {
-            include: {
-              albumArtist: true,
-              tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
-            }
-          },
-          artists: true
-        }
-      });
+      tracks = (await prisma.track.findMany(getTrackArgs(query))) as SearchTrack[];
 
       totalTracks = await prisma.track.count({
         where: { title: { contains: query, mode: 'insensitive' } }
       });
 
-      artists = await prisma.artist.findMany({
-        where: { name: { contains: query, mode: 'insensitive' } },
-        take: 10,
-        include: { _count: { select: { albums: true, tracks: true } } }
-      });
+      break;
+    case 'artist':
+      artists = (await prisma.artist.findMany(getArtistArgs(query))) as SearchArtist[];
 
       totalArtists = await prisma.artist.count({
         where: { name: { contains: query, mode: 'insensitive' } }
       });
 
-      albums = await prisma.album.findMany({
-        where: { title: { contains: query, mode: 'insensitive' } },
-        include: { albumArtist: true },
-        take: 10
+      break;
+    case 'album':
+      albums = (await prisma.album.findMany(getAlbumArgs(query))) as SearchAlbum[];
+
+      totalAlbums = await prisma.album.count({
+        where: { title: { contains: query, mode: 'insensitive' } }
       });
+
+      break;
+    case 'all':
+    default:
+      tracks = (await prisma.track.findMany(
+        getTrackArgs(query, 0, MAX_ALL_RESULTS)
+      )) as SearchTrack[];
+
+      totalTracks = await prisma.track.count({
+        where: { title: { contains: query, mode: 'insensitive' } }
+      });
+
+      artists = (await prisma.artist.findMany(
+        getArtistArgs(query, 0, MAX_ALL_RESULTS)
+      )) as SearchArtist[];
+
+      totalArtists = await prisma.artist.count({
+        where: { name: { contains: query, mode: 'insensitive' } }
+      });
+
+      albums = (await prisma.album.findMany(
+        getAlbumArgs(query, 0, MAX_ALL_RESULTS)
+      )) as SearchAlbum[];
 
       totalAlbums = await prisma.album.count({
         where: { title: { contains: query, mode: 'insensitive' } }
@@ -134,4 +157,46 @@ export const load = async ({ url }) => {
       artists: totalArtists
     }
   };
+};
+
+export const actions = {
+  getTracks: async ({ request }) => {
+    const formData = await request.formData();
+    const query = sanitizeQuery(formData.get('query')?.toString());
+    const from = parseInt(formData.get('from')?.toString() || '0', 10);
+
+    if (!query) {
+      return { tracks: [] };
+    }
+
+    const tracks = await prisma.track.findMany(getTrackArgs(query, from));
+
+    return { tracks };
+  },
+  getAlbums: async ({ request }) => {
+    const formData = await request.formData();
+    const query = sanitizeQuery(formData.get('query')?.toString());
+    const from = parseInt(formData.get('from')?.toString() || '0', 10);
+
+    if (!query) {
+      return { albums: [] };
+    }
+
+    const albums = await prisma.album.findMany(getAlbumArgs(query, from));
+
+    return { albums };
+  },
+  getArtists: async ({ request }) => {
+    const formData = await request.formData();
+    const query = sanitizeQuery(formData.get('query')?.toString());
+    const from = parseInt(formData.get('from')?.toString() || '0', 10);
+
+    if (!query) {
+      return { artists: [] };
+    }
+
+    const artists = await prisma.artist.findMany(getArtistArgs(query, from));
+
+    return { artists };
+  }
 };
