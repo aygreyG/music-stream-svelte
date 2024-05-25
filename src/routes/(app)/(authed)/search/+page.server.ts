@@ -55,13 +55,16 @@ function getArtistArgs(
   };
 }
 
+function sanitizeQuery(query?: string) {
+  if (!query) {
+    return null;
+  }
+
+  return query.replaceAll('_', '\\_').replaceAll('%', '\\%').trim();
+}
+
 export const load = async ({ url }) => {
-  const query = url.searchParams
-    .get('query')
-    ?.toString()
-    .replaceAll('_', '\\_')
-    .replaceAll('%', '\\%')
-    .trim();
+  const query = sanitizeQuery(url.searchParams.get('query')?.toString());
   const type = url.searchParams.get('type')?.toString();
 
   if (!query) {
@@ -159,12 +162,7 @@ export const load = async ({ url }) => {
 export const actions = {
   getTracks: async ({ request }) => {
     const formData = await request.formData();
-    const query = formData
-      .get('query')
-      ?.toString()
-      .replaceAll('_', '\\_')
-      .replaceAll('%', '\\%')
-      .trim();
+    const query = sanitizeQuery(formData.get('query')?.toString());
     const from = parseInt(formData.get('from')?.toString() || '0', 10);
 
     if (!query) {
@@ -177,12 +175,7 @@ export const actions = {
   },
   getAlbums: async ({ request }) => {
     const formData = await request.formData();
-    const query = formData
-      .get('query')
-      ?.toString()
-      .replaceAll('_', '\\_')
-      .replaceAll('%', '\\%')
-      .trim();
+    const query = sanitizeQuery(formData.get('query')?.toString());
     const from = parseInt(formData.get('from')?.toString() || '0', 10);
 
     if (!query) {
@@ -195,12 +188,7 @@ export const actions = {
   },
   getArtists: async ({ request }) => {
     const formData = await request.formData();
-    const query = formData
-      .get('query')
-      ?.toString()
-      .replaceAll('_', '\\_')
-      .replaceAll('%', '\\%')
-      .trim();
+    const query = sanitizeQuery(formData.get('query')?.toString());
     const from = parseInt(formData.get('from')?.toString() || '0', 10);
 
     if (!query) {
