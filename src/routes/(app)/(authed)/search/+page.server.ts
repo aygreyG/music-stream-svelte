@@ -1,6 +1,9 @@
 import prisma from '$lib/server/prisma.js';
 import type { Prisma } from '@prisma/client';
 
+const MAX_ALL_RESULTS = 8;
+const MAX_TYPE_RESULTS = 50;
+
 type TrackType = Prisma.TrackGetPayload<{
   include: {
     album: { include: { albumArtist: true; tracks: { include: { artists: true } } } };
@@ -40,6 +43,7 @@ export const load = async ({ url }) => {
     case 'track':
       tracks = await prisma.track.findMany({
         where: { title: { contains: query, mode: 'insensitive' } },
+        take: MAX_TYPE_RESULTS,
         include: {
           album: {
             include: {
@@ -48,29 +52,46 @@ export const load = async ({ url }) => {
             }
           },
           artists: true
-        }
+        },
+        orderBy: [{ albumId: 'asc' }, { trackNumber: 'asc' }]
       });
-      totalTracks = tracks.length;
+
+      totalTracks = await prisma.track.count({
+        where: { title: { contains: query, mode: 'insensitive' } }
+      });
+
       break;
     case 'artist':
       artists = await prisma.artist.findMany({
         where: { name: { contains: query, mode: 'insensitive' } },
-        include: { _count: { select: { albums: true, tracks: true } } }
+        take: MAX_TYPE_RESULTS,
+        include: { _count: { select: { albums: true, tracks: true } } },
+        orderBy: { name: 'asc' }
       });
-      totalArtists = artists.length;
+
+      totalArtists = await prisma.artist.count({
+        where: { name: { contains: query, mode: 'insensitive' } }
+      });
+
       break;
     case 'album':
       albums = await prisma.album.findMany({
         where: { title: { contains: query, mode: 'insensitive' } },
-        include: { albumArtist: true }
+        take: MAX_TYPE_RESULTS,
+        include: { albumArtist: true },
+        orderBy: { title: 'asc' }
       });
-      totalAlbums = albums.length;
+
+      totalAlbums = await prisma.album.count({
+        where: { title: { contains: query, mode: 'insensitive' } }
+      });
+
       break;
     case 'all':
     default:
       tracks = await prisma.track.findMany({
         where: { title: { contains: query, mode: 'insensitive' } },
-        take: 10,
+        take: MAX_ALL_RESULTS,
         include: {
           album: {
             include: {
@@ -79,7 +100,8 @@ export const load = async ({ url }) => {
             }
           },
           artists: true
-        }
+        },
+        orderBy: [{ albumId: 'asc' }, { trackNumber: 'asc' }]
       });
 
       totalTracks = await prisma.track.count({
@@ -88,8 +110,9 @@ export const load = async ({ url }) => {
 
       artists = await prisma.artist.findMany({
         where: { name: { contains: query, mode: 'insensitive' } },
-        take: 10,
-        include: { _count: { select: { albums: true, tracks: true } } }
+        take: MAX_ALL_RESULTS,
+        include: { _count: { select: { albums: true, tracks: true } } },
+        orderBy: { name: 'asc' }
       });
 
       totalArtists = await prisma.artist.count({
@@ -98,8 +121,9 @@ export const load = async ({ url }) => {
 
       albums = await prisma.album.findMany({
         where: { title: { contains: query, mode: 'insensitive' } },
+        take: MAX_ALL_RESULTS,
         include: { albumArtist: true },
-        take: 10
+        orderBy: { title: 'asc' }
       });
 
       totalAlbums = await prisma.album.count({
@@ -134,4 +158,75 @@ export const load = async ({ url }) => {
       artists: totalArtists
     }
   };
+};
+
+export const actions = {
+  getTracks: async ({ request }) => {
+    const formData = await request.formData();
+    const query = formData
+      .get('query')
+      ?.toString()
+      .replaceAll('_', '\\_')
+      .replaceAll('%', '\\%')
+      .trim();
+    const from = parseInt(formData.get('from')?.toString() || '0', 10);
+
+    const tracks = await prisma.track.findMany({
+      where: { title: { contains: query, mode: 'insensitive' } },
+      skip: from,
+      take: MAX_TYPE_RESULTS,
+      include: {
+        album: {
+          include: {
+            albumArtist: true,
+            tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
+          }
+        },
+        artists: true
+      },
+      orderBy: [{ albumId: 'asc' }, { trackNumber: 'asc' }]
+    });
+
+    return { tracks };
+  },
+  getAlbums: async ({ request }) => {
+    const formData = await request.formData();
+    const query = formData
+      .get('query')
+      ?.toString()
+      .replaceAll('_', '\\_')
+      .replaceAll('%', '\\%')
+      .trim();
+    const from = parseInt(formData.get('from')?.toString() || '0', 10);
+
+    const albums = await prisma.album.findMany({
+      where: { title: { contains: query, mode: 'insensitive' } },
+      skip: from,
+      take: MAX_TYPE_RESULTS,
+      include: { albumArtist: true },
+      orderBy: { title: 'asc' }
+    });
+
+    return { albums };
+  },
+  getArtists: async ({ request }) => {
+    const formData = await request.formData();
+    const query = formData
+      .get('query')
+      ?.toString()
+      .replaceAll('_', '\\_')
+      .replaceAll('%', '\\%')
+      .trim();
+    const from = parseInt(formData.get('from')?.toString() || '0', 10);
+
+    const artists = await prisma.artist.findMany({
+      where: { name: { contains: query, mode: 'insensitive' } },
+      skip: from,
+      take: MAX_TYPE_RESULTS,
+      include: { _count: { select: { albums: true, tracks: true } } },
+      orderBy: { name: 'asc' }
+    });
+
+    return { artists };
+  }
 };
