@@ -3,7 +3,7 @@ import prisma from '$lib/server/prisma';
 export const load = async () => {
   const albums = await prisma.album.findMany({
     include: { albumArtist: true },
-    orderBy: [{ albumArtist: { name: 'asc' } }, { title: 'asc' }]
+    orderBy: [{ albumArtist: { name: 'asc' } }, { releaseDate: 'asc' }, { title: 'asc' }]
   });
 
   return {

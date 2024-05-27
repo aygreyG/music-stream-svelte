@@ -18,12 +18,15 @@ function getTrackArgs(
       album: {
         include: {
           albumArtist: true,
-          tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
+          tracks: {
+            include: { artists: true },
+            orderBy: [{ discNumber: 'asc' }, { trackNumber: 'asc' }]
+          }
         }
       },
       artists: true
     },
-    orderBy: [{ albumId: 'asc' }, { trackNumber: 'asc' }]
+    orderBy: [{ albumId: 'asc' }, { discNumber: 'asc' }, { trackNumber: 'asc' }]
   };
 }
 
@@ -37,7 +40,7 @@ function getAlbumArgs(
     skip,
     take,
     include: { albumArtist: true },
-    orderBy: { title: 'asc' }
+    orderBy: [{ title: 'asc' }, { releaseDate: 'asc' }]
   };
 }
 

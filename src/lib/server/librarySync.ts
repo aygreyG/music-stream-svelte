@@ -264,7 +264,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
             album = await tx.album.create({
               data: {
                 title: data.common.album as string,
-                releaseDate: data.common.date || data.common.year?.toString(),
+                releaseDate: data.common.date?.split('-')[0] || data.common.year?.toString(),
                 albumArtist: {
                   connect: { id: albumArtist.id }
                 },
@@ -286,6 +286,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
                 connect: { id: album.id }
               },
               trackNumber: data.common.track.no || album.tracks.length + 1,
+              discNumber: data.common.disk.no?.toString() || '1',
               artists: {
                 connectOrCreate: Array.from(artistSet).map((artistName) => ({
                   where: { sanitized: sanitizeArtistName(artistName) },

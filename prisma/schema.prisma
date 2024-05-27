@@ -49,6 +49,8 @@ model Album {
   @@index([title, albumArtistId])
   @@index([title])
   @@index([releaseDate])
+  @@index([releaseDate, title])
+  @@index([id, albumArtId])
 }
 
 model Track {
@@ -57,6 +59,7 @@ model Track {
   length      Int
   trackNumber Int
   filePath    String     @unique
+  discNumber  String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   albumId     String
@@ -69,8 +72,10 @@ model Track {
   @@index([filePath])
   @@index([albumId])
   @@index([trackNumber])
+  @@index([discNumber, trackNumber])
   @@index([title])
   @@index([albumId, trackNumber])
+  @@index([albumId, discNumber, trackNumber])
 }
 
 model Artist {
