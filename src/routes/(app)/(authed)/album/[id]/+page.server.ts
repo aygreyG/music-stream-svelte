@@ -16,7 +16,7 @@ export const load = async ({ locals, params, depends }) => {
           artists: true,
           playlists: { where: { userId: locals.user?.id }, orderBy: { createdAt: 'desc' } }
         },
-        orderBy: { trackNumber: 'asc' }
+        orderBy: [{ discNumber: 'asc' }, { trackNumber: 'asc' }]
       },
       albumArtist: true
     }

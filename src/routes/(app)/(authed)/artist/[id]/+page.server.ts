@@ -9,7 +9,12 @@ export const load = async ({ locals, params }) => {
     include: {
       albums: {
         orderBy: { releaseDate: { sort: 'asc', nulls: 'last' } },
-        include: { tracks: { orderBy: { trackNumber: 'asc' }, include: { artists: true } } }
+        include: {
+          tracks: {
+            orderBy: [{ discNumber: 'asc' }, { trackNumber: 'asc' }],
+            include: { artists: true }
+          }
+        }
       },
       tracks: {
         where: { album: { NOT: { albumArtistId: id } } },
@@ -18,7 +23,10 @@ export const load = async ({ locals, params }) => {
           album: {
             include: {
               albumArtist: true,
-              tracks: { include: { artists: true }, orderBy: { trackNumber: 'asc' } }
+              tracks: {
+                include: { artists: true },
+                orderBy: [{ discNumber: 'asc' }, { trackNumber: 'asc' }]
+              }
             }
           }
         }
