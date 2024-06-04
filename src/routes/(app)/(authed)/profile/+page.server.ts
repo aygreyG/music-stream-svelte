@@ -5,12 +5,28 @@ import type { GradientAngle } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 
-export const load = async () => {
+export const load = async ({ locals, depends }) => {
+  depends('listened');
   const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: 'OWNER' } } });
+  const listens = await prisma.listened.findMany({
+    where: { userId: locals.user?.id },
+    include: {
+      track: {
+        include: {
+          album: { include: { tracks: { include: { artists: true } }, albumArtist: true } },
+          artists: true
+        }
+      }
+    },
+    orderBy: {
+      updatedAt: 'desc'
+    }
+  });
 
   return {
     title: 'Profile',
-    ownerTheme
+    ownerTheme,
+    listens
   };
 };
 

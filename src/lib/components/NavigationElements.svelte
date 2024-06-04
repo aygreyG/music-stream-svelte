@@ -12,6 +12,7 @@
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
   import { vibrate } from '$lib/actions/vibrate';
+  import { invalidate, invalidateAll } from '$app/navigation';
 
   export let user: SignedInUser | null = null;
 
@@ -74,9 +75,6 @@
 </script>
 
 {#if user}
-  <p class="whitespace-nowrap p-4 text-3xl font-bold sm:whitespace-normal sm:p-0 sm:text-base">
-    Welcome {user.username}
-  </p>
   {#if user.role === 'ADMIN' || user.role === 'OWNER'}
     {#each adminElements as el}
       <NavigationElement on:clickedelement {...el} />

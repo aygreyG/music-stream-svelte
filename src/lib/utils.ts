@@ -29,3 +29,30 @@ export const getAccessibleColor = (hex: string) => {
 export function isObjectEqual<T>(a: T, b: T) {
   return JSON.stringify(a) === JSON.stringify(b);
 }
+
+/** Transform seconds into a human readable format */
+export function getReadableTime(seconds: number) {
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+    second: 1
+  };
+
+  let counter = seconds;
+  let result = '';
+
+  for (const [key, value] of Object.entries(intervals)) {
+    const interval = Math.floor(counter / value);
+
+    if (interval > 0) {
+      result += `${interval} ${key}${interval > 1 ? 's' : ''} `;
+      counter -= interval * value;
+    }
+  }
+
+  return result;
+}

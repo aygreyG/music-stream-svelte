@@ -7,6 +7,8 @@
   import { getAccessibleColor, getRGBColor } from '$lib/utils';
   import type { Theme } from '@prisma/client';
   import { onMount } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import { slide } from 'svelte/transition';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
   export let action = '?/updatetheme';
@@ -80,7 +82,7 @@
 </script>
 
 <form
-  class="flex w-full max-w-lg select-none flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
+  class="flex w-full max-w-lg flex-none select-none flex-col gap-2 rounded-b-md bg-zinc-600/10 p-4"
   method="POST"
   style="{getRGBColor(accent, 'primary')} {getRGBColor(
     getAccessibleColor(accent),
@@ -97,6 +99,7 @@
       loading = false;
     };
   }}
+  transition:slide={{ duration: 300, easing: quintOut }}
 >
   <div class="font-bold text-zinc-400">Background gradient</div>
 

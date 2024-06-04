@@ -31,7 +31,7 @@
 
 <div class="hidden h-full w-48 flex-none flex-col gap-1 sm:flex md:w-60 h-sm:w-48">
   <div
-    class="flex flex-col gap-2 rounded-md bg-zinc-900/95 p-4 h-md:h-full"
+    class="flex flex-col gap-2 overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:h-full"
     class:h-full={!(user && user.playlists.length > 0 && !playlistTransitioning)}
   >
     <NavigationElements {user} />

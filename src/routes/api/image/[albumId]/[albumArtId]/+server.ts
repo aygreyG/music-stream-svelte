@@ -23,7 +23,7 @@ export const GET = async ({ params, setHeaders }) => {
 
       setHeaders({
         'Content-Type': `image/${imageType}`,
-        'Cache-Control': 'public, max-age=15552000'
+        'Cache-Control': 'public, max-age=31536000, immutable'
       });
 
       return new Response(image);
