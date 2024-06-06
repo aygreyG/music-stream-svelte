@@ -12,7 +12,6 @@
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import { invalidate, invalidateAll } from '$app/navigation';
 
   export let user: SignedInUser | null = null;
 

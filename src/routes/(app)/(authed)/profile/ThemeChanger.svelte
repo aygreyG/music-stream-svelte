@@ -82,7 +82,7 @@
 </script>
 
 <form
-  class="flex w-full max-w-lg flex-none select-none flex-col gap-2 rounded-b-md bg-zinc-600/10 p-4"
+  class="flex select-none flex-col gap-2 p-4"
   method="POST"
   style="{getRGBColor(accent, 'primary')} {getRGBColor(
     getAccessibleColor(accent),
@@ -99,8 +99,8 @@
       loading = false;
     };
   }}
-  transition:slide={{ duration: 300, easing: quintOut }}
 >
+  <!-- transition:slide={{ duration: 300, easing: quintOut }} -->
   <div class="font-bold text-zinc-400">Background gradient</div>
 
   <div class="flex gap-10">

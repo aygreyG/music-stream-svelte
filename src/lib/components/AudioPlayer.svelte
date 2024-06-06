@@ -34,8 +34,10 @@
   let listenedDuration = 0;
   let previousTime = 0;
   let previousTrackId: string;
+  let seeking = false;
 
   async function sendListeningData(trackId: string, duration: number) {
+    if (duration < 0.01) return;
     const resp = await fetch(`/api/listened/${trackId}`, {
       method: 'POST',
       headers: {
@@ -58,10 +60,6 @@
       return;
     }
 
-    if (listenedDuration > 0 && !$paused) {
-      sendListeningData($currentTrack.id, listenedDuration);
-      listenedDuration = 0;
-    }
     $paused = !$paused;
   }
 
@@ -153,11 +151,18 @@
 
       if (!previousTrackId) {
         previousTrackId = val.id;
-      } else if (previousTrackId !== val.id) {
+      } else if (previousTrackId !== val.id && listenedDuration > 0.01) {
         sendListeningData(previousTrackId, listenedDuration);
         previousTrackId = val.id;
         listenedDuration = 0;
       }
+    }
+  });
+
+  paused.subscribe((val) => {
+    if (val && listenedDuration > 0 && $currentTrack) {
+      sendListeningData($currentTrack.id, listenedDuration);
+      listenedDuration = 0;
     }
   });
 
@@ -192,10 +197,17 @@
       bind:volume
       autoplay={true}
       on:ended={onEnded}
+      on:seeking={() => (seeking = true)}
+      on:seeked={() => (seeking = false)}
       on:timeupdate={(e) => {
+        if (seeking) return;
         const diff = e.currentTarget.currentTime - previousTime;
         if (diff < 2 && diff > 0) {
           listenedDuration += diff;
+          if (listenedDuration > 5) {
+            sendListeningData($currentTrack.id, listenedDuration);
+            listenedDuration = 0;
+          }
         }
         previousTime = e.currentTarget.currentTime;
       }}
@@ -393,9 +405,9 @@
   }
 
   input[type='range']::-moz-range-thumb {
-    border: 2px solid rgb(var(--color-primary));
+    border: 2.5px solid rgb(var(--color-primary));
     box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
-    @apply h-3 w-3 rounded-full bg-zinc-300;
+    @apply h-[14px] w-[14px] rounded-full bg-zinc-300;
   }
 
   input[type='range']:focus {
@@ -403,7 +415,6 @@
   }
 
   .timer {
-    font-variant-numeric: tabular-nums;
-    text-align: center;
+    @apply font-mono;
   }
 </style>

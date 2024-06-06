@@ -1,10 +1,10 @@
 <script lang="ts">
   import { quintOut } from 'svelte/easing';
-  import { fly } from 'svelte/transition';
+  import { fly, slide } from 'svelte/transition';
   import RoundArrowDropDown from 'virtual:icons/ic/round-arrow-drop-down';
   import RoundArrowDropUp from 'virtual:icons/ic/round-arrow-drop-up';
 
-  export let title = '';
+  export let title = 'Open!';
   export let delay = 0;
   let show = false;
 </script>
@@ -28,5 +28,10 @@
 </button>
 
 {#if show}
-  <slot />
+  <div
+    transition:slide={{ duration: 300, easing: quintOut }}
+    class="w-full flex-none rounded-b-md bg-zinc-600/10"
+  >
+    <slot />
+  </div>
 {/if}
