@@ -5,6 +5,8 @@ import type { GradientAngle } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 
+const MAX_LISTENS = 25;
+
 export const load = async ({ locals, depends }) => {
   depends('listened');
   const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: 'OWNER' } } });
@@ -20,13 +22,23 @@ export const load = async ({ locals, depends }) => {
     },
     orderBy: {
       updatedAt: 'desc'
-    }
+    },
+    take: MAX_LISTENS
+  });
+
+  const totalListens = await prisma.listened.count({ where: { userId: locals.user?.id } });
+
+  const totalListeningTime = await prisma.listened.aggregate({
+    where: { userId: locals.user?.id },
+    _sum: { listeningTime: true }
   });
 
   return {
     title: 'Profile',
     ownerTheme,
-    listens
+    listens,
+    totalListens,
+    totalListeningTime: totalListeningTime._sum.listeningTime
   };
 };
 
@@ -217,6 +229,31 @@ export const actions = {
 
     return {
       message: 'User deleted'
+    };
+  },
+  getListens: async ({ locals, request }) => {
+    const formData = await request.formData();
+    const skip = formData.get('from')?.toString();
+
+    const listens = await prisma.listened.findMany({
+      where: { userId: locals.user?.id },
+      skip: skip ? parseInt(skip) : 0,
+      include: {
+        track: {
+          include: {
+            album: { include: { tracks: { include: { artists: true } }, albumArtist: true } },
+            artists: true
+          }
+        }
+      },
+      orderBy: {
+        updatedAt: 'desc'
+      },
+      take: MAX_LISTENS
+    });
+
+    return {
+      listens
     };
   }
 };

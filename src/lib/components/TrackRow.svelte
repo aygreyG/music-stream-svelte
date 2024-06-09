@@ -145,10 +145,15 @@
       </a>
     </div>
     {#if listenedInformation.lastListened}
-      <!-- TODO: Make sure it is always readable and does not wrap -->
+      <!-- TODO: Make sure it is always readable and does not wrap
+           Issue: https://github.com/aygreyG/music-stream-svelte/issues/124
+      -->
       <div class="flex w-full justify-between whitespace-nowrap text-xs text-white/70">
         <div>{listenedInformation.lastListened.toLocaleString()}</div>
-        <div class="translate-x-14">
+        <div
+          class="translate-x-14 overflow-hidden text-ellipsis"
+          title={getReadableTime(listenedInformation.listened)}
+        >
           {getReadableTime(listenedInformation.listened)}
         </div>
       </div>

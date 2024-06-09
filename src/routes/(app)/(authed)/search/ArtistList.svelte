@@ -87,13 +87,15 @@
 </div>
 {#if artists.length < total}
   {#if type !== 'artist'}
-    <button
-      use:vibrate
-      class="pb-4 pl-4 pt-2 hover:underline"
-      on:click={() => dispatch('typechange')}
-    >
-      Show all ({total - artists.length} more)
-    </button>
+    <div class="flex items-center justify-center pb-2">
+      <button
+        use:vibrate
+        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        on:click={() => dispatch('typechange')}
+      >
+        Show all ({total - artists.length} more)
+      </button>
+    </div>
   {:else}
     <form
       method="POST"
@@ -109,14 +111,24 @@
           loading = false;
         };
       }}
+      class="flex items-center justify-center pb-2"
     >
       <input type="hidden" name="from" value={artists.length} />
       <input type="hidden" name="query" value={query} />
-      <button use:vibrate class="pb-4 pl-4 pt-2 hover:underline" disabled={loading} type="submit">
+
+      <button
+        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        type="submit"
+        use:vibrate
+        disabled={loading}
+      >
+        <div class:opacity-0={loading}>
+          Load more ({total - artists.length} left)
+        </div>
         {#if loading}
-          <RoundRefresh class="animate-spin text-xl" />
-        {:else}
-          Show all ({total - artists.length} more)
+          <div class="absolute left-1/2 top-1 -translate-x-1/2">
+            <RoundRefresh class="animate-spin text-xl" />
+          </div>
         {/if}
       </button>
     </form>

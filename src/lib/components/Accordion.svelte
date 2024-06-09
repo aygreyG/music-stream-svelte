@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { vibrate } from '$lib/actions/vibrate';
   import { quintOut } from 'svelte/easing';
   import { fly, slide } from 'svelte/transition';
   import RoundArrowDropDown from 'virtual:icons/ic/round-arrow-drop-down';
@@ -18,6 +19,7 @@
   on:click={() => {
     show = !show;
   }}
+  use:vibrate
 >
   {title}
   {#if show}

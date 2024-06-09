@@ -11,14 +11,37 @@
   import Accordion from '$lib/components/Accordion.svelte';
   import { getReadableTime } from '$lib/utils';
   import { flip } from 'svelte/animate';
+  import type { SubmitFunction } from '@sveltejs/kit';
 
   export let data;
   export let form;
 
   let deleteClicked = false;
   let deleteTimeout: string | number | NodeJS.Timeout | undefined;
-
   let loading = false;
+  let listeningLoading = false;
+
+  let listens = [...data.listens];
+  $: if (data.listens) {
+    console.log('data.listens run');
+    let tmpListens = [
+      ...listens.filter((el) => !data.listens.find((v) => v.id === el.id)),
+      ...data.listens
+    ];
+    listens = tmpListens.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  }
+
+  const handleListenSubmit: SubmitFunction = () => {
+    listeningLoading = true;
+    return async ({ update, result }) => {
+      await update();
+      listeningLoading = false;
+
+      if (result.type === 'success' && result.data?.listens && result.data.listens.length > 0) {
+        listens = [...listens, ...result.data.listens];
+      }
+    };
+  };
 </script>
 
 <div class="flex h-full w-full flex-col items-center overflow-auto">
@@ -215,19 +238,48 @@
       class="mb-4 gap-1 text-balance px-2 text-center font-bold"
       in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
     >
-      Total listening time: {getReadableTime(
-        data.listens.reduce((acc, listen) => acc + listen.listeningTime, 0)
-      )}
+      Total listening time: {data.totalListeningTime
+        ? getReadableTime(data.totalListeningTime)
+        : '-'}
     </div>
 
-    {#each data.listens as listen, index (listen.id)}
-      <div class="w-full" animate:flip={{ duration: 200 }}>
-        <TrackRow
-          listenedInformation={{ lastListened: listen.updatedAt, listened: listen.listeningTime }}
-          delay={500 + index * 30}
-          track={listen.track}
-        />
-      </div>
-    {/each}
+    <div class="flex w-full max-w-3xl flex-none flex-col pb-2">
+      {#each listens as listen, index (listen.id)}
+        <div class="w-full flex-none overflow-clip" animate:flip={{ duration: 200 }}>
+          <TrackRow
+            listenedInformation={{ lastListened: listen.updatedAt, listened: listen.listeningTime }}
+            delay={500 + index * 30}
+            track={listen.track}
+          />
+        </div>
+      {/each}
+    </div>
+
+    {#if listens.length < data.totalListens}
+      <form
+        method="POST"
+        action="?/getListens"
+        class="flex items-center justify-center p-2"
+        use:enhance={handleListenSubmit}
+      >
+        <input type="hidden" name="from" value={listens.length} />
+        <button
+          class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+          type="submit"
+          use:vibrate
+          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
+          disabled={listeningLoading}
+        >
+          <div class:opacity-0={listeningLoading}>
+            Load more ({data.totalListens - listens.length} left)
+          </div>
+          {#if listeningLoading}
+            <div class="absolute left-1/2 top-1 -translate-x-1/2">
+              <RoundRefresh class="animate-spin text-xl" />
+            </div>
+          {/if}
+        </button>
+      </form>
+    {/if}
   {/if}
 </div>

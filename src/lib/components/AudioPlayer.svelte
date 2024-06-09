@@ -204,7 +204,7 @@
         const diff = e.currentTarget.currentTime - previousTime;
         if (diff < 2 && diff > 0) {
           listenedDuration += diff;
-          if (listenedDuration > 5) {
+          if (listenedDuration > 1) {
             sendListeningData($currentTrack.id, listenedDuration);
             listenedDuration = 0;
           }
