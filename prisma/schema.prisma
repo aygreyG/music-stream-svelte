@@ -102,6 +102,7 @@ model Listened {
 
   @@unique([userId, trackId])
   @@index([userId, trackId])
+  @@index([updatedAt])
 }
 
 model Playlist {
