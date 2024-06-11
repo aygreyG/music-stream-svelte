@@ -7,8 +7,6 @@
   import { getAccessibleColor, getRGBColor } from '$lib/utils';
   import type { Theme } from '@prisma/client';
   import { onMount } from 'svelte';
-  import { quintOut } from 'svelte/easing';
-  import { slide } from 'svelte/transition';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
   export let action = '?/updatetheme';
@@ -100,7 +98,6 @@
     };
   }}
 >
-  <!-- transition:slide={{ duration: 300, easing: quintOut }} -->
   <div class="font-bold text-zinc-400">Background gradient</div>
 
   <div class="flex gap-10">
