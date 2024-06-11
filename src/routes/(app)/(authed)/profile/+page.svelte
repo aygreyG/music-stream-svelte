@@ -19,7 +19,8 @@
   let deleteClicked = false;
   let deleteTimeout: string | number | NodeJS.Timeout | undefined;
   let loading = false;
-  let listeningLoading = false;
+  let listensLoading = false;
+  let listenedIndex = 0;
 
   let listens = [...data.listens];
   $: if (data.listens) {
@@ -32,12 +33,13 @@
   }
 
   const handleListenSubmit: SubmitFunction = () => {
-    listeningLoading = true;
+    listensLoading = true;
     return async ({ update, result }) => {
       await update();
-      listeningLoading = false;
+      listensLoading = false;
 
       if (result.type === 'success' && result.data?.listens && result.data.listens.length > 0) {
+        listenedIndex = listens.length;
         listens = [...listens, ...result.data.listens];
       }
     };
@@ -248,7 +250,9 @@
         <div class="w-full flex-none overflow-clip" animate:flip={{ duration: 200 }}>
           <TrackRow
             listenedInformation={{ lastListened: listen.updatedAt, listened: listen.listeningTime }}
-            delay={500 + index * 30}
+            delay={listenedIndex === 0
+              ? 500 + index * 30
+              : Math.min(Math.abs(index - listenedIndex), index) * 30}
             track={listen.track}
           />
         </div>
@@ -268,12 +272,12 @@
           type="submit"
           use:vibrate
           in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
-          disabled={listeningLoading}
+          disabled={listensLoading}
         >
-          <div class:opacity-0={listeningLoading}>
+          <div class:opacity-0={listensLoading}>
             Load more ({data.totalListens - listens.length} left)
           </div>
-          {#if listeningLoading}
+          {#if listensLoading}
             <div class="absolute left-1/2 top-1 -translate-x-1/2">
               <RoundRefresh class="animate-spin text-xl" />
             </div>
