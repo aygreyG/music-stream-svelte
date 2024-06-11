@@ -80,7 +80,7 @@
 </script>
 
 <form
-  class="flex w-full max-w-lg select-none flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
+  class="flex select-none flex-col gap-2 p-4"
   method="POST"
   style="{getRGBColor(accent, 'primary')} {getRGBColor(
     getAccessibleColor(accent),

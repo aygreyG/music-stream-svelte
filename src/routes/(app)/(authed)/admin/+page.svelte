@@ -162,7 +162,7 @@
             class:rounded-t-md={index === 0}
             class:rounded-b-md={index === data.users.length - 1}
             in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 + 100 * index }}
-            animate:flip
+            animate:flip={{ duration: 200 }}
           >
             <UserElement user={usr} />
           </div>

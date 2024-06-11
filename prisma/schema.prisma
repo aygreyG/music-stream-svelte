@@ -99,6 +99,10 @@ model Listened {
   trackId       String
   track         Track    @relation(fields: [trackId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([userId, trackId])
+  @@index([userId, trackId])
+  @@index([updatedAt])
 }
 
 model Playlist {

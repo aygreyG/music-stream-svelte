@@ -24,7 +24,7 @@ export const GET = async ({ params, setHeaders, url }) => {
 
       setHeaders({
         'Content-Type': `image/${extension}`,
-        'Cache-Control': 'public, max-age=15552000'
+        'Cache-Control': 'public, max-age=31536000, immutable'
       });
 
       return new Response(imageBuffer);

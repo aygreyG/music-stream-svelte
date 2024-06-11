@@ -17,12 +17,13 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { vibrate } from '$lib/actions/vibrate';
+  import { beforeNavigate, invalidate } from '$app/navigation';
 
   export let user: SignedInUser | null = null;
 
   let player: HTMLAudioElement;
   let currentTime = 0;
-  let prevTime = 0;
+  let prevSeekTime = 0;
   let duration: number;
   let volume: number;
   let prevVolume = 0;
@@ -30,6 +31,29 @@
   let currentString = '--:--';
   let repeat = false;
   let shuffle = false;
+  let listenedDuration = 0;
+  let previousTime = 0;
+  let previousTrackId: string;
+  let seeking = false;
+
+  async function sendListeningData(trackId: string, duration: number) {
+    if (duration < 0.01) return;
+    const resp = await fetch(`/api/listened/${trackId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        duration: duration.toPrecision(3)
+      })
+    });
+
+    if (!resp.ok) {
+      console.error('Error sending listening data for: ', trackId, ', duration: ', duration);
+    } else {
+      invalidate('listened');
+    }
+  }
 
   function togglePlay() {
     if (!$currentTrack) {
@@ -41,9 +65,11 @@
 
   function onEnded() {
     if (repeat) {
-      player.currentTime = 0;
-      prevTime = 0;
-      player.play();
+      if (player) {
+        player.currentTime = 0;
+        prevSeekTime = 0;
+        player.play();
+      }
     } else {
       playNext();
     }
@@ -65,7 +91,7 @@
   $: if (currentTime) {
     currentString = new Date(currentTime * 1000).toISOString().slice(14, 19);
 
-    if (navigator.mediaSession) {
+    if (navigator.mediaSession && player) {
       navigator.mediaSession.setPositionState({
         duration,
         playbackRate: player.playbackRate,
@@ -122,6 +148,21 @@
           playNext();
         });
       }
+
+      if (!previousTrackId) {
+        previousTrackId = val.id;
+      } else if (previousTrackId !== val.id && listenedDuration > 0.01) {
+        sendListeningData(previousTrackId, listenedDuration);
+        previousTrackId = val.id;
+        listenedDuration = 0;
+      }
+    }
+  });
+
+  paused.subscribe((val) => {
+    if (val && listenedDuration > 0 && $currentTrack) {
+      sendListeningData($currentTrack.id, listenedDuration);
+      listenedDuration = 0;
     }
   });
 
@@ -132,6 +173,14 @@
       volume = parseFloat(vol);
     } else {
       volume = 0.3;
+    }
+  });
+
+  beforeNavigate((navigation) => {
+    if (navigation.type === 'leave' && listenedDuration > 0.5) {
+      sendListeningData(previousTrackId, listenedDuration);
+      listenedDuration = 0;
+      navigation.cancel();
     }
   });
 </script>
@@ -148,6 +197,20 @@
       bind:volume
       autoplay={true}
       on:ended={onEnded}
+      on:seeking={() => (seeking = true)}
+      on:seeked={() => (seeking = false)}
+      on:timeupdate={(e) => {
+        if (seeking) return;
+        const diff = e.currentTarget.currentTime - previousTime;
+        if (diff < 2 && diff > 0) {
+          listenedDuration += diff;
+          if (listenedDuration > 1) {
+            sendListeningData($currentTrack.id, listenedDuration);
+            listenedDuration = 0;
+          }
+        }
+        previousTime = e.currentTarget.currentTime;
+      }}
     />
   {/if}
   <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
@@ -216,9 +279,9 @@
                 navigator &&
                 matchMedia('(prefers-reduced-motion: no-preference)').matches &&
                 matchMedia('(hover: none), (pointer: coarse)').matches &&
-                Math.abs(currentTime - prevTime) > 0.5
+                Math.abs(currentTime - prevSeekTime) > 0.5
               ) {
-                prevTime = currentTime;
+                prevSeekTime = currentTime;
                 navigator.vibrate(1);
               }
             }}
@@ -342,9 +405,9 @@
   }
 
   input[type='range']::-moz-range-thumb {
-    border: 2px solid rgb(var(--color-primary));
+    border: 2.5px solid rgb(var(--color-primary));
     box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
-    @apply h-3 w-3 rounded-full bg-zinc-300;
+    @apply h-[14px] w-[14px] rounded-full bg-zinc-300;
   }
 
   input[type='range']:focus {
@@ -352,7 +415,6 @@
   }
 
   .timer {
-    font-variant-numeric: tabular-nums;
-    text-align: center;
+    @apply font-mono;
   }
 </style>

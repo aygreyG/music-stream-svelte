@@ -5,6 +5,7 @@ import { createReadStream } from 'fs';
 import type { Track } from '@prisma/client';
 
 const cache = new Map<string, Track & { lastAccessed: Date }>();
+const CHUNK_SIZE = 10 ** 6;
 
 async function getTrack(trackId: string) {
   if (cache.has(trackId)) {
@@ -49,7 +50,8 @@ export const GET = async ({ params, request, setHeaders }) => {
 
   const range = request.headers.get('Range');
 
-  if (!range) {
+  if (!range && range !== 'bytes=0-') {
+    console.error('Range header not found\n', request.headers);
     error(400, {
       message: 'Range header not found'
     });
@@ -58,7 +60,6 @@ export const GET = async ({ params, request, setHeaders }) => {
   try {
     const audiostat = await stat(track.filePath);
     const audioSize = audiostat.size;
-    const CHUNK_SIZE = 10 ** 6;
     const start = Number(range.replace(/\D/g, ''));
     const end = Math.min(start + CHUNK_SIZE, audioSize - 1);
     const contentLength = end - start + 1;

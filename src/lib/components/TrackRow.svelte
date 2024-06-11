@@ -7,6 +7,7 @@
   import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
   import AlbumImage from './AlbumImage.svelte';
   import { vibrate } from '$lib/actions/vibrate';
+  import { getReadableTime } from '$lib/utils';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     include: {
@@ -15,9 +16,12 @@
     };
   }>;
 
+  type ListenedType = { listened: number; lastListened: Date | null };
+
   export let track: TrackRowType;
   export let index: number | null = null;
   export let delay: number = (index || 0) * 30;
+  export let listenedInformation: ListenedType = { listened: 0, lastListened: null };
   export let handleClick: () => void = () => {
     playTrack(
       track.album.tracks.map((t) => ({ ...t, album: track.album })),
@@ -140,6 +144,20 @@
         {track.album.title}
       </a>
     </div>
+    {#if listenedInformation.lastListened}
+      <!-- TODO: Make sure it is always readable and does not wrap
+           Issue: https://github.com/aygreyG/music-stream-svelte/issues/124
+      -->
+      <div class="flex w-full justify-between whitespace-nowrap text-xs text-white/70">
+        <div>{listenedInformation.lastListened.toLocaleString()}</div>
+        <div
+          class="translate-x-14 overflow-hidden text-ellipsis"
+          title={getReadableTime(listenedInformation.listened)}
+        >
+          {getReadableTime(listenedInformation.listened)}
+        </div>
+      </div>
+    {/if}
   </div>
 
   <button
