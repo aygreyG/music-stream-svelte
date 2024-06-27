@@ -31,7 +31,7 @@
 
 <div class="hidden h-full w-48 flex-none flex-col gap-1 sm:flex md:w-60 h-sm:w-48">
   <div
-    class="flex flex-col gap-2 overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:h-full"
+    class="flex flex-shrink-0 flex-col gap-2 overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:h-full h-md:flex-shrink"
     class:h-full={!(user && user.playlists.length > 0 && !playlistTransitioning)}
   >
     <NavigationElements {user} />
@@ -42,7 +42,7 @@
       transition:fade={{ duration: 300 }}
       on:transitionstart={() => (playlistTransitioning = true)}
       on:transitionend={() => (playlistTransitioning = false)}
-      class="flex h-full min-h-fit flex-col overflow-auto rounded-md bg-zinc-900/95 p-4 h-md:hidden"
+      class="h-full overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:hidden"
     >
       <div
         on:transitionstart|stopPropagation
@@ -76,13 +76,9 @@
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
           href="/album/{$currentTrack.album.id}"
-          class="flex h-full w-full overflow-hidden rounded-md"
+          class="flex h-full w-full overflow-hidden rounded-md bg-zinc-900"
         >
-          <AlbumImage
-            alt={$currentTrack.album.title}
-            id={$currentTrack.album.id}
-            artId={$currentTrack.album.albumArtId}
-          />
+          <AlbumImage album={$currentTrack.album} />
           <div
             class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
           >

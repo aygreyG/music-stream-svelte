@@ -1,4 +1,5 @@
 import type { AlbumWithArt, ImageSize } from '$lib/shared/types';
+import { getHexColorFromRGB } from '$lib/utils';
 import { readFile, access, writeFile } from 'fs/promises';
 import sharp from 'sharp';
 
@@ -73,4 +74,9 @@ async function createImage(
   await writeFile(to, imageBuffer);
 
   return imageBuffer;
+}
+
+export async function getAccentColor(image: Buffer | string) {
+  const stats = await sharp(image).stats();
+  return getHexColorFromRGB(stats.dominant.r, stats.dominant.g, stats.dominant.b);
 }

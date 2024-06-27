@@ -38,17 +38,10 @@
   <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
     {#if animate}
       <div
-        in:fade|global={{ duration: 500, easing: cubicInOut }}
+        in:fade|global={{ duration: 500, easing: cubicInOut, delay: 100 }}
         class="absolute left-0 top-0 h-full w-full opacity-10"
       >
-        <AlbumImage
-          key={data.album.updatedAt.toISOString()}
-          blur
-          alt="Backdrop for {data.album.title}"
-          id={data.album.id}
-          artId={data.album.albumArtId}
-          maxSize="s"
-        />
+        <AlbumImage key={data.album.updatedAt.toISOString()} blur album={data.album} maxSize="s" />
       </div>
     {/if}
     <div class="flex h-full flex-col">
@@ -58,18 +51,13 @@
         in:fade|global={{ duration: 500, easing: cubicInOut }}
       >
         <div
-          class="group h-32 w-32 flex-none overflow-clip rounded-md"
+          class="group h-32 w-32 flex-none overflow-clip rounded-md bg-zinc-900"
           class:z-20={albumAnimating}
           in:receive|global={{ key: `album-image-${data.album.id}` }}
           on:introstart={() => (albumAnimating = true)}
           on:introend={() => (albumAnimating = false)}
         >
-          <AlbumImage
-            key={data.album.updatedAt.toISOString()}
-            alt={data.album.title}
-            id={data.album.id}
-            artId={data.album.albumArtId}
-          />
+          <AlbumImage key={data.album.updatedAt.toISOString()} album={data.album} />
           {#if !albumAnimating && data.user?.role !== 'USER'}
             <div
               class="absolute bottom-0 left-0 flex gap-2 rounded-bl-md rounded-tr-md bg-zinc-900/80 backdrop-blur-sm transition-all focus-within:opacity-100 group-hover:opacity-100 sm:opacity-0"

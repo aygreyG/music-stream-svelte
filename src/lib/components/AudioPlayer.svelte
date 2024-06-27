@@ -224,14 +224,9 @@
                   in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                   out:fade|global={{ duration: 300, easing: quintOut }}
                   href="/album/{$currentTrack.album.id}"
-                  class="flex h-10 w-10"
+                  class="flex h-10 w-10 bg-zinc-900"
                 >
-                  <AlbumImage
-                    alt={$currentTrack.album.title}
-                    id={$currentTrack.album.id}
-                    artId={$currentTrack.album.albumArtId}
-                    maxSize="s"
-                  />
+                  <AlbumImage album={$currentTrack.album} maxSize="s" />
                 </a>
               {/key}
             {/if}

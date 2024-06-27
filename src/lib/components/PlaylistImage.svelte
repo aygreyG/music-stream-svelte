@@ -7,52 +7,27 @@
 
 {#if albumSet.length > 0}
   {#if albumSet.length === 1}
-    <div class="aspect-square h-full">
-      <AlbumImage
-        alt={albumSet[0].title}
-        artId={albumSet[0].albumArtId}
-        id={albumSet[0].id}
-        maxSize="l"
-      />
+    <div class="aspect-square h-full bg-zinc-600/20">
+      <AlbumImage album={albumSet[0]} maxSize="l" />
     </div>
   {:else}
     <div class="flex aspect-square h-full flex-wrap">
       <div class="aspect-square w-1/2 bg-zinc-600/20 bg-clip-content pb-0.5 pr-0.5">
-        <AlbumImage
-          alt={albumSet[0].title}
-          artId={albumSet[0].albumArtId}
-          id={albumSet[0].id}
-          maxSize="s"
-        />
+        <AlbumImage album={albumSet[0]} maxSize="s" />
       </div>
       <div class="aspect-square w-1/2 bg-zinc-600/20 bg-clip-content pb-0.5 pl-0.5">
         {#if albumSet.length > 1}
-          <AlbumImage
-            alt={albumSet[1].title}
-            artId={albumSet[1].albumArtId}
-            id={albumSet[1].id}
-            maxSize="s"
-          />
+          <AlbumImage album={albumSet[1]} maxSize="s" />
         {/if}
       </div>
       <div class="aspect-square w-1/2 bg-zinc-600/20 bg-clip-content pr-0.5 pt-0.5">
         {#if albumSet.length > 2}
-          <AlbumImage
-            alt={albumSet[2].title}
-            artId={albumSet[2].albumArtId}
-            id={albumSet[2].id}
-            maxSize="s"
-          />
+          <AlbumImage album={albumSet[2]} maxSize="s" />
         {/if}
       </div>
       <div class="aspect-square w-1/2 bg-zinc-600/20 bg-clip-content pl-0.5 pt-0.5">
         {#if albumSet.length > 3}
-          <AlbumImage
-            alt={albumSet[3].title}
-            artId={albumSet[3].albumArtId}
-            id={albumSet[3].id}
-            maxSize="s"
-          />
+          <AlbumImage album={albumSet[3]} maxSize="s" />
         {/if}
       </div>
     </div>
