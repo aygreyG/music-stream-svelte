@@ -76,7 +76,7 @@
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
           href="/album/{$currentTrack.album.id}"
-          class="flex h-full w-full overflow-hidden rounded-md bg-zinc-900"
+          class="flex h-full w-full overflow-hidden rounded-md"
         >
           <AlbumImage album={$currentTrack.album} />
           <div

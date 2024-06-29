@@ -11,6 +11,7 @@
 <div
   class="h-full w-full"
   style={album.albumArtAccent && !blur ? `background-color: ${album.albumArtAccent}` : ''}
+  class:bg-zinc-900={!album.albumArtAccent && !blur}
 >
   <picture class="flex h-full w-full">
     {#key key}

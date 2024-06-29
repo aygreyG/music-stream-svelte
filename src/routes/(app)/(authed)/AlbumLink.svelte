@@ -23,7 +23,7 @@
 {#if animate}
   <a
     use:vibrate
-    class="h-36 w-36 overflow-hidden rounded-md md:h-40 md:w-40 xl:h-52 xl:w-52"
+    class="h-36 w-36 overflow-hidden rounded-md bg-zinc-900 md:h-40 md:w-40 xl:h-52 xl:w-52"
     class:z-20={outrostarted}
     href="/album/{album.id}"
     in:fly={{ duration: 500, delay, easing: quintOut, x: -20 }}
