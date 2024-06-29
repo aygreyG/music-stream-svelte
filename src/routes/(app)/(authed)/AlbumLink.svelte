@@ -23,15 +23,16 @@
 {#if animate}
   <a
     use:vibrate
-    class="h-36 w-36 overflow-hidden rounded-md bg-zinc-900 md:h-40 md:w-40 xl:h-52 xl:w-52"
+    class="h-36 w-36 overflow-hidden rounded-md md:h-40 md:w-40 xl:h-52 xl:w-52"
     class:z-20={outrostarted}
+    class:bg-zinc-900={!album.albumArtAccent}
     href="/album/{album.id}"
     in:fly={{ duration: 500, delay, easing: quintOut, x: -20 }}
     out:send|global={{ key: `album-image-${album.id}` }}
     on:outrostart={() => (outrostarted = true)}
     id={index.toString()}
   >
-    <div>
+    <div class="h-full w-full">
       <AlbumImage {album} />
     </div>
     <div class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center">
