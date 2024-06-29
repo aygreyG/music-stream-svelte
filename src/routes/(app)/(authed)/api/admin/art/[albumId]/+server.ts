@@ -3,6 +3,7 @@ import { getAlbumArtUrl } from '$lib/shared/fetchAlbumArt.js';
 import { error, json } from '@sveltejs/kit';
 import { access, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
+import { getAccentColor } from '$lib/server/images';
 
 export const POST = async ({ request, params }) => {
   const { albumId } = params;
@@ -47,14 +48,18 @@ export const POST = async ({ request, params }) => {
         const ext = albumArt.headers.get('content-type')?.split('/')[1] || 'jpg';
         const buffer = Buffer.from(await albumArt.arrayBuffer());
         await writeFile(join(coversDir, `${albumArtFileName}.${ext}`), buffer);
+
+        const albumArtAccent = await getAccentColor(buffer);
         const albumArtId = crypto.randomUUID();
+
         await prisma.album.update({
           where: {
             id: albumId
           },
           data: {
             albumArt: join(coversDir, `${albumArtFileName}.${ext}`),
-            albumArtId
+            albumArtId,
+            albumArtAccent
           }
         });
 

@@ -4,6 +4,7 @@ import * as mm from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings } from './serverSettings';
+import { getAccentColor } from './images';
 
 let inProgress = false;
 let tracksCreated = 0;
@@ -148,7 +149,11 @@ async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFile
   }
 }
 
-async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist: Artist) {
+async function getAlbumArt(
+  dir: string,
+  fileData: mm.IAudioMetadata,
+  albumArtist: Artist
+): Promise<{ albumLocation: string; accentColor: string } | null> {
   const regex = / |\.|\[|\]|\\|\//g;
   const albumArtFileName = `${albumArtist.name.replaceAll(
     regex,
@@ -166,7 +171,10 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
     const coverFile = await searchForAlbumFile(coverFiles, coversDir, albumArtFileName);
 
     if (coverFile) {
-      return coverFile;
+      return {
+        albumLocation: coverFile,
+        accentColor: await getAccentColor(coverFile)
+      };
     }
   }
 
@@ -180,7 +188,10 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
       const coversDir = join(dir, 'Covers');
       await access(coversDir).catch(() => mkdir(coversDir));
       await writeFile(albumArtPath, albumArt);
-      return albumArtPath;
+      return {
+        albumLocation: albumArtPath,
+        accentColor: await getAccentColor(albumArtPath)
+      };
     } catch (err) {
       console.error('Could not create album art file', err);
     }
@@ -198,7 +209,10 @@ async function getAlbumArt(dir: string, fileData: mm.IAudioMetadata, albumArtist
       const extension = fileName.split('.').pop();
       const pathToWrite = join(coversDir, albumArtFileName) + '.' + extension;
       await writeFile(pathToWrite, buffer);
-      return pathToWrite;
+      return {
+        albumLocation: pathToWrite,
+        accentColor: await getAccentColor(pathToWrite)
+      };
     } catch (err) {
       console.error('Could not create album art file', err);
     }
@@ -268,8 +282,9 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
                 albumArtist: {
                   connect: { id: albumArtist.id }
                 },
-                albumArt,
-                albumArtId: albumArt ? crypto.randomUUID() : null
+                albumArt: albumArt ? albumArt.albumLocation : null,
+                albumArtId: albumArt ? crypto.randomUUID() : null,
+                albumArtAccent: albumArt ? albumArt.accentColor : null
               },
               include: {
                 tracks: true

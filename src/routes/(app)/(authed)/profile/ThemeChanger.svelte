@@ -116,7 +116,7 @@
     <label class="flex w-full flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Angle</div>
       <select
-        class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all focus-within:ring-2 focus-within:ring-primary hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         name="angle"
         bind:value={angle}
         required

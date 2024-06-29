@@ -226,12 +226,7 @@
                   href="/album/{$currentTrack.album.id}"
                   class="flex h-10 w-10"
                 >
-                  <AlbumImage
-                    alt={$currentTrack.album.title}
-                    id={$currentTrack.album.id}
-                    artId={$currentTrack.album.albumArtId}
-                    maxSize="s"
-                  />
+                  <AlbumImage album={$currentTrack.album} maxSize="s" />
                 </a>
               {/key}
             {/if}
