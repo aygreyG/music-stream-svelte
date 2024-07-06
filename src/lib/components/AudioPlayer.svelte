@@ -285,20 +285,21 @@
                 }
               }}
             />
-            {#each bufferedRanges as range, index (range.start)}
-              {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
-              {@const roundedEnd =
-                index === bufferedRanges.length - 1 ||
-                bufferedRanges[index + 1].start !== range.end}
-              <div
-                class="absolute h-4 bg-primary/50"
-                class:rounded-l-full={roundedStart}
-                class:rounded-r-full={roundedEnd}
-                style="width: {((range.end - range.start) / duration) * 100}%; left: {(range.start /
-                  duration) *
-                  100}%;"
-              />
-            {/each}
+            {#if !(typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox'))}
+              {#each bufferedRanges as range, index (range.start)}
+                {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
+                {@const roundedEnd =
+                  index === bufferedRanges.length - 1 ||
+                  bufferedRanges[index + 1].start !== range.end}
+                <div
+                  class="absolute h-4 bg-primary/50"
+                  class:rounded-l-full={roundedStart}
+                  class:rounded-r-full={roundedEnd}
+                  style="width: {((range.end - range.start) / duration) *
+                    100}%; left: {(range.start / duration) * 100}%;"
+                />
+              {/each}
+            {/if}
           </div>
           <div class="timer">{durationString}</div>
         </div>
