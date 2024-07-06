@@ -55,9 +55,12 @@
     "sharp": "^0.33.0"
   },
   "lint-staged": {
-    "*.{js,ts,svelte,css,md,html,json,yml,yaml}": [
+    "*.{js,ts,svelte}": [
       "prettier --write",
       "eslint --fix"
+    ],
+    "*.{html,css,json,md,yaml,yml}": [
+      "prettier --write"
     ]
   }
 }

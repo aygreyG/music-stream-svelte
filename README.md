@@ -9,6 +9,7 @@
 - [Installation](#installation)
   - [Docker](#docker)
   - [Manual](#manual)
+  - [Development](#development)
 
 ---
 
@@ -110,3 +111,28 @@ chmod +x start.sh
 ```bash
 DATABASE_URL=postgresql://user:password@host:port/dbname ./start.sh
 ```
+
+### Development
+
+- Install Node.js
+- Install PostgreSQL and create a database
+- Clone the repository
+- Create a `.env` file in the root directory with the following content:
+
+```
+DATABASE_URL=postgresql://user:password@host:port/dbname
+```
+
+- Install dependencies and generate prisma client:
+
+```bash
+npm install && npx prisma generate
+```
+
+- Start the server with
+
+```bash
+npm run dev
+```
+
+- If you are using a node manager (like `nvm`) and want to commit using a gui you might need [this](https://typicode.github.io/husky/how-to.html#node-version-managers-and-guis) to make husky work
