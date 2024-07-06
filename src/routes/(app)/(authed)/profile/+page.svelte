@@ -24,7 +24,6 @@
 
   let listens = [...data.listens];
   $: if (data.listens) {
-    console.log('data.listens run');
     let tmpListens = [
       ...listens.filter((el) => !data.listens.find((v) => v.id === el.id)),
       ...data.listens
