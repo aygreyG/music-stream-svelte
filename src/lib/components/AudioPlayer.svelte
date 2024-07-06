@@ -18,6 +18,7 @@
   import { browser } from '$app/environment';
   import { vibrate } from '$lib/actions/vibrate';
   import { beforeNavigate, invalidate } from '$app/navigation';
+  import type { SvelteMediaTimeRange } from 'svelte/elements';
 
   export let user: SignedInUser | null = null;
 
@@ -35,6 +36,7 @@
   let previousTime = 0;
   let previousTrackId: string;
   let seeking = false;
+  let bufferedRanges: SvelteMediaTimeRange[] = [];
 
   async function sendListeningData(trackId: string, duration: number) {
     if (duration < 0.01) return;
@@ -211,6 +213,7 @@
         }
         previousTime = e.currentTarget.currentTime;
       }}
+      bind:buffered={bufferedRanges}
     />
   {/if}
   <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
@@ -260,27 +263,45 @@
         </div>
         <div class="flex items-center justify-between gap-2 whitespace-nowrap sm:order-2">
           <div class="timer">{currentString}</div>
-          <input
-            class="w-full"
-            type="range"
-            min="0"
-            max={duration}
-            step="0.01"
-            bind:value={currentTime}
-            disabled={!duration}
-            aria-label="Progress bar"
-            on:input={() => {
-              if (
-                navigator &&
-                matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-                matchMedia('(hover: none), (pointer: coarse)').matches &&
-                Math.abs(currentTime - prevSeekTime) > 0.5
-              ) {
-                prevSeekTime = currentTime;
-                navigator.vibrate(1);
-              }
-            }}
-          />
+          <div
+            class="progress-bar flex w-full items-center justify-between overflow-clip rounded-full"
+          >
+            <input
+              class="z-10 w-full opacity-85"
+              type="range"
+              min="0"
+              max={duration}
+              step="0.01"
+              bind:value={currentTime}
+              disabled={!duration}
+              aria-label="Progress bar"
+              on:input={() => {
+                if (
+                  navigator &&
+                  matchMedia('(prefers-reduced-motion: no-preference)').matches &&
+                  matchMedia('(hover: none), (pointer: coarse)').matches &&
+                  Math.abs(currentTime - prevSeekTime) > 0.5
+                ) {
+                  prevSeekTime = currentTime;
+                  navigator.vibrate(1);
+                }
+              }}
+            />
+            {#each bufferedRanges as range, index (range.start)}
+              {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
+              {@const roundedEnd =
+                index === bufferedRanges.length - 1 ||
+                bufferedRanges[index + 1].start !== range.end}
+              <div
+                class="absolute h-4 bg-primary/50"
+                class:rounded-l-full={roundedStart}
+                class:rounded-r-full={roundedEnd}
+                style="width: {((range.end - range.start) / duration) * 100}%; left: {(range.start /
+                  duration) *
+                  100}%;"
+              />
+            {/each}
+          </div>
           <div class="timer">{durationString}</div>
         </div>
         <div class="flex items-center justify-center gap-2 sm:justify-around lg:justify-center">
@@ -380,15 +401,15 @@
   input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
-    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600 outline-none;
+    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-none backdrop-blur-md;
   }
 
   input[type='range']::-webkit-slider-runnable-track {
-    @apply h-4 rounded-full bg-zinc-600;
+    @apply h-4 rounded-full bg-transparent;
   }
 
   input[type='range']::-moz-range-track {
-    @apply h-4 rounded-full bg-zinc-600;
+    @apply h-4 rounded-full bg-transparent;
   }
 
   input[type='range']::-webkit-slider-thumb {
