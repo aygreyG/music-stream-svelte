@@ -120,7 +120,7 @@ DATABASE_URL=postgresql://user:password@host:port/dbname ./start.sh
 - Create a `.env` file in the root directory with the following content:
 
 ```
-DATABASE_URL=postgresql://user:password@host:port/dbname
+DATABASE_URL=postgres://user:password@host:port/dbname
 ```
 
 - Install dependencies and generate prisma client:
