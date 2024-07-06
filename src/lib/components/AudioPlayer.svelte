@@ -263,9 +263,7 @@
         </div>
         <div class="flex items-center justify-between gap-2 whitespace-nowrap sm:order-2">
           <div class="timer">{currentString}</div>
-          <div
-            class="progress-bar flex w-full items-center justify-between overflow-clip rounded-full"
-          >
+          <div class="flex w-full items-center justify-between overflow-clip rounded-full">
             <input
               class="z-10 w-full opacity-85"
               type="range"
