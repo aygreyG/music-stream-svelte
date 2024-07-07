@@ -140,7 +140,13 @@ async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFile
   ];
   for (const fileName of fileNames) {
     const fileExt = fileName.split('.').pop()?.toLowerCase();
-    if (fileExt === 'jpg' || fileExt === 'jpeg' || fileExt === 'png') {
+    if (
+      fileExt === 'jpg' ||
+      fileExt === 'jpeg' ||
+      fileExt === 'png' ||
+      fileExt === 'webp' ||
+      fileExt === 'avif'
+    ) {
       const fileBaseName = fileName.split('.').slice(0, -1).join('.').toLowerCase();
       if (albumArtNames.includes(fileBaseName)) {
         return join(dir, fileName);
