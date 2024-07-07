@@ -164,7 +164,7 @@ async function getAlbumArt(
   const albumArtFileName = `${albumArtist.name.replaceAll(
     regex,
     '_'
-  )}_${fileData.common.album?.replaceAll(regex, '_')}`;
+  )}_${fileData.common.album?.replaceAll(regex, '_')?.replaceAll('?', '')}`;
 
   const coversDir = join(dir, 'Covers');
 
