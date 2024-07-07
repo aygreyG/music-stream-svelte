@@ -10,9 +10,25 @@
   import { getReadableTime } from '$lib/utils';
 
   type TrackRowType = Prisma.TrackGetPayload<{
-    include: {
-      album: { include: { albumArtist: true; tracks: { include: { artists: true } } } };
-      artists: true;
+    select: {
+      id: true;
+      title: true;
+      length: true;
+      trackNumber: true;
+      artists: { select: { name: true; id: true } };
+      album: {
+        select: {
+          id: true;
+          title: true;
+          albumArtist: { select: { name: true; id: true } };
+          albumArtId: true;
+          albumArtAccent: true;
+          albumArt: true;
+          tracks: {
+            select: { id: true; title: true; artists: { select: { name: true; id: true } } };
+          };
+        };
+      };
     };
   }>;
 

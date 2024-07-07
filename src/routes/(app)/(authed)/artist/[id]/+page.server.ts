@@ -6,26 +6,36 @@ export const load = async ({ locals, params }) => {
 
   const artist = await prisma.artist.findUnique({
     where: { id },
-    include: {
+    select: {
+      name: true,
       albums: {
-        orderBy: { releaseDate: { sort: 'asc', nulls: 'last' } },
-        include: {
-          tracks: {
-            orderBy: [{ discNumber: 'asc' }, { trackNumber: 'asc' }],
-            include: { artists: true }
-          }
-        }
+        select: {
+          id: true,
+          title: true,
+          albumArtId: true,
+          albumArtAccent: true
+        },
+        orderBy: { releaseDate: { sort: 'asc', nulls: 'last' } }
       },
       tracks: {
         where: { album: { NOT: { albumArtistId: id } } },
-        include: {
-          artists: true,
+
+        select: {
+          id: true,
+          title: true,
+          length: true,
+          trackNumber: true,
+          artists: { select: { name: true, id: true } },
           album: {
-            include: {
-              albumArtist: true,
+            select: {
+              id: true,
+              title: true,
+              albumArtist: { select: { name: true, id: true } },
+              albumArtId: true,
+              albumArt: true,
+              albumArtAccent: true,
               tracks: {
-                include: { artists: true },
-                orderBy: [{ discNumber: 'asc' }, { trackNumber: 'asc' }]
+                select: { id: true, title: true, artists: { select: { name: true, id: true } } }
               }
             }
           }

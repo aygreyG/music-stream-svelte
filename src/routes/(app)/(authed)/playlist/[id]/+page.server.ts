@@ -1,5 +1,5 @@
 import prisma from '$lib/server/prisma.js';
-import type { Album } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals, params }) => {
@@ -10,20 +10,48 @@ export const load = async ({ locals, params }) => {
       userId: locals.user?.id,
       id
     },
-    include: {
+    select: {
+      id: true,
+      name: true,
       tracks: {
-        include: {
+        select: {
+          id: true,
+          title: true,
+          trackNumber: true,
+          length: true,
+          artists: {
+            select: {
+              id: true,
+              name: true
+            }
+          },
           album: {
-            include: {
-              albumArtist: true,
+            select: {
+              id: true,
+              title: true,
+              albumArtId: true,
+              albumArtAccent: true,
+              albumArt: true,
+              albumArtist: {
+                select: {
+                  id: true,
+                  name: true
+                }
+              },
               tracks: {
-                include: {
-                  artists: true
+                select: {
+                  id: true,
+                  title: true,
+                  artists: {
+                    select: {
+                      id: true,
+                      name: true
+                    }
+                  }
                 }
               }
             }
-          },
-          artists: true
+          }
         }
       }
     }
@@ -33,7 +61,9 @@ export const load = async ({ locals, params }) => {
     return error(404, 'Playlist not found');
   }
 
-  const albumSet: Album[] = [];
+  const albumSet: Prisma.AlbumGetPayload<{
+    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+  }>[] = [];
 
   for (const track of playlist.tracks) {
     if (!albumSet.find((a) => a.id === track.album.id)) {
@@ -72,11 +102,14 @@ export const actions = {
             id: trackId
           }
         }
+      },
+      select: {
+        id: true
       }
     });
 
     return {
-      playlist
+      playlistId: playlist.id
     };
   }
 };

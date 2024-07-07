@@ -7,24 +7,26 @@
   import { fade } from 'svelte/transition';
   import { cubicInOut } from 'svelte/easing';
   import { crossfade } from '$lib/transitions/crossfade';
-  const [send, receive] = crossfade;
-  import type { Track } from '@prisma/client';
+  const [, receive] = crossfade;
+  import type { Prisma } from '@prisma/client';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import PlaylistModal from './PlaylistModal.svelte';
   import EditModal from './EditModal.svelte';
+
+  type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 
   export let data;
   let animate: boolean = false;
   let albumAnimating: boolean = false;
   let editModalOpen: boolean = false;
   let playlistModalOpen: boolean = false;
-  let playlistModalTrack: Track;
+  let playlistModalTrack: TrackType;
 
   let container: HTMLDivElement;
   let scrolled = false;
 
-  function openPlaylistModal(track: Track) {
+  function openPlaylistModal(track: TrackType) {
     playlistModalTrack = track;
     playlistModalOpen = true;
   }

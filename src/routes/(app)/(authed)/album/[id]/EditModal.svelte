@@ -9,9 +9,12 @@
   import Modal from '$lib/components/Modal.svelte';
   import { currentTrack } from '$lib/stores/audioPlayer';
   import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
-  import type { AlbumReleaseSearchResult, AlbumWithArtist } from '$lib/shared/types';
+  import type { AlbumReleaseSearchResult } from '$lib/shared/types';
+  import type { Prisma } from '@prisma/client';
 
-  export let album: AlbumWithArtist;
+  export let album: Prisma.AlbumGetPayload<{
+    select: { title: true; albumArtist: { select: { name: true } }; id: true };
+  }>;
   let releaseResponse: Promise<AlbumReleaseSearchResult>;
   let albumArtLoading: boolean = false;
   let albumArtQuery: string = `${album.title} AND artist:${album.albumArtist.name}`;
@@ -51,7 +54,7 @@
 
     if (response.ok) {
       // Handling if the currently playing track is from the same album
-      if ($currentTrack && $currentTrack.albumId === album.id) {
+      if ($currentTrack && $currentTrack.album.id === album.id) {
         const responseJson = await response.json();
         $currentTrack.album.albumArtId = responseJson.albumArtId;
       }
@@ -75,7 +78,7 @@
           await update();
           console.log(result);
           if (result.type === 'success') {
-            if ($currentTrack && $currentTrack.albumId === album.id && result?.data?.albumArtId) {
+            if ($currentTrack && $currentTrack.album.id === album.id && result?.data?.albumArtId) {
               $currentTrack.album.albumArtId = result.data.albumArtId.toString();
             }
           }

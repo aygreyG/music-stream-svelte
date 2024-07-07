@@ -1,22 +1,33 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import type { PlaylistWithTracks } from '$lib/shared/types';
   import { crossfade } from '$lib/transitions/crossfade';
-  import type { Album } from '@prisma/client';
+  import type { Prisma } from '@prisma/client';
   import { fade } from 'svelte/transition';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
   import RoundCheckCircle from 'virtual:icons/ic/round-check-circle';
   import TrashFill from 'virtual:icons/iconamoon/trash-fill';
   import { vibrate } from '$lib/actions/vibrate';
 
-  export let playlist: PlaylistWithTracks;
+  export let playlist: Prisma.PlaylistGetPayload<{
+    select: {
+      name: true;
+      id: true;
+      tracks: {
+        select: {
+          album: { select: { id: true; albumArtAccent: true; title: true; albumArtId: true } };
+        };
+      };
+    };
+  }>;
   export let selected: boolean = false;
 
-  const albumSet: Album[] = [];
+  const albumSet: Prisma.AlbumGetPayload<{
+    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+  }>[] = [];
   let nameInput: HTMLInputElement;
   let playlistName: string = playlist.name;
   let deleteClicked = false;
-  const [send, receive] = crossfade;
+  const [send] = crossfade;
   let timeout: string | number | NodeJS.Timeout | undefined;
 
   for (const track of playlist.tracks) {

@@ -12,11 +12,30 @@ export const load = async ({ locals, depends }) => {
   const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: 'OWNER' } } });
   const listens = await prisma.listened.findMany({
     where: { userId: locals.user?.id },
-    include: {
+    select: {
+      id: true,
+      updatedAt: true,
+      listeningTime: true,
       track: {
-        include: {
-          album: { include: { tracks: { include: { artists: true } }, albumArtist: true } },
-          artists: true
+        select: {
+          id: true,
+          title: true,
+          length: true,
+          trackNumber: true,
+          artists: { select: { name: true, id: true } },
+          album: {
+            select: {
+              id: true,
+              title: true,
+              albumArtist: { select: { name: true, id: true } },
+              albumArtId: true,
+              albumArtAccent: true,
+              albumArt: true,
+              tracks: {
+                select: { id: true, title: true, artists: { select: { name: true, id: true } } }
+              }
+            }
+          }
         }
       }
     },
@@ -238,11 +257,30 @@ export const actions = {
     const listens = await prisma.listened.findMany({
       where: { userId: locals.user?.id },
       skip: skip ? parseInt(skip) : 0,
-      include: {
+      select: {
+        id: true,
+        updatedAt: true,
+        listeningTime: true,
         track: {
-          include: {
-            album: { include: { tracks: { include: { artists: true } }, albumArtist: true } },
-            artists: true
+          select: {
+            id: true,
+            title: true,
+            length: true,
+            trackNumber: true,
+            artists: { select: { name: true, id: true } },
+            album: {
+              select: {
+                id: true,
+                title: true,
+                albumArtist: { select: { name: true, id: true } },
+                albumArtId: true,
+                albumArtAccent: true,
+                albumArt: true,
+                tracks: {
+                  select: { id: true, title: true, artists: { select: { name: true, id: true } } }
+                }
+              }
+            }
           }
         }
       },

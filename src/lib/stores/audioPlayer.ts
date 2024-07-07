@@ -2,7 +2,31 @@ import type { Prisma } from '@prisma/client';
 import { writable } from 'svelte/store';
 
 type TrackType = Prisma.TrackGetPayload<{
-  include: { artists: true; album: { include: { albumArtist: true } } };
+  select: {
+    id: true;
+    title: true;
+    artists: {
+      select: {
+        id: true;
+        name: true;
+      };
+    };
+    album: {
+      select: {
+        id: true;
+        title: true;
+        albumArtist: {
+          select: {
+            id: true;
+            name: true;
+          };
+        };
+        albumArtId: true;
+        albumArt: true;
+        albumArtAccent: true;
+      };
+    };
+  };
 }>;
 
 export const paused = writable(true);

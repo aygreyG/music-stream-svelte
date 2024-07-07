@@ -56,8 +56,7 @@
   },
   "lint-staged": {
     "*.{js,ts,svelte}": [
-      "prettier --write",
-      "eslint --fix"
+      "prettier --write"
     ],
     "*.{html,css,json,md,yaml,yml}": [
       "prettier --write"

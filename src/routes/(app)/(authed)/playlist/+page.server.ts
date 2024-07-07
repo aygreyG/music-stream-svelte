@@ -5,10 +5,19 @@ export const load = async ({ locals }) => {
     where: {
       userId: locals.user?.id
     },
-    include: {
+    select: {
+      name: true,
+      id: true,
       tracks: {
-        include: {
-          album: true
+        select: {
+          album: {
+            select: {
+              id: true,
+              title: true,
+              albumArtId: true,
+              albumArtAccent: true
+            }
+          }
         }
       }
     },
