@@ -5,7 +5,7 @@
   import { fly } from 'svelte/transition';
 
   type ArtistRowType = Prisma.ArtistGetPayload<{
-    include: { _count: { select: { albums: true; tracks: true } } };
+    select: { id: true; name: true; _count: { select: { albums: true; tracks: true } } };
   }>;
 
   export let artist: ArtistRowType;

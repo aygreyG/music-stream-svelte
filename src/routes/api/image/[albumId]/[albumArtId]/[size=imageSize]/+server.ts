@@ -8,6 +8,9 @@ export const GET = async ({ params, setHeaders, url }) => {
   const blur = !!url.searchParams.get('blur');
 
   const album = await prisma.album.findUnique({
+    select: {
+      albumArt: true
+    },
     where: {
       id: albumId,
       albumArtId

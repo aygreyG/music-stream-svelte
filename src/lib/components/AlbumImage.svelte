@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { ImageSize } from '$lib/shared/types';
-  import type { Album } from '@prisma/client';
+  import type { Prisma } from '@prisma/client';
 
-  export let album: Album;
+  export let album: Prisma.AlbumGetPayload<{
+    select: { albumArtAccent: true; albumArtId: true; id: true; title: true };
+  }>;
   export let maxSize: ImageSize = 'l';
   export let blur: boolean = false;
   export let key: string | null = '';

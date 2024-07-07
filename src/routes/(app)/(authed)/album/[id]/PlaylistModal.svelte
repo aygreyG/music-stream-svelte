@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Track } from '@prisma/client';
+  import type { Prisma } from '@prisma/client';
   import { flip } from 'svelte/animate';
   import HeartFill from 'virtual:icons/iconamoon/heart-fill';
   import Heart from 'virtual:icons/iconamoon/heart';
@@ -11,7 +11,7 @@
 
   export let open: boolean = false;
   export let user: SignedInUser | null;
-  export let track: Track | undefined;
+  export let track: Prisma.TrackGetPayload<{ select: { title: true; id: true } }> | undefined;
 
   let loading = false;
 </script>

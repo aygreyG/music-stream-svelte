@@ -1,8 +1,10 @@
 <script lang="ts">
   import AlbumImage from '$lib/components/AlbumImage.svelte';
-  import type { Album } from '@prisma/client';
+  import type { Prisma } from '@prisma/client';
 
-  export let albumSet: Album[];
+  export let albumSet: Prisma.AlbumGetPayload<{
+    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+  }>[];
 </script>
 
 {#if albumSet.length > 0}

@@ -1,15 +1,14 @@
 <script lang="ts">
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { observeVisibility } from '$lib/observeVisibility';
-  import type { AlbumWithArtist } from '$lib/shared/types';
-
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import { crossfade } from '$lib/transitions/crossfade';
   import { vibrate } from '$lib/actions/vibrate';
-  const [send, receive] = crossfade;
+  import type { PageData } from './$types';
+  const [send] = crossfade;
 
-  export let album: AlbumWithArtist;
+  export let album: PageData['albums'][0];
   export let index: number;
   export let first: number | undefined = undefined;
 
