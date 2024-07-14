@@ -45,13 +45,14 @@ export async function playNext() {
   queueContextIndex.update((i) => {
     let newIndex = i;
 
-    queueContext.subscribe((context) => {
+    const unsub = queueContext.subscribe((context) => {
       if (i + 1 < context.length) {
         newIndex++;
         currentTrack.set(context[newIndex]);
       }
     });
 
+    unsub();
     return newIndex;
   });
 }
@@ -60,13 +61,14 @@ export async function playPrevious() {
   queueContextIndex.update((i) => {
     let newIndex = i;
 
-    queueContext.subscribe((context) => {
+    const unsub = queueContext.subscribe((context) => {
       if (i - 1 >= 0) {
         newIndex--;
         currentTrack.set(context[newIndex]);
       }
     });
 
+    unsub();
     return newIndex;
   });
 }

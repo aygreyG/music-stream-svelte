@@ -19,6 +19,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import { beforeNavigate, invalidate } from '$app/navigation';
   import type { SvelteMediaTimeRange } from 'svelte/elements';
+  import { navigating } from '$app/stores';
 
   export let user: SignedInUser | null = null;
 
@@ -55,6 +56,18 @@
     } else {
       invalidate('listened');
     }
+  }
+
+  function isSlowConnection() {
+    if ('connection' in navigator) {
+      return (
+        (navigator.connection?.effectiveType !== '4g' &&
+          navigator.connection?.effectiveType !== '5g') || // not sure if it can be 5g yet
+        navigator.connection?.downlink < 1.5
+      );
+    }
+
+    return false;
   }
 
   function togglePlay() {
@@ -108,67 +121,67 @@
     localStorage.setItem('player-volume', volume.toString());
   }
 
-  currentTrack.subscribe((val) => {
-    if (val) {
-      if (navigator.mediaSession) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: val.title,
-          artist: val.artists.map((a) => a.name).join(', '),
-          album: val.album.title,
-          artwork: [
-            {
-              src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/avif`,
-              sizes: '300x300',
-              type: 'image/avif'
-            },
-            {
-              src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/webp`,
-              sizes: '300x300',
-              type: 'image/webp'
-            },
-            {
-              src: `/api/image/${val.album.id}/${val.album.albumArtId}/l`,
-              sizes: '300x300',
-              type: `image/${val.album.albumArt?.split('.').pop()}`
-            }
-          ]
-        });
+  onMount(() => {
+    const currentTrackSub = currentTrack.subscribe((val) => {
+      if (val) {
+        if (navigator.mediaSession) {
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: val.title,
+            artist: val.artists.map((a) => a.name).join(', '),
+            album: val.album.title,
+            artwork: [
+              {
+                src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/avif`,
+                sizes: '300x300',
+                type: 'image/avif'
+              },
+              {
+                src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/webp`,
+                sizes: '300x300',
+                type: 'image/webp'
+              },
+              {
+                src: `/api/image/${val.album.id}/${val.album.albumArtId}/l`,
+                sizes: '300x300',
+                type: `image/${val.album.albumArt?.split('.').pop()}`
+              }
+            ]
+          });
 
-        navigator.mediaSession.setActionHandler('play', () => {
-          togglePlay();
-        });
+          navigator.mediaSession.setActionHandler('play', () => {
+            togglePlay();
+          });
 
-        navigator.mediaSession.setActionHandler('pause', () => {
-          togglePlay();
-        });
+          navigator.mediaSession.setActionHandler('pause', () => {
+            togglePlay();
+          });
 
-        navigator.mediaSession.setActionHandler('previoustrack', () => {
-          playPrevious();
-        });
+          navigator.mediaSession.setActionHandler('previoustrack', () => {
+            playPrevious();
+          });
 
-        navigator.mediaSession.setActionHandler('nexttrack', () => {
-          playNext();
-        });
+          navigator.mediaSession.setActionHandler('nexttrack', () => {
+            playNext();
+          });
+        }
+
+        if (!previousTrackId) {
+          previousTrackId = val.id;
+        } else if (previousTrackId !== val.id && listenedDuration > 0.01) {
+          sendListeningData(previousTrackId, listenedDuration);
+          previousTrackId = val.id;
+          listenedDuration = 0;
+        }
       }
+    });
 
-      if (!previousTrackId) {
-        previousTrackId = val.id;
-      } else if (previousTrackId !== val.id && listenedDuration > 0.01) {
-        sendListeningData(previousTrackId, listenedDuration);
-        previousTrackId = val.id;
+    const pausedSub = paused.subscribe((val) => {
+      if (val && listenedDuration > 0 && $currentTrack) {
+        sendListeningData($currentTrack.id, listenedDuration);
         listenedDuration = 0;
       }
-    }
-  });
+    });
 
-  paused.subscribe((val) => {
-    if (val && listenedDuration > 0 && $currentTrack) {
-      sendListeningData($currentTrack.id, listenedDuration);
-      listenedDuration = 0;
-    }
-  });
-
-  onMount(() => {
     const vol = localStorage.getItem('player-volume');
 
     if (vol) {
@@ -176,6 +189,11 @@
     } else {
       volume = 0.3;
     }
+
+    return () => {
+      currentTrackSub();
+      pausedSub();
+    };
   });
 
   beforeNavigate((navigation) => {
@@ -206,7 +224,10 @@
         const diff = e.currentTarget.currentTime - previousTime;
         if (diff < 2 && diff > 0) {
           listenedDuration += diff;
-          if (listenedDuration > 1) {
+          if (
+            ((listenedDuration > 1 && !isSlowConnection()) || listenedDuration > 8) &&
+            $navigating === null
+          ) {
             sendListeningData($currentTrack.id, listenedDuration);
             listenedDuration = 0;
           }
