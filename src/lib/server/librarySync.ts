@@ -1,6 +1,6 @@
 import type { Artist } from '@prisma/client';
 import prisma from './prisma';
-import * as mm from 'music-metadata';
+import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings } from './serverSettings';
@@ -157,7 +157,7 @@ async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFile
 
 async function getAlbumArt(
   dir: string,
-  fileData: mm.IAudioMetadata,
+  fileData: IAudioMetadata,
   albumArtist: Artist
 ): Promise<{ albumLocation: string; accentColor: string } | null> {
   const regex = / |\.|\[|\]|\\|\//g;
@@ -231,7 +231,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
   const track = await prisma.track.findUnique({ where: { filePath } });
 
   if (!track) {
-    const data = await mm.parseFile(filePath);
+    const data = await parseFile(filePath);
     if (!data.common.title || !data.common.artists || !data.common.album) {
       console.error(
         `Couldn't get artist and/or title and/or album metadata from file: ${filePath}
