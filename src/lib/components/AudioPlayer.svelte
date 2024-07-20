@@ -306,7 +306,7 @@
                 }
               }}
             />
-            {#if !(typeof navigator !== 'undefined' && navigator.userAgent.includes('Firefox'))}
+            {#if !(typeof navigator !== 'undefined' && !navigator.userAgent.includes('Chrome'))}
               {#each bufferedRanges as range, index (range.start)}
                 {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
                 {@const roundedEnd =

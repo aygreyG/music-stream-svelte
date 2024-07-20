@@ -2,14 +2,16 @@ import prisma from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { stat } from 'fs/promises';
 import { createReadStream } from 'fs';
-import type { Track } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
-const cache = new Map<string, Track & { lastAccessed: Date }>();
-const CHUNK_SIZE = 10 ** 6;
+type TrackType = Prisma.TrackGetPayload<{ select: { filePath: true; id: true } }>;
+type CachedTrack = TrackType & { lastAccessed: Date };
+
+const cache = new Map<string, CachedTrack>();
 
 async function getTrack(trackId: string) {
   if (cache.has(trackId)) {
-    const track = cache.get(trackId) as Track & { lastAccessed: Date };
+    const track = cache.get(trackId) as CachedTrack;
     track.lastAccessed = new Date();
     cache.set(trackId, track);
     return cache.get(trackId);
@@ -18,6 +20,10 @@ async function getTrack(trackId: string) {
   const track = await prisma.track.findUnique({
     where: {
       id: trackId
+    },
+    select: {
+      id: true,
+      filePath: true
     }
   });
 
@@ -39,8 +45,9 @@ async function getTrack(trackId: string) {
 
 export const GET = async ({ params, request, setHeaders }) => {
   const { trackId } = params;
-
   const track = await getTrack(trackId);
+  const headers: Record<string, string> = {};
+  headers['content-type'] = 'audio/*';
 
   if (!track) {
     error(404, {
@@ -48,34 +55,65 @@ export const GET = async ({ params, request, setHeaders }) => {
     });
   }
 
-  const range = request.headers.get('Range');
+  const range = request.headers.get('range');
+  const audioStat = await stat(track.filePath);
+  const contentLength = audioStat.size;
 
-  if (!range && range !== 'bytes=0-') {
-    console.error('Range header not found\n', request.headers);
-    error(400, {
-      message: 'Range header not found'
-    });
-  }
+  let statusCode = 206;
+  let start;
+  let end;
 
   try {
-    const audiostat = await stat(track.filePath);
-    const audioSize = audiostat.size;
-    const start = Number(range.replace(/\D/g, ''));
-    const end = Math.min(start + CHUNK_SIZE, audioSize - 1);
-    const contentLength = end - start + 1;
+    if (range) {
+      const bytesPrefix = 'bytes=';
+      if (range.startsWith(bytesPrefix)) {
+        const bytesRange = range.substring(bytesPrefix.length);
+        const parts = bytesRange.split('-');
+        if (parts.length === 2) {
+          const rangeStart = parts[0] && parts[0].trim();
+          if (rangeStart && rangeStart.length > 0) {
+            start = parseInt(rangeStart);
+          }
+          const rangeEnd = parts[1] && parts[1].trim();
+          if (rangeEnd && rangeEnd.length > 0) {
+            end = parseInt(rangeEnd);
+          }
+        }
+      }
+    }
 
-    setHeaders({
-      'Content-Range': `bytes ${start}-${end}/${audioSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': contentLength.toString(),
-      'Content-Type': 'audio/*'
+    let retrievedLength;
+
+    if (start !== undefined && end !== undefined) {
+      retrievedLength = end + 1 - start;
+    } else if (start !== undefined) {
+      retrievedLength = contentLength - start;
+    } else if (end !== undefined) {
+      retrievedLength = end + 1;
+    } else {
+      retrievedLength = contentLength;
+    }
+
+    statusCode = start !== undefined || end !== undefined ? 206 : 200;
+
+    if (range) {
+      headers['content-range'] = `bytes ${start || 0}-${end || contentLength - 1}/${contentLength}`;
+      headers['accept-ranges'] = 'bytes';
+    }
+
+    headers['content-length'] = retrievedLength.toString();
+    setHeaders(headers);
+    const fileStream = createReadStream(track.filePath, { start, end });
+    const stream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of fileStream) {
+          controller.enqueue(chunk);
+        }
+      }
     });
 
-    const audioStream = createReadStream(track.filePath, { start, end });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new Response(audioStream as any, {
-      status: 206
+    return new Response(stream, {
+      status: statusCode
     });
   } catch (e) {
     console.error(e);
