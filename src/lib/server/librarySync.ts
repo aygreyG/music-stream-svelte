@@ -1,5 +1,6 @@
 import type { Artist } from '@prisma/client';
 import prisma from './prisma';
+// parseFile is exported, only the editor shows an error because it thinks it is not running in a node environment
 import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
@@ -246,7 +247,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
     const allGenres = data.common.genre || [];
     const genres: string[] = [];
 
-    allGenres.forEach((genre) => {
+    allGenres.forEach((genre: string) => {
       genre.split(/,|;|\//).forEach((g) => genres.push(g.trim().toLowerCase()));
     });
 
@@ -259,7 +260,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
             update: { updatedAt: new Date() }
           });
 
-          allArtists.forEach((artist) => {
+          allArtists.forEach((artist: string) => {
             breakFeatures(artist).forEach((a) => artistSet.add(a));
           });
 

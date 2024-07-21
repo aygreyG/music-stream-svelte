@@ -1,14 +1,22 @@
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
 WORKDIR /app
-COPY . .
-RUN npm ci
-RUN npx prisma generate
-RUN npm run build && npm prune --production
 
-FROM node:20-alpine
-WORKDIR /app
-COPY --from=builder /app/build build/
-COPY --from=builder /app/node_modules node_modules/
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
+RUN pnpx prisma generate
+
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpx prisma generate
+RUN pnpm run build
+
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/build /app/build
 COPY /prisma prisma
 COPY package.json .
 COPY start.sh start.sh
