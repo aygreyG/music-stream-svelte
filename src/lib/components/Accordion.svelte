@@ -1,13 +1,19 @@
 <script lang="ts">
   import { vibrate } from '$lib/actions/vibrate';
+  import type { Snippet } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { fly, slide } from 'svelte/transition';
   import RoundArrowDropDown from 'virtual:icons/ic/round-arrow-drop-down';
   import RoundArrowDropUp from 'virtual:icons/ic/round-arrow-drop-up';
 
-  export let title = 'Open!';
-  export let delay = 0;
-  let show = false;
+  interface Props {
+    title?: string;
+    delay?: number;
+    children?: Snippet;
+  }
+
+  let { title = 'Open!', delay = 0, children }: Props = $props();
+  let show = $state(false);
 </script>
 
 <button
@@ -16,7 +22,7 @@
   class:shadow-md={show}
   class:delay-100={!show}
   in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay }}
-  on:click={() => {
+  onclick={() => {
     show = !show;
   }}
   use:vibrate
@@ -34,6 +40,6 @@
     transition:slide={{ duration: 300, easing: quintOut }}
     class="w-full flex-none rounded-b-md bg-zinc-600/10"
   >
-    <slot />
+    {@render children?.()}
   </div>
 {/if}

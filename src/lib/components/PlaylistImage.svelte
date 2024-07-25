@@ -2,9 +2,13 @@
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import type { Prisma } from '@prisma/client';
 
-  export let albumSet: Prisma.AlbumGetPayload<{
-    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
-  }>[];
+  interface Props {
+    albumSet: Prisma.AlbumGetPayload<{
+      select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+    }>[];
+  }
+
+  let { albumSet }: Props = $props();
 </script>
 
 {#if albumSet.length > 0}

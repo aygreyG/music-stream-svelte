@@ -10,12 +10,17 @@
   import { currentTrack } from '$lib/stores/audioPlayer';
   import { quintOut } from 'svelte/easing';
   import AlbumImage from './AlbumImage.svelte';
-  import { beforeNavigate } from '$app/navigation';
+  import { beforeNavigate, goto } from '$app/navigation';
+  import { stopPropagation } from '$lib/utils';
 
-  export let user: SignedInUser | null = null;
-  let open: boolean = false;
-  let animate = false;
-  let playlistTransitioning = false;
+  interface Props {
+    user?: SignedInUser | null;
+  }
+
+  let { user = null }: Props = $props();
+  let open: boolean = $state(false);
+  let animate = $state(false);
+  let playlistTransitioning = $state(false);
 
   onMount(() => {
     animate = true;
@@ -41,13 +46,13 @@
   {#if user && user.playlists.length > 0}
     <div
       transition:fade={{ duration: 300 }}
-      on:transitionstart={() => (playlistTransitioning = true)}
-      on:transitionend={() => (playlistTransitioning = false)}
+      ontransitionstart={() => (playlistTransitioning = true)}
+      ontransitionend={() => (playlistTransitioning = false)}
       class="h-full overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:hidden"
     >
       <div
-        on:transitionstart|stopPropagation
-        on:transitionend|stopPropagation
+        ontransitionstart={stopPropagation()}
+        ontransitionend={stopPropagation()}
         class="flex flex-none flex-col"
       >
         <div transition:fly|global={{ duration: 300, x: -20 }} class="font-bold">Playlists</div>
@@ -83,24 +88,27 @@
           <div
             class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
           >
-            <a
-              href="/album/{$currentTrack.album.id}"
+            <button
+              onclick={() => goto(`/album/${$currentTrack.album.id}`)}
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
             >
               {$currentTrack.title}
-            </a>
+            </button>
             <div
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
             >
               {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                <a class="hover:underline" href="/artist/{artist.id}">
+                <button class="hover:underline" onclick={() => goto(`/artist/${artist.id}`)}>
                   {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
-                </a>
+                </button>
               {/each}
               -
-              <a class="hover:underline" href="/artist/${$currentTrack.album.id}">
+              <button
+                class="hover:underline"
+                onclick={() => goto(`/artist/${$currentTrack.album.id}`)}
+              >
                 {$currentTrack.album.title}
-              </a>
+              </button>
             </div>
           </div>
         </a>
@@ -112,7 +120,7 @@
 <div
   class="absolute -right-1 top-24 z-50 flex items-center justify-center rounded-s-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
 >
-  <button use:vibrate on:click={() => (open = !open)}>
+  <button use:vibrate onclick={() => (open = !open)}>
     {#if open}
       <RoundClose class="text-4xl text-primary/70 transition-colors hover:text-primary" />
     {:else}
@@ -133,7 +141,7 @@
       class="flex h-full flex-col items-stretch justify-center"
       transition:fade|global={{ duration: 300 }}
     >
-      <NavigationElements on:clickedelement={() => (open = false)} {user} />
+      <NavigationElements onclickedelement={() => (open = false)} {user} />
     </div>
   {/if}
 </div>

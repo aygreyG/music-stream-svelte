@@ -2,12 +2,16 @@
   import type { ImageSize } from '$lib/shared/types';
   import type { Prisma } from '@prisma/client';
 
-  export let album: Prisma.AlbumGetPayload<{
-    select: { albumArtAccent: true; albumArtId: true; id: true; title: true };
-  }>;
-  export let maxSize: ImageSize = 'l';
-  export let blur: boolean = false;
-  export let key: string | null = '';
+  interface Props {
+    album: Prisma.AlbumGetPayload<{
+      select: { albumArtAccent: true; albumArtId: true; id: true; title: true };
+    }>;
+    maxSize?: ImageSize;
+    blur?: boolean;
+    key?: string | null;
+  }
+
+  let { album, maxSize = 'l', blur = false, key = '' }: Props = $props();
 </script>
 
 <div

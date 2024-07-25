@@ -1,6 +1,9 @@
 <script lang="ts">
   import AudioPlayer from '$lib/components/AudioPlayer.svelte';
   import NavBar from '$lib/components/NavBar.svelte';
+  import { setAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
+
+  setAudioPlayer();
 
   export let data;
 </script>

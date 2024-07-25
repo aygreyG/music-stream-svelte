@@ -175,7 +175,7 @@
     <div
       class="rounded-md bg-gradient-to-r from-zinc-50"
       style="background-image: linear-gradient(to right, {start}, {middle}); width: {middlepoint}%;"
-    />
+    ></div>
 
     <label
       class="height-5 block w-2 flex-none cursor-pointer rounded-md focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
@@ -195,7 +195,7 @@
       class="rounded-md bg-gradient-to-r from-zinc-50"
       style="background-image: linear-gradient(to right, {middle}, {end}); width: {100 -
         middlepoint}%;"
-    />
+    ></div>
 
     <label
       class="height-5 block w-2 flex-none cursor-pointer rounded-md focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
@@ -215,7 +215,7 @@
   <div
     class="size-24 place-self-center rounded-md"
     style="background-image: linear-gradient({angle}, {start}, {middle} {middlepoint}%, {end}); "
-  />
+  ></div>
 
   <div class="flex items-center gap-6">
     <label for="accent" class="font-bold text-zinc-400">Accent color</label>

@@ -83,19 +83,19 @@ docker run -d \
 - Install dependencies and generate prisma client:
 
 ```bash
-npm install && npx prisma generate
+pnpm install && pnpx prisma generate
 ```
 
 - Build the project:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 - If you want to remove unused dependencies run:
 
 ```bash
-npm prune --production
+pnpm prune --production
 ```
 
 - Make `start.sh` executable:
@@ -115,6 +115,7 @@ DATABASE_URL=postgresql://user:password@host:port/dbname ./start.sh
 ### Development
 
 - Install Node.js
+- Install pnpm
 - Install PostgreSQL and create a database
 - Clone the repository
 - Create a `.env` file in the root directory with the following content:
@@ -126,13 +127,13 @@ DATABASE_URL=postgres://user:password@host:port/dbname
 - Install dependencies and generate prisma client:
 
 ```bash
-npm install && npx prisma generate
+pnpm install && pnpx prisma generate
 ```
 
 - Start the server with
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 - If you are using a node manager (like `nvm`) and want to commit using a gui you might need [this](https://typicode.github.io/husky/how-to.html#node-version-managers-and-guis) to make husky work

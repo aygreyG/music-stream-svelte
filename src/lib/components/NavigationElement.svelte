@@ -1,20 +1,22 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import { vibrate } from '$lib/actions/vibrate';
-  import { createEventDispatcher } from 'svelte';
 
-  export let href: string;
-  export let text: string;
-  export let icon: any;
+  interface Props {
+    href: string;
+    text: string;
+    icon: any;
+    onclickedelement?: () => void;
+  }
 
-  $: currentPage = $page.url.pathname;
+  let { href, text, icon, onclickedelement }: Props = $props();
 
-  const dispatch = createEventDispatcher();
+  let currentPage = $derived($page.url.pathname);
 </script>
 
 <div>
   <a
-    on:click={() => dispatch('clickedelement')}
+    onclick={() => onclickedelement?.()}
     class="flex items-center gap-2 px-16 text-2xl transition-colors sm:px-0 sm:text-base"
     class:text-primary={currentPage.replaceAll('/', '') === href.replaceAll('/', '')}
     {href}

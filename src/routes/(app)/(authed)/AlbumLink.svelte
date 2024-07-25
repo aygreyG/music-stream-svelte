@@ -69,5 +69,5 @@
       }
     }}
     id={index.toString()}
-  />
+  ></a>
 {/if}

@@ -10,34 +10,39 @@
   import RoundRepeat from 'virtual:icons/ic/round-repeat';
   import RoundShuffle from 'virtual:icons/ic/round-shuffle';
   import type { SignedInUser } from '$lib/shared/types';
-  import { currentTrack, playNext, paused, playPrevious } from '$lib/stores/audioPlayer';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import AlbumImage from './AlbumImage.svelte';
   import { fade } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { onMount } from 'svelte';
-  import { browser } from '$app/environment';
   import { vibrate } from '$lib/actions/vibrate';
   import { beforeNavigate, invalidate } from '$app/navigation';
   import type { SvelteMediaTimeRange } from 'svelte/elements';
   import { navigating } from '$app/stores';
 
-  export let user: SignedInUser | null = null;
+  interface Props {
+    user?: SignedInUser | null;
+  }
 
-  let player: HTMLAudioElement;
-  let currentTime = 0;
-  let prevSeekTime = 0;
-  let duration: number;
-  let volume: number;
-  let prevVolume = 0;
-  let durationString = '--:--';
-  let currentString = '--:--';
-  let repeat = false;
-  let shuffle = false;
-  let listenedDuration = 0;
-  let previousTime = 0;
+  let { user = null }: Props = $props();
+
+  const audioPlayer = getAudioPlayer();
+
+  let player: HTMLAudioElement | null = $state(null);
+  let currentTime: number | undefined = $state();
+  let prevSeekTime = $state(0);
+  let duration: number | undefined = $state();
+  let volume: number = $state(0);
+  let prevVolume = $state(0);
+  let durationString = $state('--:--');
+  let currentString = $state('--:--');
+  let repeat = $state(false);
+  let shuffle = $state(false);
+  let listenedDuration = $state(0);
+  let previousTime = $state(0);
   let previousTrackId: string;
-  let seeking = false;
-  let bufferedRanges: SvelteMediaTimeRange[] = [];
+  let seeking = $state(false);
+  let bufferedRanges: SvelteMediaTimeRange[] = $state([]);
 
   async function sendListeningData(trackId: string, duration: number) {
     if (duration < 0.01) return;
@@ -70,14 +75,6 @@
     return false;
   }
 
-  function togglePlay() {
-    if (!$currentTrack) {
-      return;
-    }
-
-    $paused = !$paused;
-  }
-
   function onEnded() {
     if (repeat) {
       if (player) {
@@ -86,7 +83,7 @@
         player.play();
       }
     } else {
-      playNext();
+      audioPlayer.playNext();
     }
   }
 
@@ -94,94 +91,94 @@
     volume = Math.max(0, Math.min(1, volume + (e.deltaY < 0 ? 0.05 : -0.05)));
   }
 
-  $: if (duration) {
-    durationString = new Date(duration * 1000).toISOString().slice(14, 19);
-    if (currentTime === 0) {
-      currentString = '00:00';
-    }
-  } else {
-    durationString = '--:--';
-  }
-
-  $: if (currentTime) {
-    currentString = new Date(currentTime * 1000).toISOString().slice(14, 19);
-
-    if (navigator.mediaSession && player) {
-      navigator.mediaSession.setPositionState({
-        duration,
-        playbackRate: player.playbackRate,
-        position: currentTime
-      });
-    }
-  } else {
-    currentString = '--:--';
-  }
-
-  $: if (volume && browser) {
-    localStorage.setItem('player-volume', volume.toString());
-  }
-
-  onMount(() => {
-    const currentTrackSub = currentTrack.subscribe((val) => {
-      if (val) {
-        if (navigator.mediaSession) {
-          navigator.mediaSession.metadata = new MediaMetadata({
-            title: val.title,
-            artist: val.artists.map((a) => a.name).join(', '),
-            album: val.album.title,
-            artwork: [
-              {
-                src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/avif`,
-                sizes: '300x300',
-                type: 'image/avif'
-              },
-              {
-                src: `/api/image/${val.album.id}/${val.album.albumArtId}/l/webp`,
-                sizes: '300x300',
-                type: 'image/webp'
-              },
-              {
-                src: `/api/image/${val.album.id}/${val.album.albumArtId}/l`,
-                sizes: '300x300',
-                type: `image/${val.album.albumArt?.split('.').pop()}`
-              }
-            ]
-          });
-
-          navigator.mediaSession.setActionHandler('play', () => {
-            togglePlay();
-          });
-
-          navigator.mediaSession.setActionHandler('pause', () => {
-            togglePlay();
-          });
-
-          navigator.mediaSession.setActionHandler('previoustrack', () => {
-            playPrevious();
-          });
-
-          navigator.mediaSession.setActionHandler('nexttrack', () => {
-            playNext();
-          });
-        }
-
-        if (!previousTrackId) {
-          previousTrackId = val.id;
-        } else if (previousTrackId !== val.id && listenedDuration > 0.01) {
-          sendListeningData(previousTrackId, listenedDuration);
-          previousTrackId = val.id;
-          listenedDuration = 0;
-        }
+  $effect.pre(() => {
+    if (duration) {
+      durationString = new Date(duration * 1000).toISOString().slice(14, 19);
+      if (currentTime === 0) {
+        currentString = '00:00';
       }
-    });
+    } else {
+      durationString = '--:--';
+    }
+  });
 
-    const pausedSub = paused.subscribe((val) => {
-      if (val && listenedDuration > 0 && $currentTrack) {
-        sendListeningData($currentTrack.id, listenedDuration);
+  $effect.pre(() => {
+    if (currentTime) {
+      currentString = new Date(currentTime * 1000).toISOString().slice(14, 19);
+
+      if (navigator.mediaSession && player) {
+        navigator.mediaSession.setPositionState({
+          duration,
+          playbackRate: player.playbackRate,
+          position: currentTime
+        });
+      }
+    } else {
+      currentString = '--:--';
+    }
+  });
+
+  $effect(() => {
+    if (audioPlayer.currentTrack) {
+      if (navigator.mediaSession) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: audioPlayer.currentTrack.title,
+          artist: audioPlayer.currentTrack.artists.map((a) => a.name).join(', '),
+          album: audioPlayer.currentTrack.album.title,
+          artwork: [
+            {
+              src: `/api/image/${audioPlayer.currentTrack.album.id}/${audioPlayer.currentTrack.album.albumArtId}/l/avif`,
+              sizes: '300x300',
+              type: 'image/avif'
+            },
+            {
+              src: `/api/image/${audioPlayer.currentTrack.album.id}/${audioPlayer.currentTrack.album.albumArtId}/l/webp`,
+              sizes: '300x300',
+              type: 'image/webp'
+            },
+            {
+              src: `/api/image/${audioPlayer.currentTrack.album.id}/${audioPlayer.currentTrack.album.albumArtId}/l`,
+              sizes: '300x300',
+              type: `image/${audioPlayer.currentTrack.album.albumArt?.split('.').pop()}`
+            }
+          ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => {
+          audioPlayer.togglePlay();
+        });
+
+        navigator.mediaSession.setActionHandler('pause', () => {
+          audioPlayer.togglePlay();
+        });
+
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+          audioPlayer.playPrevious();
+        });
+
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+          audioPlayer.playNext();
+        });
+      }
+
+      if (!previousTrackId) {
+        previousTrackId = audioPlayer.currentTrack.id;
+      } else if (previousTrackId !== audioPlayer.currentTrack.id && listenedDuration > 0.01) {
+        sendListeningData(previousTrackId, listenedDuration);
+        previousTrackId = audioPlayer.currentTrack.id;
         listenedDuration = 0;
       }
-    });
+    }
+  });
 
+  $effect(() => {
+    if (audioPlayer.paused && listenedDuration > 0 && audioPlayer.currentTrack) {
+      sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
+      listenedDuration = 0;
+    }
+  });
+
+  onMount(() => {
     const vol = localStorage.getItem('player-volume');
 
     if (vol) {
@@ -189,11 +186,12 @@
     } else {
       volume = 0.3;
     }
+  });
 
-    return () => {
-      currentTrackSub();
-      pausedSub();
-    };
+  $effect(() => {
+    if (volume) {
+      localStorage.setItem('player-volume', volume.toString());
+    }
   });
 
   beforeNavigate((navigation) => {
@@ -206,20 +204,20 @@
 </script>
 
 <div class="flex h-full w-full gap-1">
-  {#if $currentTrack && user}
+  {#if audioPlayer.currentTrack && user}
     <audio
       preload="metadata"
-      src="/api/play/{$currentTrack.id}"
+      src="/api/play/{audioPlayer.currentTrack.id}"
       bind:currentTime
       bind:duration
-      bind:paused={$paused}
+      bind:paused={audioPlayer.paused}
       bind:this={player}
       bind:volume
       autoplay={true}
-      on:ended={onEnded}
-      on:seeking={() => (seeking = true)}
-      on:seeked={() => (seeking = false)}
-      on:timeupdate={(e) => {
+      onended={onEnded}
+      onseeking={() => (seeking = true)}
+      onseeked={() => (seeking = false)}
+      ontimeupdate={(e) => {
         if (seeking) return;
         const diff = e.currentTarget.currentTime - previousTime;
         if (diff < 2 && diff > 0) {
@@ -228,35 +226,35 @@
             ((listenedDuration > 1 && !isSlowConnection()) || listenedDuration > 8) &&
             $navigating === null
           ) {
-            sendListeningData($currentTrack.id, listenedDuration);
+            sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
             listenedDuration = 0;
           }
         }
         previousTime = e.currentTarget.currentTime;
       }}
       bind:buffered={bufferedRanges}
-    />
+    ></audio>
   {/if}
   <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
     {#if user}
       <div class="flex h-full w-full flex-col justify-around px-2">
         <div class="flex w-full gap-2 sm:hidden">
           <div class="h-10 w-10 flex-none overflow-clip rounded-md bg-zinc-900">
-            {#if $currentTrack}
-              {#key $currentTrack.id}
+            {#if audioPlayer.currentTrack}
+              {#key audioPlayer.currentTrack.id}
                 <a
                   in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                   out:fade|global={{ duration: 300, easing: quintOut }}
-                  href="/album/{$currentTrack.album.id}"
+                  href="/album/{audioPlayer.currentTrack.album.id}"
                   class="flex h-10 w-10"
                 >
-                  <AlbumImage album={$currentTrack.album} maxSize="s" />
+                  <AlbumImage album={audioPlayer.currentTrack.album} maxSize="s" />
                 </a>
               {/key}
             {/if}
           </div>
-          {#if $currentTrack}
-            {#key $currentTrack.id}
+          {#if audioPlayer.currentTrack}
+            {#key audioPlayer.currentTrack.id}
               <div
                 in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                 out:fade|global={{ duration: 300, easing: quintOut }}
@@ -264,18 +262,18 @@
               >
                 <a
                   class="overflow-hidden text-ellipsis whitespace-nowrap"
-                  href="/album/{$currentTrack.album.id}"
+                  href="/album/{audioPlayer.currentTrack.album.id}"
                 >
-                  {$currentTrack.title}
+                  {audioPlayer.currentTrack.title}
                 </a>
                 <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                  {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                  {#each audioPlayer.currentTrack.artists.sort( (a, b) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                     <a class="hover:underline" href="/artist/{artist.id}">
-                      {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
+                      {artist.name}{#if audioPlayer.currentTrack.artists.length > 1 && index != audioPlayer.currentTrack.artists.length - 1},{/if}
                     </a>
                   {/each}
-                  <a href="/album/{$currentTrack.album.id}">
-                    - {$currentTrack.album.title}
+                  <a href="/album/{audioPlayer.currentTrack.album.id}">
+                    - {audioPlayer.currentTrack.album.title}
                   </a>
                 </div>
               </div>
@@ -294,7 +292,7 @@
               bind:value={currentTime}
               disabled={!duration}
               aria-label="Progress bar"
-              on:input={() => {
+              oninput={() => {
                 if (
                   navigator &&
                   matchMedia('(prefers-reduced-motion: no-preference)').matches &&
@@ -306,7 +304,7 @@
                 }
               }}
             />
-            {#if !(typeof navigator !== 'undefined' && !navigator.userAgent.includes('Chrome'))}
+            {#if !(typeof navigator !== 'undefined' && !navigator.userAgent.includes('Chrome')) && duration}
               {#each bufferedRanges as range, index (range.start)}
                 {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
                 {@const roundedEnd =
@@ -318,7 +316,7 @@
                   class:rounded-r-full={roundedEnd}
                   style="width: {((range.end - range.start) / duration) *
                     100}%; left: {(range.start / duration) * 100}%;"
-                />
+                ></div>
               {/each}
             {/if}
           </div>
@@ -327,7 +325,7 @@
         <div class="flex items-center justify-center gap-2 sm:justify-around lg:justify-center">
           <div class="flex gap-4">
             <button
-              on:click={() => (shuffle = !shuffle)}
+              onclick={() => (shuffle = !shuffle)}
               class="text-2xl opacity-15 transition-colors"
               disabled
               class:text-primary={shuffle}
@@ -337,7 +335,7 @@
               <RoundShuffle />
             </button>
             <button
-              on:click={playPrevious}
+              onclick={audioPlayer.playPrevious}
               class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Previous"
               use:vibrate
@@ -345,19 +343,19 @@
               <RoundSkipPrevious />
             </button>
             <button
-              on:click={togglePlay}
+              onclick={() => audioPlayer.togglePlay()}
               class="text-6xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Toggle play"
-              use:vibrate={{ mute: $currentTrack === null }}
+              use:vibrate={{ mute: audioPlayer.currentTrack === null }}
             >
-              {#if $paused}
+              {#if audioPlayer.paused}
                 <RoundPlayCircleOutline />
               {:else}
                 <RoundPauseCircleOutline />
               {/if}
             </button>
             <button
-              on:click={playNext}
+              onclick={audioPlayer.playNext}
               class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
               aria-label="Next"
               use:vibrate
@@ -365,7 +363,7 @@
               <RoundSkipNext />
             </button>
             <button
-              on:click={() => (repeat = !repeat)}
+              onclick={() => (repeat = !repeat)}
               class="text-2xl transition-colors"
               class:text-primary={repeat}
               class:text-zinc-400={!repeat}
@@ -375,12 +373,9 @@
               <RoundRepeat />
             </button>
           </div>
-          <div
-            class="right-0 hidden items-center gap-2 sm:flex lg:absolute"
-            on:wheel={updateVolume}
-          >
+          <div class="right-0 hidden items-center gap-2 sm:flex lg:absolute" onwheel={updateVolume}>
             <button
-              on:click={() => {
+              onclick={() => {
                 if (volume === 0) {
                   volume = prevVolume;
                 } else {
