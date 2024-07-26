@@ -29,43 +29,68 @@ type TrackType = Prisma.TrackGetPayload<{
   };
 }>;
 
-class AudioPlayer {
-  paused: boolean = $state(true);
-  currentTrack: TrackType | null = $state(null);
-  queueContext: TrackType[] = $state([]);
-  queueContextIndex: number = $state(0);
+function createAudioPlayer() {
+  let paused: boolean = $state(true);
+  let currentTrack: TrackType | null = $state(null);
+  let queueContext: TrackType[] = $state([]);
+  let queueContextIndex: number = $state(0);
 
-  playTrack(context: TrackType[], index: number) {
-    this.queueContextIndex = index;
-    this.queueContext = context;
-    this.currentTrack = context[index];
-  }
-
-  playNext() {
-    if (this.queueContextIndex + 1 < this.queueContext.length) {
-      this.queueContextIndex++;
-      this.currentTrack = this.queueContext[this.queueContextIndex];
+  function playTrack(context: TrackType[], index: number, instant: boolean = true) {
+    queueContextIndex = index;
+    queueContext = context;
+    currentTrack = context[index];
+    if (instant) {
+      paused = false;
     }
   }
 
-  playPrevious() {
-    if (this.queueContextIndex - 1 >= 0) {
-      this.queueContextIndex--;
-      this.currentTrack = this.queueContext[this.queueContextIndex];
+  function playNext() {
+    if (queueContextIndex + 1 < queueContext.length) {
+      queueContextIndex++;
+      currentTrack = queueContext[queueContextIndex];
     }
   }
 
-  togglePlay() {
-    if (this.currentTrack) {
-      this.paused = !this.paused;
+  function playPrevious() {
+    if (queueContextIndex - 1 >= 0) {
+      queueContextIndex--;
+      currentTrack = queueContext[queueContextIndex];
     }
   }
+
+  function togglePlay() {
+    if (currentTrack) {
+      paused = !paused;
+    }
+  }
+
+  return {
+    togglePlay,
+    playNext,
+    playPrevious,
+    playTrack,
+    get paused() {
+      return paused;
+    },
+    set paused(value: boolean) {
+      paused = value;
+    },
+    get currentTrack() {
+      return currentTrack;
+    },
+    get queueContext() {
+      return queueContext;
+    },
+    get queueContextIndex() {
+      return queueContextIndex;
+    }
+  };
 }
 
 const PLAYER_KEY = Symbol('audioPlayer');
 
 export function setAudioPlayer() {
-  return setContext(PLAYER_KEY, new AudioPlayer());
+  return setContext(PLAYER_KEY, createAudioPlayer());
 }
 
 export function getAudioPlayer() {

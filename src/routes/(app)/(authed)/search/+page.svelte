@@ -7,40 +7,47 @@
   import TrackList from './TrackList.svelte';
   import AlbumList from './AlbumList.svelte';
   import ArtistList from './ArtistList.svelte';
+  import type { PageData } from './$types';
 
-  export let data;
+  interface Props {
+    data: PageData;
+  }
 
-  let searchString = data.query || '';
-  let type = data.type || 'all';
-  let formElement: HTMLFormElement;
-  let loading = false;
-  let timeout: NodeJS.Timeout;
+  let { data }: Props = $props();
+
+  let searchString = $state(data.query || '');
+  let type = $state(data.type || 'all');
+  let formElement: HTMLFormElement | null = $state(null);
+  let container: HTMLDivElement | null = $state(null);
+  let loading = $state(false);
+  let timeout: NodeJS.Timeout | undefined = $state();
   let duration = 250;
-  let container: HTMLDivElement;
-  let scrolled = false;
-  let startIndex = 0;
+  let scrolled = $state(false);
+  let startIndex = $state(0);
+  let results = $state(data.results);
 
   // TODO: Reset loading state when we get a response,
   // this is hacky and should be changed in the future if possible
   // related issue: https://github.com/aygreyG/music-stream-svelte/issues/118
-  $: {
+  $effect(() => {
     if (data.query) {
       tick().then(() => (loading = false));
     }
-  }
+  });
 
-  $: {
+  $effect(() => {
     if (type) {
       startIndex = 0;
+      results = data.results;
     }
-  }
+  });
 
   async function setType(newType: string) {
     type = newType;
     searchString = data.query || '';
     // waiting for dom to update before submitting the form
     await tick();
-    if (searchString) formElement.requestSubmit();
+    if (searchString) formElement?.requestSubmit();
   }
 </script>
 
@@ -51,7 +58,7 @@
     out:fade|global={{ duration }}
     bind:this={formElement}
     class="z-20 flex px-8 pt-1"
-    on:submit={() => {
+    onsubmit={() => {
       if (searchString && searchString !== data.query) {
         loading = true;
       }
@@ -66,11 +73,11 @@
         class="w-full rounded-s-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
-        on:input={() => {
+        oninput={() => {
           clearTimeout(timeout);
           if (searchString) {
             timeout = setTimeout(() => {
-              formElement.requestSubmit();
+              formElement?.requestSubmit();
             }, 500);
           }
         }}
@@ -82,8 +89,8 @@
       <select
         name="type"
         class="w-full border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus:ring-2 focus:ring-primary focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
-        on:change={() => {
-          if (searchString) formElement.requestSubmit();
+        onchange={() => {
+          if (searchString) formElement?.requestSubmit();
         }}
         bind:value={type}
       >
@@ -118,52 +125,58 @@
   <div
     class="h-full w-full overflow-auto"
     bind:this={container}
-    on:scroll={() => (scrolled = container?.scrollTop > 0)}
+    onscroll={() => (container?.scrollTop ? (scrolled = container?.scrollTop > 0) : null)}
     out:fade={{ duration: 200 }}
   >
-    {#if data?.success && data?.results}
-      {#if data.results.tracks.length > 0}
+    {#if data?.success && data.total && results}
+      {#if results.tracks.length > 0}
         <TrackList
           query={data.query}
           total={data.total.tracks}
-          tracks={data.results.tracks}
+          tracks={results.tracks}
           {startIndex}
           {type}
-          on:tracksloaded={({ detail }) => {
-            startIndex = data.results.tracks.length - 1;
-            data.results.tracks = [...data.results.tracks, ...detail.tracks];
+          ontracksloaded={(tracks) => {
+            if (results?.tracks) {
+              startIndex = results.tracks.length - 1;
+              results.tracks = [...results.tracks, ...tracks];
+            }
           }}
-          on:typechange={() => setType('track')}
+          ontypechange={() => setType('track')}
         />
       {/if}
 
-      {#if data.results.albums.length > 0}
+      {#if results.albums.length > 0}
         <AlbumList
           query={data.query}
           total={data.total.albums}
-          albums={data.results.albums}
+          albums={results.albums}
           {startIndex}
           {type}
-          on:albumsloaded={({ detail }) => {
-            startIndex = data.results.albums.length - 1;
-            data.results.albums = [...data.results.albums, ...detail.albums];
+          onalbumsloaded={(albums) => {
+            if (results?.albums) {
+              startIndex = results.albums.length - 1;
+              results.albums = [...results.albums, ...albums];
+            }
           }}
-          on:typechange={() => setType('album')}
+          ontypechange={() => setType('album')}
         />
       {/if}
 
-      {#if data.results.artists.length > 0}
+      {#if results.artists.length > 0}
         <ArtistList
           query={data.query}
           total={data.total.artists}
-          artists={data.results.artists}
+          artists={results.artists}
           {startIndex}
           {type}
-          on:artistsloaded={({ detail }) => {
-            startIndex = data.results.artists.length - 1;
-            data.results.artists = [...data.results.artists, ...detail.artists];
+          onartistsloaded={(artists) => {
+            if (results?.artists) {
+              startIndex = results.artists.length - 1;
+              results.artists = [...results.artists, ...artists];
+            }
           }}
-          on:typechange={() => setType('artist')}
+          ontypechange={() => setType('artist')}
         />
       {/if}
     {/if}

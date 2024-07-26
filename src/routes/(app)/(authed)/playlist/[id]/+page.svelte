@@ -6,13 +6,14 @@
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { enhance } from '$app/forms';
   import HeartOff from 'virtual:icons/iconamoon/heart-off';
-  import { playTrack } from '$lib/stores/audioPlayer.js';
   import { vibrate } from '$lib/actions/vibrate.js';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
 
   export let data;
   const [send, receive] = crossfade;
   let container: HTMLDivElement;
   let scrolled = false;
+  const audioPlayer = getAudioPlayer();
 </script>
 
 <div class="flex h-full w-full flex-col">
@@ -49,22 +50,24 @@
       <div class="w-full flex-none" animate:flip={{ duration: 250 }}>
         <TrackRow
           handleClick={() => {
-            playTrack(data.playlist.tracks, index);
+            audioPlayer.playTrack(data.playlist.tracks, index);
           }}
           {track}
           delay={250 + index * 30}
         >
-          <form use:enhance slot="button" action="?/remove" method="POST">
-            <input type="hidden" name="trackId" value={track.id} />
-            <button
-              class="flex h-full w-full items-center justify-center"
-              title="Remove"
-              type="submit"
-              use:vibrate
-            >
-              <HeartOff class="text-2xl text-zinc-600 hover:text-primary" />
-            </button>
-          </form>
+          {#snippet button()}
+            <form use:enhance action="?/remove" method="POST">
+              <input type="hidden" name="trackId" value={track.id} />
+              <button
+                class="flex h-full w-full items-center justify-center"
+                title="Remove"
+                type="submit"
+                use:vibrate
+              >
+                <HeartOff class="text-2xl text-zinc-600 hover:text-primary" />
+              </button>
+            </form>
+          {/snippet}
         </TrackRow>
       </div>
     {:else}

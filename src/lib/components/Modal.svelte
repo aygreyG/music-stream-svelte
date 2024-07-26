@@ -51,14 +51,16 @@
         : ''}"
     >
       <div class="w-full text-center text-xl font-bold">{title}</div>
-      <div
-        class="flex items-center justify-center place-self-start rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
-      >
-        <!-- svelte-ignore a11y_autofocus -->
-        <button aria-label="Close modal" autofocus use:vibrate onclick={() => onclose?.()}>
-          <RoundClose class="p-1 text-3xl text-primary/70 transition-colors hover:text-primary" />
-        </button>
-      </div>
+      {#if onclose}
+        <div
+          class="flex items-center justify-center place-self-start rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
+        >
+          <!-- svelte-ignore a11y_autofocus -->
+          <button aria-label="Close modal" autofocus use:vibrate onclick={() => onclose?.()}>
+            <RoundClose class="p-1 text-3xl text-primary/70 transition-colors hover:text-primary" />
+          </button>
+        </div>
+      {/if}
     </div>
     {@render children?.()}
   </div>

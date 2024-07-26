@@ -97,18 +97,19 @@
         {#each data.album.tracks as track, index (track.id)}
           <div class="w-full flex-none">
             <TrackRow track={{ ...track, album: data.album }} delay={250 + index * 30}>
-              <button
-                use:vibrate
-                on:click={() => openPlaylistModal(track)}
-                slot="button"
-                class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-primary"
-              >
-                {#if track.playlists.length > 0}
-                  <HeartFill class="text-2xl transition-colors" />
-                {:else}
-                  <Heart class="text-2xl transition-colors" />
-                {/if}
-              </button>
+              {#snippet button()}
+                <button
+                  use:vibrate
+                  on:click={() => openPlaylistModal(track)}
+                  class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-primary"
+                >
+                  {#if track.playlists.length > 0}
+                    <HeartFill class="text-2xl transition-colors" />
+                  {:else}
+                    <Heart class="text-2xl transition-colors" />
+                  {/if}
+                </button>
+              {/snippet}
             </TrackRow>
           </div>
         {/each}
@@ -124,6 +125,6 @@
   />
 
   {#if editModalOpen}
-    <EditModal on:close={() => (editModalOpen = false)} album={data.album} />
+    <EditModal onclose={() => (editModalOpen = false)} album={data.album} />
   {/if}
 {/key}

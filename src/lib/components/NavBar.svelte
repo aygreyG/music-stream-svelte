@@ -7,11 +7,11 @@
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { vibrate } from '$lib/actions/vibrate';
-  import { currentTrack } from '$lib/stores/audioPlayer';
   import { quintOut } from 'svelte/easing';
   import AlbumImage from './AlbumImage.svelte';
   import { beforeNavigate, goto } from '$app/navigation';
   import { stopPropagation } from '$lib/utils';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
   interface Props {
     user?: SignedInUser | null;
@@ -21,6 +21,7 @@
   let open: boolean = $state(false);
   let animate = $state(false);
   let playlistTransitioning = $state(false);
+  const audioPlayer = getAudioPlayer();
 
   onMount(() => {
     animate = true;
@@ -76,38 +77,38 @@
   <div
     class="hidden size-48 flex-none overflow-hidden rounded-md bg-zinc-900/95 sm:block md:size-60 h-sm:size-48"
   >
-    {#if $currentTrack && user}
-      {#key $currentTrack.id}
+    {#if audioPlayer.currentTrack && user}
+      {#key audioPlayer.currentTrack.id}
         <a
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
-          href="/album/{$currentTrack.album.id}"
+          href="/album/{audioPlayer.currentTrack.album.id}"
           class="flex h-full w-full overflow-hidden rounded-md"
         >
-          <AlbumImage album={$currentTrack.album} />
+          <AlbumImage album={audioPlayer.currentTrack.album} />
           <div
             class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
           >
             <button
-              onclick={() => goto(`/album/${$currentTrack.album.id}`)}
+              onclick={() => goto(`/album/${audioPlayer.currentTrack?.album.id}`)}
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
             >
-              {$currentTrack.title}
+              {audioPlayer.currentTrack.title}
             </button>
             <div
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
             >
-              {#each $currentTrack.artists.sort( (a, b) => (a.name !== $currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+              {#each audioPlayer.currentTrack.artists.sort( (a, b) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 <button class="hover:underline" onclick={() => goto(`/artist/${artist.id}`)}>
-                  {artist.name}{#if $currentTrack.artists.length > 1 && index != $currentTrack.artists.length - 1},{/if}
+                  {artist.name}{#if audioPlayer.currentTrack.artists.length > 1 && index != audioPlayer.currentTrack.artists.length - 1},{/if}
                 </button>
               {/each}
               -
               <button
                 class="hover:underline"
-                onclick={() => goto(`/artist/${$currentTrack.album.id}`)}
+                onclick={() => goto(`/artist/${audioPlayer.currentTrack?.album.id}`)}
               >
-                {$currentTrack.album.title}
+                {audioPlayer.currentTrack.album.title}
               </button>
             </div>
           </div>

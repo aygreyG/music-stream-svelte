@@ -6,16 +6,23 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { vibrate } from '$lib/actions/vibrate';
+  import type { PageData } from './$types';
 
-  export let data;
-  let err: string | null = null;
-  let loading = false;
-  let scrolled = false;
-  let scrolledToBottom = false;
-  let container: HTMLDivElement;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
+  let err: string | null = $state(null);
+  let loading = $state(false);
+  let scrolled = $state(false);
+  let scrolledToBottom = $state(false);
+  let container: HTMLDivElement | null = $state(null);
 
   onMount(() => {
-    scrolledToBottom = container.scrollTop < container.scrollHeight - container.clientHeight - 10;
+    if (container) {
+      scrolledToBottom = container.scrollTop < container.scrollHeight - container.clientHeight - 10;
+    }
 
     if (data.defaultFolder.path !== '/') {
       pickedFolder.set(data.defaultFolder);
@@ -110,10 +117,12 @@
         </div>
         <div
           bind:this={container}
-          on:scroll={() => {
-            scrolledToBottom =
-              container.scrollTop < container.scrollHeight - container.clientHeight - 10;
-            scrolled = container.scrollTop > 0;
+          onscroll={() => {
+            if (container) {
+              scrolledToBottom =
+                container.scrollTop < container.scrollHeight - container.clientHeight - 10;
+              scrolled = container.scrollTop > 0;
+            }
           }}
           class="flex flex-col overflow-auto"
         >

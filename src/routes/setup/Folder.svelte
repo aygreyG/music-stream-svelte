@@ -10,16 +10,21 @@
   import { tick } from 'svelte';
   import { vibrate } from '$lib/actions/vibrate';
 
-  export let folderNode: FolderNode;
-  export let level = 0;
-  let opened = false;
-  let loading = false;
+  interface Props {
+    folderNode: FolderNode;
+    level?: number;
+  }
+
+  let { folderNode = $bindable(), level = 0 }: Props = $props();
+  let opened = $state(false);
+  let loading = $state(false);
 
   async function onSubmit(
     event: SubmitEvent & {
       currentTarget: EventTarget & HTMLFormElement;
     }
   ) {
+    event.preventDefault();
     if (folderNode.children.length === 0) {
       const data = new FormData(event.currentTarget);
       loading = true;
@@ -47,7 +52,7 @@
   transition:slide
   class="ml-4 flex flex-col py-1 {level > 0 ? 'border-l-2 border-l-zinc-300/50 pl-3' : ''}"
 >
-  <form class="flex items-center" action="?/getchildren" on:submit|preventDefault={onSubmit}>
+  <form class="flex items-center" action="?/getchildren" onsubmit={onSubmit}>
     <input type="hidden" name="path" value={folderNode.path} />
     <button
       class="flex w-full transition-colors hover:text-zinc-400"

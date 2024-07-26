@@ -1,17 +1,19 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import { onMount } from 'svelte';
+  import { onMount, type Snippet } from 'svelte';
   import '../app.css';
   import { getAccessibleColor, getRGBColor } from '$lib/utils';
   import currentTheme from '$lib/stores/themeStore';
+  import type { LayoutData } from './$types';
 
-  export let data;
-
-  $: {
-    currentTheme.set(data.theme);
+  interface Props {
+    data: LayoutData;
+    children?: Snippet;
   }
 
-  $: styleArr = [
+  let { data, children }: Props = $props();
+
+  let styleArr = $derived([
     getRGBColor($currentTheme.primary, 'primary'),
     getRGBColor(getAccessibleColor($currentTheme.primary), 'accessible'),
     getRGBColor($currentTheme.gradientStart, 'gradient-start'),
@@ -20,7 +22,7 @@
     `--gradient-angle: ${$currentTheme.gradientAngle.replaceAll('_', ' ')};`,
     `--gradient-middle-point: ${$currentTheme.gradientMiddlePoint}%;`,
     `--rounding: ${$currentTheme.rounding}px;`
-  ];
+  ]);
 
   async function detectSWUpdate() {
     if (!('serviceWorker' in navigator)) return;
@@ -40,6 +42,8 @@
     });
   }
 
+  $effect(() => currentTheme.set(data.theme));
+
   onMount(() => {
     detectSWUpdate();
   });
@@ -52,6 +56,6 @@
 
 <div class="bg-theme-gradient flex h-[100dvh] w-full justify-center" style={styleArr.join(' ')}>
   <div class="flex h-full w-full flex-col overflow-hidden p-1">
-    <slot />
+    {@render children?.()}
   </div>
 </div>

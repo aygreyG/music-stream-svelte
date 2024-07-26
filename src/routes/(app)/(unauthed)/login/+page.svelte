@@ -2,11 +2,16 @@
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate.js';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import type { ActionData, PageData } from './$types';
 
-  export let data;
-  export let form;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  let loading = false;
+  let { data, form }: Props = $props();
+
+  let loading = $state(false);
 </script>
 
 <div class="flex h-full flex-col items-center overflow-auto px-4">

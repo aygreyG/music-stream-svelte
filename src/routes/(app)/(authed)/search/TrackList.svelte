@@ -3,38 +3,42 @@
   import { vibrate } from '$lib/actions/vibrate';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import type { SearchTrack } from '$lib/shared/types';
-  import { createEventDispatcher } from 'svelte';
+  import { untrack } from 'svelte';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
-  export let startIndex: number = 0;
-  export let total: number;
-  export let tracks: SearchTrack[];
-  export let query: string;
-  export let type: string;
-  let requestCanceller: () => void;
-
-  function cancelRequest() {
-    if (requestCanceller) {
-      requestCanceller();
-    }
+  interface Props {
+    startIndex?: number;
+    total: number;
+    tracks: SearchTrack[];
+    query: string;
+    type: string;
+    ontypechange: () => void;
+    ontracksloaded: (searchTracks: SearchTrack[]) => void;
   }
+
+  let {
+    startIndex = 0,
+    total,
+    tracks,
+    query,
+    type,
+    ontypechange,
+    ontracksloaded
+  }: Props = $props();
+  let requestCanceller: (() => void) | undefined = $state();
+  let loading = $derived(!!requestCanceller);
+  const duration = 250;
 
   // If type or query changes cancel the previous request
-  // in order to prevent running when requestCanceller is set the cancel logic is moved to another function
-  $: {
+  $effect(() => {
+    console.log('type', type);
     if (query && type) {
-      cancelRequest();
-      loading = false;
+      untrack(() => requestCanceller?.());
     }
-  }
-
-  const dispatch = createEventDispatcher();
-
-  const duration = 250;
-  let loading = false;
+  });
 </script>
 
 <div
@@ -56,7 +60,7 @@
       <button
         use:vibrate
         class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
-        on:click={() => dispatch('typechange')}
+        onclick={() => ontypechange()}
       >
         Show all ({total - tracks.length} more)
       </button>
@@ -66,13 +70,12 @@
       method="POST"
       action="?/getTracks"
       use:enhance={({ cancel }) => {
-        loading = true;
         requestCanceller = cancel;
         return ({ result }) => {
+          requestCanceller = undefined;
           if (result.type === 'success' && result.data?.tracks && result.data.tracks.length > 0) {
-            dispatch('tracksloaded', { tracks: result.data.tracks });
+            ontracksloaded(result.data.tracks as SearchTrack[]);
           }
-          loading = false;
         };
       }}
       class="flex items-center justify-center pb-2"

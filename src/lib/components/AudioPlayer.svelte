@@ -29,7 +29,7 @@
   const audioPlayer = getAudioPlayer();
 
   let player: HTMLAudioElement | null = $state(null);
-  let currentTime: number | undefined = $state();
+  let currentTime: number | undefined = $state(0);
   let prevSeekTime = $state(0);
   let duration: number | undefined = $state();
   let volume: number = $state(0);
@@ -80,7 +80,7 @@
       if (player) {
         player.currentTime = 0;
         prevSeekTime = 0;
-        player.play();
+        audioPlayer.paused = false;
       }
     } else {
       audioPlayer.playNext();
@@ -91,7 +91,7 @@
     volume = Math.max(0, Math.min(1, volume + (e.deltaY < 0 ? 0.05 : -0.05)));
   }
 
-  $effect.pre(() => {
+  $effect(() => {
     if (duration) {
       durationString = new Date(duration * 1000).toISOString().slice(14, 19);
       if (currentTime === 0) {
@@ -102,7 +102,7 @@
     }
   });
 
-  $effect.pre(() => {
+  $effect(() => {
     if (currentTime) {
       currentString = new Date(currentTime * 1000).toISOString().slice(14, 19);
 
@@ -201,6 +201,14 @@
       navigation.cancel();
     }
   });
+
+  $effect(() => {
+    if (audioPlayer.paused && player && audioPlayer.currentTrack) {
+      player.pause();
+    } else if (player && audioPlayer.currentTrack) {
+      player.play();
+    }
+  });
 </script>
 
 <div class="flex h-full w-full gap-1">
@@ -210,7 +218,6 @@
       src="/api/play/{audioPlayer.currentTrack.id}"
       bind:currentTime
       bind:duration
-      bind:paused={audioPlayer.paused}
       bind:this={player}
       bind:volume
       autoplay={true}
@@ -224,7 +231,8 @@
           listenedDuration += diff;
           if (
             ((listenedDuration > 1 && !isSlowConnection()) || listenedDuration > 8) &&
-            $navigating === null
+            $navigating === null &&
+            audioPlayer.currentTrack
           ) {
             sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
             listenedDuration = 0;
@@ -287,7 +295,7 @@
               class="z-10 w-full opacity-85"
               type="range"
               min="0"
-              max={duration}
+              max={duration || 0}
               step="0.01"
               bind:value={currentTime}
               disabled={!duration}
@@ -297,6 +305,7 @@
                   navigator &&
                   matchMedia('(prefers-reduced-motion: no-preference)').matches &&
                   matchMedia('(hover: none), (pointer: coarse)').matches &&
+                  currentTime &&
                   Math.abs(currentTime - prevSeekTime) > 0.5
                 ) {
                   prevSeekTime = currentTime;

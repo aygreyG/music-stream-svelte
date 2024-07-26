@@ -3,27 +3,35 @@
   import RoundSearch from 'virtual:icons/ic/round-search';
   import AlbumLink from './AlbumLink.svelte';
   import { fade } from 'svelte/transition';
+  import type { PageData } from './$types';
 
-  export let data;
-  let container: HTMLDivElement;
-  let firstVisibleElement: number;
-  let foundScroll = false;
-  let scrolled = false;
-  let scrolledFromTop = false;
-  let searchString = '';
+  interface Props {
+    data: PageData;
+  }
 
-  $: filtered = data.albums.filter((album) => {
-    if (!searchString) {
-      return true;
-    }
+  let { data }: Props = $props();
+  let container: HTMLDivElement | null = $state(null);
+  let firstVisibleElement: number = $state(0);
+  let foundScroll = $state(false);
+  let scrolled = $state(false);
+  let scrolledFromTop = $state(false);
+  let searchString = $state('');
 
-    return (
-      album.title.toLowerCase().includes(searchString.toLowerCase()) ||
-      album.albumArtist.name.toLowerCase().includes(searchString.toLowerCase())
-    );
-  });
+  let filtered = $derived(
+    data.albums.filter((album) => {
+      if (!searchString) {
+        return true;
+      }
+
+      return (
+        album.title.toLowerCase().includes(searchString.toLowerCase()) ||
+        album.albumArtist.name.toLowerCase().includes(searchString.toLowerCase())
+      );
+    })
+  );
 
   function updateVisibleElements() {
+    if (!container) return;
     let first;
     for (const child of container.children) {
       const rect = child.getBoundingClientRect();
@@ -44,7 +52,7 @@
 
   onMount(async () => {
     const scroll = localStorage.getItem('dashboard-scroll');
-    if (scroll) {
+    if (scroll && container) {
       container.scrollTop = parseInt(scroll);
       foundScroll = true;
     }
@@ -78,8 +86,9 @@
   <div
     class="flex flex-wrap items-center justify-center gap-8 overflow-auto p-2"
     bind:this={container}
-    on:scroll={() => {
-      localStorage.setItem('dashboard-scroll', container.scrollTop.toString());
+    onscroll={() => {
+      if (!container) return;
+      localStorage.setItem('dashboard-scroll', container.scrollTop.toString() || '0');
 
       updateVisibleElements();
 

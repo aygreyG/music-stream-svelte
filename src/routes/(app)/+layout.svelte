@@ -2,10 +2,17 @@
   import AudioPlayer from '$lib/components/AudioPlayer.svelte';
   import NavBar from '$lib/components/NavBar.svelte';
   import { setAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
+  import type { Snippet } from 'svelte';
+  import type { PageData } from './(authed)/$types';
 
   setAudioPlayer();
 
-  export let data;
+  interface Props {
+    data: PageData;
+    children?: Snippet;
+  }
+
+  let { data, children }: Props = $props();
 </script>
 
 <div class="flex h-full w-full gap-1">
@@ -14,7 +21,7 @@
     class="flex h-full w-full flex-col gap-1 sm:max-w-[calc(100%-12.25rem)] md:max-w-[calc(100%-15.25rem)] sm:h-sm:max-w-[calc(100%-12.25rem)]"
   >
     <div class="h-full w-full overflow-hidden rounded-md bg-zinc-900/95">
-      <slot />
+      {@render children?.()}
     </div>
     <div class="h-44 flex-none sm:h-28">
       <AudioPlayer user={data.user} />

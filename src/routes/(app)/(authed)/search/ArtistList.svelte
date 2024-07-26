@@ -2,22 +2,34 @@
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
   import type { SearchArtist } from '$lib/shared/types';
-  import { createEventDispatcher } from 'svelte';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade, fly } from 'svelte/transition';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
-  export let total: number;
-  export let artists: SearchArtist[];
-  export let query: string;
-  export let type: string;
-  export let startIndex: number = 0;
+  interface Props {
+    total: number;
+    artists: SearchArtist[];
+    query: string;
+    type: string;
+    startIndex?: number;
+    ontypechange: () => void;
+    onartistsloaded: (searchArtists: SearchArtist[]) => void;
+  }
 
-  const dispatch = createEventDispatcher();
+  let {
+    total,
+    artists,
+    query,
+    type,
+    startIndex = 0,
+    ontypechange,
+    onartistsloaded
+  }: Props = $props();
+
   const duration = 250;
-  let loading = false;
-  let requestCanceller: () => void;
+  let loading = $state(false);
+  let requestCanceller: (() => void) | undefined = $state();
 
   function cancelRequest() {
     if (requestCanceller) {
@@ -27,12 +39,12 @@
 
   // If type or query changes cancel the previous request
   // in order to prevent running when requestCanceller is set the cancel logic is moved to another function
-  $: {
+  $effect(() => {
     if (query && type) {
       cancelRequest();
       loading = false;
     }
-  }
+  });
 
   function getAlbumAndTrackString(albumCount: number, trackCount: number) {
     let str = '(';
@@ -91,7 +103,7 @@
       <button
         use:vibrate
         class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
-        on:click={() => dispatch('typechange')}
+        onclick={() => ontypechange()}
       >
         Show all ({total - artists.length} more)
       </button>
@@ -106,7 +118,7 @@
 
         return ({ result }) => {
           if (result.type === 'success' && result.data?.artists && result.data.artists.length > 0) {
-            dispatch('artistsloaded', { artists: result.data.artists });
+            onartistsloaded(result.data.artists as SearchArtist[]);
           }
           loading = false;
         };

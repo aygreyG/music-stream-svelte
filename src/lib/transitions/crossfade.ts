@@ -7,10 +7,10 @@ export const crossfade = sCrossfade({
   duration: 500,
   fallback(node) {
     const style = getComputedStyle(node);
-    const transform = style.transform === 'none' ? '' : style.transform;
+    const transform = style.transform;
 
     return {
-      duration: 0,
+      duration: 250,
       css: (t) => `
             transform: ${transform};
             opacity: ${t};

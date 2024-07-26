@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { SignedInUser } from '$lib/shared/types';
-  import { createEventDispatcher } from 'svelte';
   import RoundLougout from 'virtual:icons/ic/round-logout';
   import RoundLogin from 'virtual:icons/ic/round-login';
   import RoundSearch from 'virtual:icons/ic/round-search';

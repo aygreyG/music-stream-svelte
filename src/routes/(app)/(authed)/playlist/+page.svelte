@@ -8,17 +8,24 @@
   import { quintOut } from 'svelte/easing';
   import { vibrate } from '$lib/actions/vibrate';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import type { ActionData, PageData } from './$types';
 
-  export let data;
-  export let form;
+  interface Props {
+    data: PageData;
+    form: ActionData;
+  }
 
-  let searchString = '';
-  let scrolled = false;
+  let { data, form }: Props = $props();
+
+  let searchString = $state('');
+  let scrolled = $state(false);
+  let loading = $state(false);
   let container: HTMLDivElement;
-  let loading = false;
 
-  $: filtered = data.playlists.filter((playlist) =>
-    playlist.name.toLowerCase().includes(searchString.toLowerCase())
+  let filtered = $derived(
+    data.playlists.filter((playlist) =>
+      playlist.name.toLowerCase().includes(searchString.toLowerCase())
+    )
   );
 </script>
 
@@ -51,7 +58,7 @@
   <div
     class="flex flex-wrap justify-center gap-2 overflow-auto p-2"
     bind:this={container}
-    on:scroll={() => (scrolled = container.scrollTop > 0)}
+    onscroll={() => (scrolled = container.scrollTop > 0)}
   >
     <form
       action="?/add"
