@@ -4,8 +4,6 @@ import prisma from '$lib/server/prisma';
 import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
-import { readdir, lstat } from 'fs/promises';
-import { join } from 'path';
 import { getSubFolders } from '$lib/server/utils';
 
 export const load = async () => {

@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { applyAction, deserialize } from '$app/forms';
   import type { FolderNode } from '$lib/shared/types';
   import pickedFolder from '$lib/stores/folderPicker';
-  import type { ActionResult } from '@sveltejs/kit';
   import FolderOpenRounded from 'virtual:icons/material-symbols-light/folder-open-rounded';
   import FolderRounded from 'virtual:icons/material-symbols-light/folder-rounded';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
