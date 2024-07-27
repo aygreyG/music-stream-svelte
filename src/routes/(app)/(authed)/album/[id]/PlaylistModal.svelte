@@ -9,15 +9,20 @@
   import type { SignedInUser } from '$lib/shared/types';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
-  export let open: boolean = false;
-  export let user: SignedInUser | null;
-  export let track: Prisma.TrackGetPayload<{ select: { title: true; id: true } }> | undefined;
+  interface Props {
+    open?: boolean;
+    user: SignedInUser | null;
+    track: Prisma.TrackGetPayload<{ select: { title: true; id: true } }> | undefined;
+    onclose: () => void;
+  }
 
-  let loading = false;
+  let { open = false, user, track, onclose }: Props = $props();
+
+  let loading = $state(false);
 </script>
 
 {#if open && user && track}
-  <Modal title={`Add "${track.title}" to playlist`} on:close>
+  <Modal title={`Add "${track.title}" to playlist`} {onclose}>
     <div class="flex flex-col items-center gap-2 p-4">
       <form
         use:enhance={() => {

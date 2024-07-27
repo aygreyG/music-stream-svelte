@@ -4,38 +4,9 @@ import prisma from '$lib/server/prisma';
 import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
-import { readdir, lstat } from 'fs/promises';
-import { join } from 'path';
-
-async function getSubFolders(dir: string): Promise<FolderNode[]> {
-  const subFolders: FolderNode[] = [];
-
-  try {
-    const files = await readdir(dir);
-    for (const file of files) {
-      if (file.startsWith('.')) continue;
-      const path = join(dir, file);
-      const stats = await lstat(path);
-      if (stats.isDirectory()) {
-        const folderName = path.split('/').pop()!;
-
-        subFolders.push({
-          label: folderName,
-          children: [],
-          path
-        });
-      }
-    }
-  } catch (err) {
-    console.error(`Error reading directory ${dir}: ${err}`);
-  }
-
-  return subFolders;
-}
+import { getSubFolders } from '$lib/server/utils';
 
 export const load = async () => {
-  const musicFolders: FolderNode[] = [];
-
   const owner = await prisma.user.findFirst({
     where: {
       role: 'OWNER'
@@ -48,22 +19,8 @@ export const load = async () => {
     path: dir,
     children: []
   };
-
-  try {
-    const files = await readdir(dir);
-    for (const file of files) {
-      if (file.startsWith('.')) continue;
-      const path = join(dir, file);
-      const stats = await lstat(path);
-      if (stats.isDirectory()) {
-        const folderName = path.split('/').pop()!;
-        musicFolders.push({ label: folderName, path, children: [], parent: defaultFolder });
-      }
-    }
-    defaultFolder.children = musicFolders;
-  } catch (err) {
-    console.error(`Error reading directory ${dir}: ${err}`);
-  }
+  const musicFolders = await getSubFolders(defaultFolder.path);
+  defaultFolder.children = musicFolders;
 
   return {
     title: 'Setup',
@@ -113,15 +70,6 @@ export const actions: Actions = {
       });
       return fail(401, { error: (err as Error)?.message });
     }
-  },
-  getchildren: async ({ request }) => {
-    const form = await request.formData();
-    const path = form.get('path')?.toString();
-    if (!path) return fail(401, { error: 'path is required' });
-    const subFolders = await getSubFolders(path);
-    return {
-      body: subFolders
-    };
   },
   deleteowner: async () => {
     await prisma.user.deleteMany({

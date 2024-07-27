@@ -2,17 +2,32 @@
   import { fade } from 'svelte/transition';
   import AlbumLink from '../AlbumLink.svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import { createEventDispatcher } from 'svelte';
   import { enhance } from '$app/forms';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
   import type { SearchAlbum } from '$lib/shared/types';
 
-  export let total: number;
-  export let albums: SearchAlbum[];
-  export let query: string;
-  export let type: string;
-  export let startIndex: number = 0;
-  let requestCanceller: () => void;
+  interface Props {
+    total: number;
+    albums: SearchAlbum[];
+    query: string;
+    type: string;
+    startIndex?: number;
+    ontypechange: () => void;
+    onalbumsloaded: (searchAlbums: SearchAlbum[]) => void;
+  }
+
+  let {
+    total,
+    albums,
+    query,
+    type,
+    startIndex = 0,
+    onalbumsloaded,
+    ontypechange
+  }: Props = $props();
+  let requestCanceller: (() => void) | undefined = $state();
+  let loading = $state(false);
+  const duration = 250;
 
   function cancelRequest() {
     if (requestCanceller) {
@@ -22,17 +37,12 @@
 
   // If type or query changes cancel the previous request
   // in order to prevent running when requestCanceller is set the cancel logic is moved to another function
-  $: {
+  $effect(() => {
     if (query && type) {
       cancelRequest();
       loading = false;
     }
-  }
-
-  const dispatch = createEventDispatcher();
-
-  const duration = 250;
-  let loading = false;
+  });
 </script>
 
 <div
@@ -52,7 +62,7 @@
       <button
         use:vibrate
         class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
-        on:click={() => dispatch('typechange')}
+        onclick={() => ontypechange()}
       >
         Show all ({total - albums.length} more)
       </button>
@@ -66,7 +76,7 @@
         requestCanceller = cancel;
         return ({ result }) => {
           if (result.type === 'success' && result.data?.albums && result.data.albums.length > 0) {
-            dispatch('albumsloaded', { albums: result.data.albums });
+            onalbumsloaded(result.data.albums as SearchAlbum[]);
           }
           loading = false;
         };

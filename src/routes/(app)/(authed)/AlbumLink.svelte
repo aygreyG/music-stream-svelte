@@ -8,15 +8,23 @@
   import type { PageData } from './$types';
   const [send] = crossfade;
 
-  export let album: PageData['albums'][0];
-  export let index: number;
-  export let first: number | undefined = undefined;
+  interface Props {
+    album: PageData['albums'][0];
+    index: number;
+    first?: number | undefined;
+  }
 
-  let animate: boolean = false;
-  let outrostarted: boolean = false;
-  let delay = 30 * index;
+  let { album, index, first = undefined }: Props = $props();
 
-  $: first !== undefined ? (delay = Math.abs(index - first) * 30) : (delay = 30 * index);
+  let animate: boolean = $state(false);
+  let outrostarted: boolean = $state(false);
+  let delay = $derived.by(() => {
+    if (first !== undefined) {
+      return Math.abs(index - first) * 30;
+    } else {
+      return 30 * index;
+    }
+  });
 </script>
 
 {#if animate}
@@ -28,7 +36,7 @@
     href="/album/{album.id}"
     in:fly={{ duration: 500, delay, easing: quintOut, x: -20 }}
     out:send|global={{ key: `album-image-${album.id}` }}
-    on:outrostart={() => (outrostarted = true)}
+    onoutrostart={() => (outrostarted = true)}
     id={index.toString()}
   >
     <div class="h-full w-full">
@@ -69,5 +77,5 @@
       }
     }}
     id={index.toString()}
-  />
+  ></a>
 {/if}

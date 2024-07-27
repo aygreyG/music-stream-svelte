@@ -7,12 +7,17 @@
   import { flip } from 'svelte/animate';
   import { vibrate } from '$lib/actions/vibrate';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import type { PageData } from './$types';
 
-  export let data;
-  let syncResponse: { message: string; type: 'full' | 'normal' } | null = null;
-  let animate = false;
-  let loading = false;
-  let timeout: string | number | NodeJS.Timeout | undefined;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
+  let syncResponse: { message: string; type: 'full' | 'normal' } | null = $state(null);
+  let animate = $state(false);
+  let loading = $state(false);
+  let timeout: string | number | NodeJS.Timeout | undefined = $state();
 
   onMount(() => {
     animate = true;
@@ -34,7 +39,7 @@
         {/if}
         <button
           class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
-          on:click={async () => {
+          onclick={async () => {
             const re = await fetch('/api/admin/sync', {
               method: 'POST'
             });
@@ -61,7 +66,7 @@
         {/if}
         <button
           class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
-          on:click={async () => {
+          onclick={async () => {
             const re = await fetch('/api/admin/sync?reset=true', {
               method: 'POST'
             });

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import RoundSearch from 'virtual:icons/ic/round-search';
   import RoundFileUpload from 'virtual:icons/ic/round-file-upload';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
@@ -7,19 +7,23 @@
   import { invalidate } from '$app/navigation';
   import { vibrate } from '$lib/actions/vibrate';
   import Modal from '$lib/components/Modal.svelte';
-  import { currentTrack } from '$lib/stores/audioPlayer';
   import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
   import type { AlbumReleaseSearchResult } from '$lib/shared/types';
   import type { Prisma } from '@prisma/client';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
-  export let album: Prisma.AlbumGetPayload<{
-    select: { title: true; albumArtist: { select: { name: true } }; id: true };
-  }>;
-  let releaseResponse: Promise<AlbumReleaseSearchResult>;
-  let albumArtLoading: boolean = false;
-  let albumArtQuery: string = `${album.title} AND artist:${album.albumArtist.name}`;
+  interface Props {
+    album: Prisma.AlbumGetPayload<{
+      select: { title: true; albumArtist: { select: { name: true } }; id: true };
+    }>;
+    onclose: () => void;
+  }
 
-  const dispatch = createEventDispatcher();
+  let { album, onclose }: Props = $props();
+  let releaseResponse: Promise<AlbumReleaseSearchResult> | undefined = $state();
+  let albumArtLoading: boolean = $state(false);
+  let albumArtQuery: string = $state(`${album.title} AND artist:${album.albumArtist.name}`);
+  const audioPlayer = getAudioPlayer();
 
   function searchArt() {
     if (
@@ -40,7 +44,7 @@
     }
   }
 
-  async function chooseAlbumArt({ detail: { releaseId } }: CustomEvent<{ releaseId: string }>) {
+  async function chooseAlbumArt(releaseId: string) {
     albumArtLoading = true;
     const response = await fetch(`/api/admin/art/${album.id}`, {
       method: 'POST',
@@ -54,21 +58,21 @@
 
     if (response.ok) {
       // Handling if the currently playing track is from the same album
-      if ($currentTrack && $currentTrack.album.id === album.id) {
+      if (audioPlayer.currentTrack && audioPlayer.currentTrack.album.id === album.id) {
         const responseJson = await response.json();
-        $currentTrack.album.albumArtId = responseJson.albumArtId;
+        audioPlayer.currentTrack.album.albumArtId = responseJson.albumArtId;
       }
 
       await invalidate('album:art');
     }
 
-    dispatch('close');
+    onclose();
   }
 
   onMount(() => searchArt());
 </script>
 
-<Modal title="Edit album art" on:close>
+<Modal title="Edit album art" {onclose}>
   <div class="flex flex-col items-center">
     <form
       use:enhance={() => {
@@ -76,15 +80,18 @@
 
         return async ({ update, result }) => {
           await update();
-          console.log(result);
           if (result.type === 'success') {
-            if ($currentTrack && $currentTrack.album.id === album.id && result?.data?.albumArtId) {
-              $currentTrack.album.albumArtId = result.data.albumArtId.toString();
+            if (
+              audioPlayer.currentTrack &&
+              audioPlayer.currentTrack.album.id === album.id &&
+              result?.data?.albumArtId
+            ) {
+              audioPlayer.currentTrack.album.albumArtId = result.data.albumArtId.toString();
             }
           }
 
           albumArtLoading = false;
-          dispatch('close');
+          onclose();
         };
       }}
       enctype="multipart/form-data"
@@ -107,11 +114,11 @@
         class="w-full text-ellipsis rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={albumArtQuery}
-        on:keydown={(e) => e.key === 'Enter' && searchArt()}
+        onkeydown={(e) => e.key === 'Enter' && searchArt()}
       />
       <button
         class="flex items-center justify-center rounded-e-md border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
-        on:click={searchArt}
+        onclick={searchArt}
         use:vibrate
         disabled={albumArtQuery === '' || albumArtLoading}
         title="Search for album art"
@@ -151,7 +158,7 @@
       {:else}
         <div class="flex flex-wrap items-center justify-center gap-2">
           {#each response.releases as release}
-            <AlbumArtFromRelease on:choosen={chooseAlbumArt} {release} />
+            <AlbumArtFromRelease onchoose={chooseAlbumArt} {release} />
           {/each}
         </div>
       {/if}

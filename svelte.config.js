@@ -17,6 +17,10 @@ const config = {
       envPrefix: '',
       polyfill: true
     })
+  },
+
+  compilerOptions: {
+    runes: true
   }
 };
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { currentTrack, paused, playTrack } from '$lib/stores/audioPlayer';
   import type { Prisma } from '@prisma/client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
@@ -8,6 +7,8 @@
   import AlbumImage from './AlbumImage.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import { getReadableTime } from '$lib/utils';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import type { Snippet } from 'svelte';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {
@@ -34,28 +35,44 @@
 
   type ListenedType = { listened: number; lastListened: Date | null };
 
-  export let track: TrackRowType;
-  export let index: number | null = null;
-  export let delay: number = (index || 0) * 30;
-  export let listenedInformation: ListenedType = { listened: 0, lastListened: null };
-  export let handleClick: () => void = () => {
-    playTrack(
-      track.album.tracks.map((t) => ({ ...t, album: track.album })),
-      track.album.tracks.findIndex((t) => t.id === track.id)
-    );
-  };
-
-  let mainWidth = 'w-[calc(100%-6rem)]';
-
-  $: indexed = index !== null;
-  $: hasButton = !!$$slots.button;
-  $: {
-    if (indexed && hasButton) {
-      mainWidth = 'w-[calc(100%-10rem)]';
-    } else if (indexed || hasButton) {
-      mainWidth = 'w-[calc(100%-8rem)]';
-    }
+  interface Props {
+    track: TrackRowType;
+    index?: number | null;
+    delay?: number;
+    listenedInformation?: ListenedType;
+    handleClick?: () => void;
+    button?: Snippet;
   }
+
+  const player = getAudioPlayer();
+
+  let {
+    track,
+    index = null,
+    delay = (index || 0) * 30,
+    listenedInformation = { listened: 0, lastListened: null },
+    handleClick = () => {
+      player.playTrack(
+        track.album.tracks.map((t) => ({ ...t, album: track.album })),
+        track.album.tracks.findIndex((t) => t.id === track.id)
+      );
+    },
+    button
+  }: Props = $props();
+
+  let indexed = $derived(index !== null);
+  let hasButton = $derived(!!button);
+  let mainWidth = $derived.by(() => {
+    if (indexed && hasButton) {
+      return 'w-[calc(100%-10rem)]';
+    }
+
+    if (indexed || hasButton) {
+      return 'w-[calc(100%-8rem)]';
+    }
+
+    return 'w-[calc(100%-6rem)]';
+  });
 </script>
 
 <div
@@ -67,21 +84,21 @@
   }}
   tabindex="0"
   role="button"
-  on:keydown={(e) => {
-    if (e.key === 'Enter' && $currentTrack?.id !== track.id) handleClick();
+  onkeydown={(e) => {
+    if (e.key === 'Enter' && player.currentTrack?.id !== track.id) handleClick();
   }}
-  on:dblclick={() => {
-    if ($currentTrack?.id !== track.id) handleClick();
+  ondblclick={() => {
+    if (player.currentTrack?.id !== track.id) handleClick();
   }}
   use:vibrate
   class="group flex h-14 w-full flex-none cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
   class:px-4={!indexed}
 >
   {#if indexed}
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
-      on:click={() => {
+      onclick={() => {
         if (matchMedia('(hover: none), (pointer: coarse)').matches) {
           handleClick();
         }
@@ -98,11 +115,11 @@
   {/if}
 
   <div class="flex h-12 w-12 flex-none items-center justify-center">
-    {#if $currentTrack?.id === track.id}
-      {#if $paused}
+    {#if player.currentTrack?.id === track.id}
+      {#if player.paused}
         <button
           class="z-10 flex items-center justify-center text-primary/70 hover:text-primary"
-          on:click={() => ($paused = false)}
+          onclick={() => player.togglePlay()}
           use:vibrate
         >
           <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
@@ -110,7 +127,7 @@
       {:else}
         <button
           class="z-10 flex items-center justify-center text-primary/70 hover:text-primary"
-          on:click={() => ($paused = true)}
+          onclick={() => player.togglePlay()}
           use:vibrate
         >
           <RoundPauseCircleOutline class="text-center text-3xl transition-colors" />
@@ -119,7 +136,7 @@
     {:else}
       <button
         class="z-10 hidden items-center justify-center text-zinc-600 hover:text-primary group-hover:flex"
-        on:click={() => handleClick()}
+        onclick={() => handleClick()}
         use:vibrate
       >
         <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
@@ -134,7 +151,7 @@
 
   <div class="{mainWidth} flex-none pl-2">
     <button
-      on:click={() => {
+      onclick={() => {
         if (matchMedia('(hover: none), (pointer: coarse)').matches) {
           handleClick();
         }
@@ -172,7 +189,7 @@
   </div>
 
   <button
-    on:click={() => {
+    onclick={() => {
       if (matchMedia('(hover: none), (pointer: coarse)').matches) {
         handleClick();
       }
@@ -185,7 +202,7 @@
 
   {#if hasButton}
     <div class="w-8 flex-none">
-      <slot name="button" />
+      {@render button?.()}
     </div>
   {/if}
 </div>
