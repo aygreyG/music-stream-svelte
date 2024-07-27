@@ -95,7 +95,7 @@ pnpm run build
 - If you want to remove unused dependencies run:
 
 ```bash
-pnpm prune --production
+pnpm prune --production --ignore-scripts
 ```
 
 - Make `start.sh` executable:
