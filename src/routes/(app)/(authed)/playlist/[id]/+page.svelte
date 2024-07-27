@@ -8,11 +8,16 @@
   import HeartOff from 'virtual:icons/iconamoon/heart-off';
   import { vibrate } from '$lib/actions/vibrate.js';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
+  import type { PageData } from './$types';
 
-  export let data;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
   const [send, receive] = crossfade;
-  let container: HTMLDivElement;
-  let scrolled = false;
+  let container: HTMLDivElement | null = $state(null);
+  let scrolled = $state(false);
   const audioPlayer = getAudioPlayer();
 </script>
 
@@ -44,7 +49,7 @@
   <div
     class="flex h-full flex-col overflow-auto"
     bind:this={container}
-    on:scroll={() => (scrolled = container?.scrollTop > 0)}
+    onscroll={() => container?.scrollTop && (scrolled = container?.scrollTop > 0)}
   >
     {#each data.playlist.tracks as track, index (track.id)}
       <div class="w-full flex-none" animate:flip={{ duration: 250 }}>

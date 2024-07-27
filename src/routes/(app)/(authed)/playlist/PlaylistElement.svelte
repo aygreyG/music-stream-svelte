@@ -8,27 +8,31 @@
   import TrashFill from 'virtual:icons/iconamoon/trash-fill';
   import { vibrate } from '$lib/actions/vibrate';
 
-  export let playlist: Prisma.PlaylistGetPayload<{
-    select: {
-      name: true;
-      id: true;
-      tracks: {
-        select: {
-          album: { select: { id: true; albumArtAccent: true; title: true; albumArtId: true } };
+  interface Props {
+    playlist: Prisma.PlaylistGetPayload<{
+      select: {
+        name: true;
+        id: true;
+        tracks: {
+          select: {
+            album: { select: { id: true; albumArtAccent: true; title: true; albumArtId: true } };
+          };
         };
       };
-    };
-  }>;
-  export let selected: boolean = false;
+    }>;
+    selected?: boolean;
+  }
+
+  let { playlist, selected = false }: Props = $props();
 
   const albumSet: Prisma.AlbumGetPayload<{
     select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
   }>[] = [];
-  let nameInput: HTMLInputElement;
-  let playlistName: string = playlist.name;
-  let deleteClicked = false;
+  let nameInput: HTMLInputElement | null = $state(null);
+  let playlistName: string = $state(playlist.name);
+  let deleteClicked = $state(false);
   const [send] = crossfade;
-  let timeout: string | number | NodeJS.Timeout | undefined;
+  let timeout: string | number | NodeJS.Timeout | undefined = $state();
 
   for (const track of playlist.tracks) {
     if (!albumSet.find((a) => a.id === track.album.id)) {
@@ -38,11 +42,11 @@
     if (albumSet.length === 4) break;
   }
 
-  $: {
+  $effect(() => {
     if (selected) {
       nameInput?.focus();
     }
-  }
+  });
 </script>
 
 <form
@@ -92,7 +96,7 @@
       bind:value={playlistName}
       name="name"
       class="w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-6 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
-      on:blur={() => {
+      onblur={() => {
         if (playlistName === '') {
           playlistName = playlist.name;
         } else {

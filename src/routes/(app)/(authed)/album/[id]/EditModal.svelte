@@ -44,7 +44,7 @@
     }
   }
 
-  async function chooseAlbumArt({ detail: { releaseId } }: CustomEvent<{ releaseId: string }>) {
+  async function chooseAlbumArt(releaseId: string) {
     albumArtLoading = true;
     const response = await fetch(`/api/admin/art/${album.id}`, {
       method: 'POST',
@@ -159,7 +159,7 @@
       {:else}
         <div class="flex flex-wrap items-center justify-center gap-2">
           {#each response.releases as release}
-            <AlbumArtFromRelease on:choosen={chooseAlbumArt} {release} />
+            <AlbumArtFromRelease onchoose={chooseAlbumArt} {release} />
           {/each}
         </div>
       {/if}

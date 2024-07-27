@@ -2,17 +2,24 @@
   import ArtistRow from './ArtistRow.svelte';
   import { flip } from 'svelte/animate';
   import RoundSearch from 'virtual:icons/ic/round-search';
+  import type { PageData } from './$types';
 
-  export let data;
-  let scrolled = false;
-  let searchString = '';
-  let scrolledFromTop = false;
-  let container: HTMLDivElement;
+  interface Props {
+    data: PageData;
+  }
 
-  $: filtered = data.artists.filter(
-    (artist) =>
-      artist.name.toLowerCase().includes(searchString.toLowerCase()) ||
-      artist.sanitized.toLowerCase().includes(searchString.toLowerCase())
+  let { data }: Props = $props();
+  let scrolled = $state(false);
+  let searchString = $state('');
+  let scrolledFromTop = $state(false);
+  let container: HTMLDivElement | null = $state(null);
+
+  let filtered = $derived(
+    data.artists.filter(
+      (artist) =>
+        artist.name.toLowerCase().includes(searchString.toLowerCase()) ||
+        artist.sanitized.toLowerCase().includes(searchString.toLowerCase())
+    )
   );
 </script>
 
@@ -42,9 +49,9 @@
     <div
       class="flex h-full flex-col overflow-auto pt-2 text-lg"
       bind:this={container}
-      on:scroll={() => {
+      onscroll={() => {
         scrolled = true;
-        scrolledFromTop = container.scrollTop > 0;
+        if (container) scrolledFromTop = container.scrollTop > 0;
       }}
     >
       {#each filtered as artist, index (artist.id)}

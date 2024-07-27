@@ -4,9 +4,14 @@
   import { quintOut } from 'svelte/easing';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import AlbumLink from '../../AlbumLink.svelte';
+  import type { PageData } from './$types';
 
-  export let data;
-  let animate = false;
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
+  let animate = $state(false);
 
   onMount(() => {
     animate = true;

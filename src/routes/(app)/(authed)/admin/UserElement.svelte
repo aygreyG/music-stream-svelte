@@ -5,11 +5,15 @@
   type UserWithoutPassword = Omit<User, 'password'>;
   import { fade } from 'svelte/transition';
 
-  export let user: UserWithoutPassword;
-  let deleteClicked = false;
-  let admin = user.role === 'ADMIN';
-  let username = user.username;
-  let email = user.email;
+  interface Props {
+    user: UserWithoutPassword;
+  }
+
+  let { user }: Props = $props();
+  let deleteClicked = $state(false);
+  let admin = $state(user.role === 'ADMIN');
+  let username = $state(user.username);
+  let email = $state(user.email);
 </script>
 
 <form

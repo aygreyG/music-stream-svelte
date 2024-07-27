@@ -12,24 +12,35 @@
   import { getReadableTime } from '$lib/utils';
   import { flip } from 'svelte/animate';
   import type { SubmitFunction } from '@sveltejs/kit';
+  import type { ActionData, PageData } from './$types';
+  import { untrack } from 'svelte';
 
-  export let data;
-  export let form;
-
-  let deleteClicked = false;
-  let deleteTimeout: string | number | NodeJS.Timeout | undefined;
-  let loading = false;
-  let listensLoading = false;
-  let listenedIndex = 0;
-
-  let listens = [...data.listens];
-  $: if (data.listens) {
-    let tmpListens = [
-      ...listens.filter((el) => !data.listens.find((v) => v.id === el.id)),
-      ...data.listens
-    ];
-    listens = tmpListens.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+  interface Props {
+    data: PageData;
+    form: ActionData;
   }
+
+  let { data, form }: Props = $props();
+
+  let deleteClicked = $state(false);
+  let deleteTimeout: string | number | NodeJS.Timeout | undefined = $state();
+  let loading = $state(false);
+  let listensLoading = $state(false);
+  let listenedIndex = $state(0);
+  let listens = $state([...data.listens]);
+
+  // Update listens when data changes but untracking listens array to prevent infinite loop
+  $effect(() => {
+    if (data.listens) {
+      let tmpListens = [
+        ...untrack(() => listens.filter((el) => !data.listens.find((v) => v.id === el.id))),
+        ...data.listens
+      ];
+      untrack(() => {
+        listens = tmpListens.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+      });
+    }
+  });
 
   const handleListenSubmit: SubmitFunction = () => {
     listensLoading = true;

@@ -9,26 +9,30 @@
   import { onMount } from 'svelte';
   import RoundRefresh from 'virtual:icons/ic/round-refresh';
 
-  export let action = '?/updatetheme';
-  export let ownerTheme: Theme | null;
-  export let owner = false;
+  interface Props {
+    action?: string;
+    ownerTheme: Theme | null;
+    owner?: boolean;
+  }
 
-  let start = $currentTheme.gradientStart;
-  let middle = $currentTheme.gradientMiddle;
-  let end = $currentTheme.gradientEnd;
-  let middlepoint = $currentTheme.gradientMiddlePoint;
-  let accent = $currentTheme.primary;
-  let angle = $currentTheme.gradientAngle.replaceAll('_', ' ');
-  let radius = $currentTheme.rounding;
+  let { action = '?/updatetheme', ownerTheme, owner = false }: Props = $props();
 
-  let loading = false;
+  let start = $state($currentTheme.gradientStart);
+  let middle = $state($currentTheme.gradientMiddle);
+  let end = $state($currentTheme.gradientEnd);
+  let middlepoint = $state($currentTheme.gradientMiddlePoint);
+  let accent = $state($currentTheme.primary);
+  let angle = $state($currentTheme.gradientAngle.replaceAll('_', ' '));
+  let radius = $state($currentTheme.rounding);
 
-  $: {
+  let loading = $state(false);
+
+  $effect(() => {
     if (middlepoint) {
       if (middlepoint < 1) middlepoint = 1;
       if (middlepoint > 99) middlepoint = 99;
     }
-  }
+  });
 
   function resetToCurrent() {
     start = $currentTheme.gradientStart;
@@ -272,7 +276,10 @@
       <button
         class="w-full rounded-md bg-lime-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
         use:vibrate
-        on:click|preventDefault={resetToOwner}
+        onclick={(event) => {
+          event.preventDefault();
+          resetToOwner?.();
+        }}
         disabled={loading}
       >
         Owner
@@ -282,7 +289,10 @@
     <button
       class="w-full rounded-md bg-amber-600 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
       use:vibrate
-      on:click|preventDefault={resetToCurrent}
+      onclick={(event) => {
+        event.preventDefault();
+        resetToCurrent?.();
+      }}
       disabled={loading}
     >
       Reset
@@ -291,7 +301,10 @@
     <button
       class="w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
       use:vibrate
-      on:click|preventDefault={resetToDefault}
+      onclick={(event) => {
+        event.preventDefault();
+        resetToDefault?.();
+      }}
       disabled={loading}
     >
       Default

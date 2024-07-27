@@ -8,33 +8,42 @@
     select: { id: true; name: true; _count: { select: { albums: true; tracks: true } } };
   }>;
 
-  export let artist: ArtistRowType;
-  export let index: number;
-  export let scrolled: boolean;
+  interface Props {
+    artist: ArtistRowType;
+    index: number;
+    scrolled: boolean;
+  }
 
-  let animate: boolean = false;
-  let delay = 30 * index;
-  let trackAndAlbumCount = '(';
-  $: scrolled ? (delay = 0) : (delay = 30 * index);
-  $: {
-    trackAndAlbumCount = '(';
+  let { artist, index, scrolled }: Props = $props();
+
+  let animate: boolean = $state(false);
+  let delay = $derived.by(() => {
+    if (scrolled) {
+      return 0;
+    }
+    return 30 * index;
+  });
+
+  let trackAndAlbumCount = $derived.by(() => {
+    let tmp = '(';
     if (artist._count.albums > 0) {
-      trackAndAlbumCount += `${artist._count.albums} album`;
+      tmp += `${artist._count.albums} album`;
       if (artist._count.albums > 1) {
-        trackAndAlbumCount += 's';
+        tmp += 's';
       }
     }
     if (artist._count.tracks > 0) {
       if (artist._count.albums > 0) {
-        trackAndAlbumCount += ', ';
+        tmp += ', ';
       }
-      trackAndAlbumCount += `${artist._count.tracks} track`;
+      tmp += `${artist._count.tracks} track`;
       if (artist._count.tracks > 1) {
-        trackAndAlbumCount += 's';
+        tmp += 's';
       }
     }
-    trackAndAlbumCount += ')';
-  }
+    tmp += ')';
+    return tmp;
+  });
 </script>
 
 {#if animate}

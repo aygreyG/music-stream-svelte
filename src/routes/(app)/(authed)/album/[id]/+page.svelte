@@ -13,18 +13,23 @@
   import { vibrate } from '$lib/actions/vibrate';
   import PlaylistModal from './PlaylistModal.svelte';
   import EditModal from './EditModal.svelte';
+  import type { PageData } from './$types';
 
   type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 
-  export let data;
-  let animate: boolean = false;
-  let albumAnimating: boolean = false;
-  let editModalOpen: boolean = false;
-  let playlistModalOpen: boolean = false;
-  let playlistModalTrack: TrackType;
+  interface Props {
+    data: PageData;
+  }
 
-  let container: HTMLDivElement;
-  let scrolled = false;
+  let { data }: Props = $props();
+  let animate: boolean = $state(false);
+  let albumAnimating: boolean = $state(false);
+  let editModalOpen: boolean = $state(false);
+  let playlistModalOpen: boolean = $state(false);
+  let playlistModalTrack: TrackType | undefined = $state();
+
+  let container: HTMLDivElement | null = $state(null);
+  let scrolled = $state(false);
 
   function openPlaylistModal(track: TrackType) {
     playlistModalTrack = track;
@@ -56,8 +61,8 @@
           class="group h-32 w-32 flex-none overflow-clip rounded-md"
           class:z-20={albumAnimating}
           in:receive|global={{ key: `album-image-${data.album.id}` }}
-          on:introstart={() => (albumAnimating = true)}
-          on:introend={() => (albumAnimating = false)}
+          onintrostart={() => (albumAnimating = true)}
+          onintroend={() => (albumAnimating = false)}
         >
           <AlbumImage key={data.album.updatedAt.toISOString()} album={data.album} />
           {#if !albumAnimating && data.user?.role !== 'USER'}
@@ -66,7 +71,7 @@
             >
               <button
                 use:vibrate
-                on:click={() => (editModalOpen = true)}
+                onclick={() => (editModalOpen = true)}
                 aria-label="Edit album art"
               >
                 <RoundEdit
@@ -92,7 +97,7 @@
       <div
         class="flex h-full flex-col overflow-auto"
         bind:this={container}
-        on:scroll={() => (scrolled = container?.scrollTop > 0)}
+        onscroll={() => container?.scrollTop && (scrolled = container?.scrollTop > 0)}
       >
         {#each data.album.tracks as track, index (track.id)}
           <div class="w-full flex-none">
@@ -100,7 +105,7 @@
               {#snippet button()}
                 <button
                   use:vibrate
-                  on:click={() => openPlaylistModal(track)}
+                  onclick={() => openPlaylistModal(track)}
                   class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-primary"
                 >
                   {#if track.playlists.length > 0}
@@ -118,7 +123,7 @@
   </div>
 
   <PlaylistModal
-    on:close={() => (playlistModalOpen = false)}
+    onclose={() => (playlistModalOpen = false)}
     open={playlistModalOpen}
     user={data.user}
     track={playlistModalTrack}

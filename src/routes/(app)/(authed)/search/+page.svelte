@@ -125,7 +125,7 @@
   <div
     class="h-full w-full overflow-auto"
     bind:this={container}
-    onscroll={() => (container?.scrollTop ? (scrolled = container?.scrollTop > 0) : null)}
+    onscroll={() => container?.scrollTop && (scrolled = container?.scrollTop > 0)}
     out:fade={{ duration: 200 }}
   >
     {#if data?.success && data.total && results}
