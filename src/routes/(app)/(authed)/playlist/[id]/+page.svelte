@@ -49,7 +49,7 @@
   <div
     class="flex h-full flex-col overflow-auto"
     bind:this={container}
-    onscroll={() => container?.scrollTop && (scrolled = container?.scrollTop > 0)}
+    onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
   >
     {#each data.playlist.tracks as track, index (track.id)}
       <div class="w-full flex-none" animate:flip={{ duration: 250 }}>

@@ -34,7 +34,6 @@
 
   // If type or query changes cancel the previous request
   $effect(() => {
-    console.log('type', type);
     if (query && type) {
       untrack(() => requestCanceller?.());
     }

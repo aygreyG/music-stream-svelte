@@ -80,7 +80,7 @@
       if (player) {
         player.currentTime = 0;
         prevSeekTime = 0;
-        audioPlayer.paused = false;
+        player.play();
       }
     } else {
       audioPlayer.playNext();
