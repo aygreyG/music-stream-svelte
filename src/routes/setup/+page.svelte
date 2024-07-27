@@ -18,6 +18,7 @@
   let scrolled = $state(false);
   let scrolledToBottom = $state(false);
   let container: HTMLDivElement | null = $state(null);
+  let defaultFolder = $state(data.defaultFolder);
 
   onMount(() => {
     if (container) {
@@ -57,13 +58,13 @@
           };
         }
       }}
-      class="flex h-fit max-h-full w-full max-w-6xl flex-col items-center overflow-hidden rounded-md bg-zinc-600/10"
+      class="flex h-fit max-h-full w-full max-w-xl flex-col items-center overflow-hidden rounded-md bg-zinc-600/10"
     >
       {#if data.hasOwner}
-        <div class="flex w-full items-center justify-between pe-2">
+        <div class="flex w-full items-center justify-between pe-4 ps-2">
           <div class="w-full p-2 text-lg font-bold">Database has an owner account already</div>
           <button
-            class="whitespace-nowrap rounded-md bg-rose-600 px-2 py-1 text-xs font-semibold text-white transition-all hover:bg-rose-700"
+            class="whitespace-nowrap rounded-md bg-rose-600 px-2 py-1 text-sm font-semibold text-white transition-all hover:bg-rose-700"
             formaction="?/deleteowner"
             use:vibrate
           >
@@ -74,7 +75,7 @@
         <div class="w-full p-2 text-lg font-bold">Create an owner account</div>
 
         <label class="w-full px-4 text-sm text-zinc-300">
-          <div>Username</div>
+          <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
             class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             name="username"
@@ -84,7 +85,7 @@
         </label>
 
         <label class="w-full px-4 text-sm text-zinc-300">
-          <div>Email</div>
+          <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
             class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="email"
@@ -95,7 +96,7 @@
         </label>
 
         <label class="w-full px-4 text-sm text-zinc-300">
-          <div>Password</div>
+          <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
             class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="password"
@@ -126,11 +127,11 @@
           }}
           class="flex flex-col overflow-auto"
         >
-          {#if data.defaultFolder.path !== '/'}
-            <Folder folderNode={data.defaultFolder} />
+          {#if defaultFolder.path !== '/'}
+            <Folder bind:folderNode={defaultFolder} />
           {:else}
-            {#each data.defaultFolder.children as folder}
-              <Folder folderNode={folder} />
+            {#each defaultFolder.children as _, index}
+              <Folder bind:folderNode={defaultFolder.children[index]} />
             {/each}
           {/if}
         </div>

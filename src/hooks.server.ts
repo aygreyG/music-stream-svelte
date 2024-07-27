@@ -38,6 +38,7 @@ const handle: Handle = async ({ event, resolve }) => {
   if (
     (!serverSettings || !serverSettings?.setupComplete) &&
     !event.route.id?.startsWith('/setup') &&
+    !event.route.id?.startsWith('/api/folder') &&
     !startupRunning
   ) {
     redirect(303, '/setup');

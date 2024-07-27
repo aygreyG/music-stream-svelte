@@ -89,7 +89,7 @@ pnpm install && pnpx prisma generate
 - Build the project:
 
 ```bash
-pnpm run build
+pnpm build
 ```
 
 - If you want to remove unused dependencies run:
@@ -130,10 +130,10 @@ DATABASE_URL=postgres://user:password@host:port/dbname
 pnpm install && pnpx prisma generate
 ```
 
-- Start the server with
+- Start the server with (add `--host` if you want to access the server from another device)
 
 ```bash
-pnpm run dev
+pnpm dev
 ```
 
 - If you are using a node manager (like `nvm`) and want to commit using a gui you might need [this](https://typicode.github.io/husky/how-to.html#node-version-managers-and-guis) to make husky work
