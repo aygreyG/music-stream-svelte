@@ -8,6 +8,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import { getReadableTime } from '$lib/utils';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import type { Snippet } from 'svelte';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {
@@ -40,7 +41,7 @@
     delay?: number;
     listenedInformation?: ListenedType;
     handleClick?: () => void;
-    button?: import('svelte').Snippet;
+    button?: Snippet;
   }
 
   const player = getAudioPlayer();
