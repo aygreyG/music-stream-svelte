@@ -79,40 +79,43 @@
   >
     {#if audioPlayer.currentTrack && user}
       {#key audioPlayer.currentTrack.id}
-        <a
+        <div
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
-          href="/album/{audioPlayer.currentTrack.album.id}"
           class="flex h-full w-full overflow-hidden rounded-md"
         >
-          <AlbumImage album={audioPlayer.currentTrack.album} />
+          <a
+            title={audioPlayer.currentTrack.album.title}
+            class="h-full w-full"
+            href="/album/{audioPlayer.currentTrack.album.id}"
+          >
+            <AlbumImage album={audioPlayer.currentTrack.album} />
+          </a>
           <div
             class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
           >
-            <button
-              onclick={() => goto(`/album/${audioPlayer.currentTrack?.album.id}`)}
+            <a
+              href="/album/{audioPlayer.currentTrack.album.id}"
               class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
+              title={audioPlayer.currentTrack.title}
             >
               {audioPlayer.currentTrack.title}
-            </button>
+            </a>
             <div
-              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
+              class="z-10 overflow-hidden text-ellipsis text-nowrap rounded-md bg-zinc-900/80 px-1 text-xs backdrop-blur-sm"
             >
               {#each audioPlayer.currentTrack.artists.sort( (a, b) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                <button class="hover:underline" onclick={() => goto(`/artist/${artist.id}`)}>
+                <button
+                  title={artist.name}
+                  class="hover:underline"
+                  onclick={() => goto(`/artist/${artist.id}`)}
+                >
                   {artist.name}{#if audioPlayer.currentTrack.artists.length > 1 && index != audioPlayer.currentTrack.artists.length - 1},{/if}
                 </button>
               {/each}
-              -
-              <button
-                class="hover:underline"
-                onclick={() => goto(`/artist/${audioPlayer.currentTrack?.album.id}`)}
-              >
-                {audioPlayer.currentTrack.album.title}
-              </button>
             </div>
           </div>
-        </a>
+        </div>
       {/key}
     {/if}
   </div>
