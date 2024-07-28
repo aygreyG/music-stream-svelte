@@ -17,7 +17,8 @@
 
 A self-hosted music streaming service built with SvelteKit that allows you to stream the music stored on your computer/home server to any device with a browser. 🎶
 
-![music-streamer2](https://github.com/aygreyG/music-stream-svelte/assets/78927537/24a847ef-46d4-455d-b187-985d7624892d)
+![example](https://github.com/user-attachments/assets/91adb1cd-29fb-44d6-bf2f-0a3562c6d7a1)
+
 
 ---
 
