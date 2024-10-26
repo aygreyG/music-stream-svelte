@@ -22,14 +22,14 @@
   type NavigationElementType = {
     href: string;
     text: string;
-    icon: any;
+    Icon: any;
   };
 
   const adminElements: NavigationElementType[] = [
     {
       href: '/admin',
       text: 'Admin',
-      icon: RoundAdminPanelSettings
+      Icon: RoundAdminPanelSettings
     }
   ];
 
@@ -37,32 +37,32 @@
     {
       href: '/profile',
       text: 'Profile',
-      icon: ProfileFill
+      Icon: ProfileFill
     },
     {
       href: '/search',
       text: 'Search',
-      icon: RoundSearch
+      Icon: RoundSearch
     },
     {
       href: '/',
       text: 'Albums',
-      icon: MusicAlbumFill
+      Icon: MusicAlbumFill
     },
     {
       href: '/artist',
       text: 'Artists',
-      icon: MusicArtistFill
+      Icon: MusicArtistFill
     },
     {
       href: '/playlist',
       text: 'Playlists',
-      icon: RoundPlaylistPlay
+      Icon: RoundPlaylistPlay
     },
     {
       href: '/logout',
       text: 'Logout',
-      icon: RoundLougout
+      Icon: RoundLougout
     }
   ];
 
@@ -70,7 +70,7 @@
     {
       href: '/login',
       text: 'Login',
-      icon: RoundLogin
+      Icon: RoundLogin
     }
   ];
 </script>
@@ -90,7 +90,7 @@
           type="submit"
           use:vibrate
         >
-          <svelte:component this={el.icon} />
+          <el.Icon />
           {el.text}
         </button>
       </form>

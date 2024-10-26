@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Folder from './Folder.svelte';
   import type { FolderNode } from '$lib/shared/types';
   import pickedFolder from '$lib/stores/folderPicker';
   import FolderOpenRounded from 'virtual:icons/material-symbols-light/folder-open-rounded';
@@ -75,7 +76,7 @@
 
   {#each folderNode.children as _, index}
     {#if opened}
-      <svelte:self bind:folderNode={folderNode.children[index]} level={level + 1} />
+      <Folder bind:folderNode={folderNode.children[index]} level={level + 1} />
     {/if}
   {/each}
 </div>

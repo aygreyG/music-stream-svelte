@@ -5,11 +5,11 @@
   interface Props {
     href: string;
     text: string;
-    icon: any;
+    Icon: any;
     onclickedelement?: () => void;
   }
 
-  let { href, text, icon, onclickedelement }: Props = $props();
+  let { href, text, Icon, onclickedelement }: Props = $props();
 
   let currentPage = $derived($page.url.pathname);
 </script>
@@ -22,7 +22,7 @@
     {href}
     use:vibrate
   >
-    <svelte:component this={icon} />
+    <Icon />
     {text}
   </a>
 </div>

@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private';
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { runLibrarySync } from '$lib/server/librarySync';
 import { getServerSettings } from '$lib/server/serverSettings';
+import { serverLog } from '$lib/server/utils';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 let startupRunning = false;
@@ -29,7 +30,7 @@ async function runOnStartup() {
 }
 
 const handle: Handle = async ({ event, resolve }) => {
-  console.log(event.route.id);
+  const start = Date.now();
   const serverSettings = await getServerSettings();
   if (startupRunning && !event.route.id?.startsWith('/loading')) {
     redirect(303, '/loading');
@@ -80,7 +81,19 @@ const handle: Handle = async ({ event, resolve }) => {
     redirect(303, '/');
   }
 
-  return await resolve(event);
+  const response = await resolve(event);
+  const end = Date.now();
+  const responseTime = end - start;
+  let message = `Response: ${event.route.id}`;
+  const params = Object.keys(event.params);
+
+  if (params.length > 0) {
+    message += ` ${params.map((key) => `${key}:${event.params[key]}`).join(', ')}`;
+  }
+
+  serverLog(`${message} | ${responseTime}ms`);
+
+  return response;
 };
 
 export { handle };

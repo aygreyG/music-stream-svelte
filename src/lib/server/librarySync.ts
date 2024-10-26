@@ -1,6 +1,6 @@
 import type { Artist } from '@prisma/client';
 import prisma from './prisma';
-// parseFile is exported, only the editor shows an error because it thinks it is not running in a node environment
+// @ts-expect-error parseFile is exported, only the editor shows an error because it thinks it is not running in a node environment
 import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
