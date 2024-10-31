@@ -1,0 +1,13 @@
+[
+    {
+      "id": "redeploy-svelte-music-stream",
+      "execute-command": "/app/deploy.py",
+      "command-working-directory": "/app",
+      "pass-arguments-to-command": [
+        {
+            "source": "entire-payload"
+        }
+      ]
+    }
+  ]
+  
