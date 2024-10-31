@@ -7,6 +7,8 @@ import { build, files, version } from '$service-worker';
 
 const CACHE_NAME = `cache-${version}`;
 const ASSETS = [...build, ...files];
+const NON_CACHEABLE = ['/login', '/logout', '/api/play'];
+const CACHE_FIRST = ['/api/image', '/api/listened'];
 
 self.addEventListener('install', (event) => {
   async function addFilesToCache() {
@@ -32,47 +34,44 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('/api/play/')) return;
+  const url = new URL(event.request.url);
+  if (NON_CACHEABLE.some((path) => url.pathname.startsWith(path))) return;
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
   async function respond() {
-    const url = new URL(event.request.url);
     const cache = await caches.open(CACHE_NAME);
+    const cachedResponse = await cache.match(event.request);
 
-    // `build`/`files` can always be served from the cache
-    if (ASSETS.includes(url.pathname)) {
-      const response = await cache.match(url.pathname);
-
-      if (response) {
-        return response;
-      }
+    // build, files & api/image can always be served from the cache
+    if (
+      ASSETS.includes(url.pathname) ||
+      (CACHE_FIRST.some((path) => url.pathname.startsWith(path)) && cachedResponse)
+    ) {
+      console.log('Serving from cache:', event.request.url);
+      return cachedResponse;
     }
 
-    try {
-      const response = await fetch(event.request);
-      const httpRequest = url.protocol === 'http:';
+    const networkResponse = fetch(event.request);
 
-      if (!httpRequest) {
-        return response;
-      }
+    if (cachedResponse) {
+      console.log('Serving from cache:', event.request.url);
+      networkResponse.then((response) => {
+        if (response.status === 200) {
+          console.log('Updating cache:', event.request.url);
+          cache.put(event.request, response.clone());
+        }
+      });
 
-      if (!(response instanceof Response)) {
-        throw new Error('invalid response from fetch');
-      }
-
-      if (response.status === 200) {
-        cache.put(event.request, response.clone());
-      }
-
-      return response;
-    } catch (err) {
-      const response = await cache.match(event.request);
-
-      if (response) {
-        return response;
-      }
-
-      throw err;
+      return cachedResponse;
     }
+
+    const response = await networkResponse;
+
+    if (response.status === 200) {
+      cache.put(event.request, response.clone());
+    }
+
+    return response;
   }
 
   event.respondWith(respond());

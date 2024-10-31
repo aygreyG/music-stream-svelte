@@ -6,7 +6,7 @@ export async function load() {
 }
 
 export const actions: Actions = {
-  default: async ({ request, cookies }) => {
+  default: async ({ cookies }) => {
     cookies.delete(AUTH_COOKIE, {
       httpOnly: true,
       secure: process.env.NODE_ENV == 'production',
@@ -14,8 +14,6 @@ export const actions: Actions = {
       path: '/'
     });
 
-    const referer = request.headers.get('referer');
-
-    redirect(303, referer ?? '/');
+    redirect(303, '/login');
   }
 };
