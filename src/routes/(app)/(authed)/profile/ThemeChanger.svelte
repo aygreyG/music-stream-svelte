@@ -126,9 +126,9 @@
         required
       >
         <option value="to bottom">Top to bottom</option>
-        <option value="to right">Left to right</option>
-        <option value="to left">Right to left</option>
         <option value="to top">Bottom to top</option>
+        <!-- <option disabled value="to right">Left to right</option>
+        <option disabled value="to left">Right to left</option> -->
       </select>
     </label>
   </div>
