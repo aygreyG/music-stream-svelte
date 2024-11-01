@@ -11,6 +11,7 @@
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
   import { vibrate } from '$lib/actions/vibrate';
+  import { ROLE } from '$lib/shared/consts';
 
   interface Props {
     user?: SignedInUser | null;
@@ -76,7 +77,7 @@
 </script>
 
 {#if user}
-  {#if user.role === 'ADMIN' || user.role === 'OWNER'}
+  {#if user.role === ROLE.ADMIN || user.role === ROLE.OWNER}
     {#each adminElements as el}
       <NavigationElement {onclickedelement} {...el} />
     {/each}

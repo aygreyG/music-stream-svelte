@@ -1,8 +1,8 @@
-import type { Role } from '@prisma/client';
 import prisma from './prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getServerSettings } from './serverSettings';
+import { ROLE, type RoleType } from '$lib/shared/consts';
 
 export const AUTH_COOKIE = 'access_token';
 const TOKEN_VALID_TIME = 7 * 24 * 60 * 60;
@@ -45,7 +45,7 @@ export async function register(
   password: string,
   passwordRepeat: string,
   username: string,
-  role: Role = 'USER'
+  role: RoleType = ROLE.USER
 ) {
   const userWithEmail = await prisma.user.findUnique({ where: { email } });
   const userWithUsername = await prisma.user.findUnique({ where: { username } });

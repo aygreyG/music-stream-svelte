@@ -14,6 +14,7 @@
   import type { SubmitFunction } from '@sveltejs/kit';
   import type { ActionData, PageData } from './$types';
   import { untrack } from 'svelte';
+  import { ROLE } from '$lib/shared/consts';
 
   interface Props {
     data: PageData;
@@ -187,10 +188,10 @@
     </Accordion>
 
     <Accordion title="Change Theme" delay={200}>
-      <ThemeChanger ownerTheme={data.ownerTheme} owner={data.user?.role === 'OWNER'} />
+      <ThemeChanger ownerTheme={data.ownerTheme} owner={data.user?.role === ROLE.OWNER} />
     </Accordion>
 
-    {#if data.user?.role !== 'OWNER'}
+    {#if data.user?.role !== ROLE.OWNER}
       <div
         class="mt-4 flex w-full items-center justify-between rounded-md bg-zinc-600/20 px-4 py-2"
       >

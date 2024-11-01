@@ -75,7 +75,11 @@
         loading = true;
         requestCanceller = cancel;
         return ({ result }) => {
-          if (result.type === 'success' && result.data?.albums && result.data.albums.length > 0) {
+          if (
+            result.type === 'success' &&
+            result.data?.albums &&
+            (result.data.albums as SearchAlbum[]).length > 0
+          ) {
             onalbumsloaded(result.data.albums as SearchAlbum[]);
           }
           loading = false;

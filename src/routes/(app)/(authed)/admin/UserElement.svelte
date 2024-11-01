@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
+  import { ROLE } from '$lib/shared/consts';
   import type { User } from '@prisma/client';
   type UserWithoutPassword = Omit<User, 'password'>;
   import { fade } from 'svelte/transition';
@@ -11,7 +12,7 @@
 
   let { user }: Props = $props();
   let deleteClicked = $state(false);
-  let admin = $state(user.role === 'ADMIN');
+  let admin = $state(user.role === ROLE.ADMIN);
   let username = $state(user.username);
   let email = $state(user.email);
 </script>
@@ -67,7 +68,7 @@
     type="submit"
     disabled={user.username === username &&
       user.email === email &&
-      ((admin && user.role === 'ADMIN') || (!admin && user.role === 'USER'))}
+      ((admin && user.role === ROLE.ADMIN) || (!admin && user.role === ROLE.USER))}
     use:vibrate
   >
     Update

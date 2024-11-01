@@ -14,6 +14,7 @@
   import PlaylistModal from './PlaylistModal.svelte';
   import EditModal from './EditModal.svelte';
   import type { PageData } from './$types';
+  import { ROLE } from '$lib/shared/consts';
 
   type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 
@@ -65,7 +66,7 @@
           onintroend={() => (albumAnimating = false)}
         >
           <AlbumImage key={data.album.updatedAt.toISOString()} album={data.album} />
-          {#if !albumAnimating && data.user?.role !== 'USER'}
+          {#if !albumAnimating && data.user?.role !== ROLE.USER}
             <div
               class="absolute bottom-0 left-0 flex gap-2 rounded-bl-md rounded-tr-md bg-zinc-900/80 backdrop-blur-sm transition-all focus-within:opacity-100 group-hover:opacity-100 sm:opacity-0"
             >

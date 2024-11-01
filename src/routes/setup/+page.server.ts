@@ -5,11 +5,12 @@ import { completeServerSetup, createServerSettings } from '$lib/server/serverSet
 import type { FolderNode } from '$lib/shared/types.js';
 import { fail, type Actions } from '@sveltejs/kit';
 import { getSubFolders } from '$lib/server/utils';
+import { ROLE } from '$lib/shared/consts';
 
 export const load = async () => {
   const owner = await prisma.user.findFirst({
     where: {
-      role: 'OWNER'
+      role: ROLE.OWNER
     }
   });
 
@@ -41,7 +42,7 @@ export const actions: Actions = {
     const settings = await createServerSettings(folder.toString());
     const owner = await prisma.user.findFirst({
       where: {
-        role: 'OWNER'
+        role: ROLE.OWNER
       }
     });
 
@@ -60,7 +61,7 @@ export const actions: Actions = {
     }
 
     try {
-      await register(email, password, password, username, 'OWNER');
+      await register(email, password, password, username, ROLE.OWNER);
       await completeServerSetup(settings);
     } catch (err) {
       prisma.serverSettings.delete({
@@ -74,7 +75,7 @@ export const actions: Actions = {
   deleteowner: async () => {
     await prisma.user.deleteMany({
       where: {
-        role: 'OWNER'
+        role: ROLE.OWNER
       }
     });
   }

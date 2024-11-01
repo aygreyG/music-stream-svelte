@@ -72,7 +72,11 @@
         requestCanceller = cancel;
         return ({ result }) => {
           requestCanceller = undefined;
-          if (result.type === 'success' && result.data?.tracks && result.data.tracks.length > 0) {
+          if (
+            result.type === 'success' &&
+            result.data?.tracks &&
+            (result.data.tracks as SearchTrack[]).length > 0
+          ) {
             ontracksloaded(result.data.tracks as SearchTrack[]);
           }
         };
