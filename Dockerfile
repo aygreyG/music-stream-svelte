@@ -23,4 +23,5 @@ COPY start.sh start.sh
 RUN chmod +x start.sh
 EXPOSE 3000
 ENV NODE_ENV=production
+VOLUME [ "/app/prisma/db" ]
 ENTRYPOINT [ "/app/start.sh" ]

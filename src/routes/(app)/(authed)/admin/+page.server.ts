@@ -1,10 +1,11 @@
 import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
+import { ROLE } from '$lib/shared/consts.js';
 import { fail } from '@sveltejs/kit';
 
 export const actions = {
   create: async ({ request, locals }) => {
-    if (locals.user?.role === 'USER') {
+    if (locals.user?.role === ROLE.USER) {
       return fail(403, { error: 'You must be an admin to access this page' });
     }
 
@@ -19,7 +20,7 @@ export const actions = {
     }
 
     try {
-      await register(email, password, password, username, admin ? 'ADMIN' : 'USER');
+      await register(email, password, password, username, admin ? ROLE.ADMIN : ROLE.USER);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       return fail(400, { error: err?.message });
@@ -30,7 +31,7 @@ export const actions = {
     };
   },
   update: async ({ request, locals }) => {
-    if (locals.user?.role === 'USER') {
+    if (locals.user?.role === ROLE.USER) {
       return fail(403, { error: 'You must be an admin to access this page' });
     }
 
@@ -61,7 +62,7 @@ export const actions = {
         data: {
           email,
           username,
-          role: admin ? 'ADMIN' : 'USER'
+          role: admin ? ROLE.ADMIN : ROLE.USER
         }
       });
     } catch (err: unknown) {
@@ -74,7 +75,7 @@ export const actions = {
     };
   },
   delete: async ({ request, locals }) => {
-    if (locals.user?.role === 'USER') {
+    if (locals.user?.role === ROLE.USER) {
       return fail(403, { error: 'You must be an admin to access this page' });
     }
 
@@ -91,7 +92,7 @@ export const actions = {
           id,
           AND: {
             NOT: {
-              role: 'OWNER'
+              role: ROLE.OWNER
             }
           }
         }
@@ -108,12 +109,12 @@ export const actions = {
 };
 
 export const load = async ({ locals }) => {
-  if (locals.user?.role === 'USER') {
+  if (locals.user?.role === ROLE.USER) {
     return fail(403, { error: 'You must be an admin to access this page' });
   }
 
   const users = await prisma.user.findMany({
-    where: { id: { not: locals.user?.id }, AND: { NOT: { role: 'OWNER' } } },
+    where: { id: { not: locals.user?.id }, AND: { NOT: { role: ROLE.OWNER } } },
     select: { id: true, email: true, username: true, role: true, createdAt: true, updatedAt: true }
   });
 

@@ -1,4 +1,5 @@
 import prisma from '$lib/server/prisma.js';
+import { ROLE } from '$lib/shared/consts.js';
 import { defaultTheme } from '$lib/shared/theme.js';
 import type { Theme } from '@prisma/client';
 
@@ -11,7 +12,7 @@ export const load = async ({ locals, depends }) => {
   } else {
     const owner = await prisma.user.findFirst({
       where: {
-        role: 'OWNER'
+        role: ROLE.OWNER
       },
       select: {
         id: true,

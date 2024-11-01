@@ -6,19 +6,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-enum Role {
-  USER
-  ADMIN
-  OWNER
+  provider = "sqlite"
+  url      = "file:../db/app.db"
 }
 
 model User {
   id        String     @id @default(uuid())
-  role      Role       @default(USER)
+  role      String     @default("USER")
   email     String     @unique
   username  String     @unique
   password  String
@@ -146,24 +140,17 @@ model FolderScan {
   serverSettings   ServerSettings @relation(fields: [serverSettingsId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-enum GradientAngle {
-  to_bottom
-  to_top
-  to_left
-  to_right
-}
-
 model Theme {
-  id                  String        @id @default(uuid())
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
-  primary             String        @default("#c026d3")
-  rounding            Int           @default(15)
-  gradientStart       String        @default("#c026d3")
-  gradientMiddle      String        @default("#4f46e5")
-  gradientEnd         String        @default("#22d3ee")
-  gradientMiddlePoint Int           @default(50)
-  gradientAngle       GradientAngle @default(to_bottom)
+  id                  String   @id @default(uuid())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  primary             String   @default("#c026d3")
+  rounding            Int      @default(15)
+  gradientStart       String   @default("#c026d3")
+  gradientMiddle      String   @default("#4f46e5")
+  gradientEnd         String   @default("#22d3ee")
+  gradientMiddlePoint Int      @default(50)
+  gradientAngle       String   @default("to_bottom")
   userId              String
-  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

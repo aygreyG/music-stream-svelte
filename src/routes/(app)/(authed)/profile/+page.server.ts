@@ -1,7 +1,7 @@
 import { AUTH_COOKIE } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
+import { ROLE, type GradientAngleType } from '$lib/shared/consts.js';
 import { isObjectEqual } from '$lib/utils';
-import type { GradientAngle } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 
@@ -9,7 +9,7 @@ const MAX_LISTENS = 25;
 
 export const load = async ({ locals, depends }) => {
   depends('listened');
-  const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: 'OWNER' } } });
+  const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: ROLE.OWNER } } });
   const listens = await prisma.listened.findMany({
     where: { userId: locals.user?.id },
     select: {
@@ -175,15 +175,15 @@ export const actions = {
       gradientMiddle,
       gradientEnd,
       gradientMiddlePoint: parseInt(gradientMiddlePoint),
-      gradientAngle: gradientAngle.replaceAll(' ', '_') as GradientAngle
+      gradientAngle: gradientAngle.replaceAll(' ', '_') as GradientAngleType
     };
 
     let theme;
 
     // If the user is not the owner and the new theme is the owner's then delete the user's theme
-    if (locals.user?.role !== 'OWNER') {
+    if (locals.user?.role !== ROLE.OWNER) {
       const ownerTheme = await prisma.theme.findFirst({
-        where: { user: { role: 'OWNER' } },
+        where: { user: { role: ROLE.OWNER } },
         select: {
           primary: true,
           rounding: true,
@@ -231,7 +231,7 @@ export const actions = {
       return fail(400, { error: 'User not found!' });
     }
 
-    if (locals.user.role === 'OWNER') {
+    if (locals.user.role === ROLE.OWNER) {
       return fail(400, { error: 'Owner cannot be deleted!' });
     }
 

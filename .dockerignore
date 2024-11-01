@@ -15,3 +15,5 @@ node_modules
 build
 package
 **/.env
+app.db
+**/.*-journal
