@@ -64,7 +64,7 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 
 > make sure to replace `/path/to/music` with the path to your music directory
 
-> if you want to persist db in a known location or a named volume replace /path/to/db/data with the path to the folder or the name of the volume otherwise you can remove the volume flag
+> if you want to persist db in a known location or a named volume replace `/path/to/db/data` with the path to the folder or the name of the volume otherwise you can remove the volume flag
 
 ```bash
 docker run -d \
