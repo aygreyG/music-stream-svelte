@@ -45,9 +45,9 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/svelte-music-stream
           tags: |
-            type=raw,value=${{ needs.release.outputs.nextRelease.version }}
-            type=sha,prefix=${{ branch }}-
-            type=raw,value=latest
+            type=raw,value=${{ needs.release.outputs.nextRelease.version }}${{ github.ref == 'refs/heads/main' && '' || '-dev' }}
+            type=sha,prefix=${{ github.ref == 'refs/heads/main' && '' || 'dev-' }}
+            type=raw,value=${{github.ref == 'refs/heads/main' && 'latest' || 'dev-latest'}}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -77,5 +77,5 @@ jobs:
       - name: Deploy docker container webhook
         uses: joelwmale/webhook-action@master
         with:
-          url: ${{ secrets.WEBHOOK_URL  }}
-          body: '{ "tag": "${{ steps.meta.outputs.tags  }}"}'
+          url: ${{ secrets.WEBHOOK_URL }}
+          body: '{ "tag": "${{ steps.meta.outputs.tags }}", "token": "${{ secrets.WEBHOOK_TOKEN }}" }'
