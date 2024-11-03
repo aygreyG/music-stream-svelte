@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
+      issues: write
+      pull-requests: write
+      checks: write
+      actions: write
+      statuses: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
