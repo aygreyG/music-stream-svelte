@@ -20,6 +20,7 @@
     "@iconify-json/iconamoon": "^1.2.1",
     "@iconify-json/material-symbols-light": "^1.2.5",
     "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.0",
     "@sveltejs/adapter-node": "^5.2.9",

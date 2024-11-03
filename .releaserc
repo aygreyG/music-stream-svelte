@@ -24,6 +24,10 @@
           "package.json",
           "package-lock.json"
         ]
+      },
+      "@semantic-release/exec",
+      {
+        "verifyReleaseCmd": "echo \"version=${nextRelease.version}\" >> $GITHUB_OUTPUT"
       }
     ]
   ]

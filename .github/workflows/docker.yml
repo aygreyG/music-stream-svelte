@@ -11,7 +11,7 @@ jobs:
     name: Semantic Release
     runs-on: ubuntu-latest
     outputs:
-      nextRelease: ${{ steps.release.outputs.nextRelease.version }}
+      version: ${{ steps.release.outputs.version }}
     permissions:
       contents: write
       packages: write
@@ -39,7 +39,10 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm exec semantic-release
+        run: pnpm exec semantic-release --dry-run
+
+      - name: Version
+        run: echo "Next version is ${{ steps.release.outputs.nextRelease.version }}"
 
   push_to_registry:
     name: Build and Push Docker image
@@ -57,7 +60,7 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/svelte-music-stream
           tags: |
-            type=raw,value=${{ needs.release.outputs.nextRelease }}${{ github.ref == 'refs/heads/main' && '' || '-dev' }}
+            type=raw,value=${{ needs.release.outputs.version }}${{ github.ref == 'refs/heads/main' && '' || '-dev' }}
             type=sha,prefix=${{ github.ref == 'refs/heads/main' && '' || 'dev-' }}
             type=raw,value=${{ github.ref == 'refs/heads/main' && 'latest' || 'dev-latest' }}
 
