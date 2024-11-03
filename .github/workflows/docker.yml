@@ -10,6 +10,8 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
+    outputs:
+      nextRelease: ${{ steps.release.outputs.nextRelease.version }}
     permissions:
       contents: write
       packages: write
@@ -43,6 +45,8 @@ jobs:
     name: Build and Push Docker image
     runs-on: ubuntu-latest
     needs: release
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -53,9 +57,9 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/svelte-music-stream
           tags: |
-            type=raw,value=${{ needs.release.outputs.nextRelease.version }}${{ github.ref == 'refs/heads/main' && '' || '-dev' }}
+            type=raw,value=${{ needs.release.outputs.nextRelease }}${{ github.ref == 'refs/heads/main' && '' || '-dev' }}
             type=sha,prefix=${{ github.ref == 'refs/heads/main' && '' || 'dev-' }}
-            type=raw,value=${{github.ref == 'refs/heads/main' && 'latest' || 'dev-latest'}}
+            type=raw,value=${{ github.ref == 'refs/heads/main' && 'latest' || 'dev-latest' }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -73,17 +77,17 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+
   deploy:
     name: Deploying on server
     runs-on: ubuntu-latest
     needs: [push_to_registry]
-    env:
-      VERSION: 'latest'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
       - name: Deploy docker container webhook
         uses: joelwmale/webhook-action@master
         with:
           url: ${{ secrets.WEBHOOK_URL }}
-          body: '{ "tag": "${{ steps.meta.outputs.tags }}", "token": "${{ secrets.WEBHOOK_TOKEN }}" }'
+          body: '{ "tag": "${{ needs.push_to_registry.outputs.tags }}", "token": "${{ secrets.WEBHOOK_TOKEN }}" }'
