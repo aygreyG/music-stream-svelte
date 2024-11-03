@@ -1,3 +1,9 @@
+# [1.0.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2024-11-03)
+
+### Bug Fixes
+
+- add permissions to workflow ([12cd60d](https://github.com/aygreyG/music-stream-svelte/commit/12cd60d32ea2e2ecae2c61da0efe33584312644d))
+
 # 1.0.0-dev.1 (2024-11-03)
 
 ### Bug Fixes
