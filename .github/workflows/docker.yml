@@ -48,8 +48,6 @@ jobs:
     name: Build and Push Docker image
     runs-on: ubuntu-latest
     needs: release
-    outputs:
-      tags: ${{ steps.meta.outputs.tags }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -84,7 +82,7 @@ jobs:
   deploy:
     name: Deploying on server
     runs-on: ubuntu-latest
-    needs: [push_to_registry]
+    needs: release
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -93,4 +91,4 @@ jobs:
         uses: joelwmale/webhook-action@master
         with:
           url: ${{ secrets.WEBHOOK_URL }}
-          body: '{ "tag": "${{ needs.push_to_registry.outputs.tags }}", "token": "${{ secrets.WEBHOOK_TOKEN }}" }'
+          body: '{ "tag": "${{ needs.release.outputs.version }}", "token": "${{ secrets.WEBHOOK_TOKEN }}" }'
