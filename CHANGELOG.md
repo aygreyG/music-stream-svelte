@@ -1,3 +1,9 @@
+# [1.0.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2024-11-03)
+
+### Bug Fixes
+
+- define workflow outputs ([f29dfe3](https://github.com/aygreyG/music-stream-svelte/commit/f29dfe34c6e43ac57c0a0b89772303fe40e88fe7))
+
 # [1.0.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2024-11-03)
 
 ### Bug Fixes
