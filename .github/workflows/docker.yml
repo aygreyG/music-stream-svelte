@@ -42,7 +42,7 @@ jobs:
         run: pnpm exec semantic-release --dry-run
 
       - name: Version
-        run: echo "Next version is ${{ steps.release.outputs.nextRelease.version }}"
+        run: echo "Next version is ${{ steps.release.outputs.version }}"
 
   push_to_registry:
     name: Build and Push Docker image
@@ -60,7 +60,7 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/svelte-music-stream
           tags: |
-            type=raw,value=${{ needs.release.outputs.version }}${{ github.ref == 'refs/heads/main' && '' || '-dev' }}
+            type=raw,value=${{ needs.release.outputs.version }}
             type=sha,prefix=${{ github.ref == 'refs/heads/main' && '' || 'dev-' }}
             type=raw,value=${{ github.ref == 'refs/heads/main' && 'latest' || 'dev-latest' }}
 

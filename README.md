@@ -70,7 +70,7 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 docker run -d \
   -p 3000:3000 \
   -v /path/to/music:/music \
-  <-v /path/to/db/data:/app/prisma/db> \
+  <-v /path/to/db/data:/app/db> \
   aygreyg/svelte-music-stream
 ```
 
