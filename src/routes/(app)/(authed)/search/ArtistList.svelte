@@ -117,7 +117,11 @@
         requestCanceller = cancel;
 
         return ({ result }) => {
-          if (result.type === 'success' && result.data?.artists && result.data.artists.length > 0) {
+          if (
+            result.type === 'success' &&
+            result.data?.artists &&
+            (result.data.artists as SearchArtist[]).length > 0
+          ) {
             onartistsloaded(result.data.artists as SearchArtist[]);
           }
           loading = false;

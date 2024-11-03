@@ -3,6 +3,7 @@ import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { runLibrarySync } from '$lib/server/librarySync';
 import { getServerSettings } from '$lib/server/serverSettings';
 import { serverLog } from '$lib/server/utils';
+import { ROLE } from '$lib/shared/consts';
 import { redirect, type Handle } from '@sveltejs/kit';
 
 let startupRunning = false;
@@ -76,7 +77,7 @@ const handle: Handle = async ({ event, resolve }) => {
   if (
     (event.route.id?.startsWith('/(app)/(authed)/admin') ||
       event.route.id?.startsWith('/(app)/(authed)/api/admin')) &&
-    (!event.locals.user || event.locals.user.role === 'USER')
+    (!event.locals.user || event.locals.user.role === ROLE.USER)
   ) {
     redirect(303, '/');
   }

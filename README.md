@@ -19,7 +19,6 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 
 ![example](https://github.com/user-attachments/assets/91adb1cd-29fb-44d6-bf2f-0a3562c6d7a1)
 
-
 ---
 
 ## Tech Stack
@@ -60,17 +59,18 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 
 ### Docker
 
-- Install PostgreSQL and create a database
 - Install Docker
 - With `docker run`
 
-> make sure to replace `/path/to/music` with the path to your music directory and `postgresql://user:password@host:port/dbname` with your database URL
+> make sure to replace `/path/to/music` with the path to your music directory
+
+> if you want to persist db in a known location or a named volume replace `/path/to/db/data` with the path to the folder or the name of the volume otherwise you can remove the volume flag
 
 ```bash
 docker run -d \
   -p 3000:3000 \
   -v /path/to/music:/music \
-  -e DATABASE_URL=postgresql://user:password@host:port/dbname \
+  <-v /path/to/db/data:/app/db> \
   aygreyg/svelte-music-stream
 ```
 
@@ -79,7 +79,6 @@ docker run -d \
 ### Manual
 
 - Install Node.js
-- Install PostgreSQL and create a database
 - Clone the repository
 - Install dependencies and generate prisma client:
 
@@ -110,28 +109,23 @@ chmod +x start.sh
 - Start the server with
 
 ```bash
-DATABASE_URL=postgresql://user:password@host:port/dbname ./start.sh
+ ./start.sh
 ```
 
 ### Development
 
 - Install Node.js
 - Install pnpm
-- Install PostgreSQL and create a database
 - Clone the repository
-- Create a `.env` file in the root directory with the following content:
-
-```
-DATABASE_URL=postgres://user:password@host:port/dbname
-```
-
 - Install dependencies and generate prisma client:
 
 ```bash
 pnpm install && pnpx prisma generate
 ```
 
-- Start the server with (add `--host` if you want to access the server from another device)
+- Start the server with
+
+> add `--host` if you want to access the server from another device
 
 ```bash
 pnpm dev
