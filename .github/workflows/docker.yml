@@ -59,7 +59,6 @@ jobs:
           images: ${{ secrets.DOCKER_USERNAME }}/svelte-music-stream
           tags: |
             type=raw,value=${{ needs.release.outputs.version }}
-            type=sha,prefix=${{ github.ref == 'refs/heads/main' && '' || 'dev-' }}
             type=raw,value=${{ github.ref == 'refs/heads/main' && 'latest' || 'dev-latest' }}
 
       - name: Log in to Docker Hub
