@@ -7,8 +7,8 @@ import { build, files, version } from '$service-worker';
 
 const CACHE_NAME = `cache-${version}`;
 const ASSETS = [...build, ...files];
-const NON_CACHEABLE = ['/login', '/logout', '/api/play'];
-const CACHE_FIRST = ['/api/image', '/api/listened'];
+const NON_CACHEABLE = ['/login', '/logout', '/api/play', '/profile', '/admin', '/playlist'];
+const CACHE_FIRST = ['/api/image'];
 
 self.addEventListener('install', (event) => {
   async function addFilesToCache() {
