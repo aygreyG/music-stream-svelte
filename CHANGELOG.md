@@ -1,3 +1,15 @@
+# [1.0.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.3...v1.0.0-dev.4) (2024-11-20)
+
+### Bug Fixes
+
+- make profile and playlist page not cacheable ([#164](https://github.com/aygreyG/music-stream-svelte/issues/164)) ([fddbcce](https://github.com/aygreyG/music-stream-svelte/commit/fddbccedfce9e52dd57176e23b2b31e87e0b08bd))
+- remove dry run from semantic release ([#166](https://github.com/aygreyG/music-stream-svelte/issues/166)) ([2a532fc](https://github.com/aygreyG/music-stream-svelte/commit/2a532fccf8a29e6cb51b2986d3b3668190f6f280))
+- tag sending ([d1eb29e](https://github.com/aygreyG/music-stream-svelte/commit/d1eb29eb0b27834773ed9c4e341d089ffbe13585))
+- update version naming ([109911d](https://github.com/aygreyG/music-stream-svelte/commit/109911d5f268f69e10654eeadb6924f17a28b762))
+- wait docker push ([b7dc3c6](https://github.com/aygreyG/music-stream-svelte/commit/b7dc3c659e8e147c0063da769a8bc746285f24fa))
+- workflow outputs ([d1ff365](https://github.com/aygreyG/music-stream-svelte/commit/d1ff365f2b13a9f06b9b155a9f15d77fb01b4ba1))
+- workflow outputs v2 ([1b710c5](https://github.com/aygreyG/music-stream-svelte/commit/1b710c5518c2135d59876d35daaccde263f402e6))
+
 # [1.0.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2024-11-03)
 
 ### Bug Fixes
