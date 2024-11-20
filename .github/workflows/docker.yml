@@ -39,7 +39,7 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm exec semantic-release --dry-run
+        run: pnpm exec semantic-release
 
       - name: Version
         run: echo "Next version is ${{ steps.release.outputs.version }}"
