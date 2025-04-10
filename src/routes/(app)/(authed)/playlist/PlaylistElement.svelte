@@ -4,8 +4,8 @@
   import type { Prisma } from '@prisma/client';
   import { fade } from 'svelte/transition';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
-  import RoundCheckCircle from 'virtual:icons/ic/round-check-circle';
-  import TrashFill from 'virtual:icons/iconamoon/trash-fill';
+  import RoundCheckCircle from '~icons/ic/round-check-circle';
+  import TrashFill from '~icons/iconamoon/trash-fill';
   import { vibrate } from '$lib/actions/vibrate';
 
   interface Props {

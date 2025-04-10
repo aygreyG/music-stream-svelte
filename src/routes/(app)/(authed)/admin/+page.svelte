@@ -6,7 +6,7 @@
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
   import { vibrate } from '$lib/actions/vibrate';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import type { PageData } from './$types';
 
   interface Props {

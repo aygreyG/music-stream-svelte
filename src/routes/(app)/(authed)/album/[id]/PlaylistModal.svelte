@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { Prisma } from '@prisma/client';
   import { flip } from 'svelte/animate';
-  import HeartFill from 'virtual:icons/iconamoon/heart-fill';
-  import Heart from 'virtual:icons/iconamoon/heart';
+  import HeartFill from '~icons/iconamoon/heart-fill';
+  import Heart from '~icons/iconamoon/heart';
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
   import Modal from '$lib/components/Modal.svelte';
   import type { SignedInUser } from '$lib/shared/types';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {
     open?: boolean;

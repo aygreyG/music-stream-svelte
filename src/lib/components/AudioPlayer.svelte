@@ -1,14 +1,14 @@
 <script lang="ts">
-  import RoundPlayCircleOutline from 'virtual:icons/ic/round-play-circle-outline';
-  import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
-  import RoundSkipPrevious from 'virtual:icons/ic/round-skip-previous';
-  import RoundSkipNext from 'virtual:icons/ic/round-skip-next';
-  import RoundVolumeUp from 'virtual:icons/ic/round-volume-up';
-  import RoundVolumeDown from 'virtual:icons/ic/round-volume-down';
-  import RoundVolumeMute from 'virtual:icons/ic/round-volume-mute';
-  import RoundVolumeOff from 'virtual:icons/ic/round-volume-off';
-  import RoundRepeat from 'virtual:icons/ic/round-repeat';
-  import RoundShuffle from 'virtual:icons/ic/round-shuffle';
+  import RoundPlayCircleOutline from '~icons/ic/round-play-circle-outline';
+  import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
+  import RoundSkipPrevious from '~icons/ic/round-skip-previous';
+  import RoundSkipNext from '~icons/ic/round-skip-next';
+  import RoundVolumeUp from '~icons/ic/round-volume-up';
+  import RoundVolumeDown from '~icons/ic/round-volume-down';
+  import RoundVolumeMute from '~icons/ic/round-volume-mute';
+  import RoundVolumeOff from '~icons/ic/round-volume-off';
+  import RoundRepeat from '~icons/ic/round-repeat';
+  import RoundShuffle from '~icons/ic/round-shuffle';
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import AlbumImage from './AlbumImage.svelte';

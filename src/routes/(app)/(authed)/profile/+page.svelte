@@ -4,9 +4,9 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import ThemeChanger from './ThemeChanger.svelte';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
-  import TrashFill from 'virtual:icons/iconamoon/trash-fill';
-  import History from 'virtual:icons/iconamoon/history';
+  import RoundRefresh from '~icons/ic/round-refresh';
+  import TrashFill from '~icons/iconamoon/trash-fill';
+  import History from '~icons/iconamoon/history';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import Accordion from '$lib/components/Accordion.svelte';
   import { getReadableTime } from '$lib/utils';

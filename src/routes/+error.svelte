@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores';
-  import RoundKeyboardBackspace from 'virtual:icons/ic/round-keyboard-backspace';
+  import RoundKeyboardBackspace from '~icons/ic/round-keyboard-backspace';
 </script>
 
 <div class="flex h-full flex-col items-center justify-center gap-4 rounded-md bg-zinc-900/95">

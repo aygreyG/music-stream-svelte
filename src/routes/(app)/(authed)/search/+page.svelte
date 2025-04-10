@@ -1,6 +1,6 @@
 <script lang="ts">
-  import RoundSearch from 'virtual:icons/ic/round-search';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundSearch from '~icons/ic/round-search';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import { fade } from 'svelte/transition';
   import { tick } from 'svelte';
   import { vibrate } from '$lib/actions/vibrate';

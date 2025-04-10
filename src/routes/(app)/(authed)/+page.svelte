@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import RoundSearch from 'virtual:icons/ic/round-search';
+  import RoundSearch from '~icons/ic/round-search';
   import AlbumLink from './AlbumLink.svelte';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';

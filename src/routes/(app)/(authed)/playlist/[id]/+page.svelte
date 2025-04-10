@@ -5,7 +5,7 @@
   import { flip } from 'svelte/animate';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { enhance } from '$app/forms';
-  import HeartOff from 'virtual:icons/iconamoon/heart-off';
+  import HeartOff from '~icons/iconamoon/heart-off';
   import { vibrate } from '$lib/actions/vibrate.js';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
   import type { PageData } from './$types';

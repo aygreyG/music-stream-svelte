@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import RoundSearch from 'virtual:icons/ic/round-search';
-  import RoundFileUpload from 'virtual:icons/ic/round-file-upload';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundSearch from '~icons/ic/round-search';
+  import RoundFileUpload from '~icons/ic/round-file-upload';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import { enhance } from '$app/forms';
   import { invalidate } from '$app/navigation';
   import { vibrate } from '$lib/actions/vibrate';

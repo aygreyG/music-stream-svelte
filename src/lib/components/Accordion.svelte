@@ -3,8 +3,8 @@
   import type { Snippet } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { fly, slide } from 'svelte/transition';
-  import RoundArrowDropDown from 'virtual:icons/ic/round-arrow-drop-down';
-  import RoundArrowDropUp from 'virtual:icons/ic/round-arrow-drop-up';
+  import RoundArrowDropDown from '~icons/ic/round-arrow-drop-down';
+  import RoundArrowDropUp from '~icons/ic/round-arrow-drop-up';
 
   interface Props {
     title?: string;

@@ -7,7 +7,7 @@
   import { getAccessibleColor, getRGBColor } from '$lib/utils';
   import type { Theme } from '@prisma/client';
   import { onMount } from 'svelte';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {
     action?: string;

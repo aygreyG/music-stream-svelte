@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import { enhance } from '$app/forms';
   import pickedFolder from '$lib/stores/folderPicker';
   import Folder from './Folder.svelte';

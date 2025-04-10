@@ -7,7 +7,7 @@
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {
     startIndex?: number;
