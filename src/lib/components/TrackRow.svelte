@@ -2,8 +2,8 @@
   import type { Prisma } from '@prisma/client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
-  import RoundPlayCircleFilled from 'virtual:icons/ic/round-play-circle-filled';
-  import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
+  import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
+  import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import AlbumImage from './AlbumImage.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import { getReadableTime } from '$lib/utils';

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
-  import RoundSearch from 'virtual:icons/ic/round-search';
-  import RoundAdd from 'virtual:icons/ic/round-add';
+  import RoundSearch from '~icons/ic/round-search';
+  import RoundAdd from '~icons/ic/round-add';
   import { enhance } from '$app/forms';
   import PlaylistElement from './PlaylistElement.svelte';
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { vibrate } from '$lib/actions/vibrate';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import type { ActionData, PageData } from './$types';
 
   interface Props {

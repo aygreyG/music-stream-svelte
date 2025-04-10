@@ -3,7 +3,7 @@
   import AlbumLink from '../AlbumLink.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import { enhance } from '$app/forms';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import type { SearchAlbum } from '$lib/shared/types';
 
   interface Props {

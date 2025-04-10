@@ -1,7 +1,7 @@
 <script lang="ts">
-  import RoundEdit from 'virtual:icons/ic/round-edit';
-  import HeartFill from 'virtual:icons/iconamoon/heart-fill';
-  import Heart from 'virtual:icons/iconamoon/heart';
+  import RoundEdit from '~icons/ic/round-edit';
+  import HeartFill from '~icons/iconamoon/heart-fill';
+  import Heart from '~icons/iconamoon/heart';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';

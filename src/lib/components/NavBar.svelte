@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { SignedInUser } from '$lib/shared/types';
   import { fade, fly } from 'svelte/transition';
-  import RoundMenu from 'virtual:icons/ic/round-menu';
-  import RoundClose from 'virtual:icons/ic/round-close';
+  import RoundMenu from '~icons/ic/round-menu';
+  import RoundClose from '~icons/ic/round-close';
   import NavigationElements from './NavigationElements.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';

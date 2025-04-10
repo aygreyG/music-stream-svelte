@@ -1,7 +1,7 @@
 <script lang="ts">
   import ArtistRow from './ArtistRow.svelte';
   import { flip } from 'svelte/animate';
-  import RoundSearch from 'virtual:icons/ic/round-search';
+  import RoundSearch from '~icons/ic/round-search';
   import type { PageData } from './$types';
 
   interface Props {

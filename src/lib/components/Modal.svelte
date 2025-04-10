@@ -3,7 +3,7 @@
   import { cubicIn } from 'svelte/easing';
   import { onMount, type Snippet } from 'svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import RoundClose from 'virtual:icons/ic/round-close';
+  import RoundClose from '~icons/ic/round-close';
 
   interface Props {
     title?: string;

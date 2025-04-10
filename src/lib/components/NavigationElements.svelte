@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { SignedInUser } from '$lib/shared/types';
-  import RoundLougout from 'virtual:icons/ic/round-logout';
-  import RoundLogin from 'virtual:icons/ic/round-login';
-  import RoundSearch from 'virtual:icons/ic/round-search';
-  import RoundAdminPanelSettings from 'virtual:icons/ic/round-admin-panel-settings';
-  import RoundPlaylistPlay from 'virtual:icons/ic/round-playlist-play';
-  import MusicArtistFill from 'virtual:icons/iconamoon/music-artist-fill';
-  import MusicAlbumFill from 'virtual:icons/iconamoon/music-album-fill';
-  import ProfileFill from 'virtual:icons/iconamoon/profile-fill';
+  import RoundLougout from '~icons/ic/round-logout';
+  import RoundLogin from '~icons/ic/round-login';
+  import RoundSearch from '~icons/ic/round-search';
+  import RoundAdminPanelSettings from '~icons/ic/round-admin-panel-settings';
+  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
+  import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
+  import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
+  import ProfileFill from '~icons/iconamoon/profile-fill';
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
   import { vibrate } from '$lib/actions/vibrate';
