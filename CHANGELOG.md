@@ -1,3 +1,9 @@
+# [1.0.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.4...v1.0.0-dev.5) (2025-04-10)
+
+### Bug Fixes
+
+- update non cached routes ([#174](https://github.com/aygreyG/music-stream-svelte/issues/174)) ([c2aed67](https://github.com/aygreyG/music-stream-svelte/commit/c2aed677ca39d3afba03e2920b908535c0778ec4)), closes [#173](https://github.com/aygreyG/music-stream-svelte/issues/173)
+
 # [1.0.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.3...v1.0.0-dev.4) (2024-11-20)
 
 ### Bug Fixes
