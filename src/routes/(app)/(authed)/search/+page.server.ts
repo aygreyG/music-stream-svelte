@@ -1,6 +1,6 @@
 import prisma from '$lib/server/prisma.js';
 import type { SearchAlbum, SearchArtist, SearchTrack } from '$lib/shared/types.js';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from 'prisma-client';
 
 const MAX_ALL_RESULTS = 8;
 const MAX_TYPE_RESULTS = 50;

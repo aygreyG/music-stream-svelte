@@ -1,4 +1,4 @@
-import type { Album, Artist, Prisma } from '@prisma/client';
+import type { Album, Artist, Prisma } from 'prisma-client';
 
 export type SignedInUser = Prisma.UserGetPayload<{
   select: {

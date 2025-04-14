@@ -2,7 +2,7 @@ import prisma from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { stat } from 'fs/promises';
 import { createReadStream } from 'fs';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from 'prisma-client';
 
 type TrackType = Prisma.TrackGetPayload<{ select: { filePath: true; id: true } }>;
 type CachedTrack = TrackType & { lastAccessed: Date };

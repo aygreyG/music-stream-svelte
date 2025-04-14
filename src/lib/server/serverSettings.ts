@@ -1,4 +1,4 @@
-import type { ServerSettings } from '@prisma/client';
+import type { ServerSettings } from 'prisma-client';
 import prisma from './prisma';
 import { runLibrarySync } from './librarySync';
 import crypto from 'node:crypto';

@@ -1,7 +1,7 @@
 import prisma from '$lib/server/prisma.js';
 import { ROLE } from '$lib/shared/consts.js';
 import { defaultTheme } from '$lib/shared/theme.js';
-import type { Theme } from '@prisma/client';
+import type { Theme } from 'prisma-client';
 
 export const load = async ({ locals, depends }) => {
   depends('mainLayout');

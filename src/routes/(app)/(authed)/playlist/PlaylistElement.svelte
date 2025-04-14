@@ -1,7 +1,7 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { crossfade } from '$lib/transitions/crossfade';
-  import type { Prisma } from '@prisma/client';
+  import type { Prisma } from 'prisma-client';
   import { fade } from 'svelte/transition';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
   import RoundCheckCircle from '~icons/ic/round-check-circle';

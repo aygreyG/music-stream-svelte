@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ImageSize } from '$lib/shared/types';
-  import type { Prisma } from '@prisma/client';
+  import type { Prisma } from 'prisma-client';
 
   interface Props {
     album: Prisma.AlbumGetPayload<{

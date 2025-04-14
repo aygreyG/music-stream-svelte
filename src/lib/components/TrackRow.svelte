@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Prisma } from '@prisma/client';
+  import type { Prisma } from 'prisma-client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';

@@ -9,7 +9,7 @@
   import Modal from '$lib/components/Modal.svelte';
   import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
   import type { AlbumReleaseSearchResult } from '$lib/shared/types';
-  import type { Prisma } from '@prisma/client';
+  import type { Prisma } from 'prisma-client';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
   interface Props {

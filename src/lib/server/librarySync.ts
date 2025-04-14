@@ -1,4 +1,4 @@
-import type { Artist } from '@prisma/client';
+import type { Artist } from 'prisma-client';
 import prisma from './prisma';
 import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
