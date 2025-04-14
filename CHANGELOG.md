@@ -1,3 +1,9 @@
+# [1.0.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.7...v1.0.0-dev.8) (2025-04-14)
+
+### Bug Fixes
+
+- prisma output path ([c87b933](https://github.com/aygreyG/music-stream-svelte/commit/c87b933a8c84ddd990fb28bc6e12e044da4b9637))
+
 # [1.0.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.6...v1.0.0-dev.7) (2025-04-14)
 
 ### Bug Fixes
