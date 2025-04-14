@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "node_modules/.prisma/client"
 }
 
 datasource db {
@@ -22,8 +23,6 @@ model User {
   playlists Playlist[]
   themes    Theme[]
 
-  @@index([email])
-  @@index([username])
   @@index([id, username])
 }
 
@@ -41,7 +40,6 @@ model Album {
   tracks         Track[]
 
   @@unique([title, albumArtistId])
-  @@index([title, albumArtistId])
   @@index([title])
   @@index([releaseDate])
   @@index([releaseDate, title])
@@ -64,7 +62,6 @@ model Track {
   playlists   Playlist[]
   tags        Tag[]
 
-  @@index([filePath])
   @@index([albumId])
   @@index([trackNumber])
   @@index([discNumber, trackNumber])
@@ -81,8 +78,6 @@ model Artist {
   updatedAt DateTime @updatedAt
   tracks    Track[]
   albums    Album[]
-
-  @@index([name])
 }
 
 model Listened {
@@ -96,7 +91,6 @@ model Listened {
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([userId, trackId])
-  @@index([userId, trackId])
   @@index([updatedAt])
 }
 
@@ -116,8 +110,6 @@ model Tag {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tracks    Track[]
-
-  @@index([name])
 }
 
 model ServerSettings {
