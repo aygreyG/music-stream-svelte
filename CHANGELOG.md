@@ -1,3 +1,9 @@
+# [1.0.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.5...v1.0.0-dev.6) (2025-04-14)
+
+### Bug Fixes
+
+- remove unnecessary indexing and update service worker ([#176](https://github.com/aygreyG/music-stream-svelte/issues/176)) ([b8c0bf3](https://github.com/aygreyG/music-stream-svelte/commit/b8c0bf370d469e4ccd7979bbb96ca146d1d20f18))
+
 # [1.0.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.4...v1.0.0-dev.5) (2025-04-10)
 
 ### Bug Fixes
