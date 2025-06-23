@@ -1,3 +1,9 @@
+# [1.0.0-dev.10](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.9...v1.0.0-dev.10) (2025-06-23)
+
+### Bug Fixes
+
+- pnpx not generating prisma client ([1e6c047](https://github.com/aygreyG/music-stream-svelte/commit/1e6c047868128202139fdf1ecb71944db1a139e6))
+
 # [1.0.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.8...v1.0.0-dev.9) (2025-06-23)
 
 ### Features
