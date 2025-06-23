@@ -5,6 +5,7 @@ import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings } from './serverSettings';
 import { getAccentColor } from './images';
+import { serverLog } from './utils';
 
 let inProgress = false;
 let tracksCreated = 0;
@@ -58,12 +59,11 @@ export async function runLibrarySync() {
   inProgress = true;
 
   const startTime = Date.now();
-  console.log('Starting library sync at ' + new Date(startTime).toISOString());
+  serverLog('Starting library sync');
   await walk(settings.musicFolder);
   const endTime = Date.now();
   const elapsedSec = Math.round((endTime - startTime) / 100) / 10;
-  console.log('Finished library sync at ' + new Date(endTime).toISOString());
-  console.log('Elapsed time: ' + elapsedSec + 's');
+  serverLog(`Finished library sync in ${elapsedSec}s`);
 
   const { count } = await prisma.track.deleteMany({
     where: {
@@ -73,9 +73,8 @@ export async function runLibrarySync() {
     }
   });
 
-  console.log('Deleted ' + count + ' track(s)');
-
   if (count > 0) {
+    serverLog('Deleted ' + count + ' track(s)');
     const { count: albumCount } = await prisma.album.deleteMany({
       where: {
         tracks: {
@@ -84,7 +83,9 @@ export async function runLibrarySync() {
       }
     });
 
-    console.log('Deleted ' + albumCount + ' album(s)');
+    if (albumCount > 0) {
+      serverLog('Deleted ' + albumCount + ' album(s)');
+    }
   }
 
   if (tracksCreated > 0) {
@@ -96,7 +97,7 @@ export async function runLibrarySync() {
       }
     });
 
-    console.log('Created ' + tracksCreated + ' track(s)');
+    serverLog('Created ' + tracksCreated + ' track(s)');
   }
 
   inProgress = false;
@@ -199,7 +200,7 @@ async function getAlbumArt(
         accentColor: await getAccentColor(albumArtPath)
       };
     } catch (err) {
-      console.error('Could not create album art file', err);
+      serverLog(`Could not create album art file ${err}`, 'warn');
     }
   }
 
@@ -220,7 +221,7 @@ async function getAlbumArt(
         accentColor: await getAccentColor(pathToWrite)
       };
     } catch (err) {
-      console.error('Could not create album art file', err);
+      serverLog(`Could not create album art file ${err}`, 'warn');
     }
   }
 
@@ -233,9 +234,10 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
   if (!track) {
     const data = await parseFile(filePath);
     if (!data.common.title || !data.common.artists || !data.common.album) {
-      console.error(
+      serverLog(
         `Couldn't get artist and/or title and/or album metadata from file: ${filePath}
-        Please provide the needed tags! (artists, title, album)`
+        Please provide the needed tags! (artists, title, album)`,
+        'warn'
       );
       return false;
     }
@@ -326,7 +328,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
         { maxWait: 5000, timeout: 10000 }
       );
     } catch (err) {
-      console.error(err);
+      serverLog(`Error creating/updating track: ${err}`, 'error');
       return false;
     }
 

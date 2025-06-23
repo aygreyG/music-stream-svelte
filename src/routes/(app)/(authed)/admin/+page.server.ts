@@ -1,5 +1,6 @@
 import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
+import { getLog } from '$lib/server/utils.js';
 import { ROLE } from '$lib/shared/consts.js';
 import { fail } from '@sveltejs/kit';
 
@@ -118,9 +119,12 @@ export const load = async ({ locals }) => {
     select: { id: true, email: true, username: true, role: true, createdAt: true, updatedAt: true }
   });
 
+  const logs = getLog();
+
   return {
     user: locals.user,
     users,
-    title: 'Admin dashboard'
+    title: 'Admin dashboard',
+    logs
   };
 };

@@ -11,3 +11,4 @@ vite.config.ts.timestamp-*
 app.db
 *-journal
 *generated
+*.log

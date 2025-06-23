@@ -174,5 +174,47 @@
         {/each}
       </div>
     {/if}
+
+    <div
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 400 }}
+      class="p-2 text-center text-xl font-bold"
+    >
+      Logs
+    </div>
+    <div
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 450 }}
+      class="flex flex-col gap-1"
+    >
+      {#await data.logs}
+        <div>Loading...</div>
+      {:then logs}
+        {#if logs && logs.length > 0}
+          <div class="flex max-h-96 flex-col gap-1 overflow-y-auto rounded-md">
+            {#each logs as log, index (index)}
+              <div
+                class="rounded-md bg-zinc-600/10 px-2 py-1 text-sm"
+                animate:flip={{ duration: 200 }}
+              >
+                <span
+                  class={[
+                    log.level === 'error' && 'text-red-500',
+                    log.level === 'warn' && 'text-yellow-500',
+                    log.level === 'info' && 'text-blue-500'
+                  ]}
+                >
+                  {log.level.toUpperCase()}
+                </span>
+                {#if log.timestamp}
+                  - <span class="text-zinc-400">{log.timestamp}</span>
+                {/if}
+                - {log.message}
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <div class="p-2 text-center text-sm">No logs</div>
+        {/if}
+      {/await}
+    </div>
   </div>
 {/if}

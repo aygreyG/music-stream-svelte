@@ -18,7 +18,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import { beforeNavigate, invalidate } from '$app/navigation';
   import type { SvelteMediaTimeRange } from 'svelte/elements';
-  import { navigating } from '$app/stores';
+  import { navigating } from '$app/state';
 
   interface Props {
     user?: SignedInUser | null;
@@ -231,7 +231,7 @@
           listenedDuration += diff;
           if (
             ((listenedDuration > 1 && !isSlowConnection()) || listenedDuration > 8) &&
-            $navigating === null &&
+            navigating.to === null &&
             audioPlayer.currentTrack
           ) {
             sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
