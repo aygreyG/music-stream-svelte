@@ -1,3 +1,9 @@
+# [1.0.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.8...v1.0.0-dev.9) (2025-06-23)
+
+### Features
+
+- add logging to file and admin page ([#179](https://github.com/aygreyG/music-stream-svelte/issues/179)) ([98b2e44](https://github.com/aygreyG/music-stream-svelte/commit/98b2e440059a8946b054497c7f9ee6ce59f4d5a4))
+
 # [1.0.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.7...v1.0.0-dev.8) (2025-04-14)
 
 ### Bug Fixes
