@@ -41,6 +41,7 @@ export const load = async ({ locals, depends }) => {
 
   return {
     user: locals.user,
-    theme
+    theme,
+    APP_VERSION: process.env.APP_VERSION || 'unknown'
   };
 };

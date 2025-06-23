@@ -33,6 +33,13 @@
         in:fly|global={{ duration: 500, x: -20, easing: quintOut }}
         class="flex items-center justify-between bg-zinc-600/10 p-4"
       >
+        <div>App version</div>
+        <div>{data.APP_VERSION}</div>
+      </div>
+      <div
+        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 50 }}
+        class="flex items-center justify-between bg-zinc-600/10 p-4"
+      >
         <div>Start library sync</div>
         {#if syncResponse && syncResponse.type === 'normal'}
           <div class="text-primary">{syncResponse.message}</div>

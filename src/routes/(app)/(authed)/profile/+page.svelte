@@ -57,6 +57,9 @@
   };
 </script>
 
+<div class="absolute right-3 top-1 z-50 text-sm font-bold text-zinc-600/20">
+  App version: {data.APP_VERSION}
+</div>
 <div class="flex h-full w-full flex-col items-center overflow-auto">
   <div class="flex w-full max-w-xl flex-col p-2">
     <div class="p-2 text-center text-xl font-bold">Profile</div>

@@ -23,5 +23,7 @@ COPY start.sh start.sh
 RUN chmod +x start.sh
 EXPOSE 3000
 ENV NODE_ENV=production
+ARG APP_VERSION=unknown
+ENV APP_VERSION=${APP_VERSION}
 VOLUME [ "/app/db" ]
 ENTRYPOINT [ "/app/start.sh" ]
