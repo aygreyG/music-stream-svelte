@@ -7,11 +7,11 @@ WORKDIR /app
 
 FROM base AS prod-deps
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
-RUN pnpx prisma generate
+RUN pnpm exec prisma generate
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN pnpx prisma generate
+RUN pnpm exec prisma generate
 RUN pnpm run build
 
 FROM base
