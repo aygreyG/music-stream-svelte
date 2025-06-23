@@ -1,3 +1,9 @@
+# [1.0.0-dev.12](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.11...v1.0.0-dev.12) (2025-06-23)
+
+### Features
+
+- add app version to profile and admin page to show up ([8514d21](https://github.com/aygreyG/music-stream-svelte/commit/8514d211a2d68c2a291135a517ccf22b173e44bf))
+
 # [1.0.0-dev.11](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.10...v1.0.0-dev.11) (2025-06-23)
 
 ### Bug Fixes
