@@ -47,13 +47,15 @@ export const GET = async ({ params, request, setHeaders }) => {
   const { trackId } = params;
   const track = await getTrack(trackId);
   const headers: Record<string, string> = {};
-  headers['content-type'] = 'audio/*';
 
   if (!track) {
     error(404, {
       message: 'Track not found'
     });
   }
+
+  const contentType = track.filePath.split('.').pop();
+  headers['content-type'] = `audio/${contentType}`;
 
   const range = request.headers.get('range');
   const audioStat = await stat(track.filePath);
