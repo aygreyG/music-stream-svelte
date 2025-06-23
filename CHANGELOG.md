@@ -1,3 +1,9 @@
+# [1.0.0-dev.11](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.10...v1.0.0-dev.11) (2025-06-23)
+
+### Bug Fixes
+
+- missing prisma from dependencies ([a109496](https://github.com/aygreyG/music-stream-svelte/commit/a1094964275ee4052419f9c197117b646e4d684d))
+
 # [1.0.0-dev.10](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.9...v1.0.0-dev.10) (2025-06-23)
 
 ### Bug Fixes
