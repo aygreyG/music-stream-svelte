@@ -2,7 +2,7 @@
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
   import { ROLE } from '$lib/shared/consts';
-  import type { User } from 'prisma-client';
+  import type { User } from '../../../../generated/prisma-client/client';
   type UserWithoutPassword = Omit<User, 'password'>;
   import { fade } from 'svelte/transition';
 

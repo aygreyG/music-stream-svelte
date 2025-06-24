@@ -1,6 +1,6 @@
 <script lang="ts">
   import AlbumImage from '$lib/components/AlbumImage.svelte';
-  import type { Prisma } from 'prisma-client';
+  import type { Prisma } from '../../generated/prisma-client/client';
 
   interface Props {
     albumSet: Prisma.AlbumGetPayload<{

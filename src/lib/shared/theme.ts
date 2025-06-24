@@ -1,4 +1,4 @@
-import type { Theme } from 'prisma-client';
+import type { Theme } from '../../generated/prisma-client/client';
 
 export const defaultTheme: Theme = {
   id: '',

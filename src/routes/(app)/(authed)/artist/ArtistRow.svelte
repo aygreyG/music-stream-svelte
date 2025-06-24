@@ -1,6 +1,6 @@
 <script lang="ts">
   import { observeVisibility } from '$lib/observeVisibility';
-  import type { Prisma } from 'prisma-client';
+  import type { Prisma } from '../../../../generated/prisma-client/client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Prisma } from 'prisma-client';
+  import type { Prisma } from '../../../../../generated/prisma-client/client';
   import { flip } from 'svelte/animate';
   import HeartFill from '~icons/iconamoon/heart-fill';
   import Heart from '~icons/iconamoon/heart';

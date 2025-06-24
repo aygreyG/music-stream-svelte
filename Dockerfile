@@ -7,7 +7,6 @@ WORKDIR /app
 
 FROM base AS prod-deps
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
-RUN pnpm exec prisma generate
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -16,6 +15,7 @@ RUN pnpm run build
 
 FROM base
 COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/src/generated/prisma-client /app/src/generated/prisma-client
 COPY --from=build /app/build /app/build
 COPY /prisma prisma
 COPY package.json .

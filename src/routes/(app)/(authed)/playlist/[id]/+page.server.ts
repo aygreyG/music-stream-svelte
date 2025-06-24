@@ -1,5 +1,5 @@
 import prisma from '$lib/server/prisma.js';
-import type { Prisma } from 'prisma-client';
+import type { Prisma } from '../../../../../generated/prisma-client/client';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals, params }) => {

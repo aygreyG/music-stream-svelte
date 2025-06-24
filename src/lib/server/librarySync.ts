@@ -1,4 +1,3 @@
-import type { Artist } from 'prisma-client';
 import prisma from './prisma';
 import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
@@ -6,6 +5,7 @@ import { join } from 'path';
 import { getServerSettings } from './serverSettings';
 import { getAccentColor } from './images';
 import { serverLog } from './utils';
+import type { Artist } from '../../generated/prisma-client/client';
 
 let inProgress = false;
 let tracksCreated = 0;

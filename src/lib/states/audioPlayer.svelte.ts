@@ -1,4 +1,4 @@
-import type { Prisma } from 'prisma-client';
+import type { Prisma } from '../../generated/prisma-client/client';
 import { getContext, setContext } from 'svelte';
 
 type TrackType = Prisma.TrackGetPayload<{

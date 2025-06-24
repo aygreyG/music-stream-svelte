@@ -8,7 +8,7 @@
   import { cubicInOut } from 'svelte/easing';
   import { crossfade } from '$lib/transitions/crossfade';
   const [, receive] = crossfade;
-  import type { Prisma } from 'prisma-client';
+  import type { Prisma } from '../../../../../generated/prisma-client/client';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import PlaylistModal from './PlaylistModal.svelte';

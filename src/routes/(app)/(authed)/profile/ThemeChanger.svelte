@@ -5,9 +5,9 @@
   import { defaultTheme } from '$lib/shared/theme';
   import currentTheme from '$lib/stores/themeStore';
   import { getAccessibleColor, getRGBColor } from '$lib/utils';
-  import type { Theme } from 'prisma-client';
   import { onMount } from 'svelte';
   import RoundRefresh from '~icons/ic/round-refresh';
+  import type { Theme } from '../../../../generated/prisma-client/client';
 
   interface Props {
     action?: string;

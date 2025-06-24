@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { Prisma } from 'prisma-client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
@@ -9,6 +8,7 @@
   import { getReadableTime } from '$lib/utils';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import type { Snippet } from 'svelte';
+  import type { Prisma } from '../../generated/prisma-client/client';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {
