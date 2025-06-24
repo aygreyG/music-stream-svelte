@@ -14,12 +14,13 @@
   let { album, maxSize = 'l', blur = false, key = '' }: Props = $props();
 </script>
 
-<div
-  class="h-full w-full"
-  style={album.albumArtAccent && !blur ? `background-color: ${album.albumArtAccent}` : ''}
-  class:bg-zinc-900={!album.albumArtAccent && !blur}
->
-  <picture class="flex h-full w-full">
+<div class="h-full w-full" class:bg-zinc-900={!album.albumArtAccent && !blur}>
+  <!-- Background color when the album art is not loaded in it is smaller to make sure no white lines are visible on rounded corners -->
+  <div
+    class="absolute inset-0 ml-[0.25px] mt-[0.25px] h-[calc(100%-0.5px)] w-[calc(100%-0.5px)] rounded-md"
+    style={album.albumArtAccent && !blur ? `background-color: ${album.albumArtAccent}` : ''}
+  ></div>
+  <picture class="h-full w-full">
     {#key key}
       {#if album.albumArtId}
         {#if maxSize === 's'}
