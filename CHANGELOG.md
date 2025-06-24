@@ -1,3 +1,9 @@
+# [1.0.0-dev.13](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.12...v1.0.0-dev.13) (2025-06-24)
+
+### Bug Fixes
+
+- move prisma client out of node modules and generate proper client ([4bf64e5](https://github.com/aygreyG/music-stream-svelte/commit/4bf64e52dfba0b5e364854ce43171907a4760932))
+
 # [1.0.0-dev.12](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.11...v1.0.0-dev.12) (2025-06-23)
 
 ### Features
