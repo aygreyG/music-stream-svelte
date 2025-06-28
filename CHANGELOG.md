@@ -1,3 +1,13 @@
+# [1.0.0-dev.14](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.13...v1.0.0-dev.14) (2025-06-28)
+
+### Bug Fixes
+
+- background peeking through rounded corners on album arts ([57e8d13](https://github.com/aygreyG/music-stream-svelte/commit/57e8d13fcb81d75d2f08781ec91b6bf930fdd84a))
+
+### Features
+
+- create a palette out of albumart, update design ([a1ffc97](https://github.com/aygreyG/music-stream-svelte/commit/a1ffc97ca0fb46de419c4188b69334a301bfa67c))
+
 # [1.0.0-dev.13](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.12...v1.0.0-dev.13) (2025-06-24)
 
 ### Bug Fixes
