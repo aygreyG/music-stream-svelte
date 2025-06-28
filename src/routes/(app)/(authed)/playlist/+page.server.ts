@@ -15,7 +15,12 @@ export const load = async ({ locals }) => {
               id: true,
               title: true,
               albumArtId: true,
-              albumArtAccent: true
+              albumArtVibrant: true,
+              albumArtMuted: true,
+              albumArtDarkVibrant: true,
+              albumArtDarkMuted: true,
+              albumArtLightVibrant: true,
+              albumArtLightMuted: true
             }
           }
         }

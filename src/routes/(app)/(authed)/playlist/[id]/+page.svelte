@@ -52,7 +52,10 @@
     onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
   >
     {#each data.playlist.tracks as track, index (track.id)}
-      <div class="w-full flex-none" animate:flip={{ duration: 250 }}>
+      <div
+        class={['w-full flex-none', index === data.playlist.tracks.length - 1 && 'pb-2']}
+        animate:flip={{ duration: 250 }}
+      >
         <TrackRow
           handleClick={() => {
             audioPlayer.playTrack(data.playlist.tracks, index);

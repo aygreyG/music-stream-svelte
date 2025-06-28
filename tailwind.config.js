@@ -38,9 +38,6 @@ export default {
       },
       outlineColor: {
         primary: withOpacity('--color-primary')
-      },
-      borderRadius: {
-        md: 'var(--rounding)'
       }
     }
   },

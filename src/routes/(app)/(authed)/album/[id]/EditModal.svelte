@@ -101,7 +101,7 @@
     >
       <input accept="image/*" name="artfile" type="file" required />
       <button
-        class="flex items-center justify-center rounded-md bg-primary px-4 transition-colors hover:bg-primary/80 focus-visible:bg-primary/80"
+        class="flex items-center justify-center rounded-md bg-primary px-4 text-accessible transition-colors hover:bg-primary/80 focus-visible:bg-primary/80"
         type="submit"
         use:vibrate
       >
@@ -111,13 +111,13 @@
 
     <div class="flex w-full max-w-4xl px-6 py-1">
       <input
-        class="w-full text-ellipsis rounded-s-md border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full text-ellipsis rounded-s-xl border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={albumArtQuery}
         onkeydown={(e) => e.key === 'Enter' && searchArt()}
       />
       <button
-        class="flex items-center justify-center rounded-e-md border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+        class="flex items-center justify-center rounded-e-xl border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
         onclick={searchArt}
         use:vibrate
         disabled={albumArtQuery === '' || albumArtLoading}

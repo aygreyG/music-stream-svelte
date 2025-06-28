@@ -59,6 +59,7 @@
     "bcryptjs": "^3.0.2",
     "jsonwebtoken": "^9.0.2",
     "music-metadata": "^11.1.0",
+    "node-vibrant": "^4.0.3",
     "prisma": "^6.10.1",
     "sharp": "^0.34.1"
   },

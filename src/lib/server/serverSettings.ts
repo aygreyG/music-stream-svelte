@@ -46,6 +46,7 @@ export async function getServerSettings() {
     } catch (err) {
       console.error('Error getting server settings: ');
       console.error(err);
+      serverSettings = null;
     }
   }
 

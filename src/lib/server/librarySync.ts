@@ -3,7 +3,7 @@ import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings } from './serverSettings';
-import { getAccentColor } from './images';
+import { getPalette, type Palette } from './images';
 import { serverLog } from './utils';
 import type { Artist } from '../../generated/prisma-client/client';
 
@@ -160,7 +160,7 @@ async function getAlbumArt(
   dir: string,
   fileData: IAudioMetadata,
   albumArtist: Artist
-): Promise<{ albumLocation: string; accentColor: string } | null> {
+): Promise<{ albumLocation: string; palette: Palette } | null> {
   const regex = / |\.|\[|\]|\\|\//g;
   const albumArtFileName = `${albumArtist.name.replaceAll(
     regex,
@@ -180,7 +180,7 @@ async function getAlbumArt(
     if (coverFile) {
       return {
         albumLocation: coverFile,
-        accentColor: await getAccentColor(coverFile)
+        palette: await getPalette(coverFile)
       };
     }
   }
@@ -197,7 +197,7 @@ async function getAlbumArt(
       await writeFile(albumArtPath, albumArt);
       return {
         albumLocation: albumArtPath,
-        accentColor: await getAccentColor(albumArtPath)
+        palette: await getPalette(albumArtPath)
       };
     } catch (err) {
       serverLog(`Could not create album art file ${err}`, 'warn');
@@ -218,7 +218,7 @@ async function getAlbumArt(
       await writeFile(pathToWrite, buffer);
       return {
         albumLocation: pathToWrite,
-        accentColor: await getAccentColor(pathToWrite)
+        palette: await getPalette(pathToWrite)
       };
     } catch (err) {
       serverLog(`Could not create album art file ${err}`, 'warn');
@@ -292,7 +292,12 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
                 },
                 albumArt: albumArt ? albumArt.albumLocation : null,
                 albumArtId: albumArt ? crypto.randomUUID() : null,
-                albumArtAccent: albumArt ? albumArt.accentColor : null
+                albumArtVibrant: albumArt ? albumArt.palette.vibrant : null,
+                albumArtMuted: albumArt ? albumArt.palette.muted : null,
+                albumArtDarkVibrant: albumArt ? albumArt.palette.darkVibrant : null,
+                albumArtDarkMuted: albumArt ? albumArt.palette.darkMuted : null,
+                albumArtLightVibrant: albumArt ? albumArt.palette.lightVibrant : null,
+                albumArtLightMuted: albumArt ? albumArt.palette.lightMuted : null
               },
               include: {
                 tracks: true
@@ -334,6 +339,29 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
 
     return true;
   } else {
+    // Checking whether the album art has all the colors
+    const album = await prisma.album.findUnique({
+      where: { id: track.albumId }
+    });
+
+    if (album && album.albumArt && (!album.albumArtAccent || !album.albumArtVibrant)) {
+      const palette = await getPalette(album.albumArt);
+      await prisma.album.update({
+        where: { id: album.id },
+        data: {
+          albumArtAccent: palette.vibrant,
+          albumArtVibrant: palette.vibrant,
+          albumArtMuted: palette.muted,
+          albumArtDarkVibrant: palette.darkVibrant,
+          albumArtDarkMuted: palette.darkMuted,
+          albumArtLightVibrant: palette.lightVibrant,
+          albumArtLightMuted: palette.lightMuted
+        }
+      });
+
+      serverLog(`Updated album art colors for album: ${album.title}`, 'info');
+    }
+
     await prisma.track.update({
       where: { id: track.id },
       data: {

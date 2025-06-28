@@ -18,7 +18,7 @@
   <h1 class="p-4 text-center text-xl font-bold">Login</h1>
 
   <form
-    class="flex w-full max-w-lg flex-col gap-2 rounded-md bg-zinc-600/10 p-4 transition-all"
+    class="flex w-full max-w-lg flex-col gap-2 rounded-xl bg-zinc-600/10 p-4 transition-all"
     method="POST"
     action="?&redirect_to={data.redirectTo ?? ''}"
     use:enhance={() => {
@@ -32,7 +32,7 @@
     <label class="flex flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Username</div>
       <input
-        class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         name="username"
         required
       />
@@ -40,7 +40,7 @@
     <label class="flex flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Password</div>
       <input
-        class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="password"
         name="password"
         required

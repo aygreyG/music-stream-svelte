@@ -42,9 +42,9 @@
     class="flex w-full flex-col px-8 py-1 transition-shadow duration-300"
     class:shadow-md={scrolled}
   >
-    <label class="flex w-full items-center rounded-md backdrop-blur-md">
+    <label class="flex w-full items-center rounded-xl backdrop-blur-md">
       <input
-        class="w-full rounded-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         name="search"
@@ -76,7 +76,7 @@
       <button
         in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
         type="submit"
-        class="flex h-36 w-36 items-center justify-center rounded-md bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
+        class="flex h-36 w-36 items-center justify-center rounded-xl bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
         use:vibrate
         disabled={loading}
       >

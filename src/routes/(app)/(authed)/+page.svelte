@@ -70,9 +70,9 @@
     class="z-20 flex w-full flex-col px-8 py-1 transition-shadow duration-300"
     class:shadow-md={scrolledFromTop}
   >
-    <label class="flex w-full items-center rounded-md">
+    <label class="flex w-full items-center">
       <input
-        class="w-full rounded-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         name="search"

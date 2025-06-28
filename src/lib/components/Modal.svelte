@@ -43,7 +43,7 @@
     onscroll={() => {
       scrolled = container.scrollTop > 0;
     }}
-    class="absolute left-0 top-0 m-6 flex h-[calc(100%-3rem)] w-[calc(100%-3rem)] flex-col overflow-auto rounded-md bg-zinc-900 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
+    class="absolute left-0 top-0 m-6 flex h-[calc(100%-3rem)] w-[calc(100%-3rem)] flex-col overflow-auto rounded-xl bg-zinc-900 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
   >
     <div
       class="sticky left-0 top-0 z-20 flex w-full items-center justify-between {scrolled

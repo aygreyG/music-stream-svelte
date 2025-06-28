@@ -5,7 +5,7 @@
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import AlbumImage from './AlbumImage.svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import { getReadableTime } from '$lib/utils';
+  import { getAccessibleColor, getReadableTime, getRGBColor } from '$lib/utils';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import type { Snippet } from 'svelte';
   import type { Prisma } from '../../generated/prisma-client/client';
@@ -23,7 +23,12 @@
           title: true;
           albumArtist: { select: { name: true; id: true } };
           albumArtId: true;
-          albumArtAccent: true;
+          albumArtDarkMuted: true;
+          albumArtVibrant: true;
+          albumArtMuted: true;
+          albumArtLightVibrant: true;
+          albumArtLightMuted: true;
+          albumArtDarkVibrant: true;
           albumArt: true;
           tracks: {
             select: { id: true; title: true; artists: { select: { name: true; id: true } } };
@@ -93,6 +98,12 @@
   use:vibrate
   class="group flex h-14 w-full flex-none cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
   class:px-4={!indexed}
+  style={track.album.albumArtLightVibrant
+    ? [
+        getRGBColor(track.album.albumArtLightVibrant, 'primary'),
+        getRGBColor(getAccessibleColor(track.album.albumArtLightVibrant), 'accessible')
+      ].join(';')
+    : ''}
 >
   {#if indexed}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -135,7 +146,7 @@
       {/if}
     {:else}
       <button
-        class="z-10 hidden items-center justify-center text-zinc-600 hover:text-primary group-hover:flex"
+        class="z-10 hidden items-center justify-center text-primary/50 backdrop-blur-md hover:text-primary group-hover:flex"
         onclick={() => handleClick()}
         use:vibrate
       >

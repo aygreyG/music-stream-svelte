@@ -1,7 +1,16 @@
 import type { AlbumWithArt, ImageSize } from '$lib/shared/types';
-import { getHexColorFromRGB } from '$lib/utils';
 import { readFile, access, writeFile } from 'fs/promises';
 import sharp from 'sharp';
+import { Vibrant } from 'node-vibrant/node';
+
+export type Palette = {
+  vibrant: string;
+  muted: string;
+  darkVibrant: string;
+  darkMuted: string;
+  lightVibrant: string;
+  lightMuted: string;
+};
 
 type ExtendedImageSize = ImageSize | '';
 type ImageExtension = 'avif' | 'webp' | '';
@@ -77,6 +86,20 @@ async function createImage(
 }
 
 export async function getAccentColor(image: Buffer | string) {
-  const stats = await sharp(image).stats();
-  return getHexColorFromRGB(stats.dominant.r, stats.dominant.g, stats.dominant.b);
+  const palette = await Vibrant.from(image).getPalette();
+
+  return palette.Vibrant?.hex || '#ffffff';
+}
+
+export async function getPalette(image: Buffer | string): Promise<Palette> {
+  const palette = await Vibrant.from(image).quality(1).getPalette();
+
+  return {
+    vibrant: palette.Vibrant?.hex || '#ffffff',
+    muted: palette.Muted?.hex || '#ffffff',
+    darkVibrant: palette.DarkVibrant?.hex || '#ffffff',
+    darkMuted: palette.DarkMuted?.hex || '#ffffff',
+    lightVibrant: palette.LightVibrant?.hex || '#ffffff',
+    lightMuted: palette.LightMuted?.hex || '#ffffff'
+  };
 }

@@ -42,13 +42,13 @@
   }}
 >
   <input
-    class="w-1/2 rounded-md border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
+    class="w-1/2 rounded-[10px] border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
     type="text"
     bind:value={username}
     name="username"
   />
   <input
-    class="w-1/2 rounded-md border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
+    class="w-1/2 rounded-[10px] border-none bg-transparent px-2 py-1 outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
     type="email"
     bind:value={email}
     name="email"
@@ -64,7 +64,7 @@
   </label>
   <input type="hidden" name="id" value={user.id} />
   <button
-    class="w-36 rounded-md bg-emerald-600 px-2 py-1 font-semibold text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600"
+    class="w-36 rounded-[10px] bg-emerald-600 px-2 py-1 font-semibold text-white transition-all hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600"
     type="submit"
     disabled={user.username === username &&
       user.email === email &&
@@ -74,7 +74,7 @@
     Update
   </button>
   <button
-    class="w-36 rounded-md bg-rose-600 px-2 py-1 font-semibold text-white transition-all hover:bg-rose-700"
+    class="w-36 rounded-[10px] bg-rose-600 px-2 py-1 font-semibold text-white transition-all hover:bg-rose-700"
     formaction="?/delete"
     use:vibrate
   >

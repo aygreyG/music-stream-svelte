@@ -243,11 +243,11 @@
       bind:buffered={bufferedRanges}
     ></audio>
   {/if}
-  <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
+  <div class="h-full w-full rounded-xl bg-zinc-900/95 p-2">
     {#if user}
       <div class="flex h-full w-full flex-col justify-around px-2">
         <div class="flex w-full gap-2 sm:hidden">
-          <div class="h-10 w-10 flex-none overflow-clip rounded-md bg-zinc-900">
+          <div class="h-10 w-10 flex-none overflow-clip rounded-xl">
             {#if audioPlayer.currentTrack}
               {#key audioPlayer.currentTrack.id}
                 <a
@@ -373,7 +373,7 @@
             </button>
             <button
               onclick={() => (repeat = !repeat)}
-              class="text-2xl transition-colors"
+              class="text-2xl text-primary transition-colors"
               class:text-primary={repeat}
               class:text-zinc-400={!repeat}
               aria-label="Repeat"

@@ -37,7 +37,7 @@
 
 <div class="hidden h-full w-48 flex-none flex-col gap-1 sm:flex md:w-60 h-sm:w-48">
   <div
-    class="flex flex-col gap-2 overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:h-full h-md:flex-shrink"
+    class="flex flex-col gap-2 overflow-y-auto rounded-xl bg-zinc-900/95 p-4 h-md:h-full h-md:flex-shrink"
     class:h-full={!(user && user.playlists.length > 0 && !playlistTransitioning)}
     class:flex-shrink-0={user && user.playlists.length > 0}
   >
@@ -49,7 +49,7 @@
       transition:fade={{ duration: 300 }}
       ontransitionstart={() => (playlistTransitioning = true)}
       ontransitionend={() => (playlistTransitioning = false)}
-      class="h-full overflow-y-auto rounded-md bg-zinc-900/95 p-4 h-md:hidden"
+      class="h-full overflow-y-auto rounded-xl bg-zinc-900/95 p-4 h-md:hidden"
     >
       <div
         ontransitionstart={stopPropagation()}
@@ -75,14 +75,14 @@
   {/if}
 
   <div
-    class="hidden size-48 flex-none overflow-hidden rounded-md bg-zinc-900/95 sm:block md:size-60 h-sm:size-48"
+    class="hidden size-48 flex-none overflow-hidden rounded-xl bg-zinc-900/95 sm:block md:size-60 h-sm:size-48"
   >
     {#if audioPlayer.currentTrack && user}
       {#key audioPlayer.currentTrack.id}
         <div
           in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: 300 }}
           out:fly={{ duration: 300, easing: quintOut, x: 20 }}
-          class="flex h-full w-full overflow-hidden rounded-md"
+          class="flex h-full w-full overflow-hidden rounded-xl"
         >
           <a
             title={audioPlayer.currentTrack.album.title}
@@ -92,11 +92,11 @@
             <AlbumImage album={audioPlayer.currentTrack.album} />
           </a>
           <div
-            class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-1 p-1 text-center"
+            class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-0.5 p-2 text-center"
           >
             <a
               href="/album/{audioPlayer.currentTrack.album.id}"
-              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-zinc-900/80 px-1 backdrop-blur-sm"
+              class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-[10px] bg-zinc-900/80 px-1 backdrop-blur-sm"
               title={audioPlayer.currentTrack.title}
             >
               {audioPlayer.currentTrack.title}
@@ -122,13 +122,17 @@
 </div>
 
 <div
-  class="absolute -right-1 top-24 z-50 flex items-center justify-center rounded-s-md bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
+  class="absolute -right-1 top-24 z-50 flex items-center justify-center rounded-s-xl bg-zinc-800/90 shadow-md backdrop-blur-md sm:hidden"
 >
   <button use:vibrate onclick={() => (open = !open)}>
     {#if open}
-      <RoundClose class="text-4xl text-primary/70 transition-colors hover:text-primary" />
+      <RoundClose
+        class="text-4xl text-primary/70 transition-colors duration-500 hover:text-primary"
+      />
     {:else}
-      <RoundMenu class="text-4xl text-primary/70 transition-colors hover:text-primary" />
+      <RoundMenu
+        class="text-4xl text-primary/70 transition-colors duration-500 hover:text-primary"
+      />
     {/if}
   </button>
 </div>

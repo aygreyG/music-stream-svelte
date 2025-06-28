@@ -1,7 +1,6 @@
 import { AUTH_COOKIE } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
-import { ROLE, type GradientAngleType } from '$lib/shared/consts.js';
-import { isObjectEqual } from '$lib/utils';
+import { ROLE } from '$lib/shared/consts.js';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 
@@ -9,7 +8,6 @@ const MAX_LISTENS = 25;
 
 export const load = async ({ locals, depends }) => {
   depends('listened');
-  const ownerTheme = await prisma.theme.findFirst({ where: { user: { role: ROLE.OWNER } } });
   const listens = await prisma.listened.findMany({
     where: { userId: locals.user?.id },
     select: {
@@ -29,7 +27,12 @@ export const load = async ({ locals, depends }) => {
               title: true,
               albumArtist: { select: { name: true, id: true } },
               albumArtId: true,
-              albumArtAccent: true,
+              albumArtVibrant: true,
+              albumArtMuted: true,
+              albumArtDarkVibrant: true,
+              albumArtDarkMuted: true,
+              albumArtLightVibrant: true,
+              albumArtLightMuted: true,
               albumArt: true,
               tracks: {
                 select: { id: true, title: true, artists: { select: { name: true, id: true } } }
@@ -54,7 +57,6 @@ export const load = async ({ locals, depends }) => {
 
   return {
     title: 'Profile',
-    ownerTheme,
     listens,
     totalListens,
     totalListeningTime: totalListeningTime._sum.listeningTime
@@ -141,91 +143,6 @@ export const actions = {
       message: 'Password updated'
     };
   },
-  updatetheme: async ({ request, locals }) => {
-    const form = await request.formData();
-
-    const primary = form.get('accent')?.toString();
-    const rounding = form.get('rounding')?.toString();
-    const gradientStart = form.get('startcolor')?.toString();
-    const gradientMiddle = form.get('middlecolor')?.toString();
-    const gradientEnd = form.get('endcolor')?.toString();
-    const gradientMiddlePoint = form.get('middlepoint')?.toString();
-    const gradientAngle = form.get('angle')?.toString();
-
-    if (
-      !primary ||
-      !rounding ||
-      !gradientStart ||
-      !gradientMiddle ||
-      !gradientEnd ||
-      !gradientMiddlePoint ||
-      !gradientAngle
-    ) {
-      return fail(400, { error: 'All fields are required!' });
-    }
-
-    if (isNaN(parseInt(rounding)) || parseInt(rounding) < 0 || parseInt(rounding) > 64) {
-      return fail(400, { error: 'Rounding must be a number between 0 and 64!' });
-    }
-
-    const themeForm = {
-      primary,
-      rounding: parseInt(rounding),
-      gradientStart,
-      gradientMiddle,
-      gradientEnd,
-      gradientMiddlePoint: parseInt(gradientMiddlePoint),
-      gradientAngle: gradientAngle.replaceAll(' ', '_') as GradientAngleType
-    };
-
-    let theme;
-
-    // If the user is not the owner and the new theme is the owner's then delete the user's theme
-    if (locals.user?.role !== ROLE.OWNER) {
-      const ownerTheme = await prisma.theme.findFirst({
-        where: { user: { role: ROLE.OWNER } },
-        select: {
-          primary: true,
-          rounding: true,
-          gradientStart: true,
-          gradientMiddle: true,
-          gradientEnd: true,
-          gradientMiddlePoint: true,
-          gradientAngle: true
-        }
-      });
-
-      if (isObjectEqual(ownerTheme, themeForm)) {
-        await prisma.theme.deleteMany({ where: { userId: locals.user?.id } });
-        return {
-          message: 'Theme updated',
-          theme: ownerTheme
-        };
-      }
-    }
-
-    // If the user has a theme then update it, otherwise create a new one
-    if (locals.user?.themes && locals.user?.themes.length > 0) {
-      theme = await prisma.theme.update({
-        where: { id: locals.user.themes[0].id },
-        data: themeForm
-      });
-    } else if (locals.user) {
-      theme = await prisma.theme.create({
-        data: {
-          ...themeForm,
-          user: { connect: { id: locals.user.id } }
-        }
-      });
-    } else {
-      return fail(400, { error: 'User not found!' });
-    }
-
-    return {
-      message: 'Theme updated',
-      theme
-    };
-  },
   delete: async ({ locals, cookies }) => {
     if (!locals.user) {
       return fail(400, { error: 'User not found!' });
@@ -274,7 +191,12 @@ export const actions = {
                 title: true,
                 albumArtist: { select: { name: true, id: true } },
                 albumArtId: true,
-                albumArtAccent: true,
+                albumArtVibrant: true,
+                albumArtMuted: true,
+                albumArtDarkVibrant: true,
+                albumArtDarkMuted: true,
+                albumArtLightVibrant: true,
+                albumArtLightMuted: true,
                 albumArt: true,
                 tracks: {
                   select: { id: true, title: true, artists: { select: { name: true, id: true } } }

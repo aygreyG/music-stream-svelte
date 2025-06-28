@@ -4,7 +4,17 @@
 
   interface Props {
     albumSet: Prisma.AlbumGetPayload<{
-      select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+      select: {
+        id: true;
+        title: true;
+        albumArtId: true;
+        albumArtDarkMuted: true;
+        albumArtVibrant: true;
+        albumArtMuted: true;
+        albumArtLightVibrant: true;
+        albumArtLightMuted: true;
+        albumArtDarkVibrant: true;
+      };
     }>[];
   }
 

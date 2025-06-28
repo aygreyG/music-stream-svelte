@@ -32,13 +32,13 @@
             loading = false;
           };
         }}
-        class="flex w-full max-w-lg justify-between rounded-md border-none bg-zinc-600"
+        class="flex w-full max-w-lg justify-between rounded-xl border-none bg-zinc-600"
         method="POST"
         action="?/addplaylist"
       >
         <input type="hidden" name="trackid" value={track.id} />
         <input
-          class="w-full flex-grow rounded-s-md border-none bg-zinc-600 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
+          class="w-full flex-grow rounded-s-xl border-none bg-zinc-600 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
           type="text"
           autocomplete="off"
           placeholder="New playlist"
@@ -46,7 +46,7 @@
           required
         />
         <button
-          class="w-fit rounded-e-md border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
+          class="w-fit rounded-e-xl border-none bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
           type="submit"
           use:vibrate
           disabled={loading}
@@ -61,7 +61,7 @@
 
       {#each user.playlists as playlist (playlist.id)}
         <form
-          class="flex w-full max-w-lg items-center justify-between rounded-md border-none bg-zinc-600 py-1 pl-3 pr-2"
+          class="flex w-full max-w-lg items-center justify-between rounded-xl border-none bg-zinc-600 py-1 pl-3 pr-2"
           method="POST"
           use:enhance
           animate:flip={{ duration: 100 }}

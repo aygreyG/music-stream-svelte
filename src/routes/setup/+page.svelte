@@ -31,7 +31,7 @@
   });
 </script>
 
-<div class="flex h-full flex-col items-center rounded-md bg-zinc-900/95 p-4">
+<div class="flex h-full flex-col items-center rounded-xl bg-zinc-900/95 p-4">
   {#if loading}
     <div class="flex h-full w-full items-center justify-center">
       <RoundRefresh class="text-5xl text-primary motion-safe:animate-spin" />
@@ -58,7 +58,7 @@
           };
         }
       }}
-      class="flex h-fit max-h-full w-full max-w-xl flex-col items-center overflow-hidden rounded-md bg-zinc-600/10"
+      class="flex h-fit max-h-full w-full max-w-xl flex-col items-center overflow-hidden rounded-xl bg-zinc-600/10"
     >
       {#if data.hasOwner}
         <div class="flex w-full items-center justify-between pe-4 ps-2">
@@ -77,7 +77,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             name="username"
             autocomplete="off"
             required
@@ -87,7 +87,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="email"
             name="email"
             autocomplete="off"
@@ -98,7 +98,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="password"
             name="password"
             required

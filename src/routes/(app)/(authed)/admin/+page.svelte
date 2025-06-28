@@ -28,7 +28,7 @@
   <div class="flex h-full flex-col gap-2 overflow-auto p-2">
     <div class="p-2 text-center text-xl font-bold">Admin dashboard</div>
 
-    <div class="flex flex-none flex-col overflow-clip rounded-md">
+    <div class="flex flex-none flex-col overflow-clip rounded-xl">
       <div
         in:fly|global={{ duration: 500, x: -20, easing: quintOut }}
         class="flex items-center justify-between bg-zinc-600/10 p-4"
@@ -103,7 +103,7 @@
       class="flex w-full justify-center"
     >
       <form
-        class="flex w-full max-w-lg select-none flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
+        class="flex w-full max-w-lg select-none flex-col gap-2 rounded-xl bg-zinc-600/10 p-4"
         method="POST"
         action="?/create"
         use:enhance={() => {
@@ -117,7 +117,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             name="username"
             required
           />
@@ -125,7 +125,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="email"
             name="email"
             required
@@ -134,7 +134,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
             type="password"
             name="password"
             required
@@ -167,12 +167,12 @@
     </div>
 
     {#if data.users}
-      <div class="flex flex-col rounded-md">
+      <div class="flex flex-col rounded-xl">
         {#each data.users as usr, index (usr.id)}
           <div
             class="overflow-clip bg-zinc-600/10"
-            class:rounded-t-md={index === 0}
-            class:rounded-b-md={index === data.users.length - 1}
+            class:rounded-t-xl={index === 0}
+            class:rounded-b-xl={index === data.users.length - 1}
             in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 + 100 * index }}
             animate:flip={{ duration: 200 }}
           >
@@ -196,10 +196,10 @@
         <div>Loading...</div>
       {:then logs}
         {#if logs && logs.length > 0}
-          <div class="flex max-h-96 flex-col gap-1 overflow-y-auto rounded-md">
+          <div class="flex max-h-96 flex-col gap-1 overflow-y-auto rounded-xl">
             {#each logs as log, index (index)}
               <div
-                class="rounded-md bg-zinc-600/10 px-2 py-1 text-sm"
+                class="rounded-xl bg-zinc-600/10 px-2 py-1 text-sm"
                 animate:flip={{ duration: 200 }}
               >
                 <span

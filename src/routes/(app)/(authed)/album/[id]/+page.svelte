@@ -15,6 +15,8 @@
   import EditModal from './EditModal.svelte';
   import type { PageData } from './$types';
   import { ROLE } from '$lib/shared/consts';
+  import { getAccessibleColor, getRGBColor } from '$lib/utils';
+  import { theme } from '$lib/states/theme.svelte';
 
   type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 
@@ -39,11 +41,26 @@
 
   onMount(() => {
     animate = true;
+    if (data.album) {
+      theme.currentAlbum = data.album;
+    }
+
+    return () => {
+      theme.currentAlbum = null;
+    };
   });
 </script>
 
 {#key data.album.id}
-  <div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
+  <div
+    class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden"
+    style={data.album.albumArtLightVibrant
+      ? [
+          getRGBColor(data.album.albumArtLightVibrant, 'primary'),
+          getRGBColor(getAccessibleColor(data.album.albumArtLightVibrant), 'accessible')
+        ].join(';')
+      : ''}
+  >
     {#if animate}
       <div
         in:fade|global={{ duration: 500, easing: cubicInOut, delay: 100 }}
@@ -101,7 +118,7 @@
         onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
       >
         {#each data.album.tracks as track, index (track.id)}
-          <div class="w-full flex-none">
+          <div class={['w-full flex-none', index === data.album.tracks.length - 1 && 'pb-2']}>
             <TrackRow track={{ ...track, album: data.album }} delay={250 + index * 30}>
               {#snippet button()}
                 <button
@@ -120,17 +137,49 @@
           </div>
         {/each}
       </div>
+
+      <div class="absolute right-2 top-2 flex items-end">
+        <div
+          class="size-5 flex-none rounded-l-md outline outline-2"
+          title="Vibrant"
+          style="background-color: {data.album.albumArtVibrant};"
+        ></div>
+        <div
+          class="size-5 flex-none outline outline-2"
+          title="Muted"
+          style="background-color: {data.album.albumArtMuted};"
+        ></div>
+        <div
+          class="size-5 flex-none outline outline-2"
+          title="Dark Vibrant"
+          style="background-color: {data.album.albumArtDarkVibrant};"
+        ></div>
+        <div
+          class="size-5 flex-none outline outline-2"
+          title="Dark Muted"
+          style="background-color: {data.album.albumArtDarkMuted};"
+        ></div>
+        <div
+          class="size-5 flex-none outline outline-2"
+          title="Light Vibrant"
+          style="background-color: {data.album.albumArtLightVibrant};"
+        ></div>
+        <div
+          class="size-5 flex-none rounded-r-md outline outline-2"
+          title="Light Muted"
+          style="background-color: {data.album.albumArtLightMuted};"
+        ></div>
+      </div>
     </div>
+    <PlaylistModal
+      onclose={() => (playlistModalOpen = false)}
+      open={playlistModalOpen}
+      user={data.user}
+      track={playlistModalTrack}
+    />
+
+    {#if editModalOpen}
+      <EditModal onclose={() => (editModalOpen = false)} album={data.album} />
+    {/if}
   </div>
-
-  <PlaylistModal
-    onclose={() => (playlistModalOpen = false)}
-    open={playlistModalOpen}
-    user={data.user}
-    track={playlistModalTrack}
-  />
-
-  {#if editModalOpen}
-    <EditModal onclose={() => (editModalOpen = false)} album={data.album} />
-  {/if}
 {/key}

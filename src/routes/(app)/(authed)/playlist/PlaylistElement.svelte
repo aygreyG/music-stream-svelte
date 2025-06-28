@@ -15,7 +15,19 @@
         id: true;
         tracks: {
           select: {
-            album: { select: { id: true; albumArtAccent: true; title: true; albumArtId: true } };
+            album: {
+              select: {
+                id: true;
+                title: true;
+                albumArtId: true;
+                albumArtDarkMuted: true;
+                albumArtVibrant: true;
+                albumArtMuted: true;
+                albumArtLightVibrant: true;
+                albumArtLightMuted: true;
+                albumArtDarkVibrant: true;
+              };
+            };
           };
         };
       };
@@ -26,7 +38,17 @@
   let { playlist, selected = false }: Props = $props();
 
   const albumSet: Prisma.AlbumGetPayload<{
-    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+    select: {
+      id: true;
+      title: true;
+      albumArtId: true;
+      albumArtDarkMuted: true;
+      albumArtVibrant: true;
+      albumArtMuted: true;
+      albumArtLightVibrant: true;
+      albumArtLightMuted: true;
+      albumArtDarkVibrant: true;
+    };
   }>[] = [];
   let nameInput: HTMLInputElement | null = $state(null);
   let playlistName: string = $state(playlist.name);
@@ -50,7 +72,7 @@
 </script>
 
 <form
-  class="flex h-full w-full flex-col items-center justify-between overflow-clip rounded-md bg-zinc-950/20"
+  class="flex h-full w-full flex-col items-center justify-between overflow-clip rounded-xl bg-zinc-950/20"
   title={playlist.name}
   action="?/update"
   method="POST"
@@ -83,7 +105,7 @@
     class="flex h-3/4 w-full flex-none items-center justify-center px-2 pt-2"
     out:send|global={{ key: playlist.id, duration: 300 }}
   >
-    <div class="aspect-square h-full overflow-clip rounded-md">
+    <div class="aspect-square h-full overflow-clip rounded-xl">
       <PlaylistImage {albumSet} />
     </div>
   </a>

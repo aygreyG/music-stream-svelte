@@ -4,7 +4,17 @@
 
   interface Props {
     album: Prisma.AlbumGetPayload<{
-      select: { albumArtAccent: true; albumArtId: true; id: true; title: true };
+      select: {
+        albumArtId: true;
+        id: true;
+        title: true;
+        albumArtDarkMuted: true;
+        albumArtVibrant: true;
+        albumArtMuted: true;
+        albumArtLightVibrant: true;
+        albumArtLightMuted: true;
+        albumArtDarkVibrant: true;
+      };
     }>;
     maxSize?: ImageSize;
     blur?: boolean;
@@ -14,11 +24,11 @@
   let { album, maxSize = 'l', blur = false, key = '' }: Props = $props();
 </script>
 
-<div class="h-full w-full" class:bg-zinc-900={!album.albumArtAccent && !blur}>
+<div class="h-full w-full" class:bg-zinc-900={!album.albumArtDarkMuted && !blur}>
   <!-- Background color when the album art is not loaded in it is smaller to make sure no white lines are visible on rounded corners -->
   <div
-    class="absolute inset-0 ml-[0.25px] mt-[0.25px] h-[calc(100%-0.5px)] w-[calc(100%-0.5px)] rounded-md"
-    style={album.albumArtAccent && !blur ? `background-color: ${album.albumArtAccent}` : ''}
+    class="absolute inset-0 ml-[0.5px] mt-[0.5px] h-[calc(100%-1px)] w-[calc(100%-1px)] rounded-xl"
+    style={album.albumArtDarkMuted && !blur ? `background-color: ${album.albumArtDarkMuted}` : ''}
   ></div>
   <picture class="h-full w-full">
     {#key key}

@@ -84,7 +84,7 @@
               autocomplete="username"
               id="username"
               value={data.user?.username}
-              class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
               name="username"
               required
             />
@@ -95,14 +95,14 @@
               id="email"
               autocomplete="email"
               value={data.user?.email}
-              class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
               type="email"
               name="email"
               required
             />
           </label>
           <button
-            class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
+            class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold text-accessible transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
             type="submit"
             use:vibrate
             disabled={loading}
@@ -142,7 +142,7 @@
               autocomplete="current-password"
               type="password"
               id="currentpassword"
-              class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
               name="currentpassword"
               required
             />
@@ -152,7 +152,7 @@
             <input
               id="newpassword"
               autocomplete="new-password"
-              class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
               type="password"
               name="newpassword"
               required
@@ -163,7 +163,7 @@
             <input
               id="repeatpassword"
               autocomplete="new-password"
-              class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
               type="password"
               name="repeatpassword"
               required
@@ -173,7 +173,7 @@
             <div class="text-sm font-bold text-red-500">{form.error}</div>
           {/if}
           <button
-            class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
+            class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold text-accessible transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
             type="submit"
             use:vibrate
             disabled={loading}
@@ -190,13 +190,9 @@
       </div>
     </Accordion>
 
-    <Accordion title="Change Theme" delay={200}>
-      <ThemeChanger ownerTheme={data.ownerTheme} owner={data.user?.role === ROLE.OWNER} />
-    </Accordion>
-
     {#if data.user?.role !== ROLE.OWNER}
       <div
-        class="mt-4 flex w-full items-center justify-between rounded-md bg-zinc-600/20 px-4 py-2"
+        class="mt-4 flex w-full items-center justify-between rounded-xl bg-zinc-600/20 py-2 pl-4 pr-2"
       >
         <div
           in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}

@@ -2,17 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .bg-theme-gradient {
-    background-image: linear-gradient(
-      var(--gradient-angle),
-      rgb(var(--color-gradient-start)),
-      rgb(var(--color-gradient-middle)) var(--gradient-middle-point),
-      rgb(var(--color-gradient-end))
-    );
-  }
-}
-
 * {
   position: relative;
   box-sizing: border-box;

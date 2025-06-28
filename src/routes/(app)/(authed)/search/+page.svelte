@@ -70,7 +70,7 @@
       <input
         required
         placeholder="Search"
-        class="w-full rounded-s-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="w-full rounded-s-xl border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
         type="text"
         bind:value={searchString}
         oninput={() => {
@@ -102,7 +102,7 @@
     </label>
     <button
       type="submit"
-      class="flex items-center justify-center rounded-e-md bg-zinc-600/30 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:text-white/20 disabled:hover:bg-zinc-600/30"
+      class="flex items-center justify-center rounded-e-xl bg-zinc-600/30 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:text-white/20 disabled:hover:bg-zinc-600/30"
       disabled={!searchString || loading}
       use:vibrate={{ mute: !searchString }}
     >

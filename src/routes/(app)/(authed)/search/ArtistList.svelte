@@ -102,7 +102,7 @@
     <div class="flex items-center justify-center pb-2">
       <button
         use:vibrate
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         onclick={() => ontypechange()}
       >
         Show all ({total - artists.length} more)
@@ -133,7 +133,7 @@
       <input type="hidden" name="query" value={query} />
 
       <button
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         type="submit"
         use:vibrate
         disabled={loading}
