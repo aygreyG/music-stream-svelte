@@ -4,7 +4,7 @@
   import { setAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
   import type { Snippet } from 'svelte';
   import type { PageData } from './(authed)/$types';
-  import { getRGBColor } from '$lib/utils';
+  import { getCSSVariables } from '$lib/utils';
 
   const audioPlayer = setAudioPlayer();
 
@@ -18,11 +18,11 @@
 
 <div
   class="flex h-full w-full gap-1"
-  style={getRGBColor(audioPlayer.currentTrack?.album?.albumArtLightVibrant || '#71717a', 'primary')}
+  style={getCSSVariables(audioPlayer.currentTrack?.album.albumArtLightVibrant)}
 >
   <NavBar user={data.user} />
   <div
-    class="flex h-full w-full flex-col gap-1 sm:max-w-[calc(100%-12.25rem)] md:max-w-[calc(100%-15.25rem)] sm:h-sm:max-w-[calc(100%-12.25rem)]"
+    class="sm:h-sm:max-w-[calc(100%-12.25rem)] flex h-full w-full flex-col gap-1 sm:max-w-[calc(100%-12.25rem)] md:max-w-[calc(100%-15.25rem)]"
   >
     <div class="h-full w-full overflow-hidden rounded-xl bg-zinc-900/95">
       {@render children?.()}

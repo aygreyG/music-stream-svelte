@@ -84,7 +84,7 @@
 </script>
 
 <form
-  class="flex select-none flex-col gap-2 p-4"
+  class="flex flex-col gap-2 p-4 select-none"
   method="POST"
   style="{getRGBColor(accent, 'primary')} {getRGBColor(
     getAccessibleColor(accent),
@@ -108,7 +108,7 @@
     <label class="flex w-full flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Middle point</div>
       <input
-        class="w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
         name="middlepoint"
         type="number"
         min="1"
@@ -120,7 +120,7 @@
     <label class="flex w-full flex-col gap-1">
       <div class="text-sm font-bold text-zinc-400">Angle</div>
       <select
-        class="w-full rounded-md border-none bg-zinc-600/20 py-1 outline-none transition-all focus-within:ring-2 focus-within:ring-primary hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-within:ring-primary focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 outline-hidden transition-all focus-within:ring-2 hover:bg-zinc-600/50 focus-visible:ring-2"
         name="angle"
         bind:value={angle}
         required
@@ -141,19 +141,19 @@
     </div>
     <div class="flex justify-between gap-10">
       <input
-        class="w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={start}
         name="startcolortext"
       />
       <input
-        class="w-full rounded-md border-none bg-zinc-600/20 py-1 text-center font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 text-center font-mono outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={middle}
         name="middlecolortext"
       />
       <input
-        class="w-full rounded-md border-none bg-zinc-600/20 py-1 text-end font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 text-end font-mono outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={end}
         name="endcolortext"
@@ -163,7 +163,7 @@
 
   <div class="flex gap-1">
     <label
-      class="height-5 block w-2 flex-none cursor-pointer rounded-md focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+      class="height-5 focus-within:outline-primary block w-2 flex-none cursor-pointer rounded-md focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-solid"
       style="background-color: {start};"
     >
       <input
@@ -177,12 +177,12 @@
     </label>
 
     <div
-      class="rounded-md bg-gradient-to-r from-zinc-50"
+      class="rounded-md bg-linear-to-r from-zinc-50"
       style="background-image: linear-gradient(to right, {start}, {middle}); width: {middlepoint}%;"
     ></div>
 
     <label
-      class="height-5 block w-2 flex-none cursor-pointer rounded-md focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+      class="height-5 focus-within:outline-primary block w-2 flex-none cursor-pointer rounded-md focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-solid"
       style="background-color: {middle};"
     >
       <input
@@ -196,13 +196,13 @@
     </label>
 
     <div
-      class="rounded-md bg-gradient-to-r from-zinc-50"
+      class="rounded-md bg-linear-to-r from-zinc-50"
       style="background-image: linear-gradient(to right, {middle}, {end}); width: {100 -
         middlepoint}%;"
     ></div>
 
     <label
-      class="height-5 block w-2 flex-none cursor-pointer rounded-md focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+      class="height-5 focus-within:outline-primary block w-2 flex-none cursor-pointer rounded-md focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-solid"
       style="background-color: {end};"
     >
       <input
@@ -224,7 +224,7 @@
   <div class="flex items-center gap-6">
     <label for="accent" class="font-bold text-zinc-400">Accent color</label>
     <label
-      class="block size-5 flex-none cursor-pointer rounded-md focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
+      class="focus-within:outline-primary block size-5 flex-none cursor-pointer rounded-md focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-solid"
       style="background-color: {accent};"
     >
       <input
@@ -237,7 +237,7 @@
       />
     </label>
     <input
-      class="w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+      class="focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
       type="text"
       name="accenttext"
       bind:value={accent}
@@ -247,7 +247,7 @@
   <div class="flex items-center gap-6">
     <label for="rounding" class="font-bold text-zinc-400">Rounding</label>
     <input
-      class="w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+      class="focus-visible:ring-primary w-full rounded-md border-none bg-zinc-600/20 py-1 font-mono outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
       type="number"
       id="rounding"
       min="0"
@@ -260,7 +260,7 @@
 
   <div class="flex w-full flex-col gap-2 sm:flex-row sm:gap-6">
     <button
-      class="flex w-full items-center justify-center rounded-md bg-primary px-4 py-1 font-semibold text-accessible transition-all hover:bg-opacity-80"
+      class="bg-primary text-accessible hover:bg-opacity-80 flex w-full items-center justify-center rounded-md px-4 py-1 font-semibold transition-all"
       type="submit"
       use:vibrate
       disabled={loading}
@@ -274,7 +274,7 @@
 
     {#if !owner && ownerTheme}
       <button
-        class="w-full rounded-md bg-lime-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
+        class="hover:bg-opacity-80 w-full rounded-md bg-lime-700 px-4 py-1 font-semibold transition-all"
         use:vibrate
         onclick={(event) => {
           event.preventDefault();
@@ -287,7 +287,7 @@
     {/if}
 
     <button
-      class="w-full rounded-md bg-amber-600 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
+      class="hover:bg-opacity-80 w-full rounded-md bg-amber-600 px-4 py-1 font-semibold transition-all"
       use:vibrate
       onclick={(event) => {
         event.preventDefault();
@@ -299,7 +299,7 @@
     </button>
 
     <button
-      class="w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
+      class="hover:bg-opacity-80 w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all"
       use:vibrate
       onclick={(event) => {
         event.preventDefault();

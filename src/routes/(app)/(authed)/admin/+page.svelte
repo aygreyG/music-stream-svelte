@@ -103,7 +103,7 @@
       class="flex w-full justify-center"
     >
       <form
-        class="flex w-full max-w-lg select-none flex-col gap-2 rounded-xl bg-zinc-600/10 p-4"
+        class="flex w-full max-w-lg flex-col gap-2 rounded-xl bg-zinc-600/10 p-4 select-none"
         method="POST"
         action="?/create"
         use:enhance={() => {
@@ -117,7 +117,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
-            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             name="username"
             required
           />
@@ -125,7 +125,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
-            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="email"
             name="email"
             required
@@ -134,7 +134,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
-            class="w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="password"
             name="password"
             required
@@ -143,14 +143,14 @@
         <label class="flex gap-2">
           <div class="text-sm font-bold text-zinc-400">Admin</div>
           <input
-            class="my-auto rounded border-zinc-300/10 bg-zinc-600/20 text-primary transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-primary/50"
+            class="text-primary focus-visible:ring-primary/50 my-auto rounded-sm border-zinc-300/10 bg-zinc-600/20 transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2"
             type="checkbox"
             name="admin"
             id="admin"
           />
         </label>
         <button
-          class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:opacity-50 disabled:hover:bg-primary"
+          class="bg-primary hover:bg-primary/80 disabled:hover:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
           type="submit"
           use:vibrate
           disabled={loading}

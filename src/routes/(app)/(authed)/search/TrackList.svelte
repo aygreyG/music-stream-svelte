@@ -42,7 +42,7 @@
 
 <div
   out:fade|global={{ duration }}
-  class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
+  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
 >
   Tracks:
 </div>
@@ -99,7 +99,7 @@
           Load more ({total - tracks.length} left)
         </div>
         {#if loading}
-          <div class="absolute left-1/2 top-1 -translate-x-1/2">
+          <div class="absolute top-1 left-1/2 -translate-x-1/2">
             <RoundRefresh class="animate-spin text-xl" />
           </div>
         {/if}

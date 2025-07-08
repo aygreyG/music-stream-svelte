@@ -44,26 +44,24 @@
     </div>
     <div class="absolute bottom-0 left-0 flex w-full flex-col justify-end gap-0.5 p-1 text-center">
       <div
-        class="z-10 overflow-hidden whitespace-nowrap rounded-[10px]"
+        class="z-10 overflow-hidden rounded-[10px] whitespace-nowrap"
         class:hidden={outrostarted}
       >
-        <div class="absolute -left-1 -top-24 h-fit w-[calc(100%+0.5rem)] md:-top-28 xl:-top-40">
+        <div class="absolute -top-24 -left-1 h-fit w-[calc(100%+0.5rem)] md:-top-28 xl:-top-40">
           <AlbumImage {album} maxSize="s" blur />
         </div>
-        <div class="h-full w-full overflow-hidden text-ellipsis bg-zinc-900/80 px-2">
+        <div class="h-full w-full overflow-hidden bg-zinc-900/80 px-2 text-ellipsis">
           {album.title}
         </div>
       </div>
       <div
-        class="z-10 overflow-hidden text-ellipsis whitespace-nowrap rounded-[9px] text-xs"
+        class="z-10 overflow-hidden rounded-[9px] text-xs text-ellipsis whitespace-nowrap"
         class:hidden={outrostarted}
       >
-        <div
-          class="absolute -left-1 -top-[7.75rem] h-fit w-[calc(100%+0.5rem)] md:-top-36 xl:-top-48"
-        >
+        <div class="absolute -top-31 -left-1 h-fit w-[calc(100%+0.5rem)] md:-top-36 xl:-top-48">
           <AlbumImage {album} maxSize="s" blur />
         </div>
-        <div class="h-full w-full overflow-hidden text-ellipsis bg-zinc-900/80 px-1">
+        <div class="h-full w-full overflow-hidden bg-zinc-900/80 px-1 text-ellipsis">
           {album.albumArtist.name}
         </div>
       </div>

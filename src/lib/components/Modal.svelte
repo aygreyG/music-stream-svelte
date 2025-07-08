@@ -32,32 +32,32 @@
 
 <div
   transition:fade={{ duration: 200, easing: cubicIn }}
-  class="absolute left-0 top-0 z-10 h-full w-full bg-zinc-900/40 backdrop-blur-sm"
+  class="absolute top-0 left-0 z-10 h-full w-full bg-zinc-900/40 backdrop-blur-xs"
   aria-modal="true"
 >
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <div class="absolute left-0 top-0 h-full w-full" onclick={() => onclose?.()}></div>
+  <div class="absolute top-0 left-0 h-full w-full" onclick={() => onclose?.()}></div>
   <div
     bind:this={container}
     onscroll={() => {
       scrolled = container.scrollTop > 0;
     }}
-    class="absolute left-0 top-0 m-6 flex h-[calc(100%-3rem)] w-[calc(100%-3rem)] flex-col overflow-auto rounded-xl bg-zinc-900 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
+    class="absolute top-0 left-0 m-6 flex h-[calc(100%-3rem)] w-[calc(100%-3rem)] flex-col overflow-auto rounded-xl bg-zinc-900 md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
   >
     <div
-      class="sticky left-0 top-0 z-20 flex w-full items-center justify-between {scrolled
-        ? 'bg-zinc-900/95 shadow-md backdrop-blur-sm'
+      class="sticky top-0 left-0 z-20 flex w-full items-center justify-between {scrolled
+        ? 'bg-zinc-900/95 shadow-md backdrop-blur-xs'
         : ''}"
     >
       <div class="w-full text-center text-xl font-bold">{title}</div>
       {#if onclose}
         <div
-          class="flex items-center justify-center place-self-start rounded-bl-md rounded-tr-md hover:bg-zinc-600/20"
+          class="flex items-center justify-center place-self-start rounded-tr-md rounded-bl-md hover:bg-zinc-600/20"
         >
           <!-- svelte-ignore a11y_autofocus -->
           <button aria-label="Close modal" autofocus use:vibrate onclick={() => onclose?.()}>
-            <RoundClose class="p-1 text-3xl text-primary/70 transition-colors hover:text-primary" />
+            <RoundClose class="text-primary/70 hover:text-primary p-1 text-3xl transition-colors" />
           </button>
         </div>
       {/if}

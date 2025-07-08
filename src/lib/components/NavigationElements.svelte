@@ -78,11 +78,11 @@
 
 {#if user}
   {#if user.role === ROLE.ADMIN || user.role === ROLE.OWNER}
-    {#each adminElements as el}
+    {#each adminElements as el (el.href)}
       <NavigationElement {onclickedelement} {...el} />
     {/each}
   {/if}
-  {#each loggedInElements as el}
+  {#each loggedInElements as el (el.href)}
     {#if el.href === '/logout'}
       <form class="px-16 sm:px-0" method="POST" action="/logout" use:enhance>
         <button
@@ -100,7 +100,7 @@
     {/if}
   {/each}
 {:else}
-  {#each loggedOutElements as el}
+  {#each loggedOutElements as el (el.href)}
     <NavigationElement {onclickedelement} {...el} />
   {/each}
 {/if}

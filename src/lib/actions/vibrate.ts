@@ -13,7 +13,8 @@ export const vibrate: Action<HTMLElement, VibrationOptions | undefined> = (node,
       navigator &&
       !finalParams.mute &&
       matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-      matchMedia('(hover: none), (pointer: coarse)').matches
+      matchMedia('(hover: none), (pointer: coarse)').matches &&
+      'vibrate' in navigator
     ) {
       navigator.vibrate(finalParams.pattern);
     }

@@ -2,7 +2,6 @@
   import { page } from '$app/state';
   import { onMount, type Snippet } from 'svelte';
   import '../app.css';
-  import { getRGBColor } from '$lib/utils';
   import type { LayoutData } from './$types';
   import { theme } from '$lib/states/theme.svelte';
 
@@ -37,13 +36,12 @@
 </script>
 
 <svelte:head>
-  <meta name="theme-color" content={theme.shownBackground} />
   <title>{page.data.title ? page.data.title + ' | ' : ''}Svelte Music Streamer</title>
 </svelte:head>
 
 <div
-  class="flex h-[100dvh] w-full justify-center transition-colors duration-500"
-  style="background-color: {theme.shownBackground}; {getRGBColor('#71717a', 'primary')};"
+  class="flex h-dvh w-full justify-center transition-colors duration-500"
+  style="background-color: {theme.shownBackground};"
 >
   <div class="flex h-full w-full flex-col overflow-hidden p-1">
     {@render children?.()}

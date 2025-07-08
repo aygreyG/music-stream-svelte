@@ -48,14 +48,14 @@
 
 {#if animate}
   <a
-    class="flex justify-between gap-2 from-zinc-600/10 px-4 py-2 transition-colors hover:bg-gradient-to-r"
+    class="flex justify-between gap-2 from-zinc-600/10 px-4 py-2 transition-colors hover:bg-linear-to-r"
     in:fly={{ duration: 300, easing: quintOut, x: -20, delay }}
     href="/artist/{artist.id}"
   >
     <div>
       {artist.name}
     </div>
-    <div class="text-balance text-right">
+    <div class="text-right text-balance">
       {trackAndAlbumCount}
     </div>
   </a>

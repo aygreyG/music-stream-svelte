@@ -71,14 +71,14 @@
 
 <div
   out:fade|global={{ duration }}
-  class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
+  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
 >
   Artists:
 </div>
 <div class="flex w-full flex-col">
   {#each artists as artist, index (artist.id)}
     <a
-      class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
+      class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-linear-to-r"
       in:fly|global={{
         duration: 500,
         easing: quintOut,
@@ -142,7 +142,7 @@
           Load more ({total - artists.length} left)
         </div>
         {#if loading}
-          <div class="absolute left-1/2 top-1 -translate-x-1/2">
+          <div class="absolute top-1 left-1/2 -translate-x-1/2">
             <RoundRefresh class="animate-spin text-xl" />
           </div>
         {/if}

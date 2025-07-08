@@ -274,8 +274,8 @@
                 >
                   {audioPlayer.currentTrack.title}
                 </a>
-                <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                  {#each audioPlayer.currentTrack.artists.sort( (a, b) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                <div class="overflow-hidden text-xs text-ellipsis whitespace-nowrap">
+                  {#each audioPlayer.currentTrack.artists.sort( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                     <a class="hover:underline" href="/artist/{artist.id}">
                       {artist.name}{#if audioPlayer.currentTrack.artists.length > 1 && index != audioPlayer.currentTrack.artists.length - 1},{/if}
                     </a>
@@ -289,7 +289,9 @@
           {/if}
         </div>
         <div class="flex items-center justify-between gap-2 whitespace-nowrap sm:order-2">
-          <div class="timer">{currentString}</div>
+          <div class="timer">
+            {currentString}
+          </div>
           <div class="flex w-full items-center justify-between overflow-clip rounded-full">
             <input
               class="z-10 w-full opacity-85"
@@ -303,6 +305,7 @@
               oninput={() => {
                 if (
                   navigator &&
+                  'vibrate' in navigator &&
                   matchMedia('(prefers-reduced-motion: no-preference)').matches &&
                   matchMedia('(hover: none), (pointer: coarse)').matches &&
                   currentTime &&
@@ -313,16 +316,10 @@
                 }
               }}
             />
-            {#if !(typeof navigator !== 'undefined' && !navigator.userAgent.includes('Chrome')) && duration}
+            {#if duration}
               {#each bufferedRanges as range, index (range.start)}
-                {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
-                {@const roundedEnd =
-                  index === bufferedRanges.length - 1 ||
-                  bufferedRanges[index + 1].start !== range.end}
                 <div
-                  class="absolute h-4 bg-primary/50"
-                  class:rounded-l-full={roundedStart}
-                  class:rounded-r-full={roundedEnd}
+                  class="bg-primary/50 absolute h-4"
                   style="width: {((range.end - range.start) / duration) *
                     100}%; left: {(range.start / duration) * 100}%;"
                 ></div>
@@ -373,7 +370,7 @@
             </button>
             <button
               onclick={() => (repeat = !repeat)}
-              class="text-2xl text-primary transition-colors"
+              class="text-primary text-2xl transition-colors"
               class:text-primary={repeat}
               class:text-zinc-400={!repeat}
               aria-label="Repeat"
@@ -411,7 +408,7 @@
               max="1"
               step="0.01"
               bind:value={volume}
-              class="w-full max-w-32"
+              class="volume-bar w-full max-w-32"
               aria-label="Volume bar"
             />
           </div>
@@ -422,32 +419,40 @@
 </div>
 
 <style lang="postcss">
+  @reference "../../app.css";
+
   input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
-    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-none backdrop-blur-md;
+    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-hidden backdrop-blur-md sm:h-2;
+  }
+
+  input[type='range'].volume-bar {
+    @apply h-4;
   }
 
   input[type='range']::-webkit-slider-runnable-track {
-    @apply h-4 rounded-full bg-transparent;
+    @apply h-4 rounded-full bg-transparent sm:h-2;
   }
 
   input[type='range']::-moz-range-track {
-    @apply h-4 rounded-full bg-transparent;
+    @apply h-4 rounded-full bg-transparent sm:h-2;
   }
 
   input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    border: 2px solid rgb(var(--color-primary));
-    box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
-    @apply h-4 w-4 rounded-full bg-zinc-300;
+    border: none;
+    outline: none;
+    box-shadow: -10000px 0 0 10000px theme(--color-primary);
+    @apply size-0 transition-shadow duration-500;
   }
 
   input[type='range']::-moz-range-thumb {
-    border: 2.5px solid rgb(var(--color-primary));
-    box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
-    @apply h-[14px] w-[14px] rounded-full bg-zinc-300;
+    border: none;
+    outline: none;
+    box-shadow: -10000px 0 0 10000px theme(--color-primary);
+    @apply size-0 transition-shadow duration-500;
   }
 
   input[type='range']:focus {

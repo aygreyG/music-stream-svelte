@@ -5,7 +5,7 @@
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import AlbumImage from './AlbumImage.svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import { getAccessibleColor, getReadableTime, getRGBColor } from '$lib/utils';
+  import { getCSSVariables, getReadableTime } from '$lib/utils';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import type { Snippet } from 'svelte';
   import type { Prisma } from '../../generated/prisma-client/client';
@@ -96,14 +96,9 @@
     if (player.currentTrack?.id !== track.id) handleClick();
   }}
   use:vibrate
-  class="group flex h-14 w-full flex-none cursor-default select-none items-center from-transparent via-zinc-600/10 to-transparent transition-colors hover:bg-gradient-to-r"
+  class="group flex h-14 w-full flex-none cursor-default items-center from-transparent via-zinc-600/10 to-transparent transition-colors select-none hover:bg-linear-to-r"
   class:px-4={!indexed}
-  style={track.album.albumArtLightVibrant
-    ? [
-        getRGBColor(track.album.albumArtLightVibrant, 'primary'),
-        getRGBColor(getAccessibleColor(track.album.albumArtLightVibrant), 'accessible')
-      ].join(';')
-    : ''}
+  style={getCSSVariables(track.album.albumArtLightVibrant)}
 >
   {#if indexed}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -129,7 +124,7 @@
     {#if player.currentTrack?.id === track.id}
       {#if player.paused}
         <button
-          class="z-10 flex items-center justify-center text-primary/70 hover:text-primary"
+          class="text-primary/70 hover:text-primary z-10 flex items-center justify-center"
           onclick={() => player.togglePlay()}
           use:vibrate
         >
@@ -137,7 +132,7 @@
         </button>
       {:else}
         <button
-          class="z-10 flex items-center justify-center text-primary/70 hover:text-primary"
+          class="text-primary/70 hover:text-primary z-10 flex items-center justify-center"
           onclick={() => player.togglePlay()}
           use:vibrate
         >
@@ -146,16 +141,21 @@
       {/if}
     {:else}
       <button
-        class="z-10 hidden items-center justify-center text-primary/50 backdrop-blur-md hover:text-primary group-hover:flex"
+        class="text-primary/50 hover:text-primary z-10 flex items-center justify-center opacity-0 group-hover:opacity-100"
         onclick={() => handleClick()}
         use:vibrate
       >
-        <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
+        <RoundPlayCircleFilled class="overflow-clip text-center text-3xl transition-colors" />
       </button>
       <div
-        class="absolute left-0 top-0 z-0 h-12 w-12 overflow-hidden rounded-md group-hover:opacity-20"
+        class="pointer-events-none absolute top-0 left-0 z-0 h-12 w-12 overflow-hidden rounded-md group-hover:opacity-0"
       >
         <AlbumImage album={track.album} maxSize="s" />
+      </div>
+      <div
+        class="pointer-events-none absolute top-0 left-0 z-0 h-12 w-12 overflow-hidden rounded-md opacity-0 group-hover:opacity-20"
+      >
+        <AlbumImage album={track.album} blur maxSize="s" />
       </div>
     {/if}
   </div>
@@ -167,13 +167,13 @@
           handleClick();
         }
       }}
-      class="w-full cursor-default overflow-hidden text-ellipsis whitespace-nowrap text-start"
+      class="w-full cursor-default overflow-hidden text-start text-ellipsis whitespace-nowrap"
       use:vibrate
     >
       {track.title}
     </button>
-    <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs text-white/70">
-      {#each track.artists.sort( (a, b) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+    <div class="overflow-hidden text-xs text-ellipsis whitespace-nowrap text-white/70">
+      {#each track.artists.sort( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
         <a class="hover:underline" href="/artist/{artist.id}">
           {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
         </a>
@@ -187,7 +187,7 @@
       <!-- TODO: Make sure it is always readable and does not wrap
            Issue: https://github.com/aygreyG/music-stream-svelte/issues/124
       -->
-      <div class="flex w-full justify-between whitespace-nowrap text-xs text-white/70">
+      <div class="flex w-full justify-between text-xs whitespace-nowrap text-white/70">
         <div>{listenedInformation.lastListened.toLocaleString()}</div>
         <div
           class="translate-x-14 overflow-hidden text-ellipsis"

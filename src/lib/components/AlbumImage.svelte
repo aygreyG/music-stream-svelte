@@ -27,7 +27,7 @@
 <div class="h-full w-full" class:bg-zinc-900={!album.albumArtDarkMuted && !blur}>
   <!-- Background color when the album art is not loaded in it is smaller to make sure no white lines are visible on rounded corners -->
   <div
-    class="absolute inset-0 ml-[0.5px] mt-[0.5px] h-[calc(100%-1px)] w-[calc(100%-1px)] rounded-xl"
+    class="absolute inset-0 mt-[0.5px] ml-[0.5px] h-[calc(100%-1px)] w-[calc(100%-1px)] rounded-xl"
     style={album.albumArtDarkMuted && !blur ? `background-color: ${album.albumArtDarkMuted}` : ''}
   ></div>
   <picture class="h-full w-full">

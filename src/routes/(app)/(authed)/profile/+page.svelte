@@ -3,7 +3,6 @@
   import { vibrate } from '$lib/actions/vibrate';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
-  import ThemeChanger from './ThemeChanger.svelte';
   import RoundRefresh from '~icons/ic/round-refresh';
   import TrashFill from '~icons/iconamoon/trash-fill';
   import History from '~icons/iconamoon/history';
@@ -57,7 +56,7 @@
   };
 </script>
 
-<div class="absolute right-3 top-1 z-50 text-sm font-bold text-zinc-600/20">
+<div class="absolute top-1 right-3 z-50 text-sm font-bold text-zinc-600/20">
   App version: {data.APP_VERSION}
 </div>
 <div class="flex h-full w-full flex-col items-center overflow-auto">
@@ -67,7 +66,7 @@
     <Accordion title="Update Profile">
       <div class="flex w-full flex-none justify-center">
         <form
-          class="flex w-full select-none flex-col gap-2 p-4 transition-all"
+          class="flex w-full flex-col gap-2 p-4 transition-all select-none"
           method="POST"
           action="?/update"
           use:enhance={() => {
@@ -84,7 +83,7 @@
               autocomplete="username"
               id="username"
               value={data.user?.username}
-              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
               name="username"
               required
             />
@@ -95,14 +94,14 @@
               id="email"
               autocomplete="email"
               value={data.user?.email}
-              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
               type="email"
               name="email"
               required
             />
           </label>
           <button
-            class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold text-accessible transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
+            class="bg-primary text-accessible hover:bg-primary/80 disabled:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
             type="submit"
             use:vibrate
             disabled={loading}
@@ -125,7 +124,7 @@
     <Accordion title="Change Password" delay={100}>
       <div class="flex w-full flex-none justify-center">
         <form
-          class="flex w-full select-none flex-col gap-2 p-4"
+          class="flex w-full flex-col gap-2 p-4 select-none"
           method="POST"
           action="?/changepassword"
           use:enhance={() => {
@@ -142,7 +141,7 @@
               autocomplete="current-password"
               type="password"
               id="currentpassword"
-              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
               name="currentpassword"
               required
             />
@@ -152,7 +151,7 @@
             <input
               id="newpassword"
               autocomplete="new-password"
-              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
               type="password"
               name="newpassword"
               required
@@ -163,7 +162,7 @@
             <input
               id="repeatpassword"
               autocomplete="new-password"
-              class="w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+              class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
               type="password"
               name="repeatpassword"
               required
@@ -173,7 +172,7 @@
             <div class="text-sm font-bold text-red-500">{form.error}</div>
           {/if}
           <button
-            class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold text-accessible transition-colors hover:bg-primary/80 disabled:bg-primary disabled:opacity-50"
+            class="bg-primary text-accessible hover:bg-primary/80 disabled:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
             type="submit"
             use:vibrate
             disabled={loading}
@@ -192,7 +191,7 @@
 
     {#if data.user?.role !== ROLE.OWNER}
       <div
-        class="mt-4 flex w-full items-center justify-between rounded-xl bg-zinc-600/20 py-2 pl-4 pr-2"
+        class="mt-4 flex w-full items-center justify-between rounded-xl bg-zinc-600/20 py-2 pr-2 pl-4"
       >
         <div
           in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
@@ -224,7 +223,7 @@
           >
             <button
               type="submit"
-              class="w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all hover:bg-opacity-80"
+              class="hover:bg-opacity-80 w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all"
             >
               {#if deleteClicked}
                 Are you sure?
@@ -247,7 +246,7 @@
       Listening history
     </div>
     <div
-      class="mb-4 gap-1 text-balance px-2 text-center font-bold"
+      class="mb-4 gap-1 px-2 text-center font-bold text-balance"
       in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
     >
       Total listening time: {data.totalListeningTime
@@ -288,7 +287,7 @@
             Load more ({data.totalListens - listens.length} left)
           </div>
           {#if listensLoading}
-            <div class="absolute left-1/2 top-1 -translate-x-1/2">
+            <div class="absolute top-1 left-1/2 -translate-x-1/2">
               <RoundRefresh class="animate-spin text-xl" />
             </div>
           {/if}

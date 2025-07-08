@@ -15,7 +15,7 @@
   import EditModal from './EditModal.svelte';
   import type { PageData } from './$types';
   import { ROLE } from '$lib/shared/consts';
-  import { getAccessibleColor, getRGBColor } from '$lib/utils';
+  import { getCSSVariables } from '$lib/utils';
   import { theme } from '$lib/states/theme.svelte';
 
   type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
@@ -53,18 +53,13 @@
 
 {#key data.album.id}
   <div
-    class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden"
-    style={data.album.albumArtLightVibrant
-      ? [
-          getRGBColor(data.album.albumArtLightVibrant, 'primary'),
-          getRGBColor(getAccessibleColor(data.album.albumArtLightVibrant), 'accessible')
-        ].join(';')
-      : ''}
+    class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
+    style={getCSSVariables(data.album.albumArtLightVibrant || '#71717a')}
   >
     {#if animate}
       <div
         in:fade|global={{ duration: 500, easing: cubicInOut, delay: 100 }}
-        class="absolute left-0 top-0 h-full w-full opacity-10"
+        class="absolute top-0 left-0 h-full w-full opacity-10"
       >
         <AlbumImage key={data.album.updatedAt.toISOString()} blur album={data.album} maxSize="s" />
       </div>
@@ -85,7 +80,7 @@
           <AlbumImage key={data.album.updatedAt.toISOString()} album={data.album} />
           {#if !albumAnimating && data.user?.role !== ROLE.USER}
             <div
-              class="absolute bottom-0 left-0 flex gap-2 rounded-bl-md rounded-tr-md bg-zinc-900/80 backdrop-blur-sm transition-all focus-within:opacity-100 group-hover:opacity-100 sm:opacity-0"
+              class="absolute bottom-0 left-0 flex gap-2 rounded-tr-md rounded-bl-md bg-zinc-900/80 backdrop-blur-xs transition-all group-hover:opacity-100 focus-within:opacity-100 sm:opacity-0"
             >
               <button
                 use:vibrate
@@ -93,7 +88,7 @@
                 aria-label="Edit album art"
               >
                 <RoundEdit
-                  class="p-1 text-3xl text-primary/70 transition-colors hover:text-primary"
+                  class="text-primary/70 hover:text-primary p-1 text-3xl transition-colors"
                 />
               </button>
             </div>
@@ -124,7 +119,7 @@
                 <button
                   use:vibrate
                   onclick={() => openPlaylistModal(track)}
-                  class="flex h-full w-full items-center justify-center text-zinc-600 hover:text-primary"
+                  class="hover:text-primary flex h-full w-full items-center justify-center text-zinc-600"
                 >
                   {#if track.playlists.length > 0}
                     <HeartFill class="text-2xl transition-colors" />
@@ -138,34 +133,41 @@
         {/each}
       </div>
 
-      <div class="absolute right-2 top-2 flex items-end">
+      <div
+        class={[
+          'absolute top-2 right-2 items-end',
+          (data.user?.role === ROLE.ADMIN || data.user?.role === ROLE.OWNER) &&
+            'flex opacity-0 transition-opacity hover:opacity-100',
+          data.user?.role === ROLE.USER && 'hidden'
+        ]}
+      >
         <div
-          class="size-5 flex-none rounded-l-md outline outline-2"
+          class="size-5 flex-none rounded-l-md outline-2 outline-solid"
           title="Vibrant"
           style="background-color: {data.album.albumArtVibrant};"
         ></div>
         <div
-          class="size-5 flex-none outline outline-2"
+          class="size-5 flex-none outline-2 outline-solid"
           title="Muted"
           style="background-color: {data.album.albumArtMuted};"
         ></div>
         <div
-          class="size-5 flex-none outline outline-2"
+          class="size-5 flex-none outline-2 outline-solid"
           title="Dark Vibrant"
           style="background-color: {data.album.albumArtDarkVibrant};"
         ></div>
         <div
-          class="size-5 flex-none outline outline-2"
+          class="size-5 flex-none outline-2 outline-solid"
           title="Dark Muted"
           style="background-color: {data.album.albumArtDarkMuted};"
         ></div>
         <div
-          class="size-5 flex-none outline outline-2"
+          class="size-5 flex-none outline-2 outline-solid"
           title="Light Vibrant"
           style="background-color: {data.album.albumArtLightVibrant};"
         ></div>
         <div
-          class="size-5 flex-none rounded-r-md outline outline-2"
+          class="size-5 flex-none rounded-r-md outline-2 outline-solid"
           title="Light Muted"
           style="background-color: {data.album.albumArtLightMuted};"
         ></div>

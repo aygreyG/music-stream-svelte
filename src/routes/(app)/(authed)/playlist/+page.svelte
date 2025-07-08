@@ -31,7 +31,7 @@
 
 <div
   out:fade|global={{ duration: 150 }}
-  class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden"
+  class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
 >
   <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
     Playlists
@@ -44,7 +44,7 @@
   >
     <label class="flex w-full items-center rounded-xl backdrop-blur-md">
       <input
-        class="w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={searchString}
         name="search"

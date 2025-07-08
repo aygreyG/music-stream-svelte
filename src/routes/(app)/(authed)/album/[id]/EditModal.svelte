@@ -101,7 +101,7 @@
     >
       <input accept="image/*" name="artfile" type="file" required />
       <button
-        class="flex items-center justify-center rounded-md bg-primary px-4 text-accessible transition-colors hover:bg-primary/80 focus-visible:bg-primary/80"
+        class="bg-primary text-accessible hover:bg-primary/80 focus-visible:bg-primary/80 flex items-center justify-center rounded-md px-4 transition-colors"
         type="submit"
         use:vibrate
       >
@@ -111,13 +111,13 @@
 
     <div class="flex w-full max-w-4xl px-6 py-1">
       <input
-        class="w-full text-ellipsis rounded-s-xl border-none bg-zinc-600 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-s-xl border-none bg-zinc-600 py-1 text-ellipsis outline-hidden transition-all focus-visible:ring-2"
         type="text"
         bind:value={albumArtQuery}
         onkeydown={(e) => e.key === 'Enter' && searchArt()}
       />
       <button
-        class="flex items-center justify-center rounded-e-xl border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-none transition-all focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+        class="focus-visible:ring-primary flex items-center justify-center rounded-e-xl border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-hidden transition-all focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
         onclick={searchArt}
         use:vibrate
         disabled={albumArtQuery === '' || albumArtLoading}
@@ -129,7 +129,7 @@
     <div class="w-full max-w-4xl px-6 pb-2 text-xs text-zinc-300">
       Options for searching album art
       <a
-        class="underline transition-colors hover:text-primary"
+        class="hover:text-primary underline transition-colors"
         href="https://musicbrainz.org/doc/MusicBrainz_API/Search#Release"
         target="_blank">here</a
       >.
@@ -138,12 +138,12 @@
 
   {#if albumArtLoading}
     <div class="flex h-full w-full items-center justify-center">
-      <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-primary" />
+      <RoundRefresh class="text-primary ml-2 h-8 w-8 animate-spin" />
     </div>
   {:else}
     {#await releaseResponse}
       <div class="flex h-full w-full items-center justify-center">
-        <RoundRefresh class="ml-2 h-8 w-8 animate-spin text-primary" />
+        <RoundRefresh class="text-primary ml-2 h-8 w-8 animate-spin" />
       </div>
     {:then response}
       {#if !response}
@@ -157,7 +157,7 @@
         </div>
       {:else}
         <div class="flex flex-wrap items-center justify-center gap-2">
-          {#each response.releases as release}
+          {#each response.releases as release (release.id)}
             <AlbumArtFromRelease onchoose={chooseAlbumArt} {release} />
           {/each}
         </div>

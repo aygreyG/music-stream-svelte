@@ -117,7 +117,7 @@
       bind:this={nameInput}
       bind:value={playlistName}
       name="name"
-      class="w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-6 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
+      class="focus-visible:ring-primary w-full overflow-hidden rounded-md border-none bg-transparent px-6 py-0 text-center text-ellipsis whitespace-nowrap outline-hidden transition-all focus-visible:bg-zinc-600 focus-visible:ring-2"
       onblur={() => {
         if (playlistName === '') {
           playlistName = playlist.name;
@@ -135,14 +135,14 @@
       <button
         use:vibrate
         transition:fade={{ duration: 200 }}
-        class="absolute bottom-0 right-2"
+        class="absolute right-2 bottom-0"
         type="submit"
       >
         <RoundCheckCircle class="text-xl text-green-600/80" />
       </button>
     {:else}
       <button
-        class="absolute bottom-0 right-2 text-rose-700/80"
+        class="absolute right-2 bottom-0 text-rose-700/80"
         formaction="?/delete"
         type="submit"
         use:vibrate

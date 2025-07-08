@@ -15,7 +15,7 @@
   }
 
   let { data }: Props = $props();
-  const [send, receive] = crossfade;
+  const [_, receive] = crossfade;
   let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
   const audioPlayer = getAudioPlayer();
@@ -72,7 +72,7 @@
                 type="submit"
                 use:vibrate
               >
-                <HeartOff class="text-2xl text-zinc-600 hover:text-primary" />
+                <HeartOff class="hover:text-primary text-2xl text-zinc-600" />
               </button>
             </form>
           {/snippet}

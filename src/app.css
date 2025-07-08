@@ -1,10 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-* {
-  position: relative;
-  box-sizing: border-box;
+@plugin '@tailwindcss/forms';
+
+@config '../tailwind.config.js';
+
+@theme inline {
+  --color-primary: var(--primary, #71717a);
+  --color-accessible: var(--accessible, #ffffff);
+  --shadow-md-top: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -2px rgba(0, 0, 0, 0.1);
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  * {
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  a:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 :root {

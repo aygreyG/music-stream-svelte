@@ -1,3 +1,19 @@
+export const getCSSVariables = (value?: string | null) => {
+  if (value) {
+    return `--primary: ${value}; --accessible: ${getAccessibleColor(value)};`;
+  }
+
+  return '';
+};
+
+export const getCSSVariable = (name: string, value?: string | null) => {
+  if (value) {
+    return `--${name}: ${value};`;
+  }
+
+  return '';
+};
+
 /** Change hex color into RGB */
 export const getRGBColor = (hex: string, type: string) => {
   const color = hex.replace(/#/g, '');
@@ -10,7 +26,9 @@ export const getRGBColor = (hex: string, type: string) => {
 };
 
 /** Determine the accessible color of text */
-export const getAccessibleColor = (hex: string) => {
+export const getAccessibleColor = (hex?: string | null) => {
+  if (!hex) return '';
+
   const color = hex.replace(/#/g, '');
   // rgb values
   const r = parseInt(color.slice(0, 2), 16);
