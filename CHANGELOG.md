@@ -1,3 +1,9 @@
+# [1.0.0-dev.16](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.15...v1.0.0-dev.16) (2025-07-14)
+
+### Features
+
+- update colors and add visualiyation ([0f834f4](https://github.com/aygreyG/music-stream-svelte/commit/0f834f46e1354988d922968219c441f62c7cc75d))
+
 # [1.0.0-dev.15](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.14...v1.0.0-dev.15) (2025-07-08)
 
 ### Features
