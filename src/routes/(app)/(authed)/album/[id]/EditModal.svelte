@@ -11,6 +11,7 @@
   import type { AlbumReleaseSearchResult } from '$lib/shared/types';
   import type { Prisma } from '../../../../../generated/prisma-client/client';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { theme } from '$lib/states/theme.svelte';
 
   interface Props {
     album: Prisma.AlbumGetPayload<{
@@ -60,7 +61,10 @@
       // Handling if the currently playing track is from the same album
       if (audioPlayer.currentTrack && audioPlayer.currentTrack.album.id === album.id) {
         const responseJson = await response.json();
-        audioPlayer.currentTrack.album.albumArtId = responseJson.albumArtId;
+        audioPlayer.currentTrack.album = {
+          ...audioPlayer.currentTrack.album,
+          ...responseJson.albumArtInfo
+        };
       }
 
       await invalidate('album:art');
@@ -84,9 +88,13 @@
             if (
               audioPlayer.currentTrack &&
               audioPlayer.currentTrack.album.id === album.id &&
-              result?.data?.albumArtId
+              result?.data?.albumArtInfo
             ) {
-              audioPlayer.currentTrack.album.albumArtId = result.data.albumArtId.toString();
+              const responseData = result.data.albumArtInfo as Record<string, string>;
+              audioPlayer.currentTrack.album = {
+                ...audioPlayer.currentTrack.album,
+                ...responseData
+              };
             }
           }
 

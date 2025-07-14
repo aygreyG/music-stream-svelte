@@ -199,7 +199,18 @@ export const actions = {
           }
         });
 
-        return { message: 'Album art fetched', albumArtId };
+        return {
+          message: 'Album art fetched',
+          albumArtInfo: {
+            albumArtId,
+            albumArtVibrant: palette.vibrant,
+            albumArtMuted: palette.muted,
+            albumArtDarkVibrant: palette.darkVibrant,
+            albumArtDarkMuted: palette.darkMuted,
+            albumArtLightVibrant: palette.lightVibrant,
+            albumArtLightMuted: palette.lightMuted
+          }
+        };
       } catch (e) {
         console.error(e);
         return { message: 'Failed to fetch album art' };

@@ -283,7 +283,15 @@
       let x = 0;
       const barWidth = (canvas.width / bufferLength) * canvasSize * 1.8;
       for (let i = 0; i < (bufferLength / 2) * canvasSize; i++) {
-        const barHeight = dataArray[i * canvasSize] / 2;
+        const value = dataArray[i * canvasSize];
+
+        if (!value) {
+          x += barWidth + 2;
+          continue;
+        }
+
+        const barHeight = value / 2;
+
         if (barHeight < 1) {
           x += barWidth + 2;
           continue;

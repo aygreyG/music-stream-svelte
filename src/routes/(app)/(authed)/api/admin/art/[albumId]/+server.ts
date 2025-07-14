@@ -69,7 +69,19 @@ export const POST = async ({ request, params }) => {
           }
         });
 
-        return json({ message: 'Album art fetched', albumArtId });
+        return json({
+          message: 'Album art fetched',
+          albumArtInfo: {
+            albumArtId,
+            albumArtVibrant: albumArtPalette.vibrant,
+            albumArtMuted: albumArtPalette.muted,
+            albumArtDarkVibrant: albumArtPalette.darkVibrant,
+            albumArtDarkMuted: albumArtPalette.darkMuted,
+            albumArtLightVibrant: albumArtPalette.lightVibrant,
+            albumArtLightMuted: albumArtPalette.lightMuted,
+            albumArtAccent: albumArtPalette.vibrant
+          }
+        });
       } catch (e) {
         console.error(e);
         error(500, { message: 'Failed to fetch album art' });
