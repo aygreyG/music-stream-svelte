@@ -1,3 +1,9 @@
+# [1.0.0-dev.18](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.17...v1.0.0-dev.18) (2025-07-14)
+
+### Features
+
+- update readme ([1130b6c](https://github.com/aygreyG/music-stream-svelte/commit/1130b6c67868b2da019f88beb2c311dfae2001dc)), closes [#177](https://github.com/aygreyG/music-stream-svelte/issues/177)
+
 # [1.0.0-dev.17](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.16...v1.0.0-dev.17) (2025-07-14)
 
 ### Bug Fixes
