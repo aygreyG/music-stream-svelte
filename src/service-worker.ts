@@ -19,7 +19,7 @@ const NON_CACHEABLE = [
   '/profile'
 ];
 const CACHE_FIRST = ['/api/image'];
-const TIMEOUT_MS = 5000;
+const TIMEOUT_MS = 10000;
 
 self.addEventListener('activate', (event: ExtendableEvent) => {
   const activate = async () => {
@@ -57,15 +57,6 @@ self.addEventListener('install', (event: ExtendableEvent) => {
   event.waitUntil(cacheAssets());
 });
 
-function fetchWithTimeout(request: RequestInfo, timeout: number): Promise<Response> {
-  return Promise.race([
-    fetch(request),
-    new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error(`Network timeout (${timeout}ms)`)), timeout);
-    })
-  ]);
-}
-
 async function respond(event: FetchEvent): Promise<Response> {
   try {
     const url = new URL(event.request.url);
@@ -80,53 +71,25 @@ async function respond(event: FetchEvent): Promise<Response> {
       return cachedResponse!;
     }
 
-    try {
-      const preloadResponse = await event.preloadResponse;
-      const networkPromise = preloadResponse || fetchWithTimeout(event.request, TIMEOUT_MS);
+    const preloadedResponse = await event.preloadResponse;
 
-      if (cachedResponse) {
-        console.log('Serving from cache while updating:', event.request.url);
-
-        Promise.resolve(networkPromise)
-          .then((response) => {
-            if (!response || !response.ok) return;
-
-            console.log('Updating cache:', event.request.url);
-            const clonedResponse = response.clone();
-
-            cache
-              .put(event.request, clonedResponse)
-              .catch((err) => console.error('Cache update failed:', err));
-          })
-          .catch((err) => console.error('Background fetch failed:', err));
-
-        return cachedResponse;
-      }
-
-      const response = await networkPromise;
-
-      if (response.ok) {
-        try {
-          const clonedResponse = response.clone();
-          cache
-            .put(event.request, clonedResponse)
-            .catch((err) => console.error('Cache save failed:', err));
-        } catch (cacheError) {
-          console.error('Error cloning response:', cacheError);
-        }
-      }
-
-      return response;
-    } catch (networkError) {
-      console.error('Network request failed:', networkError);
-
-      if (cachedResponse) {
-        console.log('Falling back to cache after network error:', event.request.url);
-        return cachedResponse;
-      }
-
-      throw networkError;
+    if (preloadedResponse) {
+      return preloadedResponse;
     }
+
+    const controller = new AbortController();
+
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, TIMEOUT_MS);
+
+    const response = await fetch(event.request, {
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    return response;
   } catch (error) {
     console.error('Service worker error:', error);
     return new Response('Network error', {

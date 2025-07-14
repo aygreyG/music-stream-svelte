@@ -127,11 +127,11 @@
   <button use:vibrate onclick={() => (open = !open)}>
     {#if open}
       <RoundClose
-        class="text-primary/70 hover:text-primary text-4xl transition-colors duration-500"
+        class="text-primary-dark hover:text-primary active:text-primary text-4xl transition-colors duration-500"
       />
     {:else}
       <RoundMenu
-        class="text-primary/70 hover:text-primary text-4xl transition-colors duration-500"
+        class="text-primary-dark hover:text-primary active:text-primary text-4xl transition-colors duration-500"
       />
     {/if}
   </button>

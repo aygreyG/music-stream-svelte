@@ -47,6 +47,7 @@
     listenedInformation?: ListenedType;
     handleClick?: () => void;
     button?: Snippet;
+    showAlbumName?: boolean;
   }
 
   const player = getAudioPlayer();
@@ -62,7 +63,8 @@
         track.album.tracks.findIndex((t) => t.id === track.id)
       );
     },
-    button
+    button,
+    showAlbumName = true
   }: Props = $props();
 
   let indexed = $derived(index !== null);
@@ -178,10 +180,12 @@
           {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
         </a>
       {/each}
-      -
-      <a href="/album/{track.album.id}" class="hover:underline">
-        {track.album.title}
-      </a>
+      {#if showAlbumName}
+        -
+        <a href="/album/{track.album.id}" class="hover:underline">
+          {track.album.title}
+        </a>
+      {/if}
     </div>
     {#if listenedInformation.lastListened}
       <!-- TODO: Make sure it is always readable and does not wrap

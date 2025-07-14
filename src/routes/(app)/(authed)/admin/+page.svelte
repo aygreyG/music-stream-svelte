@@ -150,7 +150,7 @@
           />
         </label>
         <button
-          class="bg-primary hover:bg-primary/80 disabled:hover:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
+          class="bg-primary hover:bg-primary/80 disabled:hover:bg-primary text-accessible mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
           type="submit"
           use:vibrate
           disabled={loading}
@@ -196,6 +196,7 @@
         <div>Loading...</div>
       {:then logs}
         {#if logs && logs.length > 0}
+          <div>{logs.length} line{logs.length > 1 ? 's' : ''}</div>
           <div class="flex max-h-96 flex-col gap-1 overflow-y-auto rounded-xl">
             {#each logs as log, index (index)}
               <div

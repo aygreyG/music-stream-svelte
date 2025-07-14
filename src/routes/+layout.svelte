@@ -2,11 +2,9 @@
   import { page } from '$app/state';
   import { onMount, type Snippet } from 'svelte';
   import '../app.css';
-  import type { LayoutData } from './$types';
   import { theme } from '$lib/states/theme.svelte';
 
   interface Props {
-    data: LayoutData;
     children?: Snippet;
   }
 

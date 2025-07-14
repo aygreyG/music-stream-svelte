@@ -73,11 +73,20 @@ function createAudioPlayer() {
     }
   }
 
+  function stopAndClear() {
+    paused = true;
+    queueContextIndex = 0;
+    queueContext = [];
+    currentTrack = null;
+    theme.background = null;
+  }
+
   return {
     togglePlay,
     playNext,
     playPrevious,
     playTrack,
+    stopAndClear,
     get paused() {
       return paused;
     },

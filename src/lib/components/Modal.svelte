@@ -57,7 +57,9 @@
         >
           <!-- svelte-ignore a11y_autofocus -->
           <button aria-label="Close modal" autofocus use:vibrate onclick={() => onclose?.()}>
-            <RoundClose class="text-primary/70 hover:text-primary p-1 text-3xl transition-colors" />
+            <RoundClose
+              class="text-primary-dark hover:text-primary p-1 text-3xl transition-colors"
+            />
           </button>
         </div>
       {/if}

@@ -39,11 +39,14 @@
     playlistModalOpen = true;
   }
 
-  onMount(() => {
-    animate = true;
-    if (data.album) {
+  $effect(() => {
+    if (data.album.id) {
       theme.currentAlbum = data.album;
     }
+  });
+
+  onMount(() => {
+    animate = true;
 
     return () => {
       theme.currentAlbum = null;
@@ -114,7 +117,11 @@
       >
         {#each data.album.tracks as track, index (track.id)}
           <div class={['w-full flex-none', index === data.album.tracks.length - 1 && 'pb-2']}>
-            <TrackRow track={{ ...track, album: data.album }} delay={250 + index * 30}>
+            <TrackRow
+              showAlbumName={false}
+              track={{ ...track, album: data.album }}
+              delay={250 + index * 30}
+            >
               {#snippet button()}
                 <button
                   use:vibrate
