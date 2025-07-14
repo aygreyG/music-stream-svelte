@@ -1,3 +1,9 @@
+# [1.0.0-dev.17](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.16...v1.0.0-dev.17) (2025-07-14)
+
+### Bug Fixes
+
+- album art change not updating properly ([1c7ce20](https://github.com/aygreyG/music-stream-svelte/commit/1c7ce200133dc73ad959e0a36586449c5a80dacd))
+
 # [1.0.0-dev.16](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0-dev.15...v1.0.0-dev.16) (2025-07-14)
 
 ### Features
