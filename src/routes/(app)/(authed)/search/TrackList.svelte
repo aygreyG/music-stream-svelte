@@ -7,7 +7,7 @@
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {
     startIndex?: number;
@@ -42,13 +42,16 @@
 
 <div
   out:fade|global={{ duration }}
-  class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
+  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
 >
   Tracks:
 </div>
 <div class="flex w-full flex-col">
   {#each tracks as track, index (track.id)}
-    <div class="w-full flex-none" animate:flip={{ duration: 500, easing: quintOut }}>
+    <div
+      class={['w-full flex-none', index === tracks.length - 1 && 'pb-2']}
+      animate:flip={{ duration: 500, easing: quintOut }}
+    >
       <TrackRow {track} delay={250 + Math.min(Math.abs(index - startIndex), index) * 30} />
     </div>
   {/each}
@@ -58,7 +61,7 @@
     <div class="flex items-center justify-center pb-2">
       <button
         use:vibrate
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         onclick={() => ontypechange()}
       >
         Show all ({total - tracks.length} more)
@@ -87,7 +90,7 @@
       <input type="hidden" name="query" value={query} />
 
       <button
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         type="submit"
         use:vibrate
         disabled={loading}
@@ -96,7 +99,7 @@
           Load more ({total - tracks.length} left)
         </div>
         {#if loading}
-          <div class="absolute left-1/2 top-1 -translate-x-1/2">
+          <div class="absolute top-1 left-1/2 -translate-x-1/2">
             <RoundRefresh class="animate-spin text-xl" />
           </div>
         {/if}

@@ -105,9 +105,6 @@ export async function validateToken(authCookie: string) {
           tracks: true
         },
         orderBy: { createdAt: 'desc' }
-      },
-      themes: {
-        orderBy: { createdAt: 'desc' }
       }
     }
   });

@@ -1,4 +1,4 @@
-import type { ServerSettings } from '@prisma/client';
+import type { ServerSettings } from '../../generated/prisma-client/client';
 import prisma from './prisma';
 import { runLibrarySync } from './librarySync';
 import crypto from 'node:crypto';
@@ -46,6 +46,7 @@ export async function getServerSettings() {
     } catch (err) {
       console.error('Error getting server settings: ');
       console.error(err);
+      serverSettings = null;
     }
   }
 

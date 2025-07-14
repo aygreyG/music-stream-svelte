@@ -22,11 +22,11 @@
       />
     {/if}
   </div>
-  <div>{release['artist-credit'].map((ac) => ac.artist.name).join(', ')}</div>
+  <div class="text-center">{release['artist-credit'].map((ac) => ac.artist.name).join(', ')}</div>
   <div>{release.title}</div>
   <div class="m-2 flex overflow-clip rounded-md text-sm font-bold">
     <button
-      class="bg-primary transition-all hover:bg-primary/80 disabled:cursor-not-allowed disabled:bg-primary/65 disabled:opacity-80 disabled:hover:bg-primary/65"
+      class="bg-primary text-accessible hover:bg-primary/80 disabled:bg-primary/65 disabled:hover:bg-primary/65 transition-all disabled:cursor-not-allowed disabled:opacity-80"
       onclick={() => (showImage = true)}
       disabled={showImage}
       use:vibrate={{ mute: showImage }}
@@ -34,7 +34,7 @@
       Show Image
     </button>
     <button
-      class="bg-primary transition-all hover:bg-primary/80"
+      class="bg-primary text-accessible hover:bg-primary/80 transition-all"
       onclick={() => onchoose(release.id)}
       use:vibrate
     >

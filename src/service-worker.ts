@@ -7,78 +7,116 @@ import { build, files, version } from '$service-worker';
 
 const CACHE_NAME = `cache-${version}`;
 const ASSETS = [...build, ...files];
-const NON_CACHEABLE = ['/login', '/logout', '/api/play', '/profile', '/admin', '/playlist'];
+const NON_CACHEABLE = [
+  '/admin',
+  '/api/admin',
+  '/api/folder',
+  '/api/play',
+  '/loading',
+  '/login',
+  '/logout',
+  '/playlist',
+  '/profile'
+];
 const CACHE_FIRST = ['/api/image'];
+const TIMEOUT_MS = 10000;
 
-self.addEventListener('install', (event) => {
-  async function addFilesToCache() {
-    const cache = await caches.open(CACHE_NAME);
-    await cache.addAll(ASSETS);
-  }
-
-  event.waitUntil(addFilesToCache());
-});
-
-self.addEventListener('activate', (event) => {
-  async function removeOldCaches() {
+self.addEventListener('activate', (event: ExtendableEvent) => {
+  const activate = async () => {
+    // Remove old caches
     const keys = await caches.keys();
-    for (const key of keys) {
-      if (key !== CACHE_NAME) {
-        await caches.delete(key);
-      }
-    }
-  }
+    await Promise.all(
+      keys.map((key) => {
+        if (key !== CACHE_NAME) {
+          return caches.delete(key);
+        }
+      })
+    );
 
-  event.waitUntil(removeOldCaches());
+    // Enable navigation preload if supported
+    if (self.registration.navigationPreload) {
+      await self.registration.navigationPreload.enable();
+    }
+  };
+
+  event.waitUntil(activate());
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  const url = new URL(event.request.url);
-  if (NON_CACHEABLE.some((path) => url.pathname.startsWith(path))) return;
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+self.addEventListener('install', (event: ExtendableEvent) => {
+  self.skipWaiting();
 
-  async function respond() {
+  const cacheAssets = async () => {
+    const cache = await caches.open(CACHE_NAME);
+    try {
+      await cache.addAll(ASSETS);
+    } catch (error) {
+      console.error('Failed to cache assets:', error);
+    }
+  };
+
+  event.waitUntil(cacheAssets());
+});
+
+async function respond(event: FetchEvent): Promise<Response> {
+  try {
+    const url = new URL(event.request.url);
     const cache = await caches.open(CACHE_NAME);
     const cachedResponse = await cache.match(event.request);
 
-    // build, files & api/image can always be served from the cache
     if (
       ASSETS.includes(url.pathname) ||
       (CACHE_FIRST.some((path) => url.pathname.startsWith(path)) && cachedResponse)
     ) {
       console.log('Serving from cache:', event.request.url);
-      return cachedResponse;
+      return cachedResponse!;
     }
 
-    const networkResponse = fetch(event.request);
+    const preloadedResponse = await event.preloadResponse;
 
-    if (cachedResponse) {
-      console.log('Serving from cache:', event.request.url);
-      networkResponse.then((response) => {
-        if (response.status === 200) {
-          console.log('Updating cache:', event.request.url);
-          cache.put(event.request, response.clone());
-        }
-      });
-
-      return cachedResponse;
+    if (preloadedResponse) {
+      return preloadedResponse;
     }
 
-    const response = await networkResponse;
+    const controller = new AbortController();
 
-    if (response.status === 200) {
-      cache.put(event.request, response.clone());
-    }
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, TIMEOUT_MS);
+
+    const response = await fetch(event.request, {
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
 
     return response;
+  } catch (error) {
+    console.error('Service worker error:', error);
+    return new Response('Network error', {
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: {
+        'Content-Type': 'text/plain',
+        'Cache-Control': 'no-store'
+      }
+    });
   }
+}
 
-  event.respondWith(respond());
+self.addEventListener('fetch', (event: FetchEvent) => {
+  if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+
+  // Skip non-cacheable paths
+  if (NON_CACHEABLE.some((path) => url.pathname.startsWith(path))) return;
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+
+  event.respondWith(respond(event));
 });
 
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+self.addEventListener('message', (event: ExtendableMessageEvent) => {
+  if (event.data?.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });

@@ -13,7 +13,12 @@ export const load = async ({ locals, params }) => {
           id: true,
           title: true,
           albumArtId: true,
-          albumArtAccent: true
+          albumArtDarkMuted: true,
+          albumArtVibrant: true,
+          albumArtMuted: true,
+          albumArtLightVibrant: true,
+          albumArtLightMuted: true,
+          albumArtDarkVibrant: true
         },
         orderBy: { releaseDate: { sort: 'asc', nulls: 'last' } }
       },
@@ -33,7 +38,12 @@ export const load = async ({ locals, params }) => {
               albumArtist: { select: { name: true, id: true } },
               albumArtId: true,
               albumArt: true,
-              albumArtAccent: true,
+              albumArtDarkMuted: true,
+              albumArtVibrant: true,
+              albumArtMuted: true,
+              albumArtLightVibrant: true,
+              albumArtLightMuted: true,
+              albumArtDarkVibrant: true,
               tracks: {
                 select: { id: true, title: true, artists: { select: { name: true, id: true } } }
               }

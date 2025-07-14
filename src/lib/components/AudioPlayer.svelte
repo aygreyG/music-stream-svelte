@@ -1,14 +1,14 @@
 <script lang="ts">
-  import RoundPlayCircleOutline from 'virtual:icons/ic/round-play-circle-outline';
-  import RoundPauseCircleOutline from 'virtual:icons/ic/round-pause-circle-outline';
-  import RoundSkipPrevious from 'virtual:icons/ic/round-skip-previous';
-  import RoundSkipNext from 'virtual:icons/ic/round-skip-next';
-  import RoundVolumeUp from 'virtual:icons/ic/round-volume-up';
-  import RoundVolumeDown from 'virtual:icons/ic/round-volume-down';
-  import RoundVolumeMute from 'virtual:icons/ic/round-volume-mute';
-  import RoundVolumeOff from 'virtual:icons/ic/round-volume-off';
-  import RoundRepeat from 'virtual:icons/ic/round-repeat';
-  import RoundShuffle from 'virtual:icons/ic/round-shuffle';
+  import RoundPlayCircleOutline from '~icons/ic/round-play-circle-outline';
+  import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
+  import RoundSkipPrevious from '~icons/ic/round-skip-previous';
+  import RoundSkipNext from '~icons/ic/round-skip-next';
+  import RoundVolumeUp from '~icons/ic/round-volume-up';
+  import RoundVolumeDown from '~icons/ic/round-volume-down';
+  import RoundVolumeMute from '~icons/ic/round-volume-mute';
+  import RoundVolumeOff from '~icons/ic/round-volume-off';
+  import RoundRepeat from '~icons/ic/round-repeat';
+  import RoundStop from '~icons/ic/round-stop';
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import AlbumImage from './AlbumImage.svelte';
@@ -18,7 +18,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import { beforeNavigate, invalidate } from '$app/navigation';
   import type { SvelteMediaTimeRange } from 'svelte/elements';
-  import { navigating } from '$app/stores';
+  import { navigating } from '$app/state';
 
   interface Props {
     user?: SignedInUser | null;
@@ -29,6 +29,10 @@
   const audioPlayer = getAudioPlayer();
 
   let player: HTMLAudioElement | null = $state(null);
+  let canvas: HTMLCanvasElement | null = $state(null);
+  let audioContext: AudioContext | null = $state(null);
+  let source: MediaElementAudioSourceNode | null = $state(null);
+  let analyser: AnalyserNode | null = $state(null);
   let currentTime: number | undefined = $state(0);
   let prevSeekTime = $state(0);
   let duration: number | undefined = $state();
@@ -37,7 +41,6 @@
   let durationString = $state('--:--');
   let currentString = $state('--:--');
   let repeat = $state(false);
-  let shuffle = $state(false);
   let listenedDuration = $state(0);
   let previousTime = $state(0);
   let previousTrackId: string;
@@ -186,6 +189,138 @@
     } else {
       volume = 0.3;
     }
+
+    return () => {
+      if (audioContext && audioContext.state !== 'closed') {
+        audioContext.close();
+      }
+    };
+  });
+
+  const cleanupAfterStop = () => {
+    if (audioContext) {
+      audioContext.close();
+      audioContext = null;
+    }
+    if (source) {
+      source.disconnect();
+      source = null;
+    }
+    if (analyser) {
+      analyser.disconnect();
+      analyser = null;
+    }
+    currentTime = 0;
+    duration = undefined;
+    player = null;
+    previousTrackId = '';
+    prevSeekTime = 0;
+    listenedDuration = 0;
+    seeking = false;
+    previousTime = 0;
+    bufferedRanges = [];
+    repeat = false;
+    // cleaning up the canvas
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+
+      ctx?.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  };
+
+  $effect(() => {
+    if (!player || !canvas) return;
+
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      source = audioContext.createMediaElementSource(player);
+      analyser = audioContext.createAnalyser();
+      source.connect(analyser);
+      analyser.connect(audioContext.destination);
+    }
+
+    const getCanvasSize = (canvasWidth: number) => {
+      if (canvasWidth > 1250) {
+        return 1;
+      } else if (canvasWidth > 500) {
+        return 2;
+      } else {
+        return 4;
+      }
+    };
+
+    if (!analyser) return;
+
+    analyser.fftSize = 512;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    // Set canvas size
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight || 100;
+    const ctx = canvas.getContext('2d')!;
+
+    // Draw loop
+    let animationId: number;
+
+    function draw() {
+      if (!analyser || !canvas || !ctx) {
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+
+        return;
+      }
+      animationId = requestAnimationFrame(draw);
+
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight || 100;
+
+      const canvasSize = getCanvasSize(canvas.width);
+
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let x = 0;
+      const barWidth = (canvas.width / bufferLength) * canvasSize * 1.8;
+      for (let i = 0; i < (bufferLength / 2) * canvasSize; i++) {
+        const value = dataArray[i * canvasSize];
+
+        if (!value) {
+          x += barWidth + 2;
+          continue;
+        }
+
+        const barHeight = value / 2;
+
+        if (barHeight < 1) {
+          x += barWidth + 2;
+          continue;
+        }
+
+        if (x + barWidth > canvas.width) {
+          break;
+        }
+
+        ctx.fillStyle =
+          audioPlayer.currentTrack?.album.albumArtLightVibrant ||
+          getComputedStyle(document.body).getPropertyValue('--color-primary') ||
+          '#71717a';
+
+        ctx.beginPath();
+        ctx.roundRect(x, canvas.height - barHeight, barWidth, barHeight, 60);
+        ctx.fill();
+
+        x += barWidth + 2;
+      }
+    }
+
+    draw();
+
+    return () => {
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+    };
   });
 
   $effect(() => {
@@ -211,7 +346,7 @@
   });
 </script>
 
-<div class="flex h-full w-full gap-1">
+<div id="audio-player" class="flex h-full w-full gap-1">
   {#if audioPlayer.currentTrack && user}
     <audio
       preload="metadata"
@@ -231,7 +366,7 @@
           listenedDuration += diff;
           if (
             ((listenedDuration > 1 && !isSlowConnection()) || listenedDuration > 8) &&
-            $navigating === null &&
+            navigating.to === null &&
             audioPlayer.currentTrack
           ) {
             sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
@@ -243,11 +378,16 @@
       bind:buffered={bufferedRanges}
     ></audio>
   {/if}
-  <div class="h-full w-full rounded-md bg-zinc-900/95 p-2">
+  <div class="h-full w-full rounded-xl bg-zinc-900/95 p-2">
     {#if user}
+      <canvas
+        bind:this={canvas}
+        class="pointer-events-none absolute bottom-0 left-0 h-full w-full rounded-xl p-2 opacity-15 motion-reduce:hidden"
+      >
+      </canvas>
       <div class="flex h-full w-full flex-col justify-around px-2">
         <div class="flex w-full gap-2 sm:hidden">
-          <div class="h-10 w-10 flex-none overflow-clip rounded-md bg-zinc-900">
+          <div class="h-10 w-10 flex-none overflow-clip rounded-md">
             {#if audioPlayer.currentTrack}
               {#key audioPlayer.currentTrack.id}
                 <a
@@ -266,16 +406,17 @@
               <div
                 in:fade|global={{ duration: 300, easing: quintOut, delay: 300 }}
                 out:fade|global={{ duration: 300, easing: quintOut }}
-                class="flex h-10 flex-col overflow-clip"
+                class="flex h-10 w-[calc(100%-var(--spacing)*10)] flex-col overflow-clip"
               >
                 <a
                   class="overflow-hidden text-ellipsis whitespace-nowrap"
                   href="/album/{audioPlayer.currentTrack.album.id}"
+                  title={audioPlayer.currentTrack.title}
                 >
                   {audioPlayer.currentTrack.title}
                 </a>
-                <div class="overflow-hidden text-ellipsis whitespace-nowrap text-xs">
-                  {#each audioPlayer.currentTrack.artists.sort( (a, b) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                <div class="overflow-hidden text-xs text-ellipsis whitespace-nowrap">
+                  {#each audioPlayer.currentTrack.artists.sort( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                     <a class="hover:underline" href="/artist/{artist.id}">
                       {artist.name}{#if audioPlayer.currentTrack.artists.length > 1 && index != audioPlayer.currentTrack.artists.length - 1},{/if}
                     </a>
@@ -289,7 +430,9 @@
           {/if}
         </div>
         <div class="flex items-center justify-between gap-2 whitespace-nowrap sm:order-2">
-          <div class="timer">{currentString}</div>
+          <div class={['timer transition-opacity', !audioPlayer.currentTrack && 'opacity-0']}>
+            {currentString}
+          </div>
           <div class="flex w-full items-center justify-between overflow-clip rounded-full">
             <input
               class="z-10 w-full opacity-85"
@@ -303,6 +446,7 @@
               oninput={() => {
                 if (
                   navigator &&
+                  'vibrate' in navigator &&
                   matchMedia('(prefers-reduced-motion: no-preference)').matches &&
                   matchMedia('(hover: none), (pointer: coarse)').matches &&
                   currentTime &&
@@ -313,47 +457,43 @@
                 }
               }}
             />
-            {#if !(typeof navigator !== 'undefined' && !navigator.userAgent.includes('Chrome')) && duration}
-              {#each bufferedRanges as range, index (range.start)}
-                {@const roundedStart = index > 0 && bufferedRanges[index - 1].end !== range.start}
-                {@const roundedEnd =
-                  index === bufferedRanges.length - 1 ||
-                  bufferedRanges[index + 1].start !== range.end}
+            {#if duration}
+              {#each bufferedRanges as range (range.start)}
                 <div
-                  class="absolute h-4 bg-primary/50"
-                  class:rounded-l-full={roundedStart}
-                  class:rounded-r-full={roundedEnd}
+                  class="bg-primary/50 absolute h-4"
                   style="width: {((range.end - range.start) / duration) *
                     100}%; left: {(range.start / duration) * 100}%;"
                 ></div>
               {/each}
             {/if}
           </div>
-          <div class="timer">{durationString}</div>
+          <div class={['timer transition-opacity', !audioPlayer.currentTrack && 'opacity-0']}>
+            {durationString}
+          </div>
         </div>
         <div class="flex items-center justify-center gap-2 sm:justify-around lg:justify-center">
           <div class="flex gap-4">
             <button
-              onclick={() => (shuffle = !shuffle)}
-              class="text-2xl opacity-15 transition-colors"
-              disabled
-              class:text-primary={shuffle}
-              class:text-zinc-400={!shuffle}
+              onclick={() => {
+                cleanupAfterStop();
+                audioPlayer.stopAndClear();
+              }}
+              class="text-primary-dark active:text-primary text-2xl transition-colors"
               aria-label="Shuffle"
             >
-              <RoundShuffle />
+              <RoundStop />
             </button>
             <button
               onclick={audioPlayer.playPrevious}
-              class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
+              class="active:text-primary text-primary-dark text-3xl transition-colors"
               aria-label="Previous"
-              use:vibrate
+              use:vibrate={{ mute: audioPlayer.currentTrack === null }}
             >
               <RoundSkipPrevious />
             </button>
             <button
               onclick={() => audioPlayer.togglePlay()}
-              class="text-6xl text-zinc-400 transition-colors active:text-zinc-600"
+              class="active:text-primary text-primary-dark text-6xl transition-colors"
               aria-label="Toggle play"
               use:vibrate={{ mute: audioPlayer.currentTrack === null }}
             >
@@ -365,17 +505,19 @@
             </button>
             <button
               onclick={audioPlayer.playNext}
-              class="text-3xl text-zinc-400 transition-colors active:text-zinc-600"
+              class="active:text-primary text-primary-dark text-3xl transition-colors"
               aria-label="Next"
-              use:vibrate
+              use:vibrate={{ mute: audioPlayer.currentTrack === null }}
             >
               <RoundSkipNext />
             </button>
             <button
               onclick={() => (repeat = !repeat)}
-              class="text-2xl transition-colors"
-              class:text-primary={repeat}
-              class:text-zinc-400={!repeat}
+              class={[
+                'text-2xl transition-colors',
+                repeat && 'text-primary',
+                !repeat && 'text-primary-dark'
+              ]}
               aria-label="Repeat"
               use:vibrate
             >
@@ -396,13 +538,13 @@
               use:vibrate
             >
               {#if volume === 0}
-                <RoundVolumeOff class="text-3xl text-zinc-400" />
+                <RoundVolumeOff class="text-primary text-3xl" />
               {:else if volume < 0.3}
-                <RoundVolumeMute class="text-3xl text-zinc-400" />
+                <RoundVolumeMute class="text-primary text-3xl" />
               {:else if volume < 0.7}
-                <RoundVolumeDown class="text-3xl text-zinc-400" />
+                <RoundVolumeDown class="text-primary text-3xl" />
               {:else}
-                <RoundVolumeUp class="text-3xl text-zinc-400" />
+                <RoundVolumeUp class="text-primary text-3xl" />
               {/if}
             </button>
             <input
@@ -411,7 +553,7 @@
               max="1"
               step="0.01"
               bind:value={volume}
-              class="w-full max-w-32"
+              class="volume-bar w-full max-w-32"
               aria-label="Volume bar"
             />
           </div>
@@ -422,32 +564,40 @@
 </div>
 
 <style lang="postcss">
+  @reference "../../app.css";
+
   input[type='range'] {
     -webkit-appearance: none;
     appearance: none;
-    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-none backdrop-blur-md;
+    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-hidden backdrop-blur-md sm:h-2;
+  }
+
+  input[type='range'].volume-bar {
+    @apply h-4;
   }
 
   input[type='range']::-webkit-slider-runnable-track {
-    @apply h-4 rounded-full bg-transparent;
+    @apply h-4 rounded-full bg-transparent sm:h-2;
   }
 
   input[type='range']::-moz-range-track {
-    @apply h-4 rounded-full bg-transparent;
+    @apply h-4 rounded-full bg-transparent sm:h-2;
   }
 
   input[type='range']::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    border: 2px solid rgb(var(--color-primary));
-    box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
-    @apply h-4 w-4 rounded-full bg-zinc-300;
+    border: none;
+    outline: none;
+    box-shadow: -10000px 0 0 10000px theme(--color-primary);
+    @apply size-0 transition-shadow duration-500;
   }
 
   input[type='range']::-moz-range-thumb {
-    border: 2.5px solid rgb(var(--color-primary));
-    box-shadow: -10007px 0 0 10000px rgb(var(--color-primary));
-    @apply h-[14px] w-[14px] rounded-full bg-zinc-300;
+    border: none;
+    outline: none;
+    box-shadow: -10000px 0 0 10000px theme(--color-primary);
+    @apply size-0 transition-shadow duration-500;
   }
 
   input[type='range']:focus {

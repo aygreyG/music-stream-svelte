@@ -18,7 +18,7 @@
 
 A self-hosted music streaming service built with SvelteKit that allows you to stream the music stored on your computer/home server to any device with a browser. 🎶
 
-![example](https://github.com/user-attachments/assets/91adb1cd-29fb-44d6-bf2f-0a3562c6d7a1)
+<img width="6000" height="2550" alt="exampleImage" src="https://github.com/user-attachments/assets/e3becd78-9f7e-478b-b092-9e43f08b690e" />
 
 ---
 
@@ -26,11 +26,11 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 
 - [SvelteKit (TypeScript)](https://kit.svelte.dev/)
 - [TailwindCSS](https://tailwindcss.com/)
-- [Prisma (PostgreSQL)](https://www.prisma.io/)
+- [Prisma (with SQLite)](https://www.prisma.io/)
 
 ## Features
 
-- Responsive design
+- Responsive design with color palette from album arts
 - User authentication
 - Streaming music
 - Playlists
@@ -41,7 +41,6 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 
 ## Prequisites
 
-- Only Linux is supported unless you use the docker image
 - Proper metadata for your music files (artist, album, title)
 - Album covers are fetched from MusicBrainz API, so it's recommended to have the correct album and artist names
 - Music files must be stored in a directory that is accessible and modifiable by the server

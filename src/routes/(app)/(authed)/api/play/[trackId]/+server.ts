@@ -2,7 +2,7 @@ import prisma from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
 import { stat } from 'fs/promises';
 import { createReadStream } from 'fs';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '../../../../../../generated/prisma-client/client';
 
 type TrackType = Prisma.TrackGetPayload<{ select: { filePath: true; id: true } }>;
 type CachedTrack = TrackType & { lastAccessed: Date };
@@ -47,13 +47,15 @@ export const GET = async ({ params, request, setHeaders }) => {
   const { trackId } = params;
   const track = await getTrack(trackId);
   const headers: Record<string, string> = {};
-  headers['content-type'] = 'audio/*';
 
   if (!track) {
     error(404, {
       message: 'Track not found'
     });
   }
+
+  const contentType = track.filePath.split('.').pop();
+  headers['content-type'] = `audio/${contentType}`;
 
   const range = request.headers.get('range');
   const audioStat = await stat(track.filePath);

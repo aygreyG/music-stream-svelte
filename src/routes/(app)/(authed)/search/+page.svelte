@@ -1,6 +1,6 @@
 <script lang="ts">
-  import RoundSearch from 'virtual:icons/ic/round-search';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundSearch from '~icons/ic/round-search';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import { fade } from 'svelte/transition';
   import { tick } from 'svelte';
   import { vibrate } from '$lib/actions/vibrate';
@@ -51,7 +51,7 @@
   }
 </script>
 
-<div class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden">
+<div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
   <div out:fade|global={{ duration }} class="p-4 pb-0 text-center text-xl font-bold">Search</div>
 
   <form
@@ -70,7 +70,7 @@
       <input
         required
         placeholder="Search"
-        class="w-full rounded-s-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-s-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={searchString}
         oninput={() => {
@@ -88,7 +88,7 @@
     <label class="flex w-1/3 items-center border-e border-zinc-500/50">
       <select
         name="type"
-        class="w-full border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus:ring-2 focus:ring-primary focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus:ring-primary focus-visible:ring-primary w-full border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus:ring-2 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
         onchange={() => {
           if (searchString) formElement?.requestSubmit();
         }}
@@ -102,7 +102,7 @@
     </label>
     <button
       type="submit"
-      class="flex items-center justify-center rounded-e-md bg-zinc-600/30 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:text-white/20 disabled:hover:bg-zinc-600/30"
+      class="focus-visible:ring-primary flex items-center justify-center rounded-e-xl bg-zinc-600/30 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 disabled:cursor-not-allowed disabled:text-white/20 disabled:hover:bg-zinc-600/30"
       disabled={!searchString || loading}
       use:vibrate={{ mute: !searchString }}
     >

@@ -1,10 +1,20 @@
 <script lang="ts">
   import type { ImageSize } from '$lib/shared/types';
-  import type { Prisma } from '@prisma/client';
+  import type { Prisma } from '../../generated/prisma-client/client';
 
   interface Props {
     album: Prisma.AlbumGetPayload<{
-      select: { albumArtAccent: true; albumArtId: true; id: true; title: true };
+      select: {
+        albumArtId: true;
+        id: true;
+        title: true;
+        albumArtDarkMuted: true;
+        albumArtVibrant: true;
+        albumArtMuted: true;
+        albumArtLightVibrant: true;
+        albumArtLightMuted: true;
+        albumArtDarkVibrant: true;
+      };
     }>;
     maxSize?: ImageSize;
     blur?: boolean;
@@ -15,11 +25,15 @@
 </script>
 
 <div
-  class="h-full w-full"
-  style={album.albumArtAccent && !blur ? `background-color: ${album.albumArtAccent}` : ''}
-  class:bg-zinc-900={!album.albumArtAccent && !blur}
+  class="pointer-events-none h-full w-full"
+  class:bg-zinc-900={!album.albumArtDarkMuted && !blur}
 >
-  <picture class="flex h-full w-full">
+  <!-- Background color when the album art is not loaded in it is smaller to make sure no white lines are visible on rounded corners -->
+  <div
+    class="absolute inset-0 mt-[0.5px] ml-[0.5px] h-[calc(100%-1px)] w-[calc(100%-1px)] rounded-xl"
+    style={album.albumArtDarkMuted && !blur ? `background-color: ${album.albumArtDarkMuted}` : ''}
+  ></div>
+  <picture class="h-full w-full">
     {#key key}
       {#if album.albumArtId}
         {#if maxSize === 's'}

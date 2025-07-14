@@ -3,7 +3,7 @@
   "short_name": "Music Stream",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#c026d3",
+  "theme_color": "#000000",
   "background_color": "#18181b",
   "description": "A music streaming app built with Svelte",
   "icons": [

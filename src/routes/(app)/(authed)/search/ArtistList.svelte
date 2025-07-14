@@ -5,7 +5,7 @@
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade, fly } from 'svelte/transition';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {
     total: number;
@@ -71,14 +71,14 @@
 
 <div
   out:fade|global={{ duration }}
-  class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
+  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
 >
   Artists:
 </div>
 <div class="flex w-full flex-col">
   {#each artists as artist, index (artist.id)}
     <a
-      class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-gradient-to-r"
+      class="flex justify-between from-zinc-600/10 p-2 pl-4 transition-colors hover:bg-linear-to-r"
       in:fly|global={{
         duration: 500,
         easing: quintOut,
@@ -102,7 +102,7 @@
     <div class="flex items-center justify-center pb-2">
       <button
         use:vibrate
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         onclick={() => ontypechange()}
       >
         Show all ({total - artists.length} more)
@@ -133,7 +133,7 @@
       <input type="hidden" name="query" value={query} />
 
       <button
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         type="submit"
         use:vibrate
         disabled={loading}
@@ -142,7 +142,7 @@
           Load more ({total - artists.length} left)
         </div>
         {#if loading}
-          <div class="absolute left-1/2 top-1 -translate-x-1/2">
+          <div class="absolute top-1 left-1/2 -translate-x-1/2">
             <RoundRefresh class="animate-spin text-xl" />
           </div>
         {/if}

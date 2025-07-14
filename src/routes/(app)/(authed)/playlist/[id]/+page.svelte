@@ -5,7 +5,7 @@
   import { flip } from 'svelte/animate';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { enhance } from '$app/forms';
-  import HeartOff from 'virtual:icons/iconamoon/heart-off';
+  import HeartOff from '~icons/iconamoon/heart-off';
   import { vibrate } from '$lib/actions/vibrate.js';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
   import type { PageData } from './$types';
@@ -15,7 +15,7 @@
   }
 
   let { data }: Props = $props();
-  const [send, receive] = crossfade;
+  const [_, receive] = crossfade;
   let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
   const audioPlayer = getAudioPlayer();
@@ -52,7 +52,10 @@
     onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
   >
     {#each data.playlist.tracks as track, index (track.id)}
-      <div class="w-full flex-none" animate:flip={{ duration: 250 }}>
+      <div
+        class={['w-full flex-none', index === data.playlist.tracks.length - 1 && 'pb-2']}
+        animate:flip={{ duration: 250 }}
+      >
         <TrackRow
           handleClick={() => {
             audioPlayer.playTrack(data.playlist.tracks, index);
@@ -69,7 +72,7 @@
                 type="submit"
                 use:vibrate
               >
-                <HeartOff class="text-2xl text-zinc-600 hover:text-primary" />
+                <HeartOff class="hover:text-primary text-2xl text-zinc-600" />
               </button>
             </form>
           {/snippet}

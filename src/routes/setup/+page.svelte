@@ -1,5 +1,5 @@
 <script lang="ts">
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import { enhance } from '$app/forms';
   import pickedFolder from '$lib/stores/folderPicker';
   import Folder from './Folder.svelte';
@@ -31,10 +31,10 @@
   });
 </script>
 
-<div class="flex h-full flex-col items-center rounded-md bg-zinc-900/95 p-4">
+<div class="flex h-full flex-col items-center rounded-xl bg-zinc-900/95 p-4">
   {#if loading}
     <div class="flex h-full w-full items-center justify-center">
-      <RoundRefresh class="text-5xl text-primary motion-safe:animate-spin" />
+      <RoundRefresh class="text-primary text-5xl motion-safe:animate-spin" />
       <div class="text-3xl font-bold">Loading...</div>
     </div>
   {:else}
@@ -58,13 +58,13 @@
           };
         }
       }}
-      class="flex h-fit max-h-full w-full max-w-xl flex-col items-center overflow-hidden rounded-md bg-zinc-600/10"
+      class="flex h-fit max-h-full w-full max-w-xl flex-col items-center overflow-hidden rounded-xl bg-zinc-600/10"
     >
       {#if data.hasOwner}
-        <div class="flex w-full items-center justify-between pe-4 ps-2">
+        <div class="flex w-full items-center justify-between ps-2 pe-4">
           <div class="w-full p-2 text-lg font-bold">Database has an owner account already</div>
           <button
-            class="whitespace-nowrap rounded-md bg-rose-600 px-2 py-1 text-sm font-semibold text-white transition-all hover:bg-rose-700"
+            class="rounded-md bg-rose-600 px-2 py-1 text-sm font-semibold whitespace-nowrap text-white transition-all hover:bg-rose-700"
             formaction="?/deleteowner"
             use:vibrate
           >
@@ -77,7 +77,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             name="username"
             autocomplete="off"
             required
@@ -87,7 +87,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="email"
             name="email"
             autocomplete="off"
@@ -98,7 +98,7 @@
         <label class="w-full px-4 text-sm text-zinc-300">
           <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="password"
             name="password"
             required
@@ -142,7 +142,7 @@
         class:shadow-md-top={scrolledToBottom}
       >
         <button
-          class="m-2 rounded-md bg-primary px-2 py-1 font-bold text-zinc-300 transition-colors hover:bg-primary/80"
+          class="bg-primary hover:bg-primary/80 m-2 rounded-md px-2 py-1 font-bold text-zinc-300 transition-colors"
           type="submit"
           use:vibrate
         >

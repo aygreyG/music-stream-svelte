@@ -2,9 +2,9 @@
   import Folder from './Folder.svelte';
   import type { FolderNode } from '$lib/shared/types';
   import pickedFolder from '$lib/stores/folderPicker';
-  import FolderOpenRounded from 'virtual:icons/material-symbols-light/folder-open-rounded';
-  import FolderRounded from 'virtual:icons/material-symbols-light/folder-rounded';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import FolderOpenRounded from '~icons/material-symbols-light/folder-open-rounded';
+  import FolderRounded from '~icons/material-symbols-light/folder-rounded';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import { slide } from 'svelte/transition';
   import { tick } from 'svelte';
   import { vibrate } from '$lib/actions/vibrate';

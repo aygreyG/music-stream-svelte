@@ -1,4 +1,4 @@
-import type { Album, Artist, Prisma } from '@prisma/client';
+import type { Album, Artist, Prisma } from '../../generated/prisma-client/client';
 
 export type SignedInUser = Prisma.UserGetPayload<{
   select: {
@@ -10,9 +10,6 @@ export type SignedInUser = Prisma.UserGetPayload<{
     updatedAt: true;
     playlists: {
       include: { tracks: true };
-    };
-    themes: {
-      orderBy: { createdAt: 'desc' };
     };
   };
 }>;

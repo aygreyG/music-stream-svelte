@@ -1,12 +1,12 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { crossfade } from '$lib/transitions/crossfade';
-  import type { Prisma } from '@prisma/client';
   import { fade } from 'svelte/transition';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
-  import RoundCheckCircle from 'virtual:icons/ic/round-check-circle';
-  import TrashFill from 'virtual:icons/iconamoon/trash-fill';
+  import RoundCheckCircle from '~icons/ic/round-check-circle';
+  import TrashFill from '~icons/iconamoon/trash-fill';
   import { vibrate } from '$lib/actions/vibrate';
+  import type { Prisma } from '../../../../generated/prisma-client/client';
 
   interface Props {
     playlist: Prisma.PlaylistGetPayload<{
@@ -15,7 +15,19 @@
         id: true;
         tracks: {
           select: {
-            album: { select: { id: true; albumArtAccent: true; title: true; albumArtId: true } };
+            album: {
+              select: {
+                id: true;
+                title: true;
+                albumArtId: true;
+                albumArtDarkMuted: true;
+                albumArtVibrant: true;
+                albumArtMuted: true;
+                albumArtLightVibrant: true;
+                albumArtLightMuted: true;
+                albumArtDarkVibrant: true;
+              };
+            };
           };
         };
       };
@@ -26,7 +38,17 @@
   let { playlist, selected = false }: Props = $props();
 
   const albumSet: Prisma.AlbumGetPayload<{
-    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+    select: {
+      id: true;
+      title: true;
+      albumArtId: true;
+      albumArtDarkMuted: true;
+      albumArtVibrant: true;
+      albumArtMuted: true;
+      albumArtLightVibrant: true;
+      albumArtLightMuted: true;
+      albumArtDarkVibrant: true;
+    };
   }>[] = [];
   let nameInput: HTMLInputElement | null = $state(null);
   let playlistName: string = $state(playlist.name);
@@ -50,7 +72,7 @@
 </script>
 
 <form
-  class="flex h-full w-full flex-col items-center justify-between overflow-clip rounded-md bg-zinc-950/20"
+  class="flex h-full w-full flex-col items-center justify-between overflow-clip rounded-xl bg-zinc-950/20"
   title={playlist.name}
   action="?/update"
   method="POST"
@@ -83,7 +105,7 @@
     class="flex h-3/4 w-full flex-none items-center justify-center px-2 pt-2"
     out:send|global={{ key: playlist.id, duration: 300 }}
   >
-    <div class="aspect-square h-full overflow-clip rounded-md">
+    <div class="aspect-square h-full overflow-clip rounded-xl">
       <PlaylistImage {albumSet} />
     </div>
   </a>
@@ -95,7 +117,7 @@
       bind:this={nameInput}
       bind:value={playlistName}
       name="name"
-      class="w-full overflow-hidden text-ellipsis whitespace-nowrap rounded-md border-none bg-transparent px-6 py-0 text-center outline-none transition-all focus-visible:bg-zinc-600 focus-visible:ring-2 focus-visible:ring-primary"
+      class="focus-visible:ring-primary w-full overflow-hidden rounded-md border-none bg-transparent px-6 py-0 text-center text-ellipsis whitespace-nowrap outline-hidden transition-all focus-visible:bg-zinc-600 focus-visible:ring-2"
       onblur={() => {
         if (playlistName === '') {
           playlistName = playlist.name;
@@ -113,14 +135,14 @@
       <button
         use:vibrate
         transition:fade={{ duration: 200 }}
-        class="absolute bottom-0 right-2"
+        class="absolute right-2 bottom-0"
         type="submit"
       >
         <RoundCheckCircle class="text-xl text-green-600/80" />
       </button>
     {:else}
       <button
-        class="absolute bottom-0 right-2 text-rose-700/80"
+        class="absolute right-2 bottom-0 text-rose-700/80"
         formaction="?/delete"
         type="submit"
         use:vibrate

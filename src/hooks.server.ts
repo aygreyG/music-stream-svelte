@@ -60,6 +60,7 @@ const handle: Handle = async ({ event, resolve }) => {
     try {
       const user = await validateToken(authToken);
       event.locals.user = user;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       event.locals.user = null;
       event.cookies.delete(AUTH_COOKIE, { path: '/' });

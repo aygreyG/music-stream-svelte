@@ -1,5 +1,5 @@
 import prisma from '$lib/server/prisma.js';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '../../../../../generated/prisma-client/client';
 import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals, params }) => {
@@ -30,7 +30,12 @@ export const load = async ({ locals, params }) => {
               id: true,
               title: true,
               albumArtId: true,
-              albumArtAccent: true,
+              albumArtVibrant: true,
+              albumArtMuted: true,
+              albumArtDarkVibrant: true,
+              albumArtDarkMuted: true,
+              albumArtLightVibrant: true,
+              albumArtLightMuted: true,
               albumArt: true,
               albumArtist: {
                 select: {
@@ -62,7 +67,17 @@ export const load = async ({ locals, params }) => {
   }
 
   const albumSet: Prisma.AlbumGetPayload<{
-    select: { id: true; title: true; albumArtId: true; albumArtAccent: true };
+    select: {
+      id: true;
+      title: true;
+      albumArtId: true;
+      albumArtDarkMuted: true;
+      albumArtVibrant: true;
+      albumArtMuted: true;
+      albumArtLightVibrant: true;
+      albumArtLightMuted: true;
+      albumArtDarkVibrant: true;
+    };
   }>[] = [];
 
   for (const track of playlist.tracks) {

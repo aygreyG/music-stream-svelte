@@ -3,8 +3,8 @@
   import type { Snippet } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { fly, slide } from 'svelte/transition';
-  import RoundArrowDropDown from 'virtual:icons/ic/round-arrow-drop-down';
-  import RoundArrowDropUp from 'virtual:icons/ic/round-arrow-drop-up';
+  import RoundArrowDropDown from '~icons/ic/round-arrow-drop-down';
+  import RoundArrowDropUp from '~icons/ic/round-arrow-drop-up';
 
   interface Props {
     title?: string;
@@ -17,8 +17,8 @@
 </script>
 
 <button
-  class="mt-4 flex w-full items-center justify-between rounded-t-md bg-zinc-600/20 p-2 pl-4 text-xl font-bold transition-all hover:bg-zinc-600/30"
-  class:rounded-b-md={!show}
+  class="mt-4 flex w-full items-center justify-between rounded-t-xl bg-zinc-600/20 p-2 pl-4 text-xl font-bold transition-all hover:bg-zinc-600/30"
+  class:rounded-b-xl={!show}
   class:shadow-md={show}
   class:delay-100={!show}
   in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay }}
@@ -38,7 +38,7 @@
 {#if show}
   <div
     transition:slide={{ duration: 300, easing: quintOut }}
-    class="w-full flex-none rounded-b-md bg-zinc-600/10"
+    class="w-full flex-none rounded-b-xl bg-zinc-600/10"
   >
     {@render children?.()}
   </div>

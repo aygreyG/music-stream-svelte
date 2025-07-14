@@ -3,7 +3,7 @@
   import AlbumLink from '../AlbumLink.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import { enhance } from '$app/forms';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import type { SearchAlbum } from '$lib/shared/types';
 
   interface Props {
@@ -47,7 +47,7 @@
 
 <div
   out:fade|global={{ duration }}
-  class="my-2 bg-gradient-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
+  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
 >
   Albums:
 </div>
@@ -61,7 +61,7 @@
     <div class="flex items-center justify-center pb-2">
       <button
         use:vibrate
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         onclick={() => ontypechange()}
       >
         Show all ({total - albums.length} more)
@@ -91,7 +91,7 @@
       <input type="hidden" name="query" value={query} />
 
       <button
-        class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+        class="rounded-xl bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
         type="submit"
         use:vibrate
         disabled={loading}
@@ -100,7 +100,7 @@
           Load more ({total - albums.length} left)
         </div>
         {#if loading}
-          <div class="absolute left-1/2 top-1 -translate-x-1/2">
+          <div class="absolute top-1 left-1/2 -translate-x-1/2">
             <RoundRefresh class="animate-spin text-xl" />
           </div>
         {/if}

@@ -6,7 +6,7 @@
   import { onMount } from 'svelte';
   import { flip } from 'svelte/animate';
   import { vibrate } from '$lib/actions/vibrate';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import type { PageData } from './$types';
 
   interface Props {
@@ -28,9 +28,16 @@
   <div class="flex h-full flex-col gap-2 overflow-auto p-2">
     <div class="p-2 text-center text-xl font-bold">Admin dashboard</div>
 
-    <div class="flex flex-none flex-col overflow-clip rounded-md">
+    <div class="flex flex-none flex-col overflow-clip rounded-xl">
       <div
         in:fly|global={{ duration: 500, x: -20, easing: quintOut }}
+        class="flex items-center justify-between bg-zinc-600/10 p-4"
+      >
+        <div>App version</div>
+        <div>{data.APP_VERSION}</div>
+      </div>
+      <div
+        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 50 }}
         class="flex items-center justify-between bg-zinc-600/10 p-4"
       >
         <div>Start library sync</div>
@@ -96,7 +103,7 @@
       class="flex w-full justify-center"
     >
       <form
-        class="flex w-full max-w-lg select-none flex-col gap-2 rounded-md bg-zinc-600/10 p-4"
+        class="flex w-full max-w-lg flex-col gap-2 rounded-xl bg-zinc-600/10 p-4 select-none"
         method="POST"
         action="?/create"
         use:enhance={() => {
@@ -110,7 +117,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Username</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             name="username"
             required
           />
@@ -118,7 +125,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Email</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="email"
             name="email"
             required
@@ -127,7 +134,7 @@
         <label>
           <div class="text-sm font-bold text-zinc-400">Password</div>
           <input
-            class="w-full rounded-md border-none bg-zinc-600/20 px-2 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+            class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="password"
             name="password"
             required
@@ -136,14 +143,14 @@
         <label class="flex gap-2">
           <div class="text-sm font-bold text-zinc-400">Admin</div>
           <input
-            class="my-auto rounded border-zinc-300/10 bg-zinc-600/20 text-primary transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-primary/50"
+            class="text-primary focus-visible:ring-primary/50 my-auto rounded-sm border-zinc-300/10 bg-zinc-600/20 transition-colors hover:bg-zinc-600/50 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2"
             type="checkbox"
             name="admin"
             id="admin"
           />
         </label>
         <button
-          class="mt-2 w-full self-center rounded-md bg-primary px-4 py-1 font-semibold transition-colors hover:bg-primary/80 disabled:opacity-50 disabled:hover:bg-primary"
+          class="bg-primary hover:bg-primary/80 disabled:hover:bg-primary text-accessible mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
           type="submit"
           use:vibrate
           disabled={loading}
@@ -160,12 +167,12 @@
     </div>
 
     {#if data.users}
-      <div class="flex flex-col rounded-md">
+      <div class="flex flex-col rounded-xl">
         {#each data.users as usr, index (usr.id)}
           <div
             class="overflow-clip bg-zinc-600/10"
-            class:rounded-t-md={index === 0}
-            class:rounded-b-md={index === data.users.length - 1}
+            class:rounded-t-xl={index === 0}
+            class:rounded-b-xl={index === data.users.length - 1}
             in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 + 100 * index }}
             animate:flip={{ duration: 200 }}
           >
@@ -174,5 +181,48 @@
         {/each}
       </div>
     {/if}
+
+    <div
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 400 }}
+      class="p-2 text-center text-xl font-bold"
+    >
+      Logs
+    </div>
+    <div
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 450 }}
+      class="flex flex-col gap-1"
+    >
+      {#await data.logs}
+        <div>Loading...</div>
+      {:then logs}
+        {#if logs && logs.length > 0}
+          <div>{logs.length} line{logs.length > 1 ? 's' : ''}</div>
+          <div class="flex max-h-96 flex-col gap-1 overflow-y-auto rounded-xl">
+            {#each logs as log, index (index)}
+              <div
+                class="rounded-xl bg-zinc-600/10 px-2 py-1 text-sm"
+                animate:flip={{ duration: 200 }}
+              >
+                <span
+                  class={[
+                    log.level === 'error' && 'text-red-500',
+                    log.level === 'warn' && 'text-yellow-500',
+                    log.level === 'info' && 'text-blue-500'
+                  ]}
+                >
+                  {log.level.toUpperCase()}
+                </span>
+                {#if log.timestamp}
+                  - <span class="text-zinc-400">{log.timestamp}</span>
+                {/if}
+                - {log.message}
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <div class="p-2 text-center text-sm">No logs</div>
+        {/if}
+      {/await}
+    </div>
   </div>
 {/if}

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
-  import RoundSearch from 'virtual:icons/ic/round-search';
-  import RoundAdd from 'virtual:icons/ic/round-add';
+  import RoundSearch from '~icons/ic/round-search';
+  import RoundAdd from '~icons/ic/round-add';
   import { enhance } from '$app/forms';
   import PlaylistElement from './PlaylistElement.svelte';
   import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
   import { vibrate } from '$lib/actions/vibrate';
-  import RoundRefresh from 'virtual:icons/ic/round-refresh';
+  import RoundRefresh from '~icons/ic/round-refresh';
   import type { ActionData, PageData } from './$types';
 
   interface Props {
@@ -31,7 +31,7 @@
 
 <div
   out:fade|global={{ duration: 150 }}
-  class="absolute left-0 top-0 flex h-full w-full flex-col overflow-hidden"
+  class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
 >
   <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
     Playlists
@@ -42,9 +42,9 @@
     class="flex w-full flex-col px-8 py-1 transition-shadow duration-300"
     class:shadow-md={scrolled}
   >
-    <label class="flex w-full items-center rounded-md backdrop-blur-md">
+    <label class="flex w-full items-center rounded-xl backdrop-blur-md">
       <input
-        class="w-full rounded-md border-none bg-zinc-600/30 py-1 outline-none transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 focus-visible:ring-primary"
+        class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={searchString}
         name="search"
@@ -76,7 +76,7 @@
       <button
         in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
         type="submit"
-        class="flex h-36 w-36 items-center justify-center rounded-md bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
+        class="flex h-36 w-36 items-center justify-center rounded-xl bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
         use:vibrate
         disabled={loading}
       >
