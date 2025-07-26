@@ -1,3 +1,9 @@
+# [1.1.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2025-07-26)
+
+### Features
+
+- better transition for album links on albums page ([fc23938](https://github.com/aygreyG/music-stream-svelte/commit/fc239389b1bb98644040512ad292137ac1e1b703))
+
 # [1.1.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2025-07-26)
 
 ### Bug Fixes
