@@ -1,13 +1,16 @@
 export function observeVisibility(
   node: HTMLElement | Element,
-  { onVisible }: { onVisible: () => void }
+  { onVisible, onHidden }: { onVisible?: () => void; onHidden?: () => void }
 ) {
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
       if (entry.isIntersecting) {
-        onVisible();
+        onVisible?.();
         break;
       }
+    }
+    if (onHidden && !entries.some((entry) => entry.isIntersecting)) {
+      onHidden();
     }
   });
 
