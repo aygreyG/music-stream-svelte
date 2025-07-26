@@ -114,3 +114,22 @@ export function getLog() {
     });
   });
 }
+
+export const errorToNull = async <T>(
+  promise: Promise<T>,
+  errorMessage?: string,
+  includeError = false
+): Promise<T | null> => {
+  try {
+    return await promise;
+  } catch (e) {
+    let em = `Error occurred: ${errorMessage || e}`;
+
+    if (includeError) {
+      em += ` - Thrown Error: ${e}`;
+    }
+
+    serverLog(em, 'error');
+    return null;
+  }
+};
