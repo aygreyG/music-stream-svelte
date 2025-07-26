@@ -1,3 +1,9 @@
+# [1.1.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2025-07-26)
+
+### Bug Fixes
+
+- stop app crashes because of bad files ([#184](https://github.com/aygreyG/music-stream-svelte/issues/184)) ([397062b](https://github.com/aygreyG/music-stream-svelte/commit/397062b51102ec506aacd75c46a103e944d61d4d)), closes [#183](https://github.com/aygreyG/music-stream-svelte/issues/183)
+
 # [1.1.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0...v1.1.0-dev.1) (2025-07-14)
 
 ### Bug Fixes
