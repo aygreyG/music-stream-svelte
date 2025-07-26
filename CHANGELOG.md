@@ -1,3 +1,9 @@
+# [1.1.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2025-07-26)
+
+### Features
+
+- add monochrome icon ([#185](https://github.com/aygreyG/music-stream-svelte/issues/185)) ([5f990d0](https://github.com/aygreyG/music-stream-svelte/commit/5f990d04179d4179447cfbbaa2681d5728e983ce)), closes [#178](https://github.com/aygreyG/music-stream-svelte/issues/178)
+
 # [1.1.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2025-07-26)
 
 ### Features
