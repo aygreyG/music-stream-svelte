@@ -1,3 +1,9 @@
+# [1.1.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.4...v1.1.0-dev.5) (2025-08-13)
+
+### Features
+
+- add more complex cache ([#186](https://github.com/aygreyG/music-stream-svelte/issues/186)) ([5f27a66](https://github.com/aygreyG/music-stream-svelte/commit/5f27a6606abee6e82bcb20c8056c564ea245c34d)), closes [#149](https://github.com/aygreyG/music-stream-svelte/issues/149)
+
 # [1.1.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2025-07-26)
 
 ### Features
