@@ -54,6 +54,7 @@ const handle: Handle = async ({ event, resolve }) => {
     redirect(303, '/');
   }
 
+  event.locals.serverSettings = serverSettings;
   const authToken = event.cookies.get(AUTH_COOKIE);
 
   if (authToken) {
@@ -81,6 +82,16 @@ const handle: Handle = async ({ event, resolve }) => {
     (!event.locals.user || event.locals.user.role === ROLE.USER)
   ) {
     redirect(303, '/');
+  }
+
+  // Check if request has cacheKey and if it is the same as serverSettings cacheKey
+  try {
+    const cacheKey = event.request.headers.get('cache-key');
+    if (serverSettings && cacheKey && BigInt(cacheKey) === serverSettings.cacheKey) {
+      return new Response(null, { status: 304 });
+    }
+  } catch (e) {
+    serverLog(`Error checking cache key: ${e}`, 'warn');
   }
 
   const response = await resolve(event);

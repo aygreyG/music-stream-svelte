@@ -52,3 +52,25 @@ export async function getServerSettings() {
 
   return serverSettings;
 }
+
+export async function updateCacheKey() {
+  if (!serverSettings) {
+    serverSettings = await getServerSettings();
+  }
+
+  if (serverSettings) {
+    const updatedSettings = await prisma.serverSettings.update({
+      where: {
+        id: serverSettings.id
+      },
+      data: {
+        cacheKey: BigInt(Date.now())
+      }
+    });
+
+    serverSettings = updatedSettings;
+    return updatedSettings;
+  }
+
+  throw new Error('Server settings not found');
+}

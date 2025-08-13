@@ -18,7 +18,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import { beforeNavigate, invalidate } from '$app/navigation';
   import type { SvelteMediaTimeRange } from 'svelte/elements';
-  import { navigating } from '$app/state';
+  import { navigating, page } from '$app/state';
 
   interface Props {
     user?: SignedInUser | null;
@@ -365,7 +365,12 @@
         if (diff < 2 && diff > 0) {
           listenedDuration += diff;
           if (
-            ((listenedDuration > 1 && !isSlowConnection()) || listenedDuration > 8) &&
+            // Only send in a second if we are on the profile page
+            ((listenedDuration > 1 &&
+              page.url.pathname === '/profile' &&
+              !isSlowConnection() &&
+              navigating.to === null) ||
+              listenedDuration > 8) &&
             navigating.to === null &&
             audioPlayer.currentTrack
           ) {
