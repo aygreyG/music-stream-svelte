@@ -1,8 +1,9 @@
 import prisma from '$lib/server/prisma.js';
+import { updateCacheKey } from '$lib/server/serverSettings';
 import type { Prisma } from '../../../../../generated/prisma-client/client';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ locals, params, setHeaders }) => {
   const { id } = params;
 
   const playlist = await prisma.playlist.findFirst({
@@ -88,6 +89,12 @@ export const load = async ({ locals, params }) => {
     if (albumSet.length === 4) break;
   }
 
+  if (locals.serverSettings?.cacheKey !== undefined) {
+    setHeaders({
+      'cache-key': locals.serverSettings.cacheKey.toString()
+    });
+  }
+
   return {
     user: locals.user,
     playlist,
@@ -122,6 +129,8 @@ export const actions = {
         id: true
       }
     });
+
+    await updateCacheKey();
 
     return {
       playlistId: playlist.id

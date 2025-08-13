@@ -15,7 +15,6 @@ const NON_CACHEABLE = [
   '/loading',
   '/login',
   '/logout',
-  '/playlist',
   '/profile'
 ];
 const CACHE_FIRST = ['/api/image'];
@@ -32,11 +31,6 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
         }
       })
     );
-
-    // Enable navigation preload if supported
-    if (self.registration.navigationPreload) {
-      await self.registration.navigationPreload.enable();
-    }
   };
 
   event.waitUntil(activate());
@@ -71,21 +65,33 @@ async function respond(event: FetchEvent): Promise<Response> {
       return cachedResponse!;
     }
 
-    const preloadedResponse = await event.preloadResponse;
-
-    if (preloadedResponse) {
-      return preloadedResponse;
-    }
-
     const controller = new AbortController();
 
     const timeoutId = setTimeout(() => {
       controller.abort();
     }, TIMEOUT_MS);
 
+    const cacheKey = cachedResponse?.headers.get('cache-key');
+
+    const headers = new Headers(event.request.headers);
+    if (cacheKey) {
+      headers.set('cache-key', cacheKey);
+    }
+
     const response = await fetch(event.request, {
-      signal: controller.signal
+      signal: controller.signal,
+      headers
     });
+
+    if (response.status === 304) {
+      console.log('Serving from cache:', event.request.url);
+      return cachedResponse!;
+    } else {
+      const newCacheKey = response.headers.get('cache-key');
+      if (newCacheKey) {
+        cache.put(event.request, response.clone());
+      }
+    }
 
     clearTimeout(timeoutId);
 

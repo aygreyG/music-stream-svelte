@@ -124,6 +124,7 @@ model Tag {
 
 model ServerSettings {
   id            String       @id @default(uuid())
+  cacheKey      BigInt       @default(0) // On update it becomes a timestamp to make sure it is always unique
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   musicFolder   String

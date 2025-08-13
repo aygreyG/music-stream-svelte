@@ -2,7 +2,7 @@ import prisma from './prisma';
 import { parseFile, type IAudioMetadata } from 'music-metadata';
 import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
 import { join } from 'path';
-import { getServerSettings } from './serverSettings';
+import { getServerSettings, updateCacheKey } from './serverSettings';
 import { getPalette, type Palette } from './images';
 import { errorToNull, serverLog } from './utils';
 import type { Artist } from '../../generated/prisma-client/client';
@@ -98,6 +98,10 @@ export async function runLibrarySync() {
     });
 
     serverLog('Created ' + tracksCreated + ' track(s)');
+  }
+
+  if (count > 0 || tracksCreated > 0) {
+    await updateCacheKey();
   }
 
   inProgress = false;
@@ -374,6 +378,8 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
           albumArtLightMuted: palette.lightMuted
         }
       });
+
+      await updateCacheKey();
 
       serverLog(`Updated album art colors for album: ${album.title}`, 'info');
     }

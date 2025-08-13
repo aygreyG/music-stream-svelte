@@ -1,6 +1,7 @@
 import prisma from '$lib/server/prisma.js';
+import { updateCacheKey } from '$lib/server/serverSettings';
 
-export const load = async ({ locals }) => {
+export const load = async ({ locals, setHeaders }) => {
   const playlists = await prisma.playlist.findMany({
     where: {
       userId: locals.user?.id
@@ -31,6 +32,12 @@ export const load = async ({ locals }) => {
     }
   });
 
+  if (locals.serverSettings?.cacheKey !== undefined) {
+    setHeaders({
+      'cache-key': locals.serverSettings.cacheKey.toString()
+    });
+  }
+
   return {
     user: locals.user,
     playlists,
@@ -46,6 +53,8 @@ export const actions = {
     if (!id || !locals.user) {
       return;
     }
+
+    await updateCacheKey();
 
     await prisma.playlist.delete({
       where: {
@@ -79,6 +88,8 @@ export const actions = {
       }
     });
 
+    await updateCacheKey();
+
     return {
       playlist
     };
@@ -101,5 +112,7 @@ export const actions = {
         name
       }
     });
+
+    await updateCacheKey();
   }
 };
