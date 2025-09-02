@@ -6,6 +6,8 @@
 
 # [1.2.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0...v1.2.0-dev.1) (2025-09-02)
 
+# [1.2.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0...v1.2.0) (2025-09-02)
+
 ### Bug Fixes
 
 - logs folder not existing throws error ([cc180af](https://github.com/aygreyG/music-stream-svelte/commit/cc180afc98fbbc220a6c5e5a6a3c869d8ed61ca5))
