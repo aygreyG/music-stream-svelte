@@ -1,27 +1,20 @@
 import { error } from '@sveltejs/kit';
-import { createReadStream } from 'fs';
+import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
 
 export const GET = async ({ params }) => {
   const { filename } = params;
 
   // creating a readable stream from the log file
-  const file = createReadStream(`db/logs/${filename}`);
-
-  if (!file) {
+  if (!existsSync(`db/logs/${filename}`)) {
     error(404, 'Log file not found');
   }
 
-  const stream = new ReadableStream({
-    async start(controller) {
-      for await (const chunk of file) {
-        controller.enqueue(chunk);
-      }
-    }
-  });
+  const file = await readFile(`db/logs/${filename}`);
 
   const contentType = filename.split('.').pop() === 'zip' ? 'application/zip' : 'text/plain';
 
-  return new Response(stream, {
+  return new Response(file, {
     headers: {
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Type': contentType
