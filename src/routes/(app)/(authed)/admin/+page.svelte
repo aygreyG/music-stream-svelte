@@ -8,6 +8,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import RoundRefresh from '~icons/ic/round-refresh';
   import type { PageData } from './$types';
+  import Accordion from '$lib/components/Accordion.svelte';
 
   interface Props {
     data: PageData;
@@ -24,11 +25,38 @@
   });
 </script>
 
+{#snippet logFileRow({ first, last, file }: { first: boolean; last: boolean; file: string })}
+  <div
+    class={[
+      'my-1 flex items-center justify-between rounded-md bg-zinc-600/10 px-2 py-1 text-sm',
+      first && 'mt-2',
+      last && 'mb-2'
+    ]}
+  >
+    <div>
+      {file}
+      {#if file.includes(new Date().toISOString().split('T')[0])}
+        (latest)
+      {/if}
+    </div>
+    <a
+      class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
+      data-sveltekit-preload-data="false"
+      href={`/admin/download/logs/${file}`}
+      download
+      target="_blank"
+      use:vibrate
+    >
+      Download
+    </a>
+  </div>
+{/snippet}
+
 {#if animate}
   <div class="flex h-full flex-col gap-2 overflow-auto p-2">
     <div class="p-2 text-center text-xl font-bold">Admin dashboard</div>
 
-    <div class="flex flex-none flex-col overflow-clip rounded-xl">
+    <div class="mx-auto flex w-full max-w-3xl flex-none flex-col overflow-clip rounded-xl">
       <div
         in:fly|global={{ duration: 500, x: -20, easing: quintOut }}
         class="flex items-center justify-between bg-zinc-600/10 p-4"
@@ -188,19 +216,60 @@
     >
       Logs
     </div>
-    <div
-      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 450 }}
-      class="flex flex-col gap-1"
-    >
-      {#await data.logs}
-        <div>Loading...</div>
-      {:then logs}
-        {#if logs && logs.length > 0}
-          <div>{logs.length} line{logs.length > 1 ? 's' : ''}</div>
-          <div class="flex max-h-96 flex-col gap-1 overflow-y-auto rounded-xl">
-            {#each logs as log, index (index)}
+
+    <div class="mx-auto w-full max-w-3xl">
+      <Accordion delay={400} title="Errors/Warnings ({data.dbLogs?.length || 0})">
+        {#if data.dbLogs && data.dbLogs.length > 0}
+          <div class="max-h-96 overflow-y-auto px-2">
+            {#each data.dbLogs as log, index (index)}
               <div
-                class="rounded-xl bg-zinc-600/10 px-2 py-1 text-sm"
+                class={[
+                  'my-1 rounded-md bg-zinc-600/10 px-2 py-1 text-sm',
+                  index === 0 && 'mt-2',
+                  index === data.dbLogs.length - 1 && 'mb-2'
+                ]}
+                animate:flip={{ duration: 200 }}
+              >
+                <span
+                  class={[
+                    log.level === 'error' && 'text-red-500',
+                    log.level === 'warn' && 'text-yellow-500'
+                  ]}
+                >
+                  {log.level.toUpperCase()}
+                </span>
+                {#if log.createdAt}
+                  {@const timestamp =
+                    log.createdAt.toLocaleString('en-GB', {
+                      year: '2-digit',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit',
+                      hour12: false
+                    }) + `.${log.createdAt.getMilliseconds()}`}
+                  - <span class="text-zinc-400">{timestamp}</span>
+                {/if}
+                - {log.message}
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <div class="p-2 text-center text-sm">No errors/warnings</div>
+        {/if}
+      </Accordion>
+
+      <Accordion delay={450} title="Latest logs ({data.logs?.length || 0} lines)">
+        {#if data.logs && data.logs.length > 0}
+          <div class="max-h-96 overflow-y-auto px-2">
+            {#each data.logs as log, index (index)}
+              <div
+                class={[
+                  'my-1 rounded-md bg-zinc-600/10 px-2 py-1 text-sm',
+                  index === 0 && 'mt-2',
+                  index === data.logs.length - 1 && 'mb-2'
+                ]}
                 animate:flip={{ duration: 200 }}
               >
                 <span
@@ -222,7 +291,40 @@
         {:else}
           <div class="p-2 text-center text-sm">No logs</div>
         {/if}
-      {/await}
+      </Accordion>
+
+      <Accordion
+        delay={500}
+        title="Log Files ({(data.logFiles?.length || 0) + (data.logZips?.length || 0)} files)"
+      >
+        <div class="max-h-96 overflow-y-auto px-2">
+          {#if data.logFiles && data.logFiles.length > 0}
+            {#each data.logFiles as file, index (file)}
+              {@render logFileRow({
+                file,
+                first: index === 0,
+                last: index === data.logFiles.length - 1
+              })}
+            {/each}
+          {:else}
+            <div class="p-2 text-center text-sm">No log files</div>
+          {/if}
+
+          <div class="w-full px-2">Archived Logs</div>
+
+          {#if data.logZips && data.logZips.length > 0}
+            {#each data.logZips as file, index (file)}
+              {@render logFileRow({
+                file,
+                first: index === 0,
+                last: index === data.logZips.length - 1
+              })}
+            {/each}
+          {:else}
+            <div class="p-2 text-center text-sm">No archived logs</div>
+          {/if}
+        </div>
+      </Accordion>
     </div>
   </div>
 {/if}

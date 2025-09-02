@@ -157,3 +157,10 @@ model Theme {
   userId              String
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
+
+model Log {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  level     String
+  message   String
+}

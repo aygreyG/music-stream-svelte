@@ -12,3 +12,4 @@ app.db
 *-journal
 *generated
 *.log
+db/logs/*.zip

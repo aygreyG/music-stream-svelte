@@ -1,9 +1,13 @@
 import type { FolderNode } from '$lib/shared/types';
-import { createReadStream, existsSync } from 'fs';
-import { lstat, readdir, appendFile } from 'fs/promises';
+import { createReadStream, createWriteStream, existsSync } from 'fs';
+import { lstat, readdir, appendFile, rm } from 'fs/promises';
 import { join } from 'path';
+import prisma from './prisma';
+import archiver from 'archiver';
 
-const LOG_FILE = 'db/server.log';
+const LOG_FILE = 'db/logs/<placeholder>-server.log';
+const ZIP_FILE = 'db/logs/<placeholder>-server-log.zip';
+const MAX_LOG_FILES = 10;
 
 type LogLevel = 'info' | 'warn' | 'error';
 
@@ -41,7 +45,7 @@ const colorMap = {
 
 const resetColor = '\x1b[0m';
 
-export function serverLog(message: string | object, level: LogLevel = 'info') {
+export async function serverLog(message: string | object, level: LogLevel = 'info') {
   const now = new Date();
   const timestamp =
     now.toLocaleString('en-GB', {
@@ -61,7 +65,50 @@ export function serverLog(message: string | object, level: LogLevel = 'info') {
     `${colorMap[level]}[${level.toUpperCase()}]${resetColor}[${timestamp}] ${formattedMessage}`
   );
 
-  appendFile(LOG_FILE, logEntry).catch((err) => {
+  if (level !== 'info') {
+    await prisma.log.create({
+      data: {
+        level,
+        message: formattedMessage
+      }
+    });
+  }
+
+  const logFolderFiles = await readdir('db/logs');
+  const logFiles = logFolderFiles.filter((file) => file.endsWith('-server.log'));
+  if (logFiles.length > MAX_LOG_FILES) {
+    try {
+      const filesToZip = logFiles.slice(0, logFiles.length - MAX_LOG_FILES);
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      const fromTo = filesToZip.map((f) => f.replace('-server.log', '')).sort();
+      const output = createWriteStream(
+        ZIP_FILE.replace('<placeholder>', `${fromTo[0]}-${fromTo[fromTo.length - 1]}`)
+      );
+
+      archive.on('error', (err) => {
+        throw err;
+      });
+
+      archive.pipe(output);
+
+      for (const file of filesToZip) {
+        archive.file(join('db/logs', file), { name: file });
+      }
+
+      await archive.finalize();
+      // delete zipped files
+      for (const file of filesToZip) {
+        await rm(join('db/logs', file));
+      }
+    } catch (e) {
+      console.error(`Failed to archive old log files: ${e}`);
+    }
+  }
+
+  // we should append to a logfile that is for the current day
+  const logFile = LOG_FILE.replace('<placeholder>', now.toISOString().split('T')[0]);
+
+  appendFile(logFile, logEntry).catch((err) => {
     console.error(`Failed to write to log file: ${err}`);
   });
 }
@@ -74,12 +121,13 @@ export function getLog() {
       message: string;
     }[]
   >((resolve, reject) => {
-    if (!existsSync(LOG_FILE)) {
+    const logFile = LOG_FILE.replace('<placeholder>', new Date().toISOString().split('T')[0]);
+    if (!existsSync(logFile)) {
       serverLog('Log file does not exist so creating a new one.', 'info');
       return resolve([]);
     }
 
-    const logStream = createReadStream(LOG_FILE, { encoding: 'utf-8' });
+    const logStream = createReadStream(logFile, { encoding: 'utf-8' });
     let data = '';
 
     logStream.on('data', (chunk) => {
@@ -113,6 +161,16 @@ export function getLog() {
       reject(err);
     });
   });
+}
+
+export async function getLogFiles() {
+  const logFiles = await readdir('db/logs');
+  return logFiles.filter((file) => file.endsWith('-server.log'));
+}
+
+export async function getLogZips() {
+  const logZips = await readdir('db/logs');
+  return logZips.filter((file) => file.endsWith('-server-log.zip'));
 }
 
 export const errorToNull = async <T>(
