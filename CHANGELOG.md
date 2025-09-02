@@ -34,6 +34,30 @@
 
 - stop app crashes because of bad files ([#184](https://github.com/aygreyG/music-stream-svelte/issues/184)) ([397062b](https://github.com/aygreyG/music-stream-svelte/commit/397062b51102ec506aacd75c46a103e944d61d4d)), closes [#183](https://github.com/aygreyG/music-stream-svelte/issues/183)
 
+# [1.1.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0...v1.1.0) (2025-07-14)
+
+### Bug Fixes
+
+- album art change not updating properly ([1c7ce20](https://github.com/aygreyG/music-stream-svelte/commit/1c7ce200133dc73ad959e0a36586449c5a80dacd))
+- background peeking through rounded corners on album arts ([57e8d13](https://github.com/aygreyG/music-stream-svelte/commit/57e8d13fcb81d75d2f08781ec91b6bf930fdd84a))
+- missing prisma from dependencies ([a109496](https://github.com/aygreyG/music-stream-svelte/commit/a1094964275ee4052419f9c197117b646e4d684d))
+- move prisma client out of node modules and generate proper client ([4bf64e5](https://github.com/aygreyG/music-stream-svelte/commit/4bf64e52dfba0b5e364854ce43171907a4760932))
+- pnpx not generating prisma client ([1e6c047](https://github.com/aygreyG/music-stream-svelte/commit/1e6c047868128202139fdf1ecb71944db1a139e6))
+- prisma output ([287673a](https://github.com/aygreyG/music-stream-svelte/commit/287673a86115787b5a0784a5b486ffc81da21464))
+- prisma output path ([c87b933](https://github.com/aygreyG/music-stream-svelte/commit/c87b933a8c84ddd990fb28bc6e12e044da4b9637))
+- remove unnecessary indexing and update service worker ([#176](https://github.com/aygreyG/music-stream-svelte/issues/176)) ([b8c0bf3](https://github.com/aygreyG/music-stream-svelte/commit/b8c0bf370d469e4ccd7979bbb96ca146d1d20f18))
+- update non cached routes ([#174](https://github.com/aygreyG/music-stream-svelte/issues/174)) ([c2aed67](https://github.com/aygreyG/music-stream-svelte/commit/c2aed677ca39d3afba03e2920b908535c0778ec4)), closes [#173](https://github.com/aygreyG/music-stream-svelte/issues/173)
+
+### Features
+
+- add app version to profile and admin page to show up ([8514d21](https://github.com/aygreyG/music-stream-svelte/commit/8514d211a2d68c2a291135a517ccf22b173e44bf))
+- add logging to file and admin page ([#179](https://github.com/aygreyG/music-stream-svelte/issues/179)) ([98b2e44](https://github.com/aygreyG/music-stream-svelte/commit/98b2e440059a8946b054497c7f9ee6ce59f4d5a4))
+- create a palette out of albumart, update design ([a1ffc97](https://github.com/aygreyG/music-stream-svelte/commit/a1ffc97ca0fb46de419c4188b69334a301bfa67c))
+- update color management ([47c604d](https://github.com/aygreyG/music-stream-svelte/commit/47c604dfe4677a5b43e35b8c16a40cee97d1ffde))
+- update colors and add visualiyation ([0f834f4](https://github.com/aygreyG/music-stream-svelte/commit/0f834f46e1354988d922968219c441f62c7cc75d))
+- update readme ([1130b6c](https://github.com/aygreyG/music-stream-svelte/commit/1130b6c67868b2da019f88beb2c311dfae2001dc)), closes [#177](https://github.com/aygreyG/music-stream-svelte/issues/177)
+
+
 # [1.1.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0...v1.1.0-dev.1) (2025-07-14)
 
 ### Bug Fixes
