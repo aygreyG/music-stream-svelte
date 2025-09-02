@@ -1,3 +1,9 @@
+# [1.2.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.0-dev.1...v1.2.0-dev.2) (2025-09-02)
+
+### Bug Fixes
+
+- log download ([ed9ea42](https://github.com/aygreyG/music-stream-svelte/commit/ed9ea4225d4906b7cecb23e99ce9c3aaddc7c106))
+
 # [1.2.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0...v1.2.0-dev.1) (2025-09-02)
 
 ### Bug Fixes
