@@ -1,6 +1,6 @@
 import type { FolderNode } from '$lib/shared/types';
 import { createReadStream, createWriteStream, existsSync } from 'fs';
-import { lstat, readdir, appendFile, rm } from 'fs/promises';
+import { lstat, readdir, appendFile, rm, mkdir } from 'fs/promises';
 import { join } from 'path';
 import prisma from './prisma';
 import archiver from 'archiver';
@@ -74,8 +74,13 @@ export async function serverLog(message: string | object, level: LogLevel = 'inf
     });
   }
 
+  if (!existsSync('db/logs')) {
+    await mkdir('db/logs', { recursive: true });
+  }
+
   const logFolderFiles = await readdir('db/logs');
   const logFiles = logFolderFiles.filter((file) => file.endsWith('-server.log'));
+
   if (logFiles.length > MAX_LOG_FILES) {
     try {
       const filesToZip = logFiles.slice(0, logFiles.length - MAX_LOG_FILES);
@@ -108,6 +113,10 @@ export async function serverLog(message: string | object, level: LogLevel = 'inf
   // we should append to a logfile that is for the current day
   const logFile = LOG_FILE.replace('<placeholder>', now.toISOString().split('T')[0]);
 
+  if (!existsSync('db/logs')) {
+    await mkdir('db/logs', { recursive: true });
+  }
+
   appendFile(logFile, logEntry).catch((err) => {
     console.error(`Failed to write to log file: ${err}`);
   });
@@ -121,7 +130,16 @@ export function getLog() {
       message: string;
     }[]
   >((resolve, reject) => {
+    if (!existsSync('db/logs')) {
+      mkdir('db/logs', { recursive: true }).then(() => {
+        serverLog('Log folder did not exist so created a new one.', 'info');
+        resolve([]);
+      });
+      return;
+    }
+
     const logFile = LOG_FILE.replace('<placeholder>', new Date().toISOString().split('T')[0]);
+
     if (!existsSync(logFile)) {
       serverLog('Log file does not exist so creating a new one.', 'info');
       return resolve([]);
@@ -164,11 +182,19 @@ export function getLog() {
 }
 
 export async function getLogFiles() {
+  if (!existsSync('db/logs')) {
+    await mkdir('db/logs', { recursive: true });
+  }
+
   const logFiles = await readdir('db/logs');
   return logFiles.filter((file) => file.endsWith('-server.log'));
 }
 
 export async function getLogZips() {
+  if (!existsSync('db/logs')) {
+    await mkdir('db/logs', { recursive: true });
+  }
+
   const logZips = await readdir('db/logs');
   return logZips.filter((file) => file.endsWith('-server-log.zip'));
 }
