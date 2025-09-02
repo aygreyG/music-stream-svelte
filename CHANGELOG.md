@@ -1,3 +1,39 @@
+# [1.1.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.6...v1.1.0-dev.7) (2025-09-02)
+
+### Bug Fixes
+
+- logs folder not existing throws error ([cc180af](https://github.com/aygreyG/music-stream-svelte/commit/cc180afc98fbbc220a6c5e5a6a3c869d8ed61ca5))
+
+# [1.1.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.5...v1.1.0-dev.6) (2025-09-02)
+
+### Features
+
+- update logging ([#188](https://github.com/aygreyG/music-stream-svelte/issues/188)) ([4cdf3b2](https://github.com/aygreyG/music-stream-svelte/commit/4cdf3b2041901ac4640b5f9dd5655bc969b6640d)), closes [#187](https://github.com/aygreyG/music-stream-svelte/issues/187)
+
+# [1.1.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.4...v1.1.0-dev.5) (2025-08-13)
+
+### Features
+
+- add more complex cache ([#186](https://github.com/aygreyG/music-stream-svelte/issues/186)) ([5f27a66](https://github.com/aygreyG/music-stream-svelte/commit/5f27a6606abee6e82bcb20c8056c564ea245c34d)), closes [#149](https://github.com/aygreyG/music-stream-svelte/issues/149)
+
+# [1.1.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.3...v1.1.0-dev.4) (2025-07-26)
+
+### Features
+
+- add monochrome icon ([#185](https://github.com/aygreyG/music-stream-svelte/issues/185)) ([5f990d0](https://github.com/aygreyG/music-stream-svelte/commit/5f990d04179d4179447cfbbaa2681d5728e983ce)), closes [#178](https://github.com/aygreyG/music-stream-svelte/issues/178)
+
+# [1.1.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.2...v1.1.0-dev.3) (2025-07-26)
+
+### Features
+
+- better transition for album links on albums page ([fc23938](https://github.com/aygreyG/music-stream-svelte/commit/fc239389b1bb98644040512ad292137ac1e1b703))
+
+# [1.1.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2025-07-26)
+
+### Bug Fixes
+
+- stop app crashes because of bad files ([#184](https://github.com/aygreyG/music-stream-svelte/issues/184)) ([397062b](https://github.com/aygreyG/music-stream-svelte/commit/397062b51102ec506aacd75c46a103e944d61d4d)), closes [#183](https://github.com/aygreyG/music-stream-svelte/issues/183)
+
 # [1.1.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0...v1.1.0) (2025-07-14)
 
 ### Bug Fixes
@@ -20,6 +56,7 @@
 - update color management ([47c604d](https://github.com/aygreyG/music-stream-svelte/commit/47c604dfe4677a5b43e35b8c16a40cee97d1ffde))
 - update colors and add visualiyation ([0f834f4](https://github.com/aygreyG/music-stream-svelte/commit/0f834f46e1354988d922968219c441f62c7cc75d))
 - update readme ([1130b6c](https://github.com/aygreyG/music-stream-svelte/commit/1130b6c67868b2da019f88beb2c311dfae2001dc)), closes [#177](https://github.com/aygreyG/music-stream-svelte/issues/177)
+
 
 # [1.1.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.0.0...v1.1.0-dev.1) (2025-07-14)
 

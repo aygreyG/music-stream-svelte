@@ -1,7 +1,7 @@
 import prisma from '$lib/server/prisma.js';
 import { error } from '@sveltejs/kit';
 
-export const load = async ({ locals, params }) => {
+export const load = async ({ locals, params, setHeaders }) => {
   const { id } = params;
 
   const artist = await prisma.artist.findUnique({
@@ -56,6 +56,12 @@ export const load = async ({ locals, params }) => {
 
   if (!artist) {
     error(404, 'Artist not found');
+  }
+
+  if (locals.serverSettings?.cacheKey !== undefined) {
+    setHeaders({
+      'cache-key': locals.serverSettings.cacheKey.toString()
+    });
   }
 
   return {

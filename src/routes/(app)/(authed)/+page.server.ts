@@ -1,6 +1,6 @@
 import prisma from '$lib/server/prisma';
 
-export const load = async () => {
+export const load = async ({ locals, setHeaders }) => {
   const albums = await prisma.album.findMany({
     select: {
       albumArtDarkMuted: true,
@@ -16,6 +16,12 @@ export const load = async () => {
     },
     orderBy: [{ albumArtist: { name: 'asc' } }, { releaseDate: 'asc' }, { title: 'asc' }]
   });
+
+  if (locals.serverSettings?.cacheKey !== undefined) {
+    setHeaders({
+      'cache-key': locals.serverSettings.cacheKey.toString()
+    });
+  }
 
   return {
     albums,

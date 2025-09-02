@@ -2,11 +2,13 @@
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { observeVisibility } from '$lib/observeVisibility';
   import { quintOut } from 'svelte/easing';
-  import { fly } from 'svelte/transition';
+  import { scale } from 'svelte/transition';
   import { crossfade } from '$lib/transitions/crossfade';
   import { vibrate } from '$lib/actions/vibrate';
   import type { PageData } from './$types';
   const [send] = crossfade;
+
+  const DELAY = 20;
 
   interface Props {
     album: PageData['albums'][0];
@@ -20,9 +22,9 @@
   let outrostarted: boolean = $state(false);
   let delay = $derived.by(() => {
     if (first !== undefined) {
-      return Math.abs(index - first) * 30;
+      return Math.abs(index - first) * DELAY;
     } else {
-      return 30 * index;
+      return DELAY * index;
     }
   });
 </script>
@@ -34,7 +36,7 @@
     class:z-20={outrostarted}
     class:bg-zinc-900={!album.albumArtDarkMuted}
     href="/album/{album.id}"
-    in:fly={{ duration: 500, delay, easing: quintOut, x: -20 }}
+    in:scale={{ duration: 500, delay, easing: quintOut, start: 0.5 }}
     out:send|global={{ key: `album-image-${album.id}` }}
     onoutrostart={() => (outrostarted = true)}
     id={index.toString()}
