@@ -4,6 +4,7 @@ import { lstat, readdir, appendFile, rm, mkdir } from 'fs/promises';
 import { join } from 'path';
 import prisma from './prisma';
 import archiver from 'archiver';
+import { EXCLUDE_FILES_STARTING_WITH } from '$lib/shared/consts';
 
 const LOG_FILE = 'db/logs/<placeholder>-server.log';
 const ZIP_FILE = 'db/logs/<placeholder>-server-log.zip';
@@ -217,3 +218,7 @@ export const errorToNull = async <T>(
     return null;
   }
 };
+
+export function isFileNameValid(fileName: string) {
+  return EXCLUDE_FILES_STARTING_WITH.every((prefix) => !fileName.startsWith(prefix));
+}

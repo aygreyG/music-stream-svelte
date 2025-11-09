@@ -1,5 +1,6 @@
 import { getImage } from '$lib/server/images.js';
 import prisma from '$lib/server/prisma.js';
+import { serverLog } from '$lib/server/utils';
 import { isValidImageSize, type AlbumWithArt } from '$lib/shared/types.js';
 import { error, redirect } from '@sveltejs/kit';
 
@@ -30,8 +31,9 @@ export const GET = async ({ params, setHeaders, url }) => {
         'Cache-Control': 'public, max-age=31536000, immutable'
       });
 
-      return new Response(imageBuffer);
+      return new Response(new Uint8Array(imageBuffer));
     } catch (err) {
+      serverLog(`Error reading album art file: ${album.albumArt}`, 'error');
       console.log(err);
       error(500, { message: 'Internal server error' });
     }

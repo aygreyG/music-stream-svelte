@@ -1,11 +1,11 @@
 import prisma from './prisma';
-import { parseFile, type IAudioMetadata } from 'music-metadata';
-import { readdir, stat, writeFile, access, mkdir, readFile } from 'fs/promises';
+import { parseFile } from 'music-metadata';
+import { readdir, stat } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings, updateCacheKey } from './serverSettings';
-import { getPalette, type Palette } from './images';
-import { errorToNull, serverLog } from './utils';
-import type { Artist } from '../../generated/prisma-client/client';
+import { getAlbumArt, getPalette } from './images';
+import { errorToNull, isFileNameValid, serverLog } from './utils';
+import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
 
 let inProgress = false;
 let tracksCreated = 0;
@@ -129,107 +129,6 @@ function sanitizeArtistName(artist: string) {
     .replaceAll('+', 'and')
     .trim()
     .toLowerCase();
-}
-
-/**
- * Searches for an album file in a directory based on the given file names and album art file name.
- */
-async function searchForAlbumFile(fileNames: string[], dir: string, albumArtFileName?: string) {
-  const albumArtNames = [
-    'front',
-    'art',
-    'albumart',
-    'cover',
-    'folder',
-    albumArtFileName?.toLowerCase()
-  ];
-  for (const fileName of fileNames) {
-    const fileExt = fileName.split('.').pop()?.toLowerCase();
-    if (
-      fileExt === 'jpg' ||
-      fileExt === 'jpeg' ||
-      fileExt === 'png' ||
-      fileExt === 'webp' ||
-      fileExt === 'avif'
-    ) {
-      const fileBaseName = fileName.split('.').slice(0, -1).join('.').toLowerCase();
-      if (albumArtNames.includes(fileBaseName)) {
-        return join(dir, fileName);
-      }
-    }
-  }
-}
-
-async function getAlbumArt(
-  dir: string,
-  fileData: IAudioMetadata,
-  albumArtist: Artist
-): Promise<{ albumLocation: string; palette: Palette } | null> {
-  const regex = / |\.|\[|\]|\\|\//g;
-  const albumArtFileName = `${albumArtist.name.replaceAll(
-    regex,
-    '_'
-  )}_${fileData.common.album?.replaceAll(regex, '_')?.replaceAll('?', '')}`;
-
-  const coversDir = join(dir, 'Covers');
-
-  if (
-    await access(coversDir)
-      .then(() => true)
-      .catch(() => false)
-  ) {
-    const coverFiles = await readdir(coversDir);
-    const coverFile = await searchForAlbumFile(coverFiles, coversDir, albumArtFileName);
-
-    if (coverFile) {
-      return {
-        albumLocation: coverFile,
-        palette: await getPalette(coverFile)
-      };
-    }
-  }
-
-  // get album art from metadata
-  const albumArt = fileData.common.picture?.[0].data;
-  const albumArtType = fileData.common.picture?.[0].format.split('/')[1];
-  const albumArtPath = join(dir, 'Covers', `${albumArtFileName}.${albumArtType}`);
-
-  if (albumArt) {
-    try {
-      const coversDir = join(dir, 'Covers');
-      await access(coversDir).catch(() => mkdir(coversDir));
-      await writeFile(albumArtPath, albumArt);
-      return {
-        albumLocation: albumArtPath,
-        palette: await getPalette(albumArtPath)
-      };
-    } catch (err) {
-      serverLog(`Could not create album art file ${err}`, 'warn');
-    }
-  }
-
-  // get album art from directory
-  const files = await readdir(dir);
-  const fileName = await searchForAlbumFile(files, dir);
-
-  if (fileName) {
-    try {
-      const coversDir = join(dir, 'Covers');
-      await access(coversDir).catch(() => mkdir(coversDir));
-      const buffer = await readFile(fileName);
-      const extension = fileName.split('.').pop();
-      const pathToWrite = join(coversDir, albumArtFileName) + '.' + extension;
-      await writeFile(pathToWrite, buffer);
-      return {
-        albumLocation: pathToWrite,
-        palette: await getPalette(pathToWrite)
-      };
-    } catch (err) {
-      serverLog(`Could not create album art file ${err}`, 'warn');
-    }
-  }
-
-  return null;
 }
 
 async function checkDB(filePath: string, dir: string): Promise<boolean> {
@@ -395,27 +294,14 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
   return false;
 }
 
-function checkFileName(fileName: string) {
-  const cantStartWith = ['.', '_'];
-
-  for (const item of cantStartWith) {
-    if (fileName.startsWith(item)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 async function walk(dir: string) {
-  const allowedExtensions = ['flac', 'wav', 'mp3'];
   const files = await readdir(dir);
 
   for (const file of files) {
     const filePath = join(dir, file);
     const fileStat = await stat(filePath);
 
-    if (!checkFileName(file)) {
+    if (!isFileNameValid(file)) {
       continue;
     }
     const fileNameSplit = file.split('.');
@@ -423,7 +309,7 @@ async function walk(dir: string) {
 
     if (fileStat.isDirectory()) {
       await walk(filePath);
-    } else if (fileStat.isFile() && allowedExtensions.includes(extension)) {
+    } else if (fileStat.isFile() && ALLOWED_MUSIC_FILE_EXTENSIONS.includes(extension)) {
       if (await checkDB(filePath, dir)) {
         tracksCreated++;
       }
