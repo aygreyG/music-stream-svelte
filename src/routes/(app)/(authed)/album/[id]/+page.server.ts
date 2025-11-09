@@ -1,4 +1,4 @@
-import { getPalette } from '$lib/server/images.js';
+import { getAlbumArtFileName, getPalette } from '$lib/server/images.js';
 import prisma from '$lib/server/prisma.js';
 import { updateCacheKey } from '$lib/server/serverSettings.js';
 import { error } from '@sveltejs/kit';
@@ -170,11 +170,7 @@ export const actions = {
     if (album && album.tracks.length > 0) {
       const dir = album.tracks[0].filePath.substring(0, album.tracks[0].filePath.lastIndexOf('/'));
       const coversDir = join(dir, 'Covers');
-      const regex = / |\.|\[|\]|\\|\//g;
-      const albumArtFileName = `${album.albumArtist.name.replaceAll(
-        regex,
-        '_'
-      )}_${album.title?.replaceAll(regex, '_')}`;
+      const albumArtFileName = getAlbumArtFileName(album.albumArtist.name, album.title);
 
       try {
         if (

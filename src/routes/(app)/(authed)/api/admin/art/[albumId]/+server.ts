@@ -3,7 +3,7 @@ import { getAlbumArtUrl } from '$lib/shared/fetchAlbumArt.js';
 import { error, json } from '@sveltejs/kit';
 import { access, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { getPalette } from '$lib/server/images';
+import { getAlbumArtFileName, getPalette } from '$lib/server/images';
 
 export const POST = async ({ request, params }) => {
   const { albumId } = params;
@@ -26,11 +26,7 @@ export const POST = async ({ request, params }) => {
       const url = getAlbumArtUrl(releaseId);
       const dir = album.tracks[0].filePath.substring(0, album.tracks[0].filePath.lastIndexOf('/'));
       const coversDir = join(dir, 'Covers');
-      const regex = / |\.|\[|\]|\\|\//g;
-      const albumArtFileName = `${album.albumArtist.name.replaceAll(
-        regex,
-        '_'
-      )}_${album.title?.replaceAll(regex, '_')}`;
+      const albumArtFileName = getAlbumArtFileName(album.albumArtist.name, album.title);
 
       try {
         if (
