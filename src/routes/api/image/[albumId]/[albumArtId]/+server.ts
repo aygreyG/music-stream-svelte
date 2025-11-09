@@ -1,4 +1,5 @@
 import prisma from '$lib/server/prisma.js';
+import { serverLog } from '$lib/server/utils.js';
 import { error, redirect } from '@sveltejs/kit';
 import { readFile } from 'fs/promises';
 
@@ -29,8 +30,9 @@ export const GET = async ({ params, setHeaders }) => {
         'Cache-Control': 'public, max-age=31536000, immutable'
       });
 
-      return new Response(image);
+      return new Response(new Uint8Array(image));
     } catch (err) {
+      serverLog(`Error reading album art file: ${album.albumArt}`, 'error');
       console.log(err);
       error(500, { message: 'Internal server error' });
     }
