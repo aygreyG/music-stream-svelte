@@ -1,3 +1,9 @@
+# [1.3.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.1-dev.1...v1.3.0-dev.1) (2025-11-09)
+
+### Features
+
+- create image regeneration for deleted images ([#194](https://github.com/aygreyG/music-stream-svelte/issues/194)) ([91fed70](https://github.com/aygreyG/music-stream-svelte/commit/91fed7017b669a018324a296975de8a74f11080d))
+
 ## [1.2.1-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.0...v1.2.1-dev.1) (2025-09-02)
 
 ### Bug Fixes
