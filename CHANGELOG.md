@@ -1,3 +1,9 @@
+# [1.3.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.1...v1.3.0-dev.2) (2025-11-09)
+
+### Bug Fixes
+
+- album art file name generation ([7f2c048](https://github.com/aygreyG/music-stream-svelte/commit/7f2c0482c1e0fcd6171cbdea3a245375396374ba))
+
 # [1.3.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.1-dev.1...v1.3.0-dev.1) (2025-11-09)
 
 ### Features
