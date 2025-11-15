@@ -1,3 +1,9 @@
+# [1.3.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.2...v1.3.0-dev.3) (2025-11-15)
+
+### Features
+
+- show disc numbers on album page ([3e7f3f0](https://github.com/aygreyG/music-stream-svelte/commit/3e7f3f0014b1daa1a01e280ee7348eddf4ff6bcd))
+
 # [1.3.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.1...v1.3.0-dev.2) (2025-11-09)
 
 ### Bug Fixes
