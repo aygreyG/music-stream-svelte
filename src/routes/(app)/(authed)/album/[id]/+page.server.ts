@@ -31,6 +31,7 @@ export const load = async ({ locals, params, depends, setHeaders }) => {
         select: {
           id: true,
           trackNumber: true,
+          discNumber: true,
           playlists: {
             where: { userId: locals.user?.id },
             orderBy: { createdAt: 'desc' }

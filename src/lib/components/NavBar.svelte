@@ -138,7 +138,7 @@
 </div>
 
 <div
-  class="absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-x-clip overflow-y-auto rounded-md bg-zinc-900/80 backdrop-blur-md transition-all duration-300 sm:hidden"
+  class="absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-x-clip overflow-y-auto rounded-xl bg-zinc-900/80 backdrop-blur-md transition-all duration-300 sm:hidden"
   class:w-full={open}
   class:left-0={open}
   class:w-0={!open}
