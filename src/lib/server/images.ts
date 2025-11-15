@@ -6,7 +6,7 @@ import { parseFile, type IAudioMetadata } from 'music-metadata';
 import type { Album, Artist } from '../../generated/prisma-client/client';
 import { join } from 'path';
 import { errorToNull, isFileNameValid, serverLog } from './utils';
-import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
+import { ALLOWED_MUSIC_FILE_EXTENSIONS, IMAGE_FILE_EXTENSIONS } from '$lib/shared/consts';
 import prisma from './prisma';
 
 export const IMAGE_REGEX = / |\.|\[|\]|\\|\/|_|:|"/g;
@@ -140,15 +140,10 @@ export async function searchForAlbumFile(
     'folder',
     albumArtFileName?.toLowerCase()
   ];
+
   for (const fileName of fileNames) {
     const fileExt = fileName.split('.').pop()?.toLowerCase();
-    if (
-      fileExt === 'jpg' ||
-      fileExt === 'jpeg' ||
-      fileExt === 'png' ||
-      fileExt === 'webp' ||
-      fileExt === 'avif'
-    ) {
+    if (IMAGE_FILE_EXTENSIONS.includes(fileExt || '')) {
       const fileBaseName = fileName.split('.').slice(0, -1).join('.').toLowerCase();
       if (albumArtNames.includes(fileBaseName)) {
         return join(dir, fileName);

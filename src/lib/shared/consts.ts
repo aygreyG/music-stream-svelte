@@ -17,6 +17,14 @@ type GradientAngleType = (typeof GRADIENT_ANGLE)[keyof typeof GRADIENT_ANGLE];
 
 const ALLOWED_MUSIC_FILE_EXTENSIONS = ['flac', 'wav', 'mp3'];
 const EXCLUDE_FILES_STARTING_WITH = ['.', '_'];
+const IMAGE_FILE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 
-export { ROLE, GRADIENT_ANGLE, ALLOWED_MUSIC_FILE_EXTENSIONS, EXCLUDE_FILES_STARTING_WITH };
+export {
+  ROLE,
+  GRADIENT_ANGLE,
+  ALLOWED_MUSIC_FILE_EXTENSIONS,
+  EXCLUDE_FILES_STARTING_WITH,
+  IMAGE_FILE_EXTENSIONS
+};
+
 export type { RoleType, GradientAngleType };
