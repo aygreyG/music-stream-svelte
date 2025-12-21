@@ -1,3 +1,9 @@
+# [1.3.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.3...v1.3.0-dev.4) (2025-12-21)
+
+### Bug Fixes
+
+- unused error variables & update packages ([5cb7d5d](https://github.com/aygreyG/music-stream-svelte/commit/5cb7d5dcf6f52aa73896bc4ad17a97ae6a7f269d))
+
 # [1.3.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.2...v1.3.0-dev.3) (2025-11-15)
 
 ### Features
