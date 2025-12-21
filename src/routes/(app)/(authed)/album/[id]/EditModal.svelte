@@ -23,7 +23,7 @@
   let { album, onclose }: Props = $props();
   let releaseResponse: Promise<AlbumReleaseSearchResult> | undefined = $state();
   let albumArtLoading: boolean = $state(false);
-  let albumArtQuery: string = $state(`${album.title} AND artist:${album.albumArtist.name}`);
+  let albumArtQuery: string = $state('');
   const audioPlayer = getAudioPlayer();
 
   function searchArt() {
@@ -73,7 +73,10 @@
     onclose();
   }
 
-  onMount(() => searchArt());
+  onMount(() => {
+    albumArtQuery = `${album.title} AND artist:${album.albumArtist.name}`;
+    searchArt();
+  });
 </script>
 
 <Modal title="Edit album art" {onclose}>

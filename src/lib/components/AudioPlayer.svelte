@@ -68,10 +68,10 @@
 
   function isSlowConnection() {
     if ('connection' in navigator) {
+      const connection = navigator.connection as any;
       return (
-        (navigator.connection?.effectiveType !== '4g' &&
-          navigator.connection?.effectiveType !== '5g') || // not sure if it can be 5g yet
-        navigator.connection?.downlink < 1.5
+        (connection?.effectiveType !== '4g' && connection?.effectiveType !== '5g') || // not sure if it can be 5g yet
+        connection?.downlink < 1.5
       );
     }
 

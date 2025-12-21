@@ -18,6 +18,7 @@
   let scrolled = $state(false);
   let scrolledToBottom = $state(false);
   let container: HTMLDivElement | null = $state(null);
+  // svelte-ignore state_referenced_locally
   let defaultFolder = $state(data.defaultFolder);
 
   onMount(() => {

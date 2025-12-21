@@ -15,8 +15,13 @@
 
   let { data }: Props = $props();
 
+  // TODO: look into a better way to handle these
+  // svelte-ignore state_referenced_locally
   let searchString = $state(data.query || '');
+  // svelte-ignore state_referenced_locally
   let type = $state(data.type || 'all');
+  // svelte-ignore state_referenced_locally
+  let results = $state(data.results);
   let formElement: HTMLFormElement | null = $state(null);
   let container: HTMLDivElement | null = $state(null);
   let loading = $state(false);
@@ -24,7 +29,6 @@
   let duration = 250;
   let scrolled = $state(false);
   let startIndex = $state(0);
-  let results = $state(data.results);
 
   // TODO: Reset loading state when we get a response,
   // this is hacky and should be changed in the future if possible

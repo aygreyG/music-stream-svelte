@@ -12,9 +12,9 @@
 
   let { user }: Props = $props();
   let deleteClicked = $state(false);
-  let admin = $state(user.role === ROLE.ADMIN);
-  let username = $state(user.username);
-  let email = $state(user.email);
+  let admin = $derived(user.role === ROLE.ADMIN);
+  let username = $derived(user.username);
+  let email = $derived(user.email);
 </script>
 
 <form

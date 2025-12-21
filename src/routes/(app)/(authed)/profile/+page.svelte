@@ -27,6 +27,8 @@
   let loading = $state(false);
   let listensLoading = $state(false);
   let listenedIndex = $state(0);
+  // this has to be a state to make sure it does not get overwritten when data changes and there were older listens loaded
+  // svelte-ignore state_referenced_locally
   let listens = $state([...data.listens]);
 
   // Update listens when data changes but untracking listens array to prevent infinite loop
