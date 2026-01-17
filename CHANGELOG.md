@@ -1,3 +1,9 @@
+# [1.3.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.4...v1.3.0-dev.5) (2026-01-17)
+
+### Bug Fixes
+
+- archiver zipping only one file ([45805ec](https://github.com/aygreyG/music-stream-svelte/commit/45805ecd493034fb816b451a42ef8db29f780665))
+
 # [1.3.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.3...v1.3.0-dev.4) (2025-12-21)
 
 ### Bug Fixes
