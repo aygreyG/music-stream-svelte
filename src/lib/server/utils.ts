@@ -84,7 +84,7 @@ export async function serverLog(message: string | object, level: LogLevel = 'inf
 
   if (logFiles.length > MAX_LOG_FILES) {
     try {
-      const filesToZip = logFiles.slice(0, logFiles.length - MAX_LOG_FILES);
+      const filesToZip = logFiles.slice(0, logFiles.length - 1);
       const archive = archiver('zip', { zlib: { level: 9 } });
       const fromTo = filesToZip.map((f) => f.replace('-server.log', '')).sort();
       const output = createWriteStream(
