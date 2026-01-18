@@ -100,6 +100,7 @@ const handle: Handle = async ({ event, resolve }) => {
   const params = Object.keys(event.params);
 
   if (params.length > 0) {
+    // @ts-expect-error This actually works, key is always one of the params and not just a string
     message += ` ${params.map((key) => `${key}:${event.params[key]}`).join(', ')}`;
   }
 
