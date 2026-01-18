@@ -40,6 +40,8 @@ function createAudioPlayer() {
   let currentTrack: TrackType | null = $state(null);
   let queueContext: TrackType[] = $state([]);
   let queueContextIndex: number = $state(0);
+  const hasNext = $derived(queueContextIndex < queueContext.length - 1);
+  const hasPrevious = $derived(queueContextIndex > 0);
 
   function playTrack(context: TrackType[], index: number, instant: boolean = true) {
     queueContextIndex = index;
@@ -67,6 +69,14 @@ function createAudioPlayer() {
     }
   }
 
+  function playAtIndex(index: number) {
+    if (index >= 0 && index < queueContext.length) {
+      queueContextIndex = index;
+      currentTrack = queueContext[queueContextIndex];
+      theme.background = currentTrack?.album?.albumArtMuted || null;
+    }
+  }
+
   function togglePlay() {
     if (currentTrack) {
       paused = !paused;
@@ -85,6 +95,7 @@ function createAudioPlayer() {
     togglePlay,
     playNext,
     playPrevious,
+    playAtIndex,
     playTrack,
     stopAndClear,
     get paused() {
@@ -101,6 +112,12 @@ function createAudioPlayer() {
     },
     get queueContextIndex() {
       return queueContextIndex;
+    },
+    get hasNext() {
+      return hasNext;
+    },
+    get hasPrevious() {
+      return hasPrevious;
     }
   };
 }
