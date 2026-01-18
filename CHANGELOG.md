@@ -1,3 +1,9 @@
+# [1.3.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.5...v1.3.0-dev.6) (2026-01-18)
+
+### Features
+
+- add full screen overview to smaller screens ([#197](https://github.com/aygreyG/music-stream-svelte/issues/197)) ([8397600](https://github.com/aygreyG/music-stream-svelte/commit/83976004dbfb0f5be9b04f7dad036fe2c5a745bf))
+
 # [1.3.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.4...v1.3.0-dev.5) (2026-01-17)
 
 ### Bug Fixes
