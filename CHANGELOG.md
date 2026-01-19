@@ -1,3 +1,9 @@
+# [1.3.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.7...v1.3.0-dev.8) (2026-01-19)
+
+### Bug Fixes
+
+- multiple artist not having whitespace ([91b33c9](https://github.com/aygreyG/music-stream-svelte/commit/91b33c9bae69d09e62f6d5f63aa5bf984955e496))
+
 # [1.3.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.6...v1.3.0-dev.7) (2026-01-19)
 
 ### Features
