@@ -76,7 +76,7 @@
       <button
         in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
         type="submit"
-        class="flex h-36 w-36 items-center justify-center rounded-xl bg-zinc-950/20 md:h-40 md:w-40 xl:h-52 xl:w-52"
+        class="flex size-36 items-center justify-center rounded-xl bg-zinc-950/20 md:size-40 xl:size-52"
         use:vibrate
         disabled={loading}
       >
@@ -92,7 +92,7 @@
       <div
         in:fly|global={{ duration: 500, delay: 30 * index + 30, easing: quintOut, x: -20 }}
         out:fade={{ duration: 200 }}
-        class="h-36 w-36 md:h-40 md:w-40 xl:h-52 xl:w-52"
+        class="size-36 md:size-40 xl:size-52"
         animate:flip={{ duration: 200 }}
       >
         <PlaylistElement selected={form?.playlist.id === playlist.id} {playlist} />

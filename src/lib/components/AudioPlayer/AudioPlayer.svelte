@@ -335,7 +335,12 @@
                   <span
                     class="overflow-hidden text-xs text-ellipsis whitespace-nowrap text-zinc-400"
                   >
-                    {audioPlayer.currentTrack.artists.map((a) => a.name).join(', ')}
+                    {audioPlayer.currentTrack.artists
+                      .toSorted((a, _) =>
+                        a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1
+                      )
+                      .map((a) => a.name)
+                      .join(', ')}
                   </span>
                 </div>
               </div>

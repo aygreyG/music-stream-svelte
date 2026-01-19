@@ -53,7 +53,9 @@
 </div>
 <div class="flex flex-wrap items-center justify-center gap-8 p-2">
   {#each albums as album, index (album.id)}
-    <AlbumLink {album} index={Math.min(Math.abs(index - startIndex), index)} />
+    <div class="size-36 overflow-hidden rounded-xl md:size-40 xl:size-52">
+      <AlbumLink {album} index={Math.min(Math.abs(index - startIndex), index)} />
+    </div>
   {/each}
 </div>
 {#if albums.length < total}
