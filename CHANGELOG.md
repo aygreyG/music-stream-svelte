@@ -1,3 +1,9 @@
+# [1.3.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.6...v1.3.0-dev.7) (2026-01-19)
+
+### Features
+
+- add token refresh ([b806054](https://github.com/aygreyG/music-stream-svelte/commit/b806054e783bda2643125a274d66024cb34e223f))
+
 # [1.3.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.5...v1.3.0-dev.6) (2026-01-18)
 
 ### Features
