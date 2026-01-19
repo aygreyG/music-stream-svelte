@@ -6,10 +6,12 @@ import { ROLE, type RoleType } from '$lib/shared/consts';
 
 export const AUTH_COOKIE = 'access_token';
 const TOKEN_VALID_TIME = 7 * 24 * 60 * 60;
+const TOKEN_REFRESH_THRESHOLD = 24 * 60 * 60; // 1 day in seconds
 
 interface JwtPayload {
   id: string;
   username: string;
+  exp?: number;
 }
 
 export async function login(username: string, password: string) {
@@ -113,5 +115,28 @@ export async function validateToken(authCookie: string) {
     throw new Error('user not found');
   }
 
-  return user;
+  let refreshedToken: { token: string; maxAge: number } | null = null;
+  if (userInfo.exp) {
+    const now = Math.floor(Date.now() / 1000);
+    const timeRemaining = userInfo.exp - now;
+
+    if (timeRemaining > 0 && timeRemaining < TOKEN_REFRESH_THRESHOLD) {
+      // Token is valid but close to expiring, generate a new one
+      const jwtPayload: JwtPayload = {
+        id: user.id,
+        username: user.username
+      };
+
+      const newToken = jwt.sign(jwtPayload, serverSettings.jwtSecret, {
+        expiresIn: TOKEN_VALID_TIME
+      });
+
+      refreshedToken = {
+        token: 'Bearer ' + newToken,
+        maxAge: TOKEN_VALID_TIME
+      };
+    }
+  }
+
+  return { user, refreshedToken };
 }

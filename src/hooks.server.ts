@@ -59,8 +59,19 @@ const handle: Handle = async ({ event, resolve }) => {
 
   if (authToken) {
     try {
-      const user = await validateToken(authToken);
+      const { user, refreshedToken } = await validateToken(authToken);
       event.locals.user = user;
+
+      // If token was refreshed, update the cookie
+      if (refreshedToken) {
+        event.cookies.set(AUTH_COOKIE, refreshedToken.token, {
+          path: '/',
+          maxAge: refreshedToken.maxAge,
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: true
+        });
+      }
     } catch {
       event.locals.user = null;
       event.cookies.delete(AUTH_COOKIE, { path: '/' });
