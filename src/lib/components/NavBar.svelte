@@ -104,7 +104,7 @@
             <div
               class="z-10 overflow-hidden rounded-md bg-zinc-900/80 px-1 text-xs text-nowrap text-ellipsis backdrop-blur-xs"
             >
-              {#each audioPlayer.currentTrack.artists.sort( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+              {#each audioPlayer.currentTrack.artists.toSorted( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 <button
                   title={artist.name}
                   class="hover:underline"

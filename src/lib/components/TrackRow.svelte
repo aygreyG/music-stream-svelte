@@ -175,7 +175,7 @@
       {track.title}
     </button>
     <div class="overflow-hidden text-xs text-ellipsis whitespace-nowrap text-white/70">
-      {#each track.artists.sort( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+      {#each track.artists.toSorted( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
         <a class="hover:underline" href="/artist/{artist.id}">
           {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
         </a>

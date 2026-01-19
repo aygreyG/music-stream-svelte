@@ -4,6 +4,7 @@
   import AlbumLink from './AlbumLink.svelte';
   import { fade } from 'svelte/transition';
   import type { PageData } from './$types';
+  import { flip } from 'svelte/animate';
 
   interface Props {
     data: PageData;
@@ -60,13 +61,13 @@
   });
 </script>
 
-<div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
-  <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
-    Albums
-  </div>
+<div
+  out:fade|global={{ duration: 250 }}
+  class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
+>
+  <div class="p-4 pb-0 text-center text-xl font-bold">Albums</div>
 
   <div
-    out:fade|global={{ duration: 250 }}
     class="z-20 flex w-full flex-col px-8 py-1 transition-shadow duration-300"
     class:shadow-md={scrolledFromTop}
   >
@@ -102,7 +103,13 @@
     }}
   >
     {#each filtered as album, index (album.id)}
-      <AlbumLink {album} {index} first={firstVisibleElement} />
+      <div
+        animate:flip={{ duration: 200 }}
+        class="size-36 overflow-hidden rounded-xl md:size-40 xl:size-52"
+        id={index.toString()}
+      >
+        <AlbumLink {album} {index} first={firstVisibleElement} />
+      </div>
     {/each}
   </div>
 </div>
