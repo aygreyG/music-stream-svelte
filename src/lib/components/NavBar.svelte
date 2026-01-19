@@ -105,12 +105,15 @@
               class="z-10 overflow-hidden rounded-md bg-zinc-900/80 px-1 text-xs text-nowrap text-ellipsis backdrop-blur-xs"
             >
               {#each audioPlayer.currentTrack.artists.toSorted( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                {@const shouldHaveComma =
+                  audioPlayer.currentTrack.artists.length > 1 &&
+                  index != audioPlayer.currentTrack.artists.length - 1}
                 <button
                   title={artist.name}
-                  class="hover:underline"
+                  class={['hover:underline', shouldHaveComma && 'mr-1']}
                   onclick={() => goto(`/artist/${artist.id}`)}
                 >
-                  {artist.name}{#if audioPlayer.currentTrack.artists.length > 1 && index != audioPlayer.currentTrack.artists.length - 1},{/if}
+                  {artist.name}{#if shouldHaveComma},{/if}
                 </button>
               {/each}
             </div>

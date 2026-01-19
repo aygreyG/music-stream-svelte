@@ -179,15 +179,23 @@
             <h1 class="truncate text-2xl font-bold text-zinc-100">
               {audioPlayer.currentTrack.title}
             </h1>
-            <button
-              onclick={() => {
-                goto(`/artist/${audioPlayer.currentTrack?.album.albumArtist.id}`);
-                onclose();
-              }}
-              class="mt-2 block w-full truncate text-lg text-zinc-400"
-            >
-              {audioPlayer.currentTrack.artists.map((a) => a.name).join(', ')}
-            </button>
+            <div class="mt-2 truncate text-lg text-zinc-400">
+              {#each audioPlayer.currentTrack.artists.toSorted( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                {@const shouldHaveComma =
+                  audioPlayer.currentTrack.artists.length > 1 &&
+                  index != audioPlayer.currentTrack.artists.length - 1}
+                <button
+                  onclick={() => {
+                    goto(`/artist/${artist.id}`);
+                    onclose();
+                  }}
+                  class={{ 'mr-1': shouldHaveComma }}
+                >
+                  {artist.name}{#if shouldHaveComma},{/if}
+                </button>
+              {/each}
+            </div>
+
             <button
               onclick={() => {
                 goto(`/album/${audioPlayer.currentTrack?.album.id}`);
