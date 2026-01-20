@@ -46,6 +46,13 @@
 
 - create image regeneration for deleted images ([#194](https://github.com/aygreyG/music-stream-svelte/issues/194)) ([91fed70](https://github.com/aygreyG/music-stream-svelte/commit/91fed7017b669a018324a296975de8a74f11080d))
 
+## [1.2.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.0...v1.2.1) (2025-09-02)
+
+### Bug Fixes
+
+- log download ([ed9ea42](https://github.com/aygreyG/music-stream-svelte/commit/ed9ea4225d4906b7cecb23e99ce9c3aaddc7c106))
+
+
 ## [1.2.1-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.0...v1.2.1-dev.1) (2025-09-02)
 
 ### Bug Fixes
