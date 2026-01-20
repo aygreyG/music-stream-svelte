@@ -17,10 +17,10 @@
 </script>
 
 <button
-  class="mt-4 flex w-full items-center justify-between rounded-t-xl bg-zinc-600/20 p-2 pl-4 text-xl font-bold transition-all hover:bg-zinc-600/30"
-  class:rounded-b-xl={!show}
-  class:shadow-md={show}
-  class:delay-100={!show}
+  class={[
+    'mt-4 flex w-full items-center justify-between rounded-t-xl bg-zinc-600/20 p-2 pl-4 text-xl font-bold transition-all hover:bg-zinc-600/30',
+    show ? 'shadow-md' : 'rounded-b-xl'
+  ]}
   in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay }}
   onclick={() => {
     show = !show;

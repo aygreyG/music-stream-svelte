@@ -1,5 +1,5 @@
 <script lang="ts">
-  import AudioPlayer from '$lib/components/AudioPlayer.svelte';
+  import AudioPlayer from '$lib/components/AudioPlayer';
   import NavBar from '$lib/components/NavBar.svelte';
   import { setAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
   import type { Snippet } from 'svelte';

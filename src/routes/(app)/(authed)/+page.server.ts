@@ -24,7 +24,15 @@ export const load = async ({ locals, setHeaders }) => {
   }
 
   return {
-    albums,
+    // Prisma does not support case insensitive sorting https://github.com/prisma/prisma/issues/5068
+    albums: albums.sort((a, b) => {
+      const artistA = a.albumArtist?.name || '';
+      const artistB = b.albumArtist?.name || '';
+      if (artistA === artistB) {
+        return a.title.localeCompare(b.title);
+      }
+      return artistA.localeCompare(artistB);
+    }),
     title: 'Albums'
   };
 };

@@ -2,12 +2,11 @@
   import RoundEdit from '~icons/ic/round-edit';
   import HeartFill from '~icons/iconamoon/heart-fill';
   import Heart from '~icons/iconamoon/heart';
+  import AlbumIcon from '~icons/iconamoon/music-album';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { onMount } from 'svelte';
-  import { fade } from 'svelte/transition';
-  import { cubicInOut } from 'svelte/easing';
-  import { crossfade } from '$lib/transitions/crossfade';
-  const [, receive] = crossfade;
+  import { fade, fly } from 'svelte/transition';
+  import { cubicInOut, quintOut } from 'svelte/easing';
   import type { Prisma } from '../../../../../generated/prisma-client/client';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { vibrate } from '$lib/actions/vibrate';
@@ -26,10 +25,30 @@
 
   let { data }: Props = $props();
   let animate: boolean = $state(false);
-  let albumAnimating: boolean = $state(false);
   let editModalOpen: boolean = $state(false);
   let playlistModalOpen: boolean = $state(false);
   let playlistModalTrack: TrackType | undefined = $state();
+  const discInfo = $derived.by(() => {
+    let multipleDiscs = false;
+    const discChangeIndexes: number[] = [];
+    let lastDiscNumber: number | null = null;
+
+    data.album.tracks.forEach((track, index) => {
+      const discNumber = parseInt(track.discNumber || '1', 10);
+      if (lastDiscNumber === null) {
+        lastDiscNumber = discNumber;
+      } else if (discNumber !== lastDiscNumber) {
+        multipleDiscs = true;
+        discChangeIndexes.push(index);
+        lastDiscNumber = discNumber;
+      }
+    });
+
+    return {
+      multipleDiscs,
+      discChangeIndexes
+    };
+  });
 
   let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
@@ -73,15 +92,9 @@
         class:shadow-md={scrolled}
         in:fade|global={{ duration: 500, easing: cubicInOut }}
       >
-        <div
-          class="group h-32 w-32 flex-none overflow-clip rounded-md"
-          class:z-20={albumAnimating}
-          in:receive|global={{ key: `album-image-${data.album.id}` }}
-          onintrostart={() => (albumAnimating = true)}
-          onintroend={() => (albumAnimating = false)}
-        >
+        <div class="group h-32 w-32 flex-none overflow-clip rounded-md">
           <AlbumImage key={data.album.updatedAt.toISOString()} album={data.album} />
-          {#if !albumAnimating && data.user?.role !== ROLE.USER}
+          {#if data.user?.role !== ROLE.USER}
             <div
               class="absolute bottom-0 left-0 flex gap-2 rounded-tr-md rounded-bl-md bg-zinc-900/80 backdrop-blur-xs transition-all group-hover:opacity-100 focus-within:opacity-100 sm:opacity-0"
             >
@@ -116,6 +129,15 @@
         onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
       >
         {#each data.album.tracks as track, index (track.id)}
+          {#if track.discNumber !== null && discInfo.multipleDiscs && (index === 0 || discInfo.discChangeIndexes.includes(index))}
+            <div
+              in:fly|global={{ delay: 250 + index * 30, duration: 500, easing: quintOut, x: -20 }}
+              class={['px-4 font-semibold', index !== 0 && 'mt-4']}
+            >
+              <AlbumIcon class="inline-block align-text-bottom font-normal" />
+              Disc {track.discNumber}
+            </div>
+          {/if}
           <div class={['w-full flex-none', index === data.album.tracks.length - 1 && 'pb-2']}>
             <TrackRow
               showAlbumName={false}

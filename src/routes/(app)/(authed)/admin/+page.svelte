@@ -16,9 +16,11 @@
 
   let { data }: Props = $props();
   let syncResponse: { message: string; type: 'full' | 'normal' } | null = $state(null);
+  let imageGenResponse: { message: string } | null = $state(null);
   let animate = $state(false);
   let loading = $state(false);
   let timeout: string | number | NodeJS.Timeout | undefined = $state();
+  let imageGenTimeout: string | number | NodeJS.Timeout | undefined = $state();
 
   onMount(() => {
     animate = true;
@@ -116,6 +118,30 @@
           use:vibrate
         >
           Start
+        </button>
+      </div>
+      <div
+        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 150 }}
+        class="flex items-center justify-between bg-zinc-600/10 p-4"
+      >
+        <div>Regenerate album images</div>
+        {#if imageGenResponse}
+          <div class="text-primary">{imageGenResponse.message}</div>
+        {/if}
+        <button
+          class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
+          onclick={async () => {
+            const re = await fetch('/api/admin/regenerate-art');
+            const response = await re.json();
+            imageGenResponse = { message: response.message };
+            clearTimeout(imageGenTimeout);
+            imageGenTimeout = setTimeout(() => {
+              imageGenResponse = null;
+            }, 2000);
+          }}
+          use:vibrate
+        >
+          Regenerate
         </button>
       </div>
     </div>

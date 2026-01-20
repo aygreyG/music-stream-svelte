@@ -37,7 +37,7 @@
 
   let { playlist, selected = false }: Props = $props();
 
-  const albumSet: Prisma.AlbumGetPayload<{
+  type AlbumSetType = Prisma.AlbumGetPayload<{
     select: {
       id: true;
       title: true;
@@ -49,20 +49,25 @@
       albumArtLightMuted: true;
       albumArtDarkVibrant: true;
     };
-  }>[] = [];
+  }>;
+
+  const albumSet = $derived.by(() => {
+    const aSet: AlbumSetType[] = [];
+    for (const track of playlist.tracks) {
+      if (!aSet.find((a) => a.id === track.album.id)) {
+        aSet.push(track.album);
+      }
+
+      if (aSet.length === 4) break;
+    }
+
+    return aSet;
+  });
   let nameInput: HTMLInputElement | null = $state(null);
-  let playlistName: string = $state(playlist.name);
+  let playlistName: string = $derived(playlist.name);
   let deleteClicked = $state(false);
   const [send] = crossfade;
   let timeout: string | number | NodeJS.Timeout | undefined = $state();
-
-  for (const track of playlist.tracks) {
-    if (!albumSet.find((a) => a.id === track.album.id)) {
-      albumSet.push(track.album);
-    }
-
-    if (albumSet.length === 4) break;
-  }
 
   $effect(() => {
     if (selected) {

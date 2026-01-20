@@ -14,7 +14,7 @@ export const GET = async ({ params }) => {
 
   const contentType = filename.split('.').pop() === 'zip' ? 'application/zip' : 'text/plain';
 
-  return new Response(file, {
+  return new Response(new Uint8Array(file), {
     headers: {
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Content-Type': contentType

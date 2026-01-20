@@ -59,10 +59,20 @@ const handle: Handle = async ({ event, resolve }) => {
 
   if (authToken) {
     try {
-      const user = await validateToken(authToken);
+      const { user, refreshedToken } = await validateToken(authToken);
       event.locals.user = user;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (err) {
+
+      // If token was refreshed, update the cookie
+      if (refreshedToken) {
+        event.cookies.set(AUTH_COOKIE, refreshedToken.token, {
+          path: '/',
+          maxAge: refreshedToken.maxAge,
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: true
+        });
+      }
+    } catch {
       event.locals.user = null;
       event.cookies.delete(AUTH_COOKIE, { path: '/' });
     }
@@ -101,6 +111,7 @@ const handle: Handle = async ({ event, resolve }) => {
   const params = Object.keys(event.params);
 
   if (params.length > 0) {
+    // @ts-expect-error This actually works, key is always one of the params and not just a string
     message += ` ${params.map((key) => `${key}:${event.params[key]}`).join(', ')}`;
   }
 

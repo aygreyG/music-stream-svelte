@@ -175,9 +175,10 @@
       {track.title}
     </button>
     <div class="overflow-hidden text-xs text-ellipsis whitespace-nowrap text-white/70">
-      {#each track.artists.sort( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-        <a class="hover:underline" href="/artist/{artist.id}">
-          {artist.name}{#if track.artists.length > 1 && index != track.artists.length - 1},{/if}
+      {#each track.artists.toSorted( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+        {@const shouldHaveComma = track.artists.length > 1 && index != track.artists.length - 1}
+        <a class={['hover:underline', shouldHaveComma && 'mr-1']} href="/artist/{artist.id}">
+          {artist.name}{#if shouldHaveComma},{/if}
         </a>
       {/each}
       {#if showAlbumName}

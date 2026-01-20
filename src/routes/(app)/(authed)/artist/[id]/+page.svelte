@@ -33,7 +33,9 @@
       </div>
       <div class="flex flex-wrap items-center justify-center gap-8 p-2">
         {#each data.artist.albums as album, index (album.id)}
-          <AlbumLink album={{ ...album, albumArtist: data.artist }} {index} />
+          <div class="size-36 overflow-hidden rounded-xl md:size-40 xl:size-52">
+            <AlbumLink album={{ ...album, albumArtist: data.artist }} {index} />
+          </div>
         {/each}
       </div>
     {/if}
