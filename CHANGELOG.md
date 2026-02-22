@@ -1,3 +1,9 @@
+# [1.4.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0-dev.2...v1.4.0-dev.3) (2026-02-22)
+
+### Bug Fixes
+
+- changelog production detection and user deletion ([4a0828e](https://github.com/aygreyG/music-stream-svelte/commit/4a0828ee569ca86e64851b40895842e6f7859e3c))
+
 # [1.4.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0-dev.1...v1.4.0-dev.2) (2026-02-22)
 
 ### Features
