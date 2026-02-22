@@ -4,6 +4,22 @@
 
 - use material color generation for theme and update ui ([616bd31](https://github.com/aygreyG/music-stream-svelte/commit/616bd315bebb260ce09d5284bfed9cc46fe4c35c))
 
+# [1.3.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.1...v1.3.0) (2026-01-20)
+
+### Bug Fixes
+
+- album art file name generation ([7f2c048](https://github.com/aygreyG/music-stream-svelte/commit/7f2c0482c1e0fcd6171cbdea3a245375396374ba))
+- archiver zipping only one file ([45805ec](https://github.com/aygreyG/music-stream-svelte/commit/45805ecd493034fb816b451a42ef8db29f780665))
+- multiple artist not having whitespace ([91b33c9](https://github.com/aygreyG/music-stream-svelte/commit/91b33c9bae69d09e62f6d5f63aa5bf984955e496))
+- unused error variables & update packages ([5cb7d5d](https://github.com/aygreyG/music-stream-svelte/commit/5cb7d5dcf6f52aa73896bc4ad17a97ae6a7f269d))
+
+### Features
+
+- add full screen overview to smaller screens ([#197](https://github.com/aygreyG/music-stream-svelte/issues/197)) ([8397600](https://github.com/aygreyG/music-stream-svelte/commit/83976004dbfb0f5be9b04f7dad036fe2c5a745bf))
+- add token refresh ([b806054](https://github.com/aygreyG/music-stream-svelte/commit/b806054e783bda2643125a274d66024cb34e223f))
+- create image regeneration for deleted images ([#194](https://github.com/aygreyG/music-stream-svelte/issues/194)) ([91fed70](https://github.com/aygreyG/music-stream-svelte/commit/91fed7017b669a018324a296975de8a74f11080d))
+- show disc numbers on album page ([3e7f3f0](https://github.com/aygreyG/music-stream-svelte/commit/3e7f3f0014b1daa1a01e280ee7348eddf4ff6bcd))
+
 # [1.3.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.7...v1.3.0-dev.8) (2026-01-19)
 
 ### Bug Fixes
