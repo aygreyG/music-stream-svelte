@@ -1,7 +1,7 @@
 import { AUTH_COOKIE } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
 import { ROLE } from '$lib/shared/consts.js';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 
 const MAX_LISTENS = 25;
@@ -157,9 +157,7 @@ export const actions = {
       path: '/'
     });
 
-    return {
-      message: 'User deleted'
-    };
+    return redirect(303, '/login');
   },
   getListens: async ({ locals, request }) => {
     const formData = await request.formData();

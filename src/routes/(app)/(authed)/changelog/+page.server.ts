@@ -1,12 +1,15 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import { marked } from 'marked';
-import { env } from '$env/dynamic/private';
 
-export const load = async () => {
+export const load = async ({ parent }) => {
   const changelogPath = resolve('CHANGELOG.md');
   const raw = readFileSync(changelogPath, 'utf-8');
-  const isProduction = env.NODE_ENV === 'production';
+  const parentData = await parent();
+  const isProduction =
+    parentData.APP_VERSION &&
+    !parentData.APP_VERSION.includes('dev') &&
+    parentData.APP_VERSION !== 'unknown';
 
   // Split the changelog into stable and dev entries
   const lines = raw.split('\n');

@@ -6,6 +6,7 @@
   import RoundRefresh from '~icons/ic/round-refresh';
   import TrashFill from '~icons/iconamoon/trash-fill';
   import History from '~icons/iconamoon/history';
+  import InformationCircleFill from '~icons/iconamoon/information-circle-fill';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import Accordion from '$lib/components/Accordion.svelte';
   import { getReadableTime } from '$lib/utils';
@@ -14,6 +15,7 @@
   import type { ActionData, PageData } from './$types';
   import { onMount, untrack } from 'svelte';
   import { ROLE, SCHEME_TYPES } from '$lib/shared/consts';
+  import Modal from '$lib/components/Modal.svelte';
 
   interface Props {
     data: PageData;
@@ -251,51 +253,53 @@
 
     {#if data.user?.role !== ROLE.OWNER}
       <div
+        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 }}
         class="mt-4 flex w-full items-center justify-between rounded-xl bg-zinc-600/20 py-2 pr-2 pl-4"
       >
-        <div
-          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
-          class="text-center text-xl font-bold"
-        >
-          Delete account
-        </div>
+        <div class="text-center text-xl font-bold">Delete account</div>
 
-        <div
-          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 600 }}
-          class="flex items-center justify-center"
-        >
-          <form
-            method="POST"
-            use:enhance={({ cancel }) => {
-              if (!deleteClicked) {
-                deleteClicked = true;
-                deleteTimeout = setTimeout(() => {
-                  deleteClicked = false;
-                }, 2000);
-                cancel();
-              } else {
-                deleteClicked = false;
-                clearTimeout(deleteTimeout);
-              }
-            }}
-            class="flex w-full items-center justify-center"
-            action="?/delete"
+        <div class="flex items-center justify-center">
+          <button
+            onclick={() => (deleteClicked = true)}
+            class="w-full rounded-md bg-rose-600 px-4 py-1 font-semibold text-white transition-all"
+            use:vibrate
           >
-            <button
-              type="submit"
-              class="hover:bg-opacity-80 w-full rounded-md bg-rose-700 px-4 py-1 font-semibold transition-all"
-            >
-              {#if deleteClicked}
-                Are you sure?
-              {:else}
-                <TrashFill class="text-xl" />
-              {/if}
-            </button>
-          </form>
+            <TrashFill class="text-2xl" />
+          </button>
         </div>
       </div>
     {/if}
   </div>
+
+  {#if deleteClicked}
+    <Modal title="Are you sure?" onclose={() => (deleteClicked = false)}>
+      <div class="flex h-full flex-col items-center justify-center gap-10 p-6">
+        <div class="rounded-xl bg-rose-600/10 p-4 text-center text-sm font-bold text-rose-600">
+          <InformationCircleFill class="inline align-top text-base" />
+          This action cannot be undone and will delete all your data, including your listening history!
+        </div>
+
+        <div class="flex w-full items-center justify-center gap-4 max-sm:flex-col">
+          <form method="POST" action="?/delete">
+            <button
+              type="submit"
+              class="rounded-3xl bg-rose-600 px-4 py-2 font-semibold text-white transition-all"
+              use:vibrate
+            >
+              Yes, delete my account
+            </button>
+          </form>
+          <button
+            class="bg-primary text-on-primary rounded-3xl px-4 py-2 font-semibold transition-all"
+            onclick={() => (deleteClicked = false)}
+            use:vibrate
+          >
+            No, keep my account
+          </button>
+        </div>
+      </div>
+    </Modal>
+  {/if}
 
   {#if data.listens.length > 0}
     <div
