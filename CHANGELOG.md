@@ -1,3 +1,9 @@
+# [1.4.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0...v1.4.0-dev.1) (2026-02-22)
+
+### Features
+
+- use material color generation for theme and update ui ([616bd31](https://github.com/aygreyG/music-stream-svelte/commit/616bd315bebb260ce09d5284bfed9cc46fe4c35c))
+
 # [1.3.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.8...v1.3.0-dev.9) (2026-02-22)
 
 ### Features
