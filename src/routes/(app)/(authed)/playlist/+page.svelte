@@ -33,7 +33,10 @@
   out:fade|global={{ duration: 150 }}
   class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
 >
-  <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
+  <div
+    in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+    class="p-4 pb-0 text-center text-xl font-bold"
+  >
     Playlists
   </div>
 

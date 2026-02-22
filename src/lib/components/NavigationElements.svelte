@@ -5,6 +5,7 @@
   import RoundSearch from '~icons/ic/round-search';
   import RoundAdminPanelSettings from '~icons/ic/round-admin-panel-settings';
   import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
+  import RoundNewReleases from '~icons/ic/round-new-releases';
   import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
   import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
   import ProfileFill from '~icons/iconamoon/profile-fill';
@@ -59,6 +60,11 @@
       href: '/playlist',
       text: 'Playlists',
       Icon: RoundPlaylistPlay
+    },
+    {
+      href: '/changelog',
+      text: 'Changelog',
+      Icon: RoundNewReleases
     },
     {
       href: '/logout',

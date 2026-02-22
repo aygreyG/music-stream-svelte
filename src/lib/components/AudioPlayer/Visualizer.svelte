@@ -45,10 +45,12 @@
 
     if (canvasWidth > 1250) {
       return 1;
-    } else if (canvasWidth > 500) {
+    } else if (canvasWidth > 700) {
       return 2;
-    } else {
+    } else if (canvasWidth > 500) {
       return 4;
+    } else {
+      return 5;
     }
   }
 
@@ -95,35 +97,39 @@
       analyser.getByteFrequencyData(dataArray);
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-      let x = 0;
-      const barWidth = (canvasWidth / bufferLength) * canvasSize * 1.8;
+      const padding = 1;
+      const drawWidth = canvasWidth - padding * 2;
+      const drawHeight = canvasHeight - padding;
+      const minGap = 2;
+      const barWidth = (drawWidth / bufferLength) * canvasSize * 1.8;
+      const totalBars = Math.floor(bufferLength / canvasSize / 2);
+      const barCount = Math.min(totalBars, Math.floor((drawWidth + minGap) / (barWidth + minGap)));
+      const gap = barCount > 1 ? (drawWidth - barCount * barWidth) / (barCount - 1) : 0;
 
-      for (let i = 0; i < (bufferLength / 2) * canvasSize; i++) {
+      let x = padding;
+
+      for (let i = 0; i < barCount; i++) {
         const value = dataArray[i * canvasSize];
 
         if (!value) {
-          x += barWidth + 2;
+          x += barWidth + gap;
           continue;
         }
 
-        const barHeight = value / 2;
+        const barHeight = (value / 255) * drawHeight;
 
         if (barHeight < 1) {
-          x += barWidth + 2;
+          x += barWidth + gap;
           continue;
-        }
-
-        if (x + barWidth > canvasWidth) {
-          break;
         }
 
         ctx.fillStyle = fillColor;
 
         ctx.beginPath();
-        ctx.roundRect(x, canvasHeight - barHeight, barWidth, barHeight, 60);
+        ctx.roundRect(x, canvasHeight - padding - barHeight, barWidth, barHeight, 60);
         ctx.fill();
 
-        x += barWidth + 2;
+        x += barWidth + gap;
       }
     }
 

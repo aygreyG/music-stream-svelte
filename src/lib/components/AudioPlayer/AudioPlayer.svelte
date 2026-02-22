@@ -289,7 +289,7 @@
         <Visualizer
           bind:this={visualizer}
           {analyser}
-          class="pointer-events-none absolute bottom-0 left-0 h-full w-full rounded-xl p-2 opacity-15 motion-reduce:hidden"
+          class="pointer-events-none absolute bottom-0 left-0 h-32 w-full rounded-xl p-1 opacity-15 motion-reduce:hidden sm:h-full"
         />
       {/if}
       <div class="flex h-full w-full flex-col justify-around px-2">

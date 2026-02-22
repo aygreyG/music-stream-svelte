@@ -124,8 +124,7 @@
 >
   <Visualizer
     {analyser}
-    sizeMultiplier={4}
-    class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 w-full opacity-15 motion-reduce:hidden"
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full opacity-15 motion-reduce:hidden"
   />
 
   <div

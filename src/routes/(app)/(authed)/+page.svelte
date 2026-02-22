@@ -3,9 +3,10 @@
   import { beforeNavigate } from '$app/navigation';
   import RoundSearch from '~icons/ic/round-search';
   import AlbumLink from './AlbumLink.svelte';
-  import { fade } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
   import type { PageData } from './$types';
   import { flip } from 'svelte/animate';
+  import { quintOut } from 'svelte/easing';
 
   interface Props {
     data: PageData;
@@ -81,7 +82,12 @@
   out:fade|global={{ duration: 250 }}
   class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
 >
-  <div class="p-4 pb-0 text-center text-xl font-bold">Albums</div>
+  <div
+    class="p-4 pb-0 text-center text-xl font-bold"
+    in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+  >
+    Albums
+  </div>
 
   <div
     class="z-20 flex w-full flex-col px-8 py-1 transition-shadow duration-300"

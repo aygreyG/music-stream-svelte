@@ -56,7 +56,12 @@
 
 {#if animate}
   <div class="flex h-full flex-col gap-2 overflow-auto p-2">
-    <div class="p-2 text-center text-xl font-bold">Admin dashboard</div>
+    <div
+      class="p-2 text-center text-xl font-bold"
+      in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+    >
+      Admin dashboard
+    </div>
 
     <div class="mx-auto flex w-full max-w-3xl flex-none flex-col overflow-clip rounded-xl">
       <div

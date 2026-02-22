@@ -71,12 +71,14 @@
   });
 </script>
 
-<div class="absolute top-0.5 right-2 z-50 text-xs font-bold opacity-30">
-  App version: {data.APP_VERSION}
-</div>
 <div class="flex h-full w-full flex-col items-center overflow-auto">
   <div class="flex w-full max-w-xl flex-col p-2">
-    <div class="p-2 text-center text-xl font-bold">Profile</div>
+    <div
+      class="p-2 text-center text-xl font-bold"
+      in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+    >
+      Profile
+    </div>
 
     <Accordion title="Update Profile">
       <div class="flex w-full flex-none justify-center">
