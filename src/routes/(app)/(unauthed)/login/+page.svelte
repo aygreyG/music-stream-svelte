@@ -30,7 +30,7 @@
     }}
   >
     <label class="flex flex-col gap-1">
-      <div class="text-sm font-bold text-zinc-400">Username</div>
+      <div class="text-sm font-bold">Username</div>
       <input
         class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
         name="username"
@@ -38,7 +38,7 @@
       />
     </label>
     <label class="flex flex-col gap-1">
-      <div class="text-sm font-bold text-zinc-400">Password</div>
+      <div class="text-sm font-bold">Password</div>
       <input
         class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
         type="password"
@@ -48,7 +48,7 @@
     </label>
 
     <button
-      class="bg-primary hover:bg-primary/80 disabled:hover:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
+      class="bg-primary hover:bg-primary/80 disabled:hover:bg-primary text-on-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
       type="submit"
       use:vibrate
       disabled={loading}
@@ -62,7 +62,7 @@
       {/if}
     </button>
     {#if form?.error}
-      <div class="text-sm font-bold text-red-500">
+      <div class="text-error text-sm font-bold">
         {`${form.error.charAt(0).toUpperCase()}${form.error.slice(1)}.`}
       </div>
     {/if}

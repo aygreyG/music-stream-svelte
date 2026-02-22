@@ -12,13 +12,7 @@ export const load = async ({ locals, params, setHeaders }) => {
         select: {
           id: true,
           title: true,
-          albumArtId: true,
-          albumArtDarkMuted: true,
-          albumArtVibrant: true,
-          albumArtMuted: true,
-          albumArtLightVibrant: true,
-          albumArtLightMuted: true,
-          albumArtDarkVibrant: true
+          albumArtId: true
         },
         orderBy: { releaseDate: { sort: 'asc', nulls: 'last' } }
       },
@@ -38,12 +32,6 @@ export const load = async ({ locals, params, setHeaders }) => {
               albumArtist: { select: { name: true, id: true } },
               albumArtId: true,
               albumArt: true,
-              albumArtDarkMuted: true,
-              albumArtVibrant: true,
-              albumArtMuted: true,
-              albumArtLightVibrant: true,
-              albumArtLightMuted: true,
-              albumArtDarkVibrant: true,
               tracks: {
                 select: { id: true, title: true, artists: { select: { name: true, id: true } } }
               }

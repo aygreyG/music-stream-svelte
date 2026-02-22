@@ -5,16 +5,16 @@ import { createReadStream } from 'fs';
 import type { Prisma } from '../../../../../../generated/prisma-client/client';
 
 type TrackType = Prisma.TrackGetPayload<{ select: { filePath: true; id: true } }>;
-type CachedTrack = TrackType & { lastAccessed: Date };
 
-const cache = new Map<string, CachedTrack>();
+const cache = new Map<string, TrackType>();
 
 async function getTrack(trackId: string) {
   if (cache.has(trackId)) {
-    const track = cache.get(trackId) as CachedTrack;
-    track.lastAccessed = new Date();
+    // Move to end of Map (most recently used) by re-inserting
+    const track = cache.get(trackId)!;
+    cache.delete(trackId);
     cache.set(trackId, track);
-    return cache.get(trackId);
+    return track;
   }
 
   const track = await prisma.track.findUnique({
@@ -31,13 +31,12 @@ async function getTrack(trackId: string) {
     return null;
   }
 
-  cache.set(trackId, { ...track, lastAccessed: new Date() });
+  cache.set(trackId, track);
 
   if (cache.size > 100) {
-    const oldest = [...cache.values()].sort(
-      (a, b) => a.lastAccessed.getTime() - b.lastAccessed.getTime()
-    )[0];
-    cache.delete(oldest.id);
+    // Delete the oldest entry (first key in Map iteration order)
+    const oldestKey = cache.keys().next().value;
+    if (oldestKey) cache.delete(oldestKey);
   }
 
   return track;

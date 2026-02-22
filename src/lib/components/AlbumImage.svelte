@@ -8,12 +8,6 @@
         albumArtId: true;
         id: true;
         title: true;
-        albumArtDarkMuted: true;
-        albumArtVibrant: true;
-        albumArtMuted: true;
-        albumArtLightVibrant: true;
-        albumArtLightMuted: true;
-        albumArtDarkVibrant: true;
       };
     }>;
     maxSize?: ImageSize;
@@ -24,14 +18,10 @@
   let { album, maxSize = 'l', blur = false, key = '' }: Props = $props();
 </script>
 
-<div
-  class="pointer-events-none h-full w-full"
-  class:bg-zinc-900={!album.albumArtDarkMuted && !blur}
->
+<div class="pointer-events-none h-full w-full" class:bg-zinc-800={!album.albumArtId}>
   <!-- Background color when the album art is not loaded in it is smaller to make sure no white lines are visible on rounded corners -->
   <div
-    class="absolute inset-0 mt-[0.5px] ml-[0.5px] h-[calc(100%-1px)] w-[calc(100%-1px)] rounded-xl"
-    style={album.albumArtDarkMuted && !blur ? `background-color: ${album.albumArtDarkMuted}` : ''}
+    class="absolute inset-0 mt-[0.5px] ml-[0.5px] h-[calc(100%-1px)] w-[calc(100%-1px)] rounded-xl bg-zinc-800"
   ></div>
   <picture class="h-full w-full">
     {#key key}

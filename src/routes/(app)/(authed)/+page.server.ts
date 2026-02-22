@@ -3,12 +3,6 @@ import prisma from '$lib/server/prisma';
 export const load = async ({ locals, setHeaders }) => {
   const albums = await prisma.album.findMany({
     select: {
-      albumArtDarkMuted: true,
-      albumArtVibrant: true,
-      albumArtMuted: true,
-      albumArtLightVibrant: true,
-      albumArtLightMuted: true,
-      albumArtDarkVibrant: true,
       albumArtId: true,
       id: true,
       title: true,

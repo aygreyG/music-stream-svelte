@@ -37,8 +37,12 @@
   let duration: number | undefined = $state();
   let volume: number = $state(0);
   let prevVolume = $state(0);
-  let durationString = $state('--:--');
-  let currentString = $state('--:--');
+  let durationString = $derived(
+    duration ? new Date(duration * 1000).toISOString().slice(14, 19) : '--:--'
+  );
+  let currentString = $derived(
+    currentTime ? new Date(currentTime * 1000).toISOString().slice(14, 19) : '--:--'
+  );
   let repeat = $state(false);
   let listenedDuration = $state(0);
   let previousTime = $state(0);
@@ -95,29 +99,12 @@
   }
 
   $effect(() => {
-    if (duration) {
-      durationString = new Date(duration * 1000).toISOString().slice(14, 19);
-      if (currentTime === 0) {
-        currentString = '00:00';
-      }
-    } else {
-      durationString = '--:--';
-    }
-  });
-
-  $effect(() => {
-    if (currentTime) {
-      currentString = new Date(currentTime * 1000).toISOString().slice(14, 19);
-
-      if (navigator.mediaSession && player) {
-        navigator.mediaSession.setPositionState({
-          duration,
-          playbackRate: player.playbackRate,
-          position: currentTime
-        });
-      }
-    } else {
-      currentString = '--:--';
+    if (currentTime && navigator.mediaSession && player) {
+      navigator.mediaSession.setPositionState({
+        duration,
+        playbackRate: player.playbackRate,
+        position: currentTime
+      });
     }
   });
 
@@ -296,13 +283,15 @@
       bind:buffered={bufferedRanges}
     ></audio>
   {/if}
-  <div class="h-full w-full rounded-xl bg-zinc-900/95 p-2">
+  <div class="bg-surface h-full w-full rounded-xl p-2 transition-colors duration-500">
     {#if user}
-      <Visualizer
-        bind:this={visualizer}
-        {analyser}
-        class="pointer-events-none absolute bottom-0 left-0 h-full w-full rounded-xl p-2 opacity-15 motion-reduce:hidden"
-      />
+      {#if !fullScreenOpen}
+        <Visualizer
+          bind:this={visualizer}
+          {analyser}
+          class="pointer-events-none absolute bottom-0 left-0 h-full w-full rounded-xl p-2 opacity-15 motion-reduce:hidden"
+        />
+      {/if}
       <div class="flex h-full w-full flex-col justify-around px-2">
         <button
           onclick={() => (fullScreenOpen = true)}
@@ -327,14 +316,12 @@
                   class="flex h-10 w-[calc(100%-2.5rem)] shrink flex-col text-left"
                 >
                   <span
-                    class="overflow-hidden text-ellipsis whitespace-nowrap"
+                    class="overflow-hidden font-bold text-ellipsis whitespace-nowrap"
                     title={audioPlayer.currentTrack.title}
                   >
                     {audioPlayer.currentTrack.title}
                   </span>
-                  <span
-                    class="overflow-hidden text-xs text-ellipsis whitespace-nowrap text-zinc-400"
-                  >
+                  <span class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
                     {audioPlayer.currentTrack.artists
                       .toSorted((a, _) =>
                         a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1
@@ -346,7 +333,7 @@
               </div>
             {/key}
             <div
-              class="text-primary-dark active:text-primary flex-none text-2xl transition-colors"
+              class="text-on-surface-variant active:text-primary flex-none text-2xl transition-colors"
               in:fade|global={{ duration: 500, easing: quintOut }}
             >
               <RoundKeyboardArrowUp />
@@ -377,13 +364,13 @@
               use:vibrate
             >
               {#if volume === 0}
-                <RoundVolumeOff class="text-primary text-3xl" />
+                <RoundVolumeOff class="text-primary text-3xl transition-colors duration-500" />
               {:else if volume < 0.3}
-                <RoundVolumeMute class="text-primary text-3xl" />
+                <RoundVolumeMute class="text-primary text-3xl transition-colors duration-500" />
               {:else if volume < 0.7}
-                <RoundVolumeDown class="text-primary text-3xl" />
+                <RoundVolumeDown class="text-primary text-3xl transition-colors duration-500" />
               {:else}
-                <RoundVolumeUp class="text-primary text-3xl" />
+                <RoundVolumeUp class="text-primary text-3xl transition-colors duration-500" />
               {/if}
             </button>
             <input
@@ -392,7 +379,7 @@
               max="1"
               step="0.01"
               bind:value={volume}
-              class="volume-bar w-full max-w-32"
+              class="styled-range volume-bar w-full max-w-32"
               aria-label="Volume bar"
             />
           </div>
@@ -423,41 +410,7 @@
 <style lang="postcss">
   @reference "../../../app.css";
 
-  input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none;
-    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-hidden backdrop-blur-md sm:h-2;
-  }
-
-  input[type='range'].volume-bar {
-    @apply h-4;
-  }
-
-  input[type='range']::-webkit-slider-runnable-track {
-    @apply h-4 rounded-full bg-transparent sm:h-2;
-  }
-
-  input[type='range']::-moz-range-track {
-    @apply h-4 rounded-full bg-transparent sm:h-2;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-    outline: none;
-    box-shadow: -10000px 0 0 10000px theme(--color-primary);
-    @apply size-0 transition-shadow duration-500;
-  }
-
-  input[type='range']::-moz-range-thumb {
-    border: none;
-    outline: none;
-    box-shadow: -10000px 0 0 10000px theme(--color-primary);
-    @apply size-0 transition-shadow duration-500;
-  }
-
-  input[type='range']:focus {
-    outline: none;
+  .volume-bar {
+    @apply h-4!;
   }
 </style>

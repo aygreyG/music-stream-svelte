@@ -27,12 +27,6 @@ export const load = async ({ locals, depends }) => {
               title: true,
               albumArtist: { select: { name: true, id: true } },
               albumArtId: true,
-              albumArtVibrant: true,
-              albumArtMuted: true,
-              albumArtDarkVibrant: true,
-              albumArtDarkMuted: true,
-              albumArtLightVibrant: true,
-              albumArtLightMuted: true,
               albumArt: true,
               tracks: {
                 select: { id: true, title: true, artists: { select: { name: true, id: true } } }
@@ -191,12 +185,6 @@ export const actions = {
                 title: true,
                 albumArtist: { select: { name: true, id: true } },
                 albumArtId: true,
-                albumArtVibrant: true,
-                albumArtMuted: true,
-                albumArtDarkVibrant: true,
-                albumArtDarkMuted: true,
-                albumArtLightVibrant: true,
-                albumArtLightMuted: true,
                 albumArt: true,
                 tracks: {
                   select: { id: true, title: true, artists: { select: { name: true, id: true } } }

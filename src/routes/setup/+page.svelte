@@ -32,7 +32,7 @@
   });
 </script>
 
-<div class="flex h-full flex-col items-center rounded-xl bg-zinc-900/95 p-4">
+<div class="bg-surface flex h-full flex-col items-center rounded-xl p-4">
   {#if loading}
     <div class="flex h-full w-full items-center justify-center">
       <RoundRefresh class="text-primary text-5xl motion-safe:animate-spin" />
@@ -65,7 +65,7 @@
         <div class="flex w-full items-center justify-between ps-2 pe-4">
           <div class="w-full p-2 text-lg font-bold">Database has an owner account already</div>
           <button
-            class="rounded-md bg-rose-600 px-2 py-1 text-sm font-semibold whitespace-nowrap text-white transition-all hover:bg-rose-700"
+            class="bg-error text-on-error hover:bg-error/80 rounded-md px-2 py-1 text-sm font-semibold whitespace-nowrap transition-all"
             formaction="?/deleteowner"
             use:vibrate
           >
@@ -75,8 +75,8 @@
       {:else}
         <div class="w-full p-2 text-lg font-bold">Create an owner account</div>
 
-        <label class="w-full px-4 text-sm text-zinc-300">
-          <div class="text-sm font-bold text-zinc-400">Username</div>
+        <label class="w-full px-4 text-sm">
+          <div class="text-sm font-bold">Username</div>
           <input
             class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             name="username"
@@ -85,8 +85,8 @@
           />
         </label>
 
-        <label class="w-full px-4 text-sm text-zinc-300">
-          <div class="text-sm font-bold text-zinc-400">Email</div>
+        <label class="w-full px-4 text-sm">
+          <div class="text-sm font-bold">Email</div>
           <input
             class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="email"
@@ -96,8 +96,8 @@
           />
         </label>
 
-        <label class="w-full px-4 text-sm text-zinc-300">
-          <div class="text-sm font-bold text-zinc-400">Password</div>
+        <label class="w-full px-4 text-sm">
+          <div class="text-sm font-bold">Password</div>
           <input
             class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/20 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
             type="password"
@@ -143,7 +143,7 @@
         class:shadow-md-top={scrolledToBottom}
       >
         <button
-          class="bg-primary hover:bg-primary/80 m-2 rounded-md px-2 py-1 font-bold text-zinc-300 transition-colors"
+          class="bg-primary hover:bg-primary/80 text-on-primary m-2 rounded-md px-2 py-1 font-bold transition-colors"
           type="submit"
           use:vibrate
         >

@@ -1,4 +1,4 @@
-FROM node:23-alpine AS base
+FROM node:24.13.1-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -7,6 +7,7 @@ WORKDIR /app
 
 FROM base AS prod-deps
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile --ignore-scripts
+RUN pnpm rebuild better-sqlite3
 
 FROM base AS build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
@@ -18,6 +19,7 @@ COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/src/generated/prisma-client /app/src/generated/prisma-client
 COPY --from=build /app/build /app/build
 COPY /prisma prisma
+COPY prisma.config.ts .
 COPY package.json .
 COPY start.sh start.sh
 RUN chmod +x start.sh

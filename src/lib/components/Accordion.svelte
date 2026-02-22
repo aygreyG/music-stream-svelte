@@ -10,10 +10,15 @@
     title?: string;
     delay?: number;
     children?: Snippet;
+    /**
+     * This makes transitions weird, only use if necessary
+     */
+    defaultOpen?: boolean;
   }
 
-  let { title = 'Open!', delay = 0, children }: Props = $props();
-  let show = $state(false);
+  let { title = 'Open!', delay = 0, children, defaultOpen = false }: Props = $props();
+  // svelte-ignore state_referenced_locally
+  let show = $state(defaultOpen);
 </script>
 
 <button

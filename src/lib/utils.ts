@@ -1,53 +1,3 @@
-export const getCSSVariables = (value?: string | null) => {
-  if (value) {
-    return `--primary: ${value}; --accessible: ${getAccessibleColor(value)};`;
-  }
-
-  return '';
-};
-
-export const getCSSVariable = (name: string, value?: string | null) => {
-  if (value) {
-    return `--${name}: ${value};`;
-  }
-
-  return '';
-};
-
-/** Change hex color into RGB */
-export const getRGBColor = (hex: string, type: string) => {
-  const color = hex.replace(/#/g, '');
-  // rgb values
-  const r = parseInt(color.slice(0, 2), 16);
-  const g = parseInt(color.slice(2, 4), 16);
-  const b = parseInt(color.slice(4, 6), 16);
-
-  return `--color-${type}: ${r}, ${g}, ${b};`;
-};
-
-/** Determine the accessible color of text */
-export const getAccessibleColor = (hex?: string | null) => {
-  if (!hex) return '';
-
-  const color = hex.replace(/#/g, '');
-  // rgb values
-  const r = parseInt(color.slice(0, 2), 16);
-  const g = parseInt(color.slice(2, 4), 16);
-  const b = parseInt(color.slice(4, 6), 16);
-
-  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-
-  return yiq >= 128 ? '#18181b' : '#d4d4d8';
-};
-
-/** Determine if the given objects are equal.
- *
- *  Objects must be JSON serializable
- */
-export function isObjectEqual<T>(a: T, b: T) {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
 /** Transform seconds into a human readable format
  * @param seconds - The number of seconds to transform
  * @param maxIntervals - The maximum number of intervals to display, it can be max 7 (default is 2)
@@ -83,10 +33,6 @@ export function getReadableTime(seconds: number, maxIntervals = 2) {
   return result;
 }
 
-export function getHexColorFromRGB(r: number, g: number, b: number) {
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).split('.')[0]}`;
-}
-
 export function preventDefault(fn?: (event: Event) => void) {
   return function (event: Event) {
     event.preventDefault();
@@ -99,4 +45,23 @@ export function stopPropagation(fn?: (event: Event) => void) {
     event.stopPropagation();
     fn?.(event);
   };
+}
+
+export function handleVibrate(pattern: number | number[] = 200, mute = false) {
+  if (
+    !mute &&
+    navigator &&
+    matchMedia('(prefers-reduced-motion: no-preference)').matches &&
+    matchMedia('(hover: none), (pointer: coarse)').matches &&
+    'vibrate' in navigator
+  ) {
+    navigator.vibrate(pattern);
+  }
+}
+
+export function getDarkModePreference() {
+  const localStorageDarkMode = localStorage.getItem('darkMode');
+  return localStorageDarkMode
+    ? localStorageDarkMode === 'true'
+    : !matchMedia('(prefers-color-scheme: light)').matches;
 }

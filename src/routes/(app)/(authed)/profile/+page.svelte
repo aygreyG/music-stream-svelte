@@ -12,8 +12,8 @@
   import { flip } from 'svelte/animate';
   import type { SubmitFunction } from '@sveltejs/kit';
   import type { ActionData, PageData } from './$types';
-  import { untrack } from 'svelte';
-  import { ROLE } from '$lib/shared/consts';
+  import { onMount, untrack } from 'svelte';
+  import { ROLE, SCHEME_TYPES } from '$lib/shared/consts';
 
   interface Props {
     data: PageData;
@@ -22,6 +22,8 @@
 
   let { data, form }: Props = $props();
 
+  let selectedScheme: (typeof SCHEME_TYPES)[number] = $state('EXPRESSIVE');
+  let darkMode = $state<'true' | 'false' | 'auto'>('auto');
   let deleteClicked = $state(false);
   let deleteTimeout: string | number | NodeJS.Timeout | undefined = $state();
   let loading = $state(false);
@@ -56,9 +58,20 @@
       }
     };
   };
+
+  onMount(() => {
+    selectedScheme =
+      (localStorage.getItem('schemeType') as (typeof SCHEME_TYPES)[number]) || 'EXPRESSIVE';
+    const localStorageDarkMode = localStorage.getItem('darkMode');
+    if (localStorageDarkMode !== null) {
+      darkMode = localStorageDarkMode as 'true' | 'false';
+    } else {
+      darkMode = 'auto';
+    }
+  });
 </script>
 
-<div class="absolute top-1 right-3 z-50 text-sm font-bold text-zinc-600/20">
+<div class="absolute top-0.5 right-2 z-50 text-xs font-bold opacity-30">
   App version: {data.APP_VERSION}
 </div>
 <div class="flex h-full w-full flex-col items-center overflow-auto">
@@ -80,7 +93,7 @@
           }}
         >
           <label class="flex flex-col gap-1">
-            <div class="text-sm font-bold text-zinc-400">Username</div>
+            <div class="text-sm font-bold">Username</div>
             <input
               autocomplete="username"
               id="username"
@@ -91,7 +104,7 @@
             />
           </label>
           <label class="flex flex-col gap-1">
-            <div class="text-sm font-bold text-zinc-400">Email</div>
+            <div class="text-sm font-bold">Email</div>
             <input
               id="email"
               autocomplete="email"
@@ -103,7 +116,7 @@
             />
           </label>
           <button
-            class="bg-primary text-accessible hover:bg-primary/80 disabled:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
+            class="bg-primary text-on-primary hover:bg-primary/80 disabled:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
             type="submit"
             use:vibrate
             disabled={loading}
@@ -138,7 +151,7 @@
           }}
         >
           <label class="flex flex-col gap-1">
-            <div class="text-sm font-bold text-zinc-400">Current password</div>
+            <div class="text-sm font-bold">Current password</div>
             <input
               autocomplete="current-password"
               type="password"
@@ -149,7 +162,7 @@
             />
           </label>
           <label class="flex flex-col gap-1">
-            <div class="text-sm font-bold text-zinc-400">New password</div>
+            <div class="text-sm font-bold">New password</div>
             <input
               id="newpassword"
               autocomplete="new-password"
@@ -160,7 +173,7 @@
             />
           </label>
           <label class="flex flex-col gap-1">
-            <div class="text-sm font-bold text-zinc-400">Repeat new password</div>
+            <div class="text-sm font-bold">Repeat new password</div>
             <input
               id="repeatpassword"
               autocomplete="new-password"
@@ -174,7 +187,7 @@
             <div class="text-sm font-bold text-red-500">{form.error}</div>
           {/if}
           <button
-            class="bg-primary text-accessible hover:bg-primary/80 disabled:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
+            class="bg-primary text-on-primary hover:bg-primary/80 disabled:bg-primary mt-2 w-full self-center rounded-md px-4 py-1 font-semibold transition-colors disabled:opacity-50"
             type="submit"
             use:vibrate
             disabled={loading}
@@ -188,6 +201,49 @@
             {/if}
           </button>
         </form>
+      </div>
+    </Accordion>
+
+    <Accordion title="Color Scheme" delay={200}>
+      <div class="flex w-full flex-col gap-2 p-4">
+        <div class="text-sm font-bold">Choose a color scheme for the app</div>
+        <select
+          class="focus-visible:ring-primary focus-within:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
+          onchange={(e) => {
+            const value = (e.target as HTMLSelectElement).value;
+            localStorage.setItem('schemeType', value);
+            location.reload();
+          }}
+          bind:value={selectedScheme}
+        >
+          {#each SCHEME_TYPES as schemeType}
+            <option value={schemeType}>
+              {schemeType.charAt(0) + schemeType.slice(1).toLowerCase().replaceAll('_', ' ')}
+              {#if schemeType === 'EXPRESSIVE'}
+                (default)
+              {/if}
+            </option>
+          {/each}
+        </select>
+
+        <div class="text-sm font-bold">Dark mode</div>
+        <select
+          class="focus-visible:ring-primary focus-within:ring-primary w-full rounded-xl border-none bg-zinc-600/20 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:ring-2"
+          onchange={(e) => {
+            const value = (e.target as HTMLSelectElement).value;
+            if (value === 'auto') {
+              localStorage.removeItem('darkMode');
+            } else {
+              localStorage.setItem('darkMode', value);
+            }
+            location.reload();
+          }}
+          value={darkMode}
+        >
+          <option value="auto">Auto (follow system preference)</option>
+          <option value="true">Dark</option>
+          <option value="false">Light</option>
+        </select>
       </div>
     </Accordion>
 

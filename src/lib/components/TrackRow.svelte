@@ -5,8 +5,9 @@
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import AlbumImage from './AlbumImage.svelte';
   import { vibrate } from '$lib/actions/vibrate';
-  import { getCSSVariables, getReadableTime } from '$lib/utils';
+  import { getReadableTime } from '$lib/utils';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
   import type { Snippet } from 'svelte';
   import type { Prisma } from '../../generated/prisma-client/client';
 
@@ -23,12 +24,6 @@
           title: true;
           albumArtist: { select: { name: true; id: true } };
           albumArtId: true;
-          albumArtDarkMuted: true;
-          albumArtVibrant: true;
-          albumArtMuted: true;
-          albumArtLightVibrant: true;
-          albumArtLightMuted: true;
-          albumArtDarkVibrant: true;
           albumArt: true;
           tracks: {
             select: { id: true; title: true; artists: { select: { name: true; id: true } } };
@@ -67,6 +62,14 @@
     showAlbumName = true
   }: Props = $props();
 
+  let schemeStyle = $state('');
+
+  $effect(() => {
+    getExpressiveScheme(track.album.id, track.album.albumArtId).then((scheme) => {
+      schemeStyle = schemeToCSS(scheme);
+    });
+  });
+
   let indexed = $derived(index !== null);
   let hasButton = $derived(!!button);
   let mainWidth = $derived.by(() => {
@@ -98,9 +101,12 @@
     if (player.currentTrack?.id !== track.id) handleClick();
   }}
   use:vibrate
-  class="group flex h-14 w-full flex-none cursor-default items-center from-transparent via-zinc-600/10 to-transparent transition-colors select-none hover:bg-linear-to-r"
+  class={[
+    'group flex h-16 w-full flex-none cursor-default items-center rounded-md from-transparent via-zinc-600/10 to-transparent transition-colors select-none hover:bg-linear-to-r focus-visible:bg-linear-to-r',
+    player.currentTrack?.id === track.id && 'bg-linear-to-r'
+  ]}
   class:px-4={!indexed}
-  style={getCSSVariables(track.album.albumArtLightVibrant)}
+  style={schemeStyle}
 >
   {#if indexed}
     <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -122,7 +128,7 @@
     </div>
   {/if}
 
-  <div class="flex h-12 w-12 flex-none items-center justify-center">
+  <div class="flex size-12 flex-none items-center justify-center">
     {#if player.currentTrack?.id === track.id}
       {#if player.paused}
         <button
@@ -169,12 +175,12 @@
           handleClick();
         }
       }}
-      class="w-full cursor-default overflow-hidden text-start text-ellipsis whitespace-nowrap"
+      class="w-full cursor-default overflow-hidden text-start font-bold text-ellipsis whitespace-nowrap"
       use:vibrate
     >
       {track.title}
     </button>
-    <div class="overflow-hidden text-xs text-ellipsis whitespace-nowrap text-white/70">
+    <div class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
       {#each track.artists.toSorted( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
         {@const shouldHaveComma = track.artists.length > 1 && index != track.artists.length - 1}
         <a class={['hover:underline', shouldHaveComma && 'mr-1']} href="/artist/{artist.id}">
@@ -192,7 +198,7 @@
       <!-- TODO: Make sure it is always readable and does not wrap
            Issue: https://github.com/aygreyG/music-stream-svelte/issues/124
       -->
-      <div class="flex w-full justify-between text-xs whitespace-nowrap text-white/70">
+      <div class="flex w-full justify-between text-xs font-medium whitespace-nowrap">
         <div>{listenedInformation.lastListened.toLocaleString()}</div>
         <div
           class="translate-x-14 overflow-hidden text-ellipsis"

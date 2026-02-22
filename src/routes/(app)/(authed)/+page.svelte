@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { beforeNavigate } from '$app/navigation';
   import RoundSearch from '~icons/ic/round-search';
   import AlbumLink from './AlbumLink.svelte';
   import { fade } from 'svelte/transition';
@@ -17,19 +18,28 @@
   let scrolled = $state(false);
   let scrolledFromTop = $state(false);
   let searchString = $state('');
+  let debouncedSearch = $state('');
+  let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
 
   let filtered = $derived(
     data.albums.filter((album) => {
-      if (!searchString) {
+      if (!debouncedSearch) {
         return true;
       }
 
       return (
-        album.title.toLowerCase().includes(searchString.toLowerCase()) ||
-        album.albumArtist.name.toLowerCase().includes(searchString.toLowerCase())
+        album.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        album.albumArtist.name.toLowerCase().includes(debouncedSearch.toLowerCase())
       );
     })
   );
+
+  function onSearchInput() {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      debouncedSearch = searchString;
+    }, 250);
+  }
 
   function updateVisibleElements() {
     if (!container) return;
@@ -59,6 +69,12 @@
     }
     updateVisibleElements();
   });
+
+  beforeNavigate(() => {
+    if (container) {
+      localStorage.setItem('dashboard-scroll', container.scrollTop.toString() || '0');
+    }
+  });
 </script>
 
 <div
@@ -76,6 +92,7 @@
         class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
         type="text"
         bind:value={searchString}
+        oninput={onSearchInput}
         name="search"
         autocomplete="off"
         placeholder="Search"
@@ -89,7 +106,6 @@
     bind:this={container}
     onscroll={() => {
       if (!container) return;
-      localStorage.setItem('dashboard-scroll', container.scrollTop.toString() || '0');
 
       updateVisibleElements();
 

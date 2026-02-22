@@ -3,7 +3,7 @@ import { getAlbumArtUrl } from '$lib/shared/fetchAlbumArt.js';
 import { error, json } from '@sveltejs/kit';
 import { access, mkdir, rm, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { getAlbumArtFileName, getPalette } from '$lib/server/images';
+import { getAlbumArtFileName } from '$lib/server/images';
 
 export const POST = async ({ request, params }) => {
   const { albumId } = params;
@@ -45,7 +45,6 @@ export const POST = async ({ request, params }) => {
         const buffer = Buffer.from(await albumArt.arrayBuffer());
         await writeFile(join(coversDir, `${albumArtFileName}.${ext}`), buffer);
 
-        const albumArtPalette = await getPalette(buffer);
         const albumArtId = crypto.randomUUID();
 
         await prisma.album.update({
@@ -54,28 +53,14 @@ export const POST = async ({ request, params }) => {
           },
           data: {
             albumArt: join(coversDir, `${albumArtFileName}.${ext}`),
-            albumArtId,
-            albumArtAccent: albumArtPalette.vibrant,
-            albumArtVibrant: albumArtPalette.vibrant,
-            albumArtMuted: albumArtPalette.muted,
-            albumArtLightVibrant: albumArtPalette.lightVibrant,
-            albumArtDarkVibrant: albumArtPalette.darkVibrant,
-            albumArtLightMuted: albumArtPalette.lightMuted,
-            albumArtDarkMuted: albumArtPalette.darkMuted
+            albumArtId
           }
         });
 
         return json({
           message: 'Album art fetched',
           albumArtInfo: {
-            albumArtId,
-            albumArtVibrant: albumArtPalette.vibrant,
-            albumArtMuted: albumArtPalette.muted,
-            albumArtDarkVibrant: albumArtPalette.darkVibrant,
-            albumArtDarkMuted: albumArtPalette.darkMuted,
-            albumArtLightVibrant: albumArtPalette.lightVibrant,
-            albumArtLightMuted: albumArtPalette.lightMuted,
-            albumArtAccent: albumArtPalette.vibrant
+            albumArtId
           }
         });
       } catch (e) {

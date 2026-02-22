@@ -13,7 +13,7 @@
 </script>
 
 <div class="flex w-40 flex-none flex-col items-center justify-center">
-  <div class="h-36 w-36 flex-none overflow-clip rounded-md bg-zinc-600/80">
+  <div class="bg-surface-variant/80 h-36 w-36 flex-none overflow-clip rounded-md">
     {#if showImage}
       <img
         class="h-full w-full object-cover"
@@ -24,9 +24,9 @@
   </div>
   <div class="text-center">{release['artist-credit'].map((ac) => ac.artist.name).join(', ')}</div>
   <div>{release.title}</div>
-  <div class="m-2 flex overflow-clip rounded-md text-sm font-bold">
+  <div class="m-2 flex overflow-clip rounded-full text-sm font-bold">
     <button
-      class="bg-primary text-accessible hover:bg-primary/80 disabled:bg-primary/65 disabled:hover:bg-primary/65 transition-all disabled:cursor-not-allowed disabled:opacity-80"
+      class="bg-primary text-on-primary hover:bg-primary/80 disabled:bg-primary/65 disabled:hover:bg-primary/65 py-2 pl-2 transition-all disabled:cursor-not-allowed disabled:opacity-80"
       onclick={() => (showImage = true)}
       disabled={showImage}
       use:vibrate={{ mute: showImage }}
@@ -34,7 +34,7 @@
       Show Image
     </button>
     <button
-      class="bg-primary text-accessible hover:bg-primary/80 transition-all"
+      class="bg-primary text-on-primary hover:bg-primary/80 py-2 pr-2 transition-all"
       onclick={() => onchoose(release.id)}
       use:vibrate
     >

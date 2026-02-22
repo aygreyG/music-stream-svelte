@@ -20,12 +20,6 @@
                 id: true;
                 title: true;
                 albumArtId: true;
-                albumArtDarkMuted: true;
-                albumArtVibrant: true;
-                albumArtMuted: true;
-                albumArtLightVibrant: true;
-                albumArtLightMuted: true;
-                albumArtDarkVibrant: true;
               };
             };
           };
@@ -42,12 +36,6 @@
       id: true;
       title: true;
       albumArtId: true;
-      albumArtDarkMuted: true;
-      albumArtVibrant: true;
-      albumArtMuted: true;
-      albumArtLightVibrant: true;
-      albumArtLightMuted: true;
-      albumArtDarkVibrant: true;
     };
   }>;
 
@@ -77,7 +65,7 @@
 </script>
 
 <form
-  class="flex h-full w-full flex-col items-center justify-between overflow-clip rounded-xl bg-zinc-950/20"
+  class="bg-surface-variant/40 flex h-full w-full flex-col items-center justify-between overflow-clip rounded-xl"
   title={playlist.name}
   action="?/update"
   method="POST"
@@ -108,6 +96,7 @@
   <a
     href="/playlist/{playlist.id}"
     class="flex h-3/4 w-full flex-none items-center justify-center px-2 pt-2"
+    use:vibrate
     out:send|global={{ key: playlist.id, duration: 300 }}
   >
     <div class="aspect-square h-full overflow-clip rounded-xl">

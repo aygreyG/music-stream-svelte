@@ -58,7 +58,10 @@
       >
         <TrackRow
           handleClick={() => {
-            audioPlayer.playTrack(data.playlist.tracks, index);
+            audioPlayer.playTrack(data.playlist.tracks, index, true, {
+              title: data.playlist.name,
+              id: data.playlist.id
+            });
           }}
           {track}
           delay={250 + index * 30}
@@ -72,16 +75,16 @@
                 type="submit"
                 use:vibrate
               >
-                <HeartOff class="hover:text-primary text-2xl text-zinc-600" />
+                <HeartOff
+                  class="hover:text-primary text-2xl transition-colors sm:opacity-0 sm:group-hover:opacity-100"
+                />
               </button>
             </form>
           {/snippet}
         </TrackRow>
       </div>
     {:else}
-      <div class="text-white/70 text-center text-xl px-4">
-        There are no tracks in this playlist.
-      </div>
+      <div class="text-center text-xl px-4">There are no tracks in this playlist.</div>
     {/each}
   </div>
 </div>

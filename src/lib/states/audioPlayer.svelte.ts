@@ -1,6 +1,5 @@
 import type { Prisma } from '../../generated/prisma-client/client';
 import { getContext, setContext } from 'svelte';
-import { theme } from './theme.svelte';
 
 type TrackType = Prisma.TrackGetPayload<{
   select: {
@@ -24,40 +23,44 @@ type TrackType = Prisma.TrackGetPayload<{
         };
         albumArtId: true;
         albumArt: true;
-        albumArtDarkMuted: true;
-        albumArtVibrant: true;
-        albumArtMuted: true;
-        albumArtLightVibrant: true;
-        albumArtLightMuted: true;
-        albumArtDarkVibrant: true;
       };
     };
   };
 }>;
 
+type PlaylistInfoType = {
+  title: string;
+  id: string;
+};
+
 function createAudioPlayer() {
   let paused: boolean = $state(true);
   let currentTrack: TrackType | null = $state(null);
+  let playlistInfo: PlaylistInfoType | null = $state(null);
   let queueContext: TrackType[] = $state([]);
   let queueContextIndex: number = $state(0);
   const hasNext = $derived(queueContextIndex < queueContext.length - 1);
   const hasPrevious = $derived(queueContextIndex > 0);
 
-  function playTrack(context: TrackType[], index: number, instant: boolean = true) {
+  function playTrack(
+    context: TrackType[],
+    index: number,
+    instant: boolean = true,
+    playlistInfoParam: PlaylistInfoType | null = null
+  ) {
     queueContextIndex = index;
     queueContext = context;
     currentTrack = context[index];
-    theme.background = currentTrack?.album?.albumArtMuted || null;
     if (instant) {
       paused = false;
     }
+    playlistInfo = playlistInfoParam;
   }
 
   function playNext() {
     if (queueContextIndex + 1 < queueContext.length) {
       queueContextIndex++;
       currentTrack = queueContext[queueContextIndex];
-      theme.background = currentTrack?.album?.albumArtMuted || null;
     }
   }
 
@@ -65,7 +68,6 @@ function createAudioPlayer() {
     if (queueContextIndex - 1 >= 0) {
       queueContextIndex--;
       currentTrack = queueContext[queueContextIndex];
-      theme.background = currentTrack?.album?.albumArtMuted || null;
     }
   }
 
@@ -73,7 +75,6 @@ function createAudioPlayer() {
     if (index >= 0 && index < queueContext.length) {
       queueContextIndex = index;
       currentTrack = queueContext[queueContextIndex];
-      theme.background = currentTrack?.album?.albumArtMuted || null;
     }
   }
 
@@ -88,7 +89,7 @@ function createAudioPlayer() {
     queueContextIndex = 0;
     queueContext = [];
     currentTrack = null;
-    theme.background = null;
+    playlistInfo = null;
   }
 
   return {
@@ -118,6 +119,9 @@ function createAudioPlayer() {
     },
     get hasPrevious() {
       return hasPrevious;
+    },
+    get playlistInfo() {
+      return playlistInfo;
     }
   };
 }

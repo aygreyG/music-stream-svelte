@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { vibrate } from '$lib/actions/vibrate';
 
   interface Props {
@@ -11,15 +11,15 @@
 
   let { href, text, Icon, onclickedelement }: Props = $props();
 
-  let currentPage = $derived($page.url.pathname);
+  let currentPage = $derived(page.url.pathname);
 </script>
 
 <div>
   <a
     onclick={() => onclickedelement?.()}
     class={[
-      'flex items-center gap-2 px-16 text-2xl transition-colors sm:px-0 sm:text-base',
-      currentPage.replaceAll('/', '') === href.replaceAll('/', '') && 'text-primary'
+      'flex items-center gap-2 rounded-2xl px-16 py-2 text-2xl font-bold transition-colors sm:px-4 sm:text-base',
+      currentPage.replaceAll('/', '') === href.replaceAll('/', '') && 'bg-primary text-on-primary'
     ]}
     {href}
     use:vibrate

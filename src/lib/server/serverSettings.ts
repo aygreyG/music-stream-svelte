@@ -4,7 +4,8 @@ import { runLibrarySync } from './librarySync';
 import crypto from 'node:crypto';
 
 let serverSettings: ServerSettings | null = null;
-let requestedServerSettings = false;
+let requestAttempts = 0;
+const MAX_REQUEST_ATTEMPTS = 3;
 
 export async function createServerSettings(folderPath: string) {
   const newSettings = await prisma.serverSettings.create({
@@ -15,6 +16,7 @@ export async function createServerSettings(folderPath: string) {
   });
 
   serverSettings = newSettings;
+  requestAttempts = 0;
 
   return newSettings;
 }
@@ -30,6 +32,7 @@ export async function completeServerSetup(sSettings: ServerSettings) {
   });
 
   serverSettings = updatedSettings;
+  requestAttempts = 0;
   runLibrarySync();
 }
 
@@ -38,14 +41,15 @@ export async function getServerSettings() {
     return serverSettings;
   }
 
-  if (!requestedServerSettings) {
+  if (requestAttempts < MAX_REQUEST_ATTEMPTS) {
     try {
       const settings = await prisma.serverSettings.findFirst();
       serverSettings = settings;
-      requestedServerSettings = true;
+      requestAttempts++;
     } catch (err) {
       console.error('Error getting server settings: ');
       console.error(err);
+      requestAttempts++;
       serverSettings = null;
     }
   }

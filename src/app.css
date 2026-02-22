@@ -5,9 +5,32 @@
 @config '../tailwind.config.js';
 
 @theme inline {
-  --color-primary: var(--primary, #71717a);
-  --color-primary-dark: color-mix(in oklch, var(--primary, #71717a), #111111 40%);
-  --color-accessible: var(--accessible, #ffffff);
+  --color-primary: var(--primary, #d4c3ff);
+  --color-on-primary: var(--on-primary, #4a3a72);
+  --color-primary-container: var(--primary-container, #c7b4f5);
+  --color-on-primary-container: var(--on-primary-container, #403168);
+  --color-secondary: var(--secondary, #bbcbb2);
+  --color-on-secondary: var(--on-secondary, #364431);
+  --color-secondary-container: var(--secondary-container, #1c2918);
+  --color-on-secondary-container: var(--on-secondary-container, #98a990);
+  --color-tertiary: var(--tertiary, #edffdf);
+  --color-on-tertiary: var(--on-tertiary, #376b21);
+  --color-tertiary-container: var(--tertiary-container, #bffca0);
+  --color-on-tertiary-container: var(--on-tertiary-container, #2f6219);
+  --color-surface: var(--surface, #120b1a);
+  --color-on-surface: var(--on-surface, #f1dfff);
+  --color-surface-variant: var(--surface-variant, #2d203c);
+  --color-on-surface-variant: var(--on-surface-variant, #b7a4c7);
+  --color-surface-dim: var(--surface-dim, #120b1a);
+  --color-surface-container-low: var(--surface-container-low, #181021);
+  --color-surface-container: var(--surface-container, #1f152a);
+  --color-outline: var(--outline, #7f6f90);
+  --color-outline-variant: var(--outline-variant, #504260);
+  --color-inverse-surface: var(--inverse-surface, #fff7ff);
+  --color-inverse-on-surface: var(--inverse-on-surface, #5b5163);
+  --color-inverse-primary: var(--inverse-primary, #65568f);
+  --color-error: var(--error, #fd6f85);
+  --color-on-error: var(--on-error, #490013);
   --shadow-md-top: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -2px rgba(0, 0, 0, 0.1);
 }
 
@@ -56,7 +79,7 @@
     'Helvetica Neue',
     sans-serif;
   font-size: 18px;
-  @apply text-zinc-300;
+  @apply text-zinc-50;
 }
 
 @media (min-width: 1921px) or ((min-height: 1300px) and (min-width: 1200px)) {
@@ -92,4 +115,43 @@
   [style*='--tag'] {
     view-transition-name: var(--tag);
   }
+}
+
+/* Shared range input styles for audio player controls */
+input[type='range'].styled-range {
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  backdrop-filter: blur(12px);
+  @apply h-4 rounded-full bg-zinc-600/60 sm:h-2;
+}
+
+input[type='range'].styled-range::-webkit-slider-runnable-track {
+  @apply h-4 rounded-full bg-transparent sm:h-2;
+}
+
+input[type='range'].styled-range::-moz-range-track {
+  @apply h-4 rounded-full bg-transparent sm:h-2;
+}
+
+input[type='range'].styled-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  box-shadow: -10000px 0 0 10000px theme(--color-primary);
+  @apply size-0 transition-shadow duration-500;
+}
+
+input[type='range'].styled-range::-moz-range-thumb {
+  border: none;
+  outline: none;
+  box-shadow: -10000px 0 0 10000px theme(--color-primary);
+  @apply size-0 transition-shadow duration-500;
+}
+
+input[type='range'].styled-range:focus {
+  outline: none;
 }

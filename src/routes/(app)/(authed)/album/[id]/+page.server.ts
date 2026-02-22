@@ -1,4 +1,4 @@
-import { getAlbumArtFileName, getPalette } from '$lib/server/images.js';
+import { getAlbumArtFileName } from '$lib/server/images.js';
 import prisma from '$lib/server/prisma.js';
 import { updateCacheKey } from '$lib/server/serverSettings.js';
 import { error } from '@sveltejs/kit';
@@ -20,12 +20,6 @@ export const load = async ({ locals, params, depends, setHeaders }) => {
       releaseDate: true,
       updatedAt: true,
       albumArtId: true,
-      albumArtVibrant: true,
-      albumArtMuted: true,
-      albumArtDarkVibrant: true,
-      albumArtDarkMuted: true,
-      albumArtLightVibrant: true,
-      albumArtLightMuted: true,
       albumArt: true,
       tracks: {
         select: {
@@ -186,7 +180,6 @@ export const actions = {
         }
 
         const buffer = Buffer.from(await file.arrayBuffer());
-        const palette = await getPalette(buffer);
         await writeFile(
           join(coversDir, `${albumArtFileName}.${file.name.split('.').pop()}`),
           buffer
@@ -198,14 +191,7 @@ export const actions = {
           },
           data: {
             albumArt: join(coversDir, `${albumArtFileName}.${file.name.split('.').pop()}`),
-            albumArtId,
-            albumArtVibrant: palette.vibrant,
-            albumArtMuted: palette.muted,
-            albumArtDarkVibrant: palette.darkVibrant,
-            albumArtDarkMuted: palette.darkMuted,
-            albumArtLightVibrant: palette.lightVibrant,
-            albumArtLightMuted: palette.lightMuted,
-            albumArtAccent: palette.vibrant
+            albumArtId
           }
         });
 
@@ -214,13 +200,7 @@ export const actions = {
         return {
           message: 'Album art fetched',
           albumArtInfo: {
-            albumArtId,
-            albumArtVibrant: palette.vibrant,
-            albumArtMuted: palette.muted,
-            albumArtDarkVibrant: palette.darkVibrant,
-            albumArtDarkMuted: palette.darkMuted,
-            albumArtLightVibrant: palette.lightVibrant,
-            albumArtLightMuted: palette.lightMuted
+            albumArtId
           }
         };
       } catch (e) {

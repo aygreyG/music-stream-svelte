@@ -139,3 +139,34 @@ export type AlbumReleaseSearchResult = {
   offset: number;
   releases: Release[];
 };
+
+export interface MaterialScheme {
+  primary: string;
+  onPrimary: string;
+  primaryContainer: string;
+  onPrimaryContainer: string;
+  secondary: string;
+  onSecondary: string;
+  secondaryContainer: string;
+  onSecondaryContainer: string;
+  tertiary: string;
+  onTertiary: string;
+  tertiaryContainer: string;
+  onTertiaryContainer: string;
+  surface: string;
+  onSurface: string;
+  surfaceVariant: string;
+  onSurfaceVariant: string;
+  surfaceDim: string;
+  surfaceContainerLow: string;
+  surfaceContainer: string;
+  outline: string;
+  outlineVariant: string;
+  inverseSurface: string;
+  inverseOnSurface: string;
+  inversePrimary: string;
+  background: string;
+  onBackground: string;
+  error: string;
+  onError: string;
+}

@@ -1,3 +1,4 @@
+import { handleVibrate } from '$lib/utils';
 import type { Action } from 'svelte/action';
 
 type VibrationOptions = {
@@ -8,17 +9,7 @@ type VibrationOptions = {
 export const vibrate: Action<HTMLElement, VibrationOptions | undefined> = (node, params) => {
   let finalParams = { pattern: 1, mute: false, ...params };
 
-  const handleVibration = () => {
-    if (
-      navigator &&
-      !finalParams.mute &&
-      matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-      matchMedia('(hover: none), (pointer: coarse)').matches &&
-      'vibrate' in navigator
-    ) {
-      navigator.vibrate(finalParams.pattern);
-    }
-  };
+  const handleVibration = () => handleVibrate(finalParams.pattern, finalParams.mute);
 
   node.addEventListener('click', handleVibration);
 
