@@ -1,3 +1,27 @@
+# [1.4.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0-dev.2...v1.4.0-dev.3) (2026-02-22)
+
+### Bug Fixes
+
+- changelog production detection and user deletion ([4a0828e](https://github.com/aygreyG/music-stream-svelte/commit/4a0828ee569ca86e64851b40895842e6f7859e3c))
+
+# [1.4.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0-dev.1...v1.4.0-dev.2) (2026-02-22)
+
+### Features
+
+- add changelog page and update visualizer ([2ec7b0e](https://github.com/aygreyG/music-stream-svelte/commit/2ec7b0e34bef743ae9e94462df1fa6fda97f5ecf))
+
+# [1.4.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0...v1.4.0-dev.1) (2026-02-22)
+
+### Features
+
+- use material color generation for theme and update ui ([616bd31](https://github.com/aygreyG/music-stream-svelte/commit/616bd315bebb260ce09d5284bfed9cc46fe4c35c))
+
+# [1.3.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.3.0-dev.8...v1.3.0-dev.9) (2026-02-22)
+
+### Features
+
+- use material color generation for theme and update ui ([616bd31](https://github.com/aygreyG/music-stream-svelte/commit/616bd315bebb260ce09d5284bfed9cc46fe4c35c))
+
 # [1.3.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.2.1...v1.3.0) (2026-01-20)
 
 ### Bug Fixes

@@ -3,7 +3,7 @@ import { parseFile } from 'music-metadata';
 import { readdir, stat } from 'fs/promises';
 import { join } from 'path';
 import { getServerSettings, updateCacheKey } from './serverSettings';
-import { getAlbumArt, getPalette } from './images';
+import { getAlbumArt } from './images';
 import { errorToNull, isFileNameValid, serverLog } from './utils';
 import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
 
@@ -209,14 +209,8 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
                 albumArtist: {
                   connect: { id: albumArtist.id }
                 },
-                albumArt: albumArt ? albumArt.albumLocation : null,
-                albumArtId: albumArt ? crypto.randomUUID() : null,
-                albumArtVibrant: albumArt ? albumArt.palette.vibrant : null,
-                albumArtMuted: albumArt ? albumArt.palette.muted : null,
-                albumArtDarkVibrant: albumArt ? albumArt.palette.darkVibrant : null,
-                albumArtDarkMuted: albumArt ? albumArt.palette.darkMuted : null,
-                albumArtLightVibrant: albumArt ? albumArt.palette.lightVibrant : null,
-                albumArtLightMuted: albumArt ? albumArt.palette.lightMuted : null
+                albumArt: albumArt || null,
+                albumArtId: albumArt ? crypto.randomUUID() : null
               },
               include: {
                 tracks: true
@@ -258,31 +252,6 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
 
     return true;
   } else {
-    // Checking whether the album art has all the colors
-    const album = await prisma.album.findUnique({
-      where: { id: track.albumId }
-    });
-
-    if (album && album.albumArt && (!album.albumArtAccent || !album.albumArtVibrant)) {
-      const palette = await getPalette(album.albumArt);
-      await prisma.album.update({
-        where: { id: album.id },
-        data: {
-          albumArtAccent: palette.vibrant,
-          albumArtVibrant: palette.vibrant,
-          albumArtMuted: palette.muted,
-          albumArtDarkVibrant: palette.darkVibrant,
-          albumArtDarkMuted: palette.darkMuted,
-          albumArtLightVibrant: palette.lightVibrant,
-          albumArtLightMuted: palette.lightMuted
-        }
-      });
-
-      await updateCacheKey();
-
-      serverLog(`Updated album art colors for album: ${album.title}`, 'info');
-    }
-
     await prisma.track.update({
       where: { id: track.id },
       data: {

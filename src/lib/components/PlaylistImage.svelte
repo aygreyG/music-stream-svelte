@@ -8,12 +8,6 @@
         id: true;
         title: true;
         albumArtId: true;
-        albumArtDarkMuted: true;
-        albumArtVibrant: true;
-        albumArtMuted: true;
-        albumArtLightVibrant: true;
-        albumArtLightMuted: true;
-        albumArtDarkVibrant: true;
       };
     }>[];
   }

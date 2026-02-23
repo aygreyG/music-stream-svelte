@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
-
   interface Props {
     analyser: AnalyserNode | null;
     class?: string;
@@ -13,9 +11,32 @@
 
   let { analyser, class: className = '', sizeMultiplier = 'auto' }: Props = $props();
 
-  const audioPlayer = getAudioPlayer();
-
   let canvas: HTMLCanvasElement | null = $state(null);
+  let fillColor = $state('#d4c3ff');
+
+  function updateFillColor() {
+    if (canvas) {
+      fillColor = getComputedStyle(canvas).getPropertyValue('--primary') || '#d4c3ff';
+    }
+  }
+
+  $effect(() => {
+    if (!canvas) return;
+
+    updateFillColor();
+
+    const observer = new MutationObserver(() => {
+      updateFillColor();
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+      subtree: true
+    });
+
+    return () => observer.disconnect();
+  });
 
   function getCanvasSize(canvasWidth: number): number {
     if (sizeMultiplier !== 'auto') {
@@ -24,10 +45,12 @@
 
     if (canvasWidth > 1250) {
       return 1;
-    } else if (canvasWidth > 500) {
+    } else if (canvasWidth > 700) {
       return 2;
-    } else {
+    } else if (canvasWidth > 500) {
       return 4;
+    } else {
+      return 5;
     }
   }
 
@@ -38,9 +61,25 @@
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight || 100;
+    let canvasWidth = canvas.clientWidth;
+    let canvasHeight = canvas.clientHeight || 100;
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
     const ctx = canvas.getContext('2d')!;
+
+    // Update canvas dimensions only on actual resize
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        canvasWidth = entry.contentRect.width;
+        canvasHeight = entry.contentRect.height || 100;
+        if (canvas) {
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+        }
+      }
+    });
+
+    resizeObserver.observe(canvas);
 
     let animationId: number;
 
@@ -53,46 +92,44 @@
       }
       animationId = requestAnimationFrame(draw);
 
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight || 100;
-
-      const canvasSize = getCanvasSize(canvas.width);
+      const canvasSize = getCanvasSize(canvasWidth);
 
       analyser.getByteFrequencyData(dataArray);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-      let x = 0;
-      const barWidth = (canvas.width / bufferLength) * canvasSize * 1.8;
+      const padding = 1;
+      const drawWidth = canvasWidth - padding * 2;
+      const drawHeight = canvasHeight - padding;
+      const minGap = 2;
+      const barWidth = (drawWidth / bufferLength) * canvasSize * 1.8;
+      const totalBars = Math.floor(bufferLength / canvasSize / 2);
+      const barCount = Math.min(totalBars, Math.floor((drawWidth + minGap) / (barWidth + minGap)));
+      const gap = barCount > 1 ? (drawWidth - barCount * barWidth) / (barCount - 1) : 0;
 
-      for (let i = 0; i < (bufferLength / 2) * canvasSize; i++) {
+      let x = padding;
+
+      for (let i = 0; i < barCount; i++) {
         const value = dataArray[i * canvasSize];
 
         if (!value) {
-          x += barWidth + 2;
+          x += barWidth + gap;
           continue;
         }
 
-        const barHeight = value / 2;
+        const barHeight = (value / 255) * drawHeight;
 
         if (barHeight < 1) {
-          x += barWidth + 2;
+          x += barWidth + gap;
           continue;
         }
 
-        if (x + barWidth > canvas.width) {
-          break;
-        }
-
-        ctx.fillStyle =
-          audioPlayer.currentTrack?.album.albumArtLightVibrant ||
-          getComputedStyle(document.body).getPropertyValue('--color-primary') ||
-          '#71717a';
+        ctx.fillStyle = fillColor;
 
         ctx.beginPath();
-        ctx.roundRect(x, canvas.height - barHeight, barWidth, barHeight, 60);
+        ctx.roundRect(x, canvasHeight - padding - barHeight, barWidth, barHeight, 60);
         ctx.fill();
 
-        x += barWidth + 2;
+        x += barWidth + gap;
       }
     }
 
@@ -102,6 +139,7 @@
       if (animationId) {
         cancelAnimationFrame(animationId);
       }
+      resizeObserver.disconnect();
     };
   });
 

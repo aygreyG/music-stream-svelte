@@ -1,7 +1,7 @@
 import type { AlbumWithArt, ImageSize } from '$lib/shared/types';
 import { readFile, access, writeFile, readdir, mkdir } from 'fs/promises';
 import sharp from 'sharp';
-import { Vibrant } from 'node-vibrant/node';
+
 import { parseFile, type IAudioMetadata } from 'music-metadata';
 import type { Album, Artist } from '../../generated/prisma-client/client';
 import { join } from 'path';
@@ -10,15 +10,6 @@ import { ALLOWED_MUSIC_FILE_EXTENSIONS, IMAGE_FILE_EXTENSIONS } from '$lib/share
 import prisma from './prisma';
 
 export const IMAGE_REGEX = / |\.|\[|\]|\\|\/|_|:|"/g;
-
-export type Palette = {
-  vibrant: string;
-  muted: string;
-  darkVibrant: string;
-  darkMuted: string;
-  lightVibrant: string;
-  lightMuted: string;
-};
 
 type ExtendedImageSize = ImageSize | '';
 type ImageExtension = 'avif' | 'webp' | '';
@@ -99,25 +90,6 @@ async function createImage(
   return imageBuffer;
 }
 
-export async function getAccentColor(image: Buffer | string) {
-  const palette = await Vibrant.from(image).getPalette();
-
-  return palette.Vibrant?.hex || '#ffffff';
-}
-
-export async function getPalette(image: Buffer | string): Promise<Palette> {
-  const palette = await Vibrant.from(image).quality(1).getPalette();
-
-  return {
-    vibrant: palette.Vibrant?.hex || '#ffffff',
-    muted: palette.Muted?.hex || '#ffffff',
-    darkVibrant: palette.DarkVibrant?.hex || '#ffffff',
-    darkMuted: palette.DarkMuted?.hex || '#ffffff',
-    lightVibrant: palette.LightVibrant?.hex || '#ffffff',
-    lightMuted: palette.LightMuted?.hex || '#ffffff'
-  };
-}
-
 export function getAlbumArtFileName(albumArtist: string, albumTitle: string) {
   return `${albumArtist.replaceAll(IMAGE_REGEX, '_')}_${albumTitle
     .replaceAll(IMAGE_REGEX, '_')
@@ -156,7 +128,7 @@ export async function getAlbumArt(
   dir: string,
   fileData: IAudioMetadata,
   albumArtist: Artist
-): Promise<{ albumLocation: string; palette: Palette } | null> {
+): Promise<string | null> {
   const albumArtFileName = `${albumArtist.name.replaceAll(
     IMAGE_REGEX,
     '_'
@@ -173,10 +145,7 @@ export async function getAlbumArt(
     const coverFile = await searchForAlbumFile(coverFiles, coversDir, albumArtFileName);
 
     if (coverFile) {
-      return {
-        albumLocation: coverFile,
-        palette: await getPalette(coverFile)
-      };
+      return coverFile;
     }
   }
 
@@ -190,10 +159,7 @@ export async function getAlbumArt(
       const coversDir = join(dir, 'Covers');
       await access(coversDir).catch(() => mkdir(coversDir));
       await writeFile(albumArtPath, albumArt);
-      return {
-        albumLocation: albumArtPath,
-        palette: await getPalette(albumArtPath)
-      };
+      return albumArtPath;
     } catch (err) {
       serverLog(`Could not create album art file ${err}`, 'warn');
     }
@@ -211,10 +177,7 @@ export async function getAlbumArt(
       const extension = fileName.split('.').pop();
       const pathToWrite = join(coversDir, albumArtFileName) + '.' + extension;
       await writeFile(pathToWrite, buffer);
-      return {
-        albumLocation: pathToWrite,
-        palette: await getPalette(pathToWrite)
-      };
+      return pathToWrite;
     } catch (err) {
       serverLog(`Could not create album art file ${err}`, 'warn');
     }
@@ -282,14 +245,8 @@ export async function regenerateAlbumImageNames(album: Album[]) {
     await prisma.album.update({
       where: { id: alb.id },
       data: {
-        albumArt: albumArtData.albumLocation,
-        albumArtId: crypto.randomUUID(),
-        albumArtVibrant: albumArtData.palette.vibrant,
-        albumArtMuted: albumArtData.palette.muted,
-        albumArtDarkVibrant: albumArtData.palette.darkVibrant,
-        albumArtDarkMuted: albumArtData.palette.darkMuted,
-        albumArtLightVibrant: albumArtData.palette.lightVibrant,
-        albumArtLightMuted: albumArtData.palette.lightMuted
+        albumArt: albumArtData,
+        albumArtId: crypto.randomUUID()
       }
     });
 

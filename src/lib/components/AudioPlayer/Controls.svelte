@@ -26,7 +26,7 @@
       onstop?.();
       audioPlayer.stopAndClear();
     }}
-    class="text-primary-dark enabled:active:text-primary text-2xl transition-colors disabled:opacity-30"
+    class="text-primary text-2xl transition-all duration-500 disabled:opacity-30"
     aria-label="Stop"
     use:vibrate={{ mute: !audioPlayer.currentTrack }}
   >
@@ -35,7 +35,7 @@
   <button
     onclick={audioPlayer.playPrevious}
     disabled={!audioPlayer.hasPrevious}
-    class="text-primary-dark enabled:active:text-primary text-3xl transition-all disabled:opacity-30"
+    class="text-primary text-3xl transition-all duration-500 disabled:opacity-30"
     aria-label="Previous"
     use:vibrate={{ mute: !audioPlayer.hasPrevious }}
   >
@@ -44,7 +44,7 @@
   <button
     disabled={!audioPlayer.currentTrack}
     onclick={() => audioPlayer.togglePlay()}
-    class="text-primary text-6xl transition-transform enabled:active:scale-95 disabled:opacity-30"
+    class="text-primary text-6xl transition-all duration-500 enabled:active:scale-90 disabled:opacity-30"
     aria-label="Toggle play"
     use:vibrate={{ mute: audioPlayer.currentTrack === null }}
   >
@@ -57,7 +57,7 @@
   <button
     onclick={audioPlayer.playNext}
     disabled={!audioPlayer.hasNext}
-    class="text-primary-dark enabled:active:text-primary text-3xl transition-all disabled:opacity-30"
+    class="text-primary text-3xl transition-all duration-500 disabled:opacity-30"
     aria-label="Next"
     use:vibrate={{ mute: !audioPlayer.hasNext }}
   >
@@ -65,7 +65,11 @@
   </button>
   <button
     onclick={() => (repeat = !repeat)}
-    class={['text-2xl transition-colors', repeat && 'text-primary', !repeat && 'text-primary-dark']}
+    class={[
+      'text-2xl transition-colors duration-500',
+      repeat && 'text-primary',
+      !repeat && 'text-primary/30'
+    ]}
     aria-label="Repeat"
     use:vibrate
   >

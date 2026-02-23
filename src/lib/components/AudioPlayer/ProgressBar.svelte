@@ -28,7 +28,7 @@
   </div>
   <div class="flex w-full items-center justify-between overflow-clip rounded-full">
     <input
-      class="z-10 w-full opacity-85"
+      class="styled-range z-10 w-full opacity-85"
       type="range"
       min="0"
       max={duration || 0}
@@ -68,40 +68,6 @@
 
 <style lang="postcss">
   @reference "../../../app.css";
-
-  input[type='range'] {
-    -webkit-appearance: none;
-    appearance: none;
-    @apply h-4 cursor-pointer overflow-hidden rounded-full bg-zinc-600/60 outline-hidden backdrop-blur-md sm:h-2;
-  }
-
-  input[type='range']::-webkit-slider-runnable-track {
-    @apply h-4 rounded-full bg-transparent sm:h-2;
-  }
-
-  input[type='range']::-moz-range-track {
-    @apply h-4 rounded-full bg-transparent sm:h-2;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-    outline: none;
-    box-shadow: -10000px 0 0 10000px theme(--color-primary);
-    @apply size-0 transition-shadow duration-500;
-  }
-
-  input[type='range']::-moz-range-thumb {
-    border: none;
-    outline: none;
-    box-shadow: -10000px 0 0 10000px theme(--color-primary);
-    @apply size-0 transition-shadow duration-500;
-  }
-
-  input[type='range']:focus {
-    outline: none;
-  }
 
   .timer {
     @apply font-mono font-bold transition-opacity;

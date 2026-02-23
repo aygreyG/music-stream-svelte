@@ -7,10 +7,12 @@ export const POST = async ({ params, request, locals }) => {
 
   if (requestData.duration && locals.user) {
     const duration = parseFloat(requestData.duration);
-    const listen = await prisma.listened.findFirst({
+    const listen = await prisma.listened.findUnique({
       where: {
-        trackId: id,
-        userId: locals.user.id
+        userId_trackId: {
+          userId: locals.user.id,
+          trackId: id
+        }
       }
     });
 

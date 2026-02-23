@@ -1,7 +1,7 @@
 import { AUTH_COOKIE } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
 import { ROLE } from '$lib/shared/consts.js';
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcryptjs';
 
 const MAX_LISTENS = 25;
@@ -27,12 +27,6 @@ export const load = async ({ locals, depends }) => {
               title: true,
               albumArtist: { select: { name: true, id: true } },
               albumArtId: true,
-              albumArtVibrant: true,
-              albumArtMuted: true,
-              albumArtDarkVibrant: true,
-              albumArtDarkMuted: true,
-              albumArtLightVibrant: true,
-              albumArtLightMuted: true,
               albumArt: true,
               tracks: {
                 select: { id: true, title: true, artists: { select: { name: true, id: true } } }
@@ -163,9 +157,7 @@ export const actions = {
       path: '/'
     });
 
-    return {
-      message: 'User deleted'
-    };
+    return redirect(303, '/login');
   },
   getListens: async ({ locals, request }) => {
     const formData = await request.formData();
@@ -191,12 +183,6 @@ export const actions = {
                 title: true,
                 albumArtist: { select: { name: true, id: true } },
                 albumArtId: true,
-                albumArtVibrant: true,
-                albumArtMuted: true,
-                albumArtDarkVibrant: true,
-                albumArtDarkMuted: true,
-                albumArtLightVibrant: true,
-                albumArtLightMuted: true,
                 albumArt: true,
                 tracks: {
                   select: { id: true, title: true, artists: { select: { name: true, id: true } } }

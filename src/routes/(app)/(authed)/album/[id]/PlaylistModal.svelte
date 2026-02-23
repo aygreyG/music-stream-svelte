@@ -32,13 +32,13 @@
             loading = false;
           };
         }}
-        class="flex w-full max-w-lg justify-between rounded-xl border-none bg-zinc-600"
+        class="flex w-full max-w-lg justify-between rounded-xl border-none bg-zinc-600/30"
         method="POST"
         action="?/addplaylist"
       >
         <input type="hidden" name="trackid" value={track.id} />
         <input
-          class="focus-visible:ring-primary w-full grow rounded-s-xl border-none bg-zinc-600 outline-hidden transition-all focus-visible:ring-2"
+          class="focus-visible:ring-primary w-full grow rounded-s-xl border-none bg-transparent outline-hidden transition-all focus-visible:ring-2"
           type="text"
           autocomplete="off"
           placeholder="New playlist"
@@ -46,7 +46,7 @@
           required
         />
         <button
-          class="focus-visible:ring-primary w-fit rounded-e-xl border-none bg-zinc-600 px-2 py-1 outline-hidden transition-all focus-visible:ring-2"
+          class="focus-visible:ring-primary w-fit rounded-e-xl border-none bg-transparent px-2 py-1 outline-hidden transition-all focus-visible:ring-2"
           type="submit"
           use:vibrate
           disabled={loading}
@@ -61,7 +61,7 @@
 
       {#each user.playlists as playlist (playlist.id)}
         <form
-          class="flex w-full max-w-lg items-center justify-between rounded-xl border-none bg-zinc-600 py-1 pr-2 pl-3"
+          class="flex w-full max-w-lg items-center justify-between rounded-xl border-none bg-zinc-600/30 py-1 pr-2 pl-3"
           method="POST"
           use:enhance
           animate:flip={{ duration: 100 }}
@@ -76,12 +76,14 @@
           <button type="submit" class="group" use:vibrate>
             {#if playlist.tracks.some((t) => t.id === track.id)}
               <input type="hidden" name="remove" value={true} />
-              <HeartFill class="hover:text-primary text-2xl transition-colors" />
+              <HeartFill class="hover:text-primary text-on-primary text-2xl transition-colors" />
             {:else}
               <HeartFill
                 class="text-primary text-2xl opacity-0 transition-all group-hover:opacity-100"
               />
-              <Heart class="absolute top-0 left-0 text-2xl transition-all group-hover:opacity-0" />
+              <Heart
+                class="text-on-primary absolute top-0 left-0 text-2xl transition-all group-hover:opacity-0"
+              />
             {/if}
           </button>
         </form>

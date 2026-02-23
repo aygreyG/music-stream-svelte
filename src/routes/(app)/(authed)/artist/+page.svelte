@@ -3,6 +3,8 @@
   import { flip } from 'svelte/animate';
   import RoundSearch from '~icons/ic/round-search';
   import type { PageData } from './$types';
+  import { fly } from 'svelte/transition';
+  import { quintOut } from 'svelte/easing';
 
   interface Props {
     data: PageData;
@@ -24,7 +26,12 @@
 </script>
 
 <div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
-  <div class="p-4 pb-0 text-center text-xl font-bold">Artists</div>
+  <div
+    class="p-4 pb-0 text-center text-xl font-bold"
+    in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+  >
+    Artists
+  </div>
 
   {#if data.artists.length === 0}
     <div class="p-4 pt-1 text-center text-xl font-bold">There are no artists 🫤</div>

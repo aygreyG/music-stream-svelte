@@ -33,7 +33,10 @@
   out:fade|global={{ duration: 150 }}
   class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
 >
-  <div out:fade|global={{ duration: 250 }} class="p-4 pb-0 text-center text-xl font-bold">
+  <div
+    in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+    class="p-4 pb-0 text-center text-xl font-bold"
+  >
     Playlists
   </div>
 
@@ -76,14 +79,14 @@
       <button
         in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
         type="submit"
-        class="flex size-36 items-center justify-center rounded-xl bg-zinc-950/20 md:size-40 xl:size-52"
+        class="bg-surface-variant/40 text-on-surface-variant flex size-36 items-center justify-center rounded-xl md:size-40 xl:size-52"
         use:vibrate
         disabled={loading}
       >
         {#if loading}
-          <RoundRefresh class="animate-spin text-3xl text-zinc-600" />
+          <RoundRefresh class="animate-spin text-3xl" />
         {:else}
-          <RoundAdd class="text-3xl text-zinc-600" />
+          <RoundAdd class="text-3xl" />
         {/if}
       </button>
     </form>

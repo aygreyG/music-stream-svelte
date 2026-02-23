@@ -38,10 +38,6 @@ export const GET = async ({ params, setHeaders, url }) => {
       error(500, { message: 'Internal server error' });
     }
   } else {
-    setHeaders({
-      'Cache-Control': 'no-cache'
-    });
-
-    return new Response(redirect(307, blur ? '/album_sm_blur.png' : '/album.png'));
+    redirect(307, blur ? '/album_sm_blur.png' : '/album.png');
   }
 };

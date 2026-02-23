@@ -5,6 +5,7 @@
   import RoundSearch from '~icons/ic/round-search';
   import RoundAdminPanelSettings from '~icons/ic/round-admin-panel-settings';
   import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
+  import RoundNewReleases from '~icons/ic/round-new-releases';
   import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
   import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
   import ProfileFill from '~icons/iconamoon/profile-fill';
@@ -61,6 +62,11 @@
       Icon: RoundPlaylistPlay
     },
     {
+      href: '/changelog',
+      text: 'Changelog',
+      Icon: RoundNewReleases
+    },
+    {
       href: '/logout',
       text: 'Logout',
       Icon: RoundLougout
@@ -84,9 +90,9 @@
   {/if}
   {#each loggedInElements as el (el.href)}
     {#if el.href === '/logout'}
-      <form class="px-16 sm:px-0" method="POST" action="/logout" use:enhance>
+      <form class="block" method="POST" action="/logout" use:enhance>
         <button
-          class="flex w-full items-center justify-start gap-2 text-2xl sm:text-base"
+          class="flex items-center gap-2 rounded-2xl px-16 py-2 text-2xl font-bold transition-colors sm:px-4 sm:text-base"
           onclick={() => onclickedelement?.()}
           type="submit"
           use:vibrate

@@ -1,5 +1,6 @@
 <script lang="ts">
   import RoundKeyboardArrowDown from '~icons/ic/round-keyboard-arrow-down';
+  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import AlbumImage from '../AlbumImage.svelte';
   import { fade, fly } from 'svelte/transition';
@@ -14,6 +15,7 @@
   import Controls from './Controls.svelte';
   import ProgressBar from './ProgressBar.svelte';
   import Visualizer from './Visualizer.svelte';
+  import { handleVibrate } from '$lib/utils';
 
   interface Props {
     onclose: () => void;
@@ -72,6 +74,7 @@
           if (newIndex !== lastPlayedIndex) {
             lastPlayedIndex = newIndex;
             audioPlayer.playAtIndex(newIndex);
+            handleVibrate(1);
           }
         },
         touchEnd: (sw) => {
@@ -79,6 +82,7 @@
           if (newIndex !== lastPlayedIndex) {
             lastPlayedIndex = newIndex;
             audioPlayer.playAtIndex(newIndex);
+            handleVibrate(1);
           }
         }
       }
@@ -114,25 +118,43 @@
 </script>
 
 <div
-  class="fixed inset-0 z-100 flex flex-col bg-zinc-950/85 backdrop-blur-xl sm:hidden"
+  class="bg-surface fixed inset-0 z-100 flex flex-col sm:hidden"
   in:fly={{ y: 100, duration: 300, easing: cubicOut }}
   out:fly={{ y: 100, duration: 300, easing: cubicOut }}
 >
   <Visualizer
     {analyser}
-    sizeMultiplier={4}
-    class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 w-full opacity-15 motion-reduce:hidden"
+    class="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full opacity-15 motion-reduce:hidden"
   />
 
-  <div class="z-10 flex items-center justify-end p-4">
+  <div
+    class={[
+      'z-10 flex items-center p-4',
+      audioPlayer.playlistInfo ? 'justify-between pl-0' : 'justify-end'
+    ]}
+  >
+    {#if audioPlayer.playlistInfo}
+      <button
+        onclick={() => {
+          goto(`/playlist/${audioPlayer.playlistInfo!.id}`);
+          onclose();
+        }}
+        class="text-on-surface-variant line-clamp-1 max-w-30 text-sm tracking-wide"
+        use:vibrate
+        title={audioPlayer.playlistInfo.title}
+      >
+        <RoundPlaylistPlay class="inline align-top text-lg" />
+        {audioPlayer.playlistInfo.title}
+      </button>
+    {/if}
     <div
-      class="absolute left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide text-zinc-400"
+      class="text-on-surface absolute left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide"
     >
       Now Playing
     </div>
     <button
       onclick={onclose}
-      class="text-primary-dark active:text-primary rounded-full p-2 text-3xl transition-colors"
+      class="text-on-surface-variant active:text-primary rounded-full p-2 text-3xl transition-colors"
       aria-label="Close full screen player"
       use:vibrate
     >
@@ -151,8 +173,7 @@
               <div
                 in:fade|global={{ duration: 300, easing: quintOut, delay: 200 }}
                 out:fade|global={{ duration: 200, easing: quintOut }}
-                class="absolute inset-0 m-auto aspect-square w-full max-w-70 scale-110 rounded-3xl opacity-30 blur-3xl sm:max-w-80"
-                style="background-color: var(--primary);"
+                class="bg-primary absolute inset-0 m-auto aspect-square w-full max-w-70 scale-110 rounded-3xl opacity-40 blur-2xl sm:max-w-80"
               ></div>
             {/if}
             <div
@@ -176,10 +197,10 @@
             in:fade|global={{ duration: 300, easing: quintOut, delay: 150 }}
             out:fade|global={{ duration: 200, easing: quintOut }}
           >
-            <h1 class="truncate text-2xl font-bold text-zinc-100">
+            <h1 class="text-on-surface truncate text-2xl font-bold">
               {audioPlayer.currentTrack.title}
             </h1>
-            <div class="mt-2 truncate text-lg text-zinc-400">
+            <div class="text-on-surface-variant mt-2 truncate text-lg">
               {#each audioPlayer.currentTrack.artists.toSorted( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 {@const shouldHaveComma =
                   audioPlayer.currentTrack.artists.length > 1 &&
@@ -201,7 +222,7 @@
                 goto(`/album/${audioPlayer.currentTrack?.album.id}`);
                 onclose();
               }}
-              class="mt-1 block w-full truncate text-base text-zinc-500"
+              class="text-on-surface-variant mt-1 block w-full truncate text-base"
             >
               {audioPlayer.currentTrack.album.title}
             </button>

@@ -31,12 +31,6 @@ export const load = async ({ locals, params, setHeaders }) => {
               id: true,
               title: true,
               albumArtId: true,
-              albumArtVibrant: true,
-              albumArtMuted: true,
-              albumArtDarkVibrant: true,
-              albumArtDarkMuted: true,
-              albumArtLightVibrant: true,
-              albumArtLightMuted: true,
               albumArt: true,
               albumArtist: {
                 select: {
@@ -72,12 +66,6 @@ export const load = async ({ locals, params, setHeaders }) => {
       id: true;
       title: true;
       albumArtId: true;
-      albumArtDarkMuted: true;
-      albumArtVibrant: true;
-      albumArtMuted: true;
-      albumArtLightVibrant: true;
-      albumArtLightMuted: true;
-      albumArtDarkVibrant: true;
     };
   }>[] = [];
 

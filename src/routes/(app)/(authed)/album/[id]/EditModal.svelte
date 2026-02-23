@@ -11,7 +11,6 @@
   import type { AlbumReleaseSearchResult } from '$lib/shared/types';
   import type { Prisma } from '../../../../../generated/prisma-client/client';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
-  import { theme } from '$lib/states/theme.svelte';
 
   interface Props {
     album: Prisma.AlbumGetPayload<{
@@ -63,7 +62,7 @@
         const responseJson = await response.json();
         audioPlayer.currentTrack.album = {
           ...audioPlayer.currentTrack.album,
-          ...responseJson.albumArtInfo
+          albumArtId: responseJson.albumArtInfo.albumArtId
         };
       }
 
@@ -96,7 +95,7 @@
               const responseData = result.data.albumArtInfo as Record<string, string>;
               audioPlayer.currentTrack.album = {
                 ...audioPlayer.currentTrack.album,
-                ...responseData
+                albumArtId: responseData.albumArtId
               };
             }
           }
@@ -112,7 +111,7 @@
     >
       <input accept="image/*" name="artfile" type="file" required />
       <button
-        class="bg-primary text-accessible hover:bg-primary/80 focus-visible:bg-primary/80 flex items-center justify-center rounded-md px-4 transition-colors"
+        class="bg-primary text-on-primary hover:bg-primary/80 focus-visible:bg-primary/80 flex items-center justify-center rounded-md px-4 transition-colors"
         type="submit"
         use:vibrate
       >
@@ -122,13 +121,13 @@
 
     <div class="flex w-full max-w-4xl px-6 py-1">
       <input
-        class="focus-visible:ring-primary w-full rounded-s-xl border-none bg-zinc-600 py-1 text-ellipsis outline-hidden transition-all focus-visible:ring-2"
+        class="focus-visible:ring-primary w-full rounded-s-xl border-none bg-zinc-600/50 py-1 text-ellipsis outline-hidden transition-all focus-visible:ring-2"
         type="text"
         bind:value={albumArtQuery}
         onkeydown={(e) => e.key === 'Enter' && searchArt()}
       />
       <button
-        class="focus-visible:ring-primary flex items-center justify-center rounded-e-xl border-s border-zinc-500 bg-zinc-600 px-2 py-1 outline-hidden transition-all focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+        class="focus-visible:ring-primary focus-visible:bg-on-primary focus-visible:text-primary bg-primary text-on-primary flex items-center justify-center rounded-e-xl px-2 py-1 outline-hidden transition-colors focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
         onclick={searchArt}
         use:vibrate
         disabled={albumArtQuery === '' || albumArtLoading}
@@ -137,7 +136,7 @@
         <RoundSearch class="text-xl" />
       </button>
     </div>
-    <div class="w-full max-w-4xl px-6 pb-2 text-xs text-zinc-300">
+    <div class="w-full max-w-4xl px-6 pb-2 text-xs">
       Options for searching album art
       <a
         class="hover:text-primary underline transition-colors"

@@ -1,13 +1,14 @@
 <script lang="ts">
   import RoundSearch from '~icons/ic/round-search';
   import RoundRefresh from '~icons/ic/round-refresh';
-  import { fade } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
   import { tick } from 'svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import TrackList from './TrackList.svelte';
   import AlbumList from './AlbumList.svelte';
   import ArtistList from './ArtistList.svelte';
   import type { PageData } from './$types';
+  import { quintOut } from 'svelte/easing';
 
   interface Props {
     data: PageData;
@@ -56,7 +57,12 @@
 </script>
 
 <div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
-  <div out:fade|global={{ duration }} class="p-4 pb-0 text-center text-xl font-bold">Search</div>
+  <div
+    in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
+    class="p-4 pb-0 text-center text-xl font-bold"
+  >
+    Search
+  </div>
 
   <form
     out:fade|global={{ duration }}
@@ -119,7 +125,7 @@
   </form>
   {#if data?.success && data?.results}
     <div
-      class="px-8 py-1 text-xs text-white/70 transition-shadow duration-300"
+      class="text-on-surface/80 px-8 py-1 text-xs transition-shadow duration-300"
       class:shadow-md={scrolled}
     >
       Results for: "{data.query}"
