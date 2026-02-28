@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0...v1.4.1) (2026-02-28)
+
+### Bug Fixes
+
+- release workflow ([651b749](https://github.com/aygreyG/music-stream-svelte/commit/651b7494d9d81c165ffaf608431829ffdc04340b))
+- update releases ([#209](https://github.com/aygreyG/music-stream-svelte/issues/209)) ([6397342](https://github.com/aygreyG/music-stream-svelte/commit/63973424b34d276b66f7cc1941f2cad26a4dae9a))
+- wrong prerelease value ([c1d89fc](https://github.com/aygreyG/music-stream-svelte/commit/c1d89fcca1415c053b3f4b344f6fb2b5d0a04e9f))
+
 ## [1.4.1-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0...v1.4.1-dev.1) (2026-02-28)
 
 ### Bug Fixes
