@@ -28,6 +28,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Ensure release branch exists
+        run: |
+          if ! git ls-remote --exit-code origin refs/heads/release; then
+            git push origin HEAD:refs/heads/release
+          fi
+
+      - name: Prepare stable release
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git checkout -B release
+          git push --force origin release
+
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
@@ -43,8 +55,14 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          STABLE_RELEASE: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
         run: pnpm exec semantic-release
+
+      - name: Sync changelog to main
+        if: github.event_name == 'workflow_dispatch' && steps.release.outputs.version != ''
+        run: |
+          git checkout main
+          git merge release --no-edit
+          git push origin main
 
       - name: Version
         run: echo "Next version is ${{ steps.release.outputs.version }}"

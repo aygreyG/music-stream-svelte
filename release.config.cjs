@@ -1,8 +1,6 @@
-const isStable = process.env.STABLE_RELEASE === 'true';
-
 module.exports = {
-  branches: isStable ? ['main'] : [{ name: 'main', prerelease: true }],
-  plugins: [
+	branches: ['release', { name: 'main', prerelease: 'dev' }],
+	plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
     [
