@@ -1,12 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { beforeNavigate } from '$app/navigation';
+  import AlbumLink from '../../AlbumLink.svelte';
   import RoundSearch from '~icons/ic/round-search';
-  import AlbumLink from './AlbumLink.svelte';
-  import { fade, fly } from 'svelte/transition';
-  import type { PageData } from './$types';
   import { flip } from 'svelte/animate';
+  import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import type { PageData } from './$types.js';
 
   interface Props {
     data: PageData;
@@ -15,7 +13,6 @@
   let { data }: Props = $props();
   let container: HTMLDivElement | null = $state(null);
   let firstVisibleElement: number = $state(0);
-  let foundScroll = $state(false);
   let scrolled = $state(false);
   let scrolledFromTop = $state(false);
   let searchString = $state('');
@@ -61,21 +58,6 @@
       firstVisibleElement = first;
     }
   }
-
-  onMount(async () => {
-    const scroll = localStorage.getItem('dashboard-scroll');
-    if (scroll && container) {
-      container.scrollTop = parseInt(scroll);
-      foundScroll = true;
-    }
-    updateVisibleElements();
-  });
-
-  beforeNavigate(() => {
-    if (container) {
-      localStorage.setItem('dashboard-scroll', container.scrollTop.toString() || '0');
-    }
-  });
 </script>
 
 <div
@@ -86,7 +68,7 @@
     class="p-4 pb-0 text-center text-xl font-bold"
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
   >
-    Albums
+    {data.tag.name}
   </div>
 
   <div
@@ -114,14 +96,7 @@
     bind:this={container}
     onscroll={() => {
       if (!container) return;
-
       updateVisibleElements();
-
-      if (!foundScroll) {
-        foundScroll = true;
-        return;
-      }
-
       scrolled = true;
       scrolledFromTop = container.scrollTop > 0;
     }}

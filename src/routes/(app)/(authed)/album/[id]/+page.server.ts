@@ -54,10 +54,21 @@ export const load = async ({ locals, params, depends, setHeaders }) => {
     });
   }
 
+  const tags = await prisma.tag.findMany({
+    where: {
+      tracks: {
+        some: {
+          albumId: id
+        }
+      }
+    }
+  });
+
   return {
     user: locals.user,
     album,
-    title: `${album.title} - ${album.albumArtist.name}`
+    title: `${album.title} - ${album.albumArtist.name}`,
+    tags
   };
 };
 

@@ -1,11 +1,12 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { onMount } from 'svelte';
   import RoundRefresh from '~icons/ic/round-refresh';
 
   onMount(() => {
     const timeout = setInterval(() => {
-      goto('/');
+      goto(resolve(`/`));
     }, 1000);
 
     return () => {

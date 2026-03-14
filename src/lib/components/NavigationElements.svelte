@@ -8,6 +8,7 @@
   import RoundNewReleases from '~icons/ic/round-new-releases';
   import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
   import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
+  import RoundLabel from '~icons/ic/round-label';
   import ProfileFill from '~icons/iconamoon/profile-fill';
   import { enhance } from '$app/forms';
   import NavigationElement from './NavigationElement.svelte';
@@ -55,6 +56,11 @@
       href: '/artist',
       text: 'Artists',
       Icon: MusicArtistFill
+    },
+    {
+      href: '/tag',
+      text: 'Tags',
+      Icon: RoundLabel
     },
     {
       href: '/playlist',

@@ -4,7 +4,7 @@ import { error, json } from '@sveltejs/kit';
 
 export const GET = async () => {
   if (getRegenerationInProgress()) {
-    return error(400, { message: 'Album art regeneration already in progress' });
+    error(400, { message: 'Album art regeneration already in progress' });
   }
 
   const albums = await prisma.album.findMany();

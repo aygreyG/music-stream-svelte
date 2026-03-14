@@ -220,7 +220,7 @@
           }}
           bind:value={selectedScheme}
         >
-          {#each SCHEME_TYPES as schemeType}
+          {#each SCHEME_TYPES as schemeType (schemeType)}
             <option value={schemeType}>
               {schemeType.charAt(0) + schemeType.slice(1).toLowerCase().replaceAll('_', ' ')}
               {#if schemeType === 'EXPRESSIVE'}
@@ -347,7 +347,7 @@
           in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
           disabled={listensLoading}
         >
-          <div class:opacity-0={listensLoading}>
+          <div class={[listensLoading && 'opacity-0']}>
             Load more ({data.totalListens - listens.length} left)
           </div>
           {#if listensLoading}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ArtistRow from './ArtistRow.svelte';
+  import TagRow from './TagRow.svelte';
   import { flip } from 'svelte/animate';
   import RoundSearch from '~icons/ic/round-search';
   import type { PageData } from './$types';
@@ -17,11 +17,7 @@
   let container: HTMLDivElement | null = $state(null);
 
   let filtered = $derived(
-    data.artists.filter(
-      (artist) =>
-        artist.name.toLowerCase().includes(searchString.toLowerCase()) ||
-        artist.sanitized.toLowerCase().includes(searchString.toLowerCase())
-    )
+    data.tags.filter((tag) => tag.name.toLowerCase().includes(searchString.toLowerCase()))
   );
 </script>
 
@@ -30,11 +26,11 @@
     class="p-4 pb-0 text-center text-xl font-bold"
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
   >
-    Artists
+    Tags
   </div>
 
-  {#if data.artists.length === 0}
-    <div class="p-4 pt-1 text-center text-xl font-bold">There are no artists 🫤</div>
+  {#if data.tags.length === 0}
+    <div class="p-4 pt-1 text-center text-xl font-bold">There are no tags 🫤</div>
   {:else}
     <div
       class={[
@@ -63,9 +59,9 @@
         if (container) scrolledFromTop = container.scrollTop > 0;
       }}
     >
-      {#each filtered as artist, index (artist.id)}
+      {#each filtered as tag, index (tag.id)}
         <div animate:flip={{ duration: 100 }} class="flex w-full flex-col">
-          <ArtistRow {artist} {index} {scrolled} />
+          <TagRow {tag} {index} {scrolled} />
         </div>
       {/each}
     </div>

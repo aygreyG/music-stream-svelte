@@ -6,6 +6,7 @@ import { getServerSettings, updateCacheKey } from './serverSettings';
 import { getAlbumArt } from './images';
 import { errorToNull, isFileNameValid, serverLog } from './utils';
 import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
+import { cleanUpTags } from './tags';
 
 let inProgress = false;
 let tracksCreated = 0;
@@ -165,11 +166,7 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
     const artistSet = new Set<string>();
     const albumArtistName = data.common.albumartist || breakFeatures(allArtists[0])[0];
     const allGenres = data.common.genre || [];
-    const genres: string[] = [];
-
-    allGenres.forEach((genre: string) => {
-      genre.split(/,|;|\//).forEach((g) => genres.push(g.trim().toLowerCase()));
-    });
+    const genres = cleanUpTags(allGenres);
 
     try {
       await prisma.$transaction(

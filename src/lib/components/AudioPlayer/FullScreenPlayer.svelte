@@ -16,6 +16,7 @@
   import ProgressBar from './ProgressBar.svelte';
   import Visualizer from './Visualizer.svelte';
   import { handleVibrate } from '$lib/utils';
+  import { resolve } from '$app/paths';
 
   interface Props {
     onclose: () => void;
@@ -136,7 +137,7 @@
     {#if audioPlayer.playlistInfo}
       <button
         onclick={() => {
-          goto(`/playlist/${audioPlayer.playlistInfo!.id}`);
+          goto(resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id }));
           onclose();
         }}
         class="text-on-surface-variant line-clamp-1 max-w-30 text-sm tracking-wide"
@@ -177,9 +178,10 @@
               ></div>
             {/if}
             <div
-              class="album-slide mx-auto aspect-square w-full max-w-70 overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 sm:max-w-80"
-              class:opacity-40={index !== audioPlayer.queueContextIndex}
-              class:scale-90={index !== audioPlayer.queueContextIndex}
+              class={[
+                'album-slide mx-auto aspect-square w-full max-w-70 overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 sm:max-w-80',
+                index !== audioPlayer.queueContextIndex && 'scale-90 opacity-40'
+              ]}
             >
               <AlbumImage album={track.album} maxSize="l" />
             </div>
@@ -201,16 +203,16 @@
               {audioPlayer.currentTrack.title}
             </h1>
             <div class="text-on-surface-variant mt-2 truncate text-lg">
-              {#each audioPlayer.currentTrack.artists.toSorted( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+              {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 {@const shouldHaveComma =
                   audioPlayer.currentTrack.artists.length > 1 &&
                   index != audioPlayer.currentTrack.artists.length - 1}
                 <button
                   onclick={() => {
-                    goto(`/artist/${artist.id}`);
+                    goto(resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id }));
                     onclose();
                   }}
-                  class={{ 'mr-1': shouldHaveComma }}
+                  class={[shouldHaveComma && 'mr-1']}
                 >
                   {artist.name}{#if shouldHaveComma},{/if}
                 </button>
@@ -219,7 +221,9 @@
 
             <button
               onclick={() => {
-                goto(`/album/${audioPlayer.currentTrack?.album.id}`);
+                goto(
+                  resolve(`/(app)/(authed)/album/[id]`, { id: audioPlayer.currentTrack!.album.id })
+                );
                 onclose();
               }}
               class="text-on-surface-variant mt-1 block w-full truncate text-base"

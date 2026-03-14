@@ -98,7 +98,7 @@
         use:vibrate
         disabled={loading}
       >
-        <div class:opacity-0={loading}>
+        <div class={[loading && 'opacity-0']}>
           Load more ({total - albums.length} left)
         </div>
         {#if loading}

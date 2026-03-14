@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
+  import { resolve } from '$app/paths';
   import { vibrate } from '$lib/actions/vibrate';
   import type { SearchArtist } from '$lib/shared/types';
   import { flip } from 'svelte/animate';
@@ -86,7 +87,7 @@
         delay: Math.min(Math.abs(index - startIndex), index) * 30
       }}
       animate:flip={{ duration: 500, easing: quintOut }}
-      href="/artist/{artist.id}"
+      href={resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id })}
     >
       <div>
         {artist.name}
@@ -138,7 +139,7 @@
         use:vibrate
         disabled={loading}
       >
-        <div class:opacity-0={loading}>
+        <div class={[loading && 'opacity-0']}>
           Load more ({total - artists.length} left)
         </div>
         {#if loading}

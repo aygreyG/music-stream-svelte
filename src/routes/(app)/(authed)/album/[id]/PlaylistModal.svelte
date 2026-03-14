@@ -8,6 +8,7 @@
   import Modal from '$lib/components/Modal.svelte';
   import type { SignedInUser } from '$lib/shared/types';
   import RoundRefresh from '~icons/ic/round-refresh';
+  import { resolve } from '$app/paths';
 
   interface Props {
     open?: boolean;
@@ -68,7 +69,9 @@
           action="?/addtoplaylist"
         >
           <div class="flex w-full items-center justify-between pr-2">
-            <a href="/playlist/{playlist.id}">{playlist.name}</a>
+            <a href={resolve(`/(app)/(authed)/playlist/[id]`, { id: playlist.id })}>
+              {playlist.name}
+            </a>
             <div>({playlist.tracks.length})</div>
           </div>
           <input type="hidden" name="playlistid" value={playlist.id} />

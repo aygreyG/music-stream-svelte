@@ -10,6 +10,7 @@
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
   import type { Snippet } from 'svelte';
   import type { Prisma } from '../../generated/prisma-client/client';
+  import { resolve } from '$app/paths';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {
@@ -103,9 +104,9 @@
   use:vibrate
   class={[
     'group flex h-16 w-full flex-none cursor-default items-center rounded-md from-transparent via-zinc-600/10 to-transparent transition-colors select-none hover:bg-linear-to-r focus-visible:bg-linear-to-r',
-    player.currentTrack?.id === track.id && 'bg-linear-to-r'
+    player.currentTrack?.id === track.id && 'bg-linear-to-r',
+    !indexed && 'px-4'
   ]}
-  class:px-4={!indexed}
   style={schemeStyle}
 >
   {#if indexed}
@@ -181,15 +182,21 @@
       {track.title}
     </button>
     <div class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
-      {#each track.artists.toSorted( (a, _) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+      {#each track.artists.toSorted( (a) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
         {@const shouldHaveComma = track.artists.length > 1 && index != track.artists.length - 1}
-        <a class={['hover:underline', shouldHaveComma && 'mr-1']} href="/artist/{artist.id}">
+        <a
+          class={['hover:underline', shouldHaveComma && 'mr-1']}
+          href={resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id })}
+        >
           {artist.name}{#if shouldHaveComma},{/if}
         </a>
       {/each}
       {#if showAlbumName}
         -
-        <a href="/album/{track.album.id}" class="hover:underline">
+        <a
+          href={resolve(`/(app)/(authed)/album/[id]`, { id: track.album.id })}
+          class="hover:underline"
+        >
           {track.album.title}
         </a>
       {/if}
