@@ -7,6 +7,7 @@
   import { goto } from '$app/navigation';
   import { vibrate } from '$lib/actions/vibrate';
   import type { PageData } from './$types';
+  import { resolve } from '$app/paths';
 
   interface Props {
     data: PageData;
@@ -54,7 +55,7 @@
           return async ({ update }) => {
             loading = true;
             await update();
-            await goto('/login');
+            await goto(resolve('/(app)/(unauthed)/login'));
             loading = false;
           };
         }
@@ -111,7 +112,7 @@
 
       <div class="flex h-fit max-h-full w-full flex-col overflow-hidden">
         <div class="p-2 pb-0 text-lg font-bold">Select a music folder:</div>
-        <div class="flex gap-2 px-4 text-sm transition-shadow" class:shadow-md={scrolled}>
+        <div class={['flex gap-2 px-4 text-sm transition-shadow', scrolled && 'shadow-md']}>
           Currently selected: {$pickedFolder?.path ?? 'None'}
           {#if err}
             <p class="text-sm font-normal text-red-600">{err}</p>
@@ -139,8 +140,10 @@
       </div>
 
       <div
-        class="flex w-full flex-none items-center justify-center transition-shadow"
-        class:shadow-md-top={scrolledToBottom}
+        class={[
+          'flex w-full flex-none items-center justify-center transition-shadow',
+          scrolledToBottom && 'shadow-md-top'
+        ]}
       >
         <button
           class="bg-primary hover:bg-primary/80 text-on-primary m-2 rounded-md px-2 py-1 font-bold transition-colors"

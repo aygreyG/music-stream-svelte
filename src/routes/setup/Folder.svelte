@@ -57,7 +57,7 @@
     disabled={loading}
     use:vibrate
   >
-    <div class:text-primary={$pickedFolder === folderNode}>
+    <div class={[$pickedFolder === folderNode && 'text-primary']}>
       {#if loading}
         <RoundRefresh class="h-6 w-6 animate-spin" />
       {:else if opened}

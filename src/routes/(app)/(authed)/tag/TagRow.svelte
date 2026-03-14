@@ -1,21 +1,17 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { observeVisibility } from '$lib/actions/observeVisibility';
-  import type { Prisma } from '../../../../generated/prisma-client/client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
-
-  type ArtistRowType = Prisma.ArtistGetPayload<{
-    select: { id: true; name: true; _count: { select: { albums: true; tracks: true } } };
-  }>;
+  import type { PageData } from './$types';
 
   interface Props {
-    artist: ArtistRowType;
+    tag: PageData['tags'][0];
     index: number;
     scrolled: boolean;
   }
 
-  let { artist, index, scrolled }: Props = $props();
+  let { tag, index, scrolled }: Props = $props();
 
   let animate: boolean = $state(false);
   let delay = $derived.by(() => {
@@ -25,22 +21,11 @@
     return 30 * index;
   });
 
-  let trackAndAlbumCount = $derived.by(() => {
+  let albumCount = $derived.by(() => {
     let tmp = '(';
-    if (artist._count.albums > 0) {
-      tmp += `${artist._count.albums} album`;
-      if (artist._count.albums > 1) {
-        tmp += 's';
-      }
-    }
-    if (artist._count.tracks > 0) {
-      if (artist._count.albums > 0) {
-        tmp += ', ';
-      }
-      tmp += `${artist._count.tracks} track`;
-      if (artist._count.tracks > 1) {
-        tmp += 's';
-      }
+    tmp += `${tag.albumCount} album`;
+    if (tag.albumCount !== 1) {
+      tmp += 's';
     }
     tmp += ')';
     return tmp;
@@ -51,13 +36,13 @@
   <a
     class="flex justify-between gap-2 from-zinc-600/10 px-4 py-2 transition-colors hover:bg-linear-to-r"
     in:fly={{ duration: 300, easing: quintOut, x: -20, delay }}
-    href={resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id })}
+    href={resolve(`/(app)/(authed)/tag/[id]`, { id: tag.id })}
   >
     <div>
-      {artist.name}
+      {tag.name}
     </div>
     <div class="text-right text-balance">
-      {trackAndAlbumCount}
+      {albumCount}
     </div>
   </a>
 {:else}
@@ -68,13 +53,13 @@
         animate = true;
       }
     }}
-    href={resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id })}
+    href={resolve(`/(app)/(authed)/tag/[id]`, { id: tag.id })}
   >
     <div>
-      {artist.name}
+      {tag.name}
     </div>
     <div>
-      {trackAndAlbumCount}
+      {albumCount}
     </div>
   </a>
 {/if}

@@ -15,6 +15,7 @@
   import type { PageData } from './$types';
   import { ROLE } from '$lib/shared/consts';
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import { resolve } from '$app/paths';
 
   type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 
@@ -86,11 +87,13 @@
     {/if}
     <div class="to-surface flex h-full flex-col bg-radial from-transparent from-60%">
       <div
-        class="flex items-center justify-center gap-6 p-4 transition-shadow md:justify-start"
-        class:shadow-md={scrolled}
+        class={[
+          '@container flex items-center justify-start gap-4 p-4 transition-shadow max-sm:pb-2',
+          scrolled && 'shadow-md'
+        ]}
         in:fade|global={{ duration: 500, easing: cubicInOut }}
       >
-        <div class="group h-32 w-32 flex-none overflow-clip rounded-md">
+        <div class="group size-24 flex-none overflow-clip rounded-md @md:size-32 @xl:size-40">
           <AlbumImage key={data.album.updatedAt.toISOString()} album={data.album} />
           {#if data.user?.role !== ROLE.USER}
             <div
@@ -108,15 +111,34 @@
             </div>
           {/if}
         </div>
-        <div class="flex flex-col">
-          <div>
+        <div class="flex min-w-0 flex-col">
+          <div class="text-2xl font-bold @md:text-3xl">
             {data.album.title}
           </div>
-          <a class="hover:underline" href="/artist/{data.album.albumArtistId}">
-            {data.album.albumArtist.name}
-          </a>
-          <div>
-            {data.album.releaseDate || ''}
+          <div class="flex flex-col text-sm @xl:text-base">
+            <a
+              class="font-semibold hover:underline"
+              href={resolve(`/(app)/(authed)/artist/[id]`, { id: data.album.albumArtistId })}
+            >
+              {data.album.albumArtist.name}
+            </a>
+            {#if data.album.releaseDate}
+              <div>
+                {data.album.releaseDate}
+              </div>
+            {/if}
+            {#if data.tags}
+              <div class="flex w-full gap-1.5 overflow-x-auto py-1 pr-6">
+                {#each data.tags as tag (tag.id)}
+                  <a
+                    href={resolve(`/(app)/(authed)/tag/[id]`, { id: tag.id })}
+                    class="bg-primary/20 hover:bg-primary/30 text-primary h-fit rounded-md px-1.5 py-0.5 text-xs whitespace-nowrap transition-colors"
+                  >
+                    {tag.name}
+                  </a>
+                {/each}
+              </div>
+            {/if}
           </div>
         </div>
       </div>

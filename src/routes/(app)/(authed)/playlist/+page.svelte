@@ -42,8 +42,10 @@
 
   <div
     out:fade|global={{ duration: 250 }}
-    class="flex w-full flex-col px-8 py-1 transition-shadow duration-300"
-    class:shadow-md={scrolled}
+    class={[
+      'flex w-full flex-col px-8 py-1 transition-shadow duration-300',
+      scrolled && 'shadow-md'
+    ]}
   >
     <label class="flex w-full items-center rounded-xl backdrop-blur-md">
       <input

@@ -7,6 +7,7 @@
   import TrashFill from '~icons/iconamoon/trash-fill';
   import { vibrate } from '$lib/actions/vibrate';
   import type { Prisma } from '../../../../generated/prisma-client/client';
+  import { resolve } from '$app/paths';
 
   interface Props {
     playlist: Prisma.PlaylistGetPayload<{
@@ -94,7 +95,7 @@
   <input type="hidden" name="id" value={playlist.id} />
 
   <a
-    href="/playlist/{playlist.id}"
+    href={resolve(`/(app)/(authed)/playlist/[id]`, { id: playlist.id })}
     class="flex h-3/4 w-full flex-none items-center justify-center px-2 pt-2"
     use:vibrate
     out:send|global={{ key: playlist.id, duration: 300 }}

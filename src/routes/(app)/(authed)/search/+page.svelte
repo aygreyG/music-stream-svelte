@@ -125,8 +125,10 @@
   </form>
   {#if data?.success && data?.results}
     <div
-      class="text-on-surface/80 px-8 py-1 text-xs transition-shadow duration-300"
-      class:shadow-md={scrolled}
+      class={[
+        'text-on-surface/80 px-8 py-1 text-xs transition-shadow duration-300',
+        scrolled && 'shadow-md'
+      ]}
     >
       Results for: "{data.query}"
     </div>

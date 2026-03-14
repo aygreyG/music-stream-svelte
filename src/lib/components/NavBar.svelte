@@ -9,6 +9,7 @@
   import AlbumImage from './AlbumImage.svelte';
   import { beforeNavigate, goto } from '$app/navigation';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { resolve } from '$app/paths';
 
   interface Props {
     user?: SignedInUser | null;
@@ -46,7 +47,7 @@
           <a
             title={audioPlayer.currentTrack.album.title}
             class="h-full w-full"
-            href="/album/{audioPlayer.currentTrack.album.id}"
+            href={resolve(`/(app)/(authed)/album/[id]`, { id: audioPlayer.currentTrack.album.id })}
           >
             <AlbumImage album={audioPlayer.currentTrack.album} />
           </a>
@@ -54,7 +55,9 @@
             class="text-on-surface absolute bottom-0 left-0 flex w-full flex-col justify-end gap-0.5 p-2 text-center"
           >
             <a
-              href="/album/{audioPlayer.currentTrack.album.id}"
+              href={resolve(`/(app)/(authed)/album/[id]`, {
+                id: audioPlayer.currentTrack.album.id
+              })}
               class="bg-surface/80 z-10 overflow-hidden rounded-[10px] px-1 text-ellipsis whitespace-nowrap backdrop-blur-xs"
               title={audioPlayer.currentTrack.title}
             >
@@ -63,14 +66,14 @@
             <div
               class="bg-surface/80 z-10 overflow-hidden rounded-md px-1 text-xs text-nowrap text-ellipsis backdrop-blur-xs"
             >
-              {#each audioPlayer.currentTrack.artists.toSorted( (a, _) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+              {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 {@const shouldHaveComma =
                   audioPlayer.currentTrack.artists.length > 1 &&
                   index != audioPlayer.currentTrack.artists.length - 1}
                 <button
                   title={artist.name}
                   class={['hover:underline', shouldHaveComma && 'mr-1']}
-                  onclick={() => goto(`/artist/${artist.id}`)}
+                  onclick={() => goto(resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id }))}
                 >
                   {artist.name}{#if shouldHaveComma},{/if}
                 </button>
@@ -100,11 +103,10 @@
 </div>
 
 <div
-  class="bg-surface/95 absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-x-clip overflow-y-auto rounded-xl backdrop-blur-md transition-all duration-300 sm:hidden"
-  class:w-full={open}
-  class:left-0={open}
-  class:w-0={!open}
-  class:left-full={!open}
+  class={[
+    'bg-surface/95 absolute top-0 z-40 flex h-[calc(100%-11.25rem)] justify-center overflow-x-clip overflow-y-auto rounded-xl backdrop-blur-md transition-all duration-300 sm:hidden',
+    open ? 'left-0 w-full' : 'left-full w-0'
+  ]}
 >
   {#if open}
     <div

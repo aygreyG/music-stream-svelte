@@ -6,6 +6,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import type { PageData } from './$types';
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import { resolve } from '$app/paths';
 
   const DELAY = 20;
 
@@ -41,7 +42,7 @@
     <a
       use:vibrate
       class={['absolute inset-0 overflow-hidden rounded-xl', !album.albumArtId && 'bg-zinc-900']}
-      href="/album/{album.id}"
+      href={resolve(`/(app)/(authed)/album/[id]`, { id: album.id })}
       in:scale={{ duration: 400, delay, easing: quintOut, start: 0.8 }}
       style={schemeStyle}
     >
@@ -71,7 +72,7 @@
     <a
       class="absolute inset-0 opacity-0"
       aria-label="{album.title} by {album.albumArtist.name}"
-      href="/album/{album.id}"
+      href={resolve(`/(app)/(authed)/album/[id]`, { id: album.id })}
       use:observeVisibility={{
         onVisible: () => {
           animate = true;

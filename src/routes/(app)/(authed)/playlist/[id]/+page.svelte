@@ -15,7 +15,7 @@
   }
 
   let { data }: Props = $props();
-  const [_, receive] = crossfade;
+  const [, receive] = crossfade;
   let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
   const audioPlayer = getAudioPlayer();
@@ -23,8 +23,10 @@
 
 <div class="flex h-full w-full flex-col">
   <div
-    class="flex items-center justify-center gap-6 p-4 transition-shadow md:justify-start"
-    class:shadow-md={scrolled}
+    class={[
+      'flex items-center justify-center gap-6 p-4 transition-shadow md:justify-start',
+      scrolled && 'shadow-md'
+    ]}
   >
     <div
       class="flex h-32 w-32 flex-none items-center justify-center overflow-clip rounded-md md:h-40 md:w-40 xl:h-48 xl:w-48"

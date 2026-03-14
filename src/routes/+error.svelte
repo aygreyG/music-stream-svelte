@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths';
   import { page } from '$app/state';
   import RoundKeyboardBackspace from '~icons/ic/round-keyboard-backspace';
 </script>
@@ -15,7 +16,7 @@
   </div>
   <a
     class="group hover:text-primary focus-visible:text-primary bg-primary text-on-primary hover:bg-on-primary focus-visible:bg-on-primary flex items-center gap-1 rounded-xl p-2 transition-colors"
-    href="/"
+    href={resolve('/')}
   >
     <RoundKeyboardBackspace class="transition-transform group-hover:translate-x-1" />
     Back to homepage

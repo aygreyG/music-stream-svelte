@@ -9,6 +9,7 @@
   import RoundRefresh from '~icons/ic/round-refresh';
   import type { PageData } from './$types';
   import Accordion from '$lib/components/Accordion.svelte';
+  import { resolve } from '$app/paths';
 
   interface Props {
     data: PageData;
@@ -17,6 +18,7 @@
   let { data }: Props = $props();
   let syncResponse: { message: string; type: 'full' | 'normal' } | null = $state(null);
   let imageGenResponse: { message: string } | null = $state(null);
+  let tagRegenerationResponse: { message: string } | null = $state(null);
   let animate = $state(false);
   let loading = $state(false);
   let timeout: string | number | NodeJS.Timeout | undefined = $state();
@@ -44,7 +46,7 @@
     <a
       class="rounded-md bg-sky-600 px-4 py-1 font-semibold transition-colors hover:bg-sky-700"
       data-sveltekit-preload-data="false"
-      href={`/admin/download/logs/${file}`}
+      href={resolve('/(app)/(authed)/admin/download/logs/[filename]', { filename: file })}
       download
       target="_blank"
       use:vibrate
@@ -149,6 +151,30 @@
           Start
         </button>
       </div>
+      <div
+        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 200 }}
+        class="flex items-center justify-between bg-zinc-600/10 p-4"
+      >
+        <div>Regenerate tags</div>
+        {#if tagRegenerationResponse}
+          <div class="text-primary">{tagRegenerationResponse.message}</div>
+        {/if}
+        <button
+          class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-1 font-semibold transition-colors"
+          onclick={async () => {
+            const re = await fetch('/api/admin/regenerate-tag');
+            const response = await re.json();
+            tagRegenerationResponse = { message: response.message };
+            clearTimeout(imageGenTimeout);
+            imageGenTimeout = setTimeout(() => {
+              tagRegenerationResponse = null;
+            }, 2000);
+          }}
+          use:vibrate
+        >
+          Start
+        </button>
+      </div>
     </div>
     <div
       in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 200 }}
@@ -229,9 +255,11 @@
       <div class="flex flex-col rounded-xl">
         {#each data.users as usr, index (usr.id)}
           <div
-            class="overflow-clip bg-zinc-600/10"
-            class:rounded-t-xl={index === 0}
-            class:rounded-b-xl={index === data.users.length - 1}
+            class={[
+              'overflow-clip bg-zinc-600/10',
+              index === 0 && 'rounded-t-xl',
+              index === data.users.length - 1 && 'rounded-b-xl'
+            ]}
             in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 + 100 * index }}
             animate:flip={{ duration: 200 }}
           >
