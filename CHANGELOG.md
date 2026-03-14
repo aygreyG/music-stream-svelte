@@ -1,3 +1,9 @@
+# [1.5.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.1...v1.5.0-dev.1) (2026-03-14)
+
+### Features
+
+- make use of tags on tracks ([#210](https://github.com/aygreyG/music-stream-svelte/issues/210)) ([e73600e](https://github.com/aygreyG/music-stream-svelte/commit/e73600e1e8a7dd5bb0f21ce918968724e03d8f31)), closes [#148](https://github.com/aygreyG/music-stream-svelte/issues/148)
+
 ## [1.4.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.0...v1.4.1) (2026-02-28)
 
 ### Bug Fixes
