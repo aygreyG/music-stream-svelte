@@ -170,7 +170,7 @@
           <div class="flex items-center justify-between">
             <div class="font-bold">{task.label}</div>
             <button
-              class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-2 font-semibold transition-colors disabled:opacity-50"
+              class="bg-tertiary text-on-tertiary enabled:hover:bg-tertiary/80 rounded-full px-4 py-2 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               onclick={() => (showModal = task)}
               disabled={taskState?.status === 'running' || isAnyTaskRunning}
               use:vibrate
@@ -438,7 +438,7 @@
                 Cancel
               </button>
               <button
-                class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-2 font-semibold transition-colors disabled:opacity-50"
+                class="bg-tertiary text-on-tertiary enabled:hover:bg-tertiary/80 rounded-full px-4 py-2 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 onclick={() => {
                   fetch(`/api/admin/task/${showModal!.taskId}`, {
                     method: 'PUT'
