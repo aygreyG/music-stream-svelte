@@ -1,3 +1,9 @@
+# [1.5.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.2...v1.5.0-dev.3) (2026-03-21)
+
+### Bug Fixes
+
+- admin task button state ([2f91c85](https://github.com/aygreyG/music-stream-svelte/commit/2f91c857f2a7db49a63a97723c11732f2a8a7216))
+
 # [1.5.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.1...v1.5.0-dev.2) (2026-03-21)
 
 ### Features
