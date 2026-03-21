@@ -48,7 +48,7 @@
   }
 
   function connectTaskSSE() {
-    taskEventSource = new EventSource('/api/admin/tasks/events');
+    taskEventSource = new EventSource(resolve('/api/admin/tasks/events'));
 
     taskEventSource.onmessage = (event) => {
       const data: TaskEvent = JSON.parse(event.data);
@@ -69,7 +69,7 @@
   }
 
   function connectLogSSE() {
-    logEventSource = new EventSource('/api/admin/logs/events');
+    logEventSource = new EventSource(resolve('/api/admin/logs/events'));
 
     logEventSource.onmessage = (event) => {
       const data: LogEvent = JSON.parse(event.data);
@@ -183,7 +183,7 @@
               <RoundRefresh class="text-primary animate-spin text-lg" />
               <span class="text-primary text-sm">
                 {taskState.message}
-                {#if taskState.progress !== null}
+                {#if taskState.progress !== undefined}
                   ({taskState.progress}%)
                 {/if}
               </span>
@@ -198,7 +198,7 @@
           {:else if taskState?.status === 'error'}
             <span class="text-sm text-red-400">{taskState.message}</span>
           {/if}
-          {#if taskState?.status === 'running' && taskState.progress !== null}
+          {#if taskState?.status === 'running' && taskState.progress !== undefined}
             <div class="h-1.5 w-full overflow-hidden rounded-full bg-zinc-600/30">
               <div
                 class="bg-primary h-full rounded-full transition-all duration-300"
