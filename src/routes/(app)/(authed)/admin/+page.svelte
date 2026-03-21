@@ -3,29 +3,102 @@
   import { fly } from 'svelte/transition';
   import UserElement from './UserElement.svelte';
   import { quintOut } from 'svelte/easing';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { flip } from 'svelte/animate';
   import { vibrate } from '$lib/actions/vibrate';
   import RoundRefresh from '~icons/ic/round-refresh';
   import type { PageData } from './$types';
   import Accordion from '$lib/components/Accordion.svelte';
   import { resolve } from '$app/paths';
+  import type {
+    TaskEvent,
+    LogEvent,
+    TaskState,
+    LogEntry,
+    DbLogEntry,
+    TaskDefinition
+  } from '$lib/shared/types';
+  import { SvelteMap } from 'svelte/reactivity';
+  import { formatDate } from '$lib/utils';
+  import Modal from '$lib/components/Modal.svelte';
 
   interface Props {
     data: PageData;
   }
 
   let { data }: Props = $props();
-  let syncResponse: { message: string; type: 'full' | 'normal' } | null = $state(null);
-  let imageGenResponse: { message: string } | null = $state(null);
-  let tagRegenerationResponse: { message: string } | null = $state(null);
   let animate = $state(false);
   let loading = $state(false);
-  let timeout: string | number | NodeJS.Timeout | undefined = $state();
-  let imageGenTimeout: string | number | NodeJS.Timeout | undefined = $state();
+
+  let taskStates: Map<string, TaskState> = new SvelteMap();
+  let logs: LogEntry[] = $state([]);
+  let dbLogs: DbLogEntry[] = $state([]);
+  let taskEventSource: EventSource | null = null;
+  let logEventSource: EventSource | null = null;
+  let showModal = $state<Omit<TaskDefinition, 'execute'> | null>(null);
+  const isAnyTaskRunning = $derived.by(() => {
+    for (const task of taskStates.values()) {
+      if (task.status === 'running') return true;
+    }
+    return false;
+  });
+
+  function getTask(id: string): TaskState | undefined {
+    return taskStates.get(id);
+  }
+
+  function connectTaskSSE() {
+    taskEventSource = new EventSource(resolve('/api/admin/tasks/events'));
+
+    taskEventSource.onmessage = (event) => {
+      const data: TaskEvent = JSON.parse(event.data);
+
+      if (data.type === 'snapshot') {
+        for (const task of data.tasks) {
+          taskStates.set(task.id, task);
+        }
+      } else if (data.type === 'update') {
+        taskStates.set(data.task.id, data.task);
+      }
+    };
+
+    taskEventSource.onerror = () => {
+      taskEventSource?.close();
+      setTimeout(connectTaskSSE, 3000);
+    };
+  }
+
+  function connectLogSSE() {
+    logEventSource = new EventSource(resolve('/api/admin/logs/events'));
+
+    logEventSource.onmessage = (event) => {
+      const data: LogEvent = JSON.parse(event.data);
+
+      if (data.type === 'snapshot') {
+        logs = data.logs;
+        dbLogs = data.dbLogs;
+      } else if (data.type === 'log') {
+        logs = [data.log, ...logs];
+      } else if (data.type === 'dbLog') {
+        dbLogs = [data.dbLog, ...dbLogs];
+      }
+    };
+
+    logEventSource.onerror = () => {
+      logEventSource?.close();
+      setTimeout(connectLogSSE, 3000);
+    };
+  }
 
   onMount(() => {
     animate = true;
+    connectTaskSSE();
+    connectLogSSE();
+  });
+
+  onDestroy(() => {
+    taskEventSource?.close();
+    logEventSource?.close();
   });
 </script>
 
@@ -65,117 +138,78 @@
       Admin dashboard
     </div>
 
-    <div class="mx-auto flex w-full max-w-3xl flex-none flex-col overflow-clip rounded-xl">
+    <div
+      class="mx-auto flex w-full max-w-3xl flex-none flex-col overflow-clip rounded-xl bg-zinc-600/10 p-2"
+    >
       <div
         in:fly|global={{ duration: 500, x: -20, easing: quintOut }}
-        class="flex items-center justify-between bg-zinc-600/10 p-4"
+        class="flex items-center justify-between p-2"
       >
-        <div>App version</div>
+        <div class="font-bold">App version</div>
         <div>{data.APP_VERSION}</div>
       </div>
-      <div
-        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 50 }}
-        class="flex items-center justify-between bg-zinc-600/10 p-4"
-      >
-        <div>Library sync</div>
-        {#if syncResponse && syncResponse.type === 'normal'}
-          <div class="text-primary">{syncResponse.message}</div>
-        {/if}
-        <button
-          class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-1 font-semibold transition-colors"
-          onclick={async () => {
-            const re = await fetch('/api/admin/sync', {
-              method: 'POST'
-            });
-
-            const response = await re.json();
-            syncResponse = { message: response.message, type: 'normal' };
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-              syncResponse = null;
-            }, 2000);
-          }}
-          use:vibrate
-        >
-          Start
-        </button>
-      </div>
-      <div
-        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 100 }}
-        class="flex items-center justify-between bg-zinc-600/10 p-4"
-      >
-        <div>Full reset & sync</div>
-        {#if syncResponse && syncResponse.type === 'full'}
-          <div class="text-primary">{syncResponse.message}</div>
-        {/if}
-        <button
-          class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-1 font-semibold transition-colors"
-          onclick={async () => {
-            const re = await fetch('/api/admin/sync?reset=true', {
-              method: 'POST'
-            });
-
-            const response = await re.json();
-            syncResponse = { message: response.message, type: 'full' };
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-              syncResponse = null;
-            }, 2000);
-          }}
-          use:vibrate
-        >
-          Start
-        </button>
-      </div>
-      <div
-        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 150 }}
-        class="flex items-center justify-between bg-zinc-600/10 p-4"
-      >
-        <div>Regenerate album images</div>
-        {#if imageGenResponse}
-          <div class="text-primary">{imageGenResponse.message}</div>
-        {/if}
-        <button
-          class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-1 font-semibold transition-colors"
-          onclick={async () => {
-            const re = await fetch('/api/admin/regenerate-art');
-            const response = await re.json();
-            imageGenResponse = { message: response.message };
-            clearTimeout(imageGenTimeout);
-            imageGenTimeout = setTimeout(() => {
-              imageGenResponse = null;
-            }, 2000);
-          }}
-          use:vibrate
-        >
-          Start
-        </button>
-      </div>
-      <div
-        in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 200 }}
-        class="flex items-center justify-between bg-zinc-600/10 p-4"
-      >
-        <div>Regenerate tags</div>
-        {#if tagRegenerationResponse}
-          <div class="text-primary">{tagRegenerationResponse.message}</div>
-        {/if}
-        <button
-          class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-1 font-semibold transition-colors"
-          onclick={async () => {
-            const re = await fetch('/api/admin/regenerate-tag');
-            const response = await re.json();
-            tagRegenerationResponse = { message: response.message };
-            clearTimeout(imageGenTimeout);
-            imageGenTimeout = setTimeout(() => {
-              tagRegenerationResponse = null;
-            }, 2000);
-          }}
-          use:vibrate
-        >
-          Start
-        </button>
-      </div>
     </div>
+
+    <div
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 25 }}
+      class="p-2 text-center text-xl font-bold"
+    >
+      Tasks
+    </div>
+
+    <div
+      class="mx-auto flex w-full max-w-3xl flex-none flex-col overflow-clip rounded-xl bg-zinc-600/10 p-2 pb-1"
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 25 }}
+    >
+      {#each data.tasks as task, index (task.taskId)}
+        {@const taskState = getTask(task.taskId)}
+        <div
+          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 25 + 25 * index }}
+          class="my-1 flex flex-col gap-2 rounded-xl bg-zinc-600/20 p-4"
+        >
+          <div class="flex items-center justify-between">
+            <div class="font-bold">{task.label}</div>
+            <button
+              class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-2 font-semibold transition-colors disabled:opacity-50"
+              onclick={() => (showModal = task)}
+              disabled={taskState?.status === 'running' || isAnyTaskRunning}
+              use:vibrate
+            >
+              Start
+            </button>
+          </div>
+          {#if taskState?.status === 'running'}
+            <div class="flex items-center gap-2">
+              <RoundRefresh class="text-primary animate-spin text-lg" />
+              <span class="text-primary text-sm">
+                {taskState.message}
+                {#if taskState.progress !== undefined}
+                  ({taskState.progress}%)
+                {/if}
+              </span>
+            </div>
+          {:else if taskState?.status === 'completed'}
+            <span class="text-sm text-green-600">
+              {#if taskState.completedAt}
+                {formatDate(taskState.completedAt)} -
+              {/if}
+              {taskState.message}
+            </span>
+          {:else if taskState?.status === 'error'}
+            <span class="text-sm text-red-400">{taskState.message}</span>
+          {/if}
+          {#if taskState?.status === 'running' && taskState.progress !== undefined}
+            <div class="h-1.5 w-full overflow-hidden rounded-full bg-zinc-600/30">
+              <div
+                class="bg-primary h-full rounded-full transition-all duration-300"
+                style="width: {taskState.progress}%"
+              ></div>
+            </div>
+          {/if}
+        </div>
+      {/each}
+    </div>
+
     <div
       in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 200 }}
       class="p-2 text-center text-xl font-bold"
@@ -277,17 +311,16 @@
     </div>
 
     <div class="mx-auto w-full max-w-3xl">
-      <Accordion delay={400} title="Errors/Warnings ({data.dbLogs?.length || 0})">
-        {#if data.dbLogs && data.dbLogs.length > 0}
+      <Accordion delay={400} title="Errors/Warnings ({dbLogs.length})">
+        {#if dbLogs.length > 0}
           <div class="max-h-96 overflow-y-auto px-2">
-            {#each data.dbLogs as log, index (log.id)}
+            {#each dbLogs as log, index (log.id)}
               <div
                 class={[
                   'my-1 rounded-md bg-zinc-600/10 px-2 py-1 text-sm',
                   index === 0 && 'mt-2',
-                  index === data.dbLogs.length - 1 && 'mb-2'
+                  index === dbLogs.length - 1 && 'mb-2'
                 ]}
-                animate:flip={{ duration: 200 }}
               >
                 <span
                   class={[
@@ -298,8 +331,9 @@
                   {log.level.toUpperCase()}
                 </span>
                 {#if log.createdAt}
+                  {@const date = new Date(log.createdAt)}
                   {@const timestamp =
-                    log.createdAt.toLocaleString('en-GB', {
+                    date.toLocaleString('en-GB', {
                       year: '2-digit',
                       month: '2-digit',
                       day: '2-digit',
@@ -307,7 +341,7 @@
                       minute: '2-digit',
                       second: '2-digit',
                       hour12: false
-                    }) + `.${log.createdAt.getMilliseconds()}`}
+                    }) + `.${date.getMilliseconds()}`}
                   - <span class="text-zinc-400">{timestamp}</span>
                 {/if}
                 - {log.message}
@@ -319,15 +353,15 @@
         {/if}
       </Accordion>
 
-      <Accordion delay={450} title="Latest logs ({data.logs?.length || 0} lines)">
-        {#if data.logs && data.logs.length > 0}
+      <Accordion delay={450} title="Latest logs ({logs.length} lines)">
+        {#if logs.length > 0}
           <div class="max-h-96 overflow-y-auto px-2">
-            {#each data.logs as log, index (`${log.timestamp}-${index}`)}
+            {#each logs as log, index (`${log.timestamp}-${index}`)}
               <div
                 class={[
                   'my-1 rounded-md bg-zinc-600/10 px-2 py-1 text-sm',
                   index === 0 && 'mt-2',
-                  index === data.logs.length - 1 && 'mb-2'
+                  index === logs.length - 1 && 'mb-2'
                 ]}
               >
                 <span
@@ -385,4 +419,47 @@
       </Accordion>
     </div>
   </div>
+
+  {#if showModal}
+    <Modal title="Are you sure you want to start this task?" onclose={() => (showModal = null)}>
+      <div class="flex h-full w-full flex-col items-center justify-center p-4">
+        <div
+          class="flex h-fit w-full max-w-3xl flex-col items-center gap-2 rounded-xl bg-zinc-600/20 p-4"
+        >
+          <div class="flex w-full items-center justify-between gap-2">
+            <div class="font-bold">{showModal.label}</div>
+
+            <div class="flex gap-2">
+              <button
+                class="rounded-full bg-gray-500 px-4 py-2 font-semibold text-white transition-colors hover:bg-gray-600"
+                onclick={() => (showModal = null)}
+                use:vibrate
+              >
+                Cancel
+              </button>
+              <button
+                class="bg-tertiary text-on-tertiary hover:bg-tertiary/80 rounded-full px-4 py-2 font-semibold transition-colors disabled:opacity-50"
+                onclick={() => {
+                  fetch(`/api/admin/task/${showModal!.taskId}`, {
+                    method: 'PUT'
+                  });
+                  showModal = null;
+                }}
+                disabled={isAnyTaskRunning}
+                use:vibrate
+              >
+                Start
+              </button>
+            </div>
+          </div>
+
+          {#if showModal.description}
+            <div class="w-full text-sm font-semibold text-yellow-600">
+              {showModal.description}
+            </div>
+          {/if}
+        </div>
+      </div>
+    </Modal>
+  {/if}
 {/if}

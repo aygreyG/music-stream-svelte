@@ -1,10 +1,12 @@
-import type { FolderNode } from '$lib/shared/types';
+import type { FolderNode, LogEntry } from '$lib/shared/types';
 import { createReadStream, createWriteStream, existsSync } from 'fs';
 import { lstat, readdir, appendFile, rm, mkdir } from 'fs/promises';
 import { join } from 'path';
 import prisma from './prisma';
 import archiver from 'archiver';
 import { EXCLUDE_FILES_STARTING_WITH } from '$lib/shared/consts';
+import { broadcastLog, broadcastDbLog } from './logEvents';
+import { formatDate } from '$lib/utils';
 
 const LOG_FILE = 'db/logs/<placeholder>-server.log';
 const ZIP_FILE = 'db/logs/<placeholder>-server-log.zip';
@@ -48,16 +50,7 @@ const resetColor = '\x1b[0m';
 
 export async function serverLog(message: string | object, level: LogLevel = 'info') {
   const now = new Date();
-  const timestamp =
-    now.toLocaleString('en-GB', {
-      year: '2-digit',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    }) + `.${now.getMilliseconds()}`;
+  const timestamp = formatDate(now, true);
 
   const formattedMessage = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
   const logEntry = `${level};${timestamp};${formattedMessage}\n`;
@@ -66,12 +59,22 @@ export async function serverLog(message: string | object, level: LogLevel = 'inf
     `${colorMap[level]}[${level.toUpperCase()}]${resetColor}[${timestamp}] ${formattedMessage}`
   );
 
+  // Broadcast to SSE subscribers
+  broadcastLog({ level, timestamp, message: formattedMessage });
+
   if (level !== 'info') {
-    await prisma.log.create({
+    const dbLog = await prisma.log.create({
       data: {
         level,
         message: formattedMessage
       }
+    });
+
+    broadcastDbLog({
+      id: dbLog.id,
+      level: dbLog.level,
+      message: dbLog.message,
+      createdAt: dbLog.createdAt.toISOString()
     });
   }
 
@@ -124,13 +127,7 @@ export async function serverLog(message: string | object, level: LogLevel = 'inf
 }
 
 export function getLog() {
-  return new Promise<
-    {
-      level: LogLevel;
-      timestamp: string | null;
-      message: string;
-    }[]
-  >((resolve, reject) => {
+  return new Promise<LogEntry[]>((resolve, reject) => {
     if (!existsSync('db/logs')) {
       mkdir('db/logs', { recursive: true }).then(() => {
         serverLog('Log folder did not exist so created a new one.', 'info');
@@ -221,4 +218,16 @@ export const errorToNull = async <T>(
 
 export function isFileNameValid(fileName: string) {
   return EXCLUDE_FILES_STARTING_WITH.every((prefix) => !fileName.startsWith(prefix));
+}
+
+export function cleanUpTags(tags: string[]) {
+  const cleanedTags: string[] = [];
+
+  tags.forEach((tag) =>
+    tag
+      .split(/,|;|\//)
+      .forEach((g) => cleanedTags.push(g.replaceAll('-', ' ').trim().toLowerCase()))
+  );
+
+  return cleanedTags;
 }

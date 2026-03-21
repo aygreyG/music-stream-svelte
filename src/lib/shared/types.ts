@@ -170,3 +170,47 @@ export interface MaterialScheme {
   error: string;
   onError: string;
 }
+
+// Task Manager types
+
+export type TaskStatus = 'idle' | 'running' | 'completed' | 'error';
+
+export type TaskState = {
+  id: string;
+  name: string;
+  status: TaskStatus;
+  progress?: number;
+  message?: string;
+  startedAt?: string;
+  completedAt?: string;
+  error?: string;
+};
+
+export type LogEntry = {
+  level: 'info' | 'warn' | 'error';
+  timestamp: string | null;
+  message: string;
+};
+
+export type DbLogEntry = {
+  id: string;
+  level: string;
+  message: string;
+  createdAt: string;
+};
+
+export type TaskEvent =
+  | { type: 'snapshot'; tasks: TaskState[] }
+  | { type: 'update'; task: TaskState };
+
+export type LogEvent =
+  | { type: 'snapshot'; logs: LogEntry[]; dbLogs: DbLogEntry[] }
+  | { type: 'log'; log: LogEntry }
+  | { type: 'dbLog'; dbLog: DbLogEntry };
+
+export type TaskDefinition = {
+  taskId: string;
+  label: string;
+  execute: () => Promise<void>;
+  description?: string;
+};

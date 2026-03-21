@@ -1,6 +1,6 @@
 import type { ServerSettings } from '../../generated/prisma-client/client';
 import prisma from './prisma';
-import { runLibrarySync } from './librarySync';
+import librarySync from './tasks/definitions/librarySync';
 import crypto from 'node:crypto';
 
 let serverSettings: ServerSettings | null = null;
@@ -33,7 +33,7 @@ export async function completeServerSetup(sSettings: ServerSettings) {
 
   serverSettings = updatedSettings;
   requestAttempts = 0;
-  runLibrarySync();
+  librarySync.execute();
 }
 
 export async function getServerSettings() {

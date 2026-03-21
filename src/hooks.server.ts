@@ -1,14 +1,14 @@
 import { env } from '$env/dynamic/private';
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
-import { runLibrarySync } from '$lib/server/librarySync';
 import { getServerSettings } from '$lib/server/serverSettings';
 import { serverLog } from '$lib/server/utils';
 import { ROLE } from '$lib/shared/consts';
-import { redirect, type Handle } from '@sveltejs/kit';
+import { redirect, type Handle, type ServerInit } from '@sveltejs/kit';
+import librarySync from '$lib/server/tasks/definitions/librarySync';
 
 let startupRunning = false;
 
-async function runOnStartup() {
+export const init: ServerInit = async () => {
   if (startupRunning) {
     return;
   }
@@ -22,15 +22,13 @@ async function runOnStartup() {
   }
 
   if (env.NODE_ENV === 'production') {
-    runLibrarySync();
+    librarySync.execute();
   }
 
   startupRunning = false;
+};
 
-  return;
-}
-
-const handle: Handle = async ({ event, resolve }) => {
+export const handle: Handle = async ({ event, resolve }) => {
   const start = Date.now();
   const serverSettings = await getServerSettings();
   if (startupRunning && !event.route.id?.startsWith('/loading')) {
@@ -119,7 +117,3 @@ const handle: Handle = async ({ event, resolve }) => {
 
   return response;
 };
-
-export { handle };
-
-runOnStartup();

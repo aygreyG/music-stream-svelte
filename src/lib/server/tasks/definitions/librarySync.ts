@@ -1,111 +1,103 @@
-import prisma from './prisma';
+import type { TaskDefinition } from '$lib/shared/types';
+import prisma from '../../prisma';
 import { parseFile } from 'music-metadata';
 import { readdir, stat } from 'fs/promises';
 import { join } from 'path';
-import { getServerSettings, updateCacheKey } from './serverSettings';
-import { getAlbumArt } from './images';
-import { errorToNull, isFileNameValid, serverLog } from './utils';
+import { getServerSettings, updateCacheKey } from '../../serverSettings';
+import { getAlbumArt } from '../../images';
+import { cleanUpTags, errorToNull, isFileNameValid, serverLog } from '../../utils';
 import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
-import { cleanUpTags } from './tags';
+import { startTask, updateTask, completeTask, failTask, isAnyTaskRunning } from '../taskManager';
 
-let inProgress = false;
 let tracksCreated = 0;
+let filesProcessed = 0;
+let totalFiles = 0;
 
-/**
- * Retrieves the current status of the library synchronization process.
- */
-export function getLibrarySyncInProgress() {
-  return inProgress;
-}
-
-/**
- * Runs a full library synchronization process.
- * Deletes all existing tracks, albums, and artists from the database
- * and then initiates a new library synchronization.
- */
-export async function runFullLibrarySync() {
-  const settings = await getServerSettings();
-  if (inProgress || !settings?.setupComplete) {
-    return;
-  }
-
-  inProgress = true;
-
-  await prisma.$transaction(
-    async (tx) => {
-      await tx.track.deleteMany();
-      await tx.album.deleteMany();
-      await tx.artist.deleteMany();
-    },
-    { maxWait: 5000, timeout: 10000 }
-  );
-
-  inProgress = false;
-
-  runLibrarySync();
-}
+const definition: TaskDefinition = {
+  taskId: 'library-sync',
+  label: 'Library Sync',
+  description: 'This will sync new and removed tracks, but will not fix existing metadata.',
+  execute: runLibrarySync
+};
 
 /**
  * Runs the library synchronization process.
  * This function synchronizes the music library by walking through the music folder,
  * deleting outdated tracks and albums, and creating new tracks.
  */
-export async function runLibrarySync() {
+async function runLibrarySync() {
   const settings = await getServerSettings();
-  if (inProgress || !settings?.setupComplete) {
+  if (isAnyTaskRunning() || !settings?.setupComplete) {
     return;
   }
 
   tracksCreated = 0;
-  inProgress = true;
+  filesProcessed = 0;
+  totalFiles = 0;
+
+  startTask(definition, 'Counting files.');
 
   const startTime = Date.now();
   serverLog('Starting library sync');
-  await walk(settings.musicFolder);
-  const endTime = Date.now();
-  const elapsedSec = Math.round((endTime - startTime) / 100) / 10;
-  serverLog(`Finished library sync in ${elapsedSec}s`);
 
-  const { count } = await prisma.track.deleteMany({
-    where: {
-      updatedAt: {
-        lt: new Date(startTime)
-      }
-    }
-  });
+  try {
+    totalFiles = await countFiles(settings.musicFolder);
+    updateTask(definition, { message: `Syncing 0/${totalFiles} files.` });
 
-  if (count > 0) {
-    serverLog('Deleted ' + count + ' track(s)');
-    const { count: albumCount } = await prisma.album.deleteMany({
+    await walk(settings.musicFolder);
+    const endTime = Date.now();
+    const elapsedSec = Math.round((endTime - startTime) / 100) / 10;
+    serverLog(`Finished library sync in ${elapsedSec}s`);
+
+    updateTask(definition, { progress: 90, message: 'Cleaning up old tracks.' });
+
+    const { count } = await prisma.track.deleteMany({
       where: {
-        tracks: {
-          none: {}
+        updatedAt: {
+          lt: new Date(startTime)
         }
       }
     });
 
-    if (albumCount > 0) {
-      serverLog('Deleted ' + albumCount + ' album(s)');
-    }
-  }
+    if (count > 0) {
+      serverLog('Deleted ' + count + ' track(s)');
+      const { count: albumCount } = await prisma.album.deleteMany({
+        where: {
+          tracks: {
+            none: {}
+          }
+        }
+      });
 
-  if (tracksCreated > 0) {
-    await prisma.folderScan.create({
-      data: {
-        scanLength: elapsedSec,
-        serverSettings: { connect: { id: settings.id } },
-        newTracks: tracksCreated
+      if (albumCount > 0) {
+        serverLog('Deleted ' + albumCount + ' album(s)');
       }
-    });
+    }
 
-    serverLog('Created ' + tracksCreated + ' track(s)');
+    if (tracksCreated > 0) {
+      await prisma.folderScan.create({
+        data: {
+          scanLength: elapsedSec,
+          serverSettings: { connect: { id: settings.id } },
+          newTracks: tracksCreated
+        }
+      });
+
+      serverLog('Created ' + tracksCreated + ' track(s)');
+    }
+
+    if (count > 0 || tracksCreated > 0) {
+      await updateCacheKey();
+    }
+
+    completeTask(
+      definition,
+      `Completed in ${elapsedSec}s - ${tracksCreated} new, ${count} removed`
+    );
+  } catch (err) {
+    serverLog(`Library sync failed: ${err}`, 'error');
+    failTask(definition, `Library sync failed: ${err}`);
   }
-
-  if (count > 0 || tracksCreated > 0) {
-    await updateCacheKey();
-  }
-
-  inProgress = false;
 }
 
 /**
@@ -134,7 +126,6 @@ function sanitizeArtistName(artist: string) {
 
 async function checkDB(filePath: string, dir: string): Promise<boolean> {
   const track = await prisma.track.findUnique({ where: { filePath } });
-
   if (!track) {
     const data = await errorToNull(parseFile(filePath), `Error parsing file ${filePath}`, true);
     if (!data) {
@@ -260,6 +251,28 @@ async function checkDB(filePath: string, dir: string): Promise<boolean> {
   return false;
 }
 
+async function countFiles(dir: string): Promise<number> {
+  let count = 0;
+  const files = await readdir(dir);
+
+  for (const file of files) {
+    if (!isFileNameValid(file)) continue;
+    const filePath = join(dir, file);
+    const fileStat = await stat(filePath);
+
+    if (fileStat.isDirectory()) {
+      count += await countFiles(filePath);
+    } else if (fileStat.isFile()) {
+      const ext = file.split('.').pop()?.toLowerCase();
+      if (ext && ALLOWED_MUSIC_FILE_EXTENSIONS.includes(ext)) {
+        count++;
+      }
+    }
+  }
+
+  return count;
+}
+
 async function walk(dir: string) {
   const files = await readdir(dir);
 
@@ -279,6 +292,16 @@ async function walk(dir: string) {
       if (await checkDB(filePath, dir)) {
         tracksCreated++;
       }
+      filesProcessed++;
+      if (totalFiles > 0) {
+        const progress = Math.round((filesProcessed / totalFiles) * 85);
+        updateTask(definition, {
+          progress,
+          message: `Syncing ${filesProcessed}/${totalFiles} files.`
+        });
+      }
     }
   }
 }
+
+export default definition;

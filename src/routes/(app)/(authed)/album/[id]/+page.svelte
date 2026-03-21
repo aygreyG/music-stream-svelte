@@ -119,6 +119,7 @@
             <a
               class="font-semibold hover:underline"
               href={resolve(`/(app)/(authed)/artist/[id]`, { id: data.album.albumArtistId })}
+              use:vibrate
             >
               {data.album.albumArtist.name}
             </a>
@@ -133,6 +134,7 @@
                   <a
                     href={resolve(`/(app)/(authed)/tag/[id]`, { id: tag.id })}
                     class="bg-primary/20 hover:bg-primary/30 text-primary h-fit rounded-md px-1.5 py-0.5 text-xs whitespace-nowrap transition-colors"
+                    use:vibrate
                   >
                     {tag.name}
                   </a>
