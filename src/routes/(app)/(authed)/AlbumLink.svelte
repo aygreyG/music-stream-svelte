@@ -50,7 +50,7 @@
       <div
         class="text-on-surface absolute bottom-0 left-0 flex w-full flex-col justify-end gap-0.5 p-1 text-center"
       >
-        <div class="z-10 overflow-hidden rounded-[10px] whitespace-nowrap">
+        <div class="overflow-hidden rounded-[10px] whitespace-nowrap">
           <div class="absolute -top-24 -left-1 h-fit w-[calc(100%+0.5rem)] md:-top-28 xl:-top-40">
             <AlbumImage {album} maxSize="s" blur />
           </div>
@@ -58,7 +58,7 @@
             {album.title}
           </div>
         </div>
-        <div class="z-10 overflow-hidden rounded-[9px] text-xs text-ellipsis whitespace-nowrap">
+        <div class="overflow-hidden rounded-[9px] text-xs text-ellipsis whitespace-nowrap">
           <div class="absolute -top-31 -left-1 h-fit w-[calc(100%+0.5rem)] md:-top-36 xl:-top-48">
             <AlbumImage {album} maxSize="s" blur />
           </div>

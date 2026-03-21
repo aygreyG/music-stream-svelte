@@ -1,8 +1,9 @@
 import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
-import { getLog, getLogFiles, getLogZips } from '$lib/server/utils.js';
+import { getLogFiles, getLogZips } from '$lib/server/utils.js';
 import { ROLE } from '$lib/shared/consts.js';
 import { fail } from '@sveltejs/kit';
+import taskDefinitions from '$lib/server/tasks/definitions';
 
 export const actions = {
   create: async ({ request, locals }) => {
@@ -119,18 +120,19 @@ export const load = async ({ locals }) => {
     select: { id: true, email: true, username: true, role: true, createdAt: true, updatedAt: true }
   });
 
-  const dbLogs = await prisma.log.findMany();
-
-  const logs = await getLog();
   const logFiles = await getLogFiles();
   const logZips = await getLogZips();
+  const tasks = taskDefinitions.map(({ taskId, label, description }) => ({
+    taskId,
+    label,
+    description
+  }));
 
   return {
     user: locals.user,
     users,
     title: 'Admin dashboard',
-    logs,
-    dbLogs,
+    tasks,
     logFiles,
     logZips
   };

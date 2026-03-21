@@ -65,3 +65,19 @@ export function getDarkModePreference() {
     ? localStorageDarkMode === 'true'
     : !matchMedia('(prefers-color-scheme: light)').matches;
 }
+
+export function formatDate(date: Date | string, includeMs = false) {
+  const d = new Date(date);
+  const ms = includeMs ? `.${d.getMilliseconds()}` : '';
+  return (
+    d.toLocaleString('en-GB', {
+      year: '2-digit',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    }) + ms
+  );
+}

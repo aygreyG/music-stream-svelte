@@ -1,24 +1,16 @@
 import type { AlbumWithArt, ImageSize } from '$lib/shared/types';
 import { readFile, access, writeFile, readdir, mkdir } from 'fs/promises';
 import sharp from 'sharp';
-
-import { parseFile, type IAudioMetadata } from 'music-metadata';
-import type { Album, Artist } from '../../generated/prisma-client/client';
+import { type IAudioMetadata } from 'music-metadata';
+import type { Artist } from '../../generated/prisma-client/client';
 import { join } from 'path';
-import { errorToNull, isFileNameValid, serverLog } from './utils';
-import { ALLOWED_MUSIC_FILE_EXTENSIONS, IMAGE_FILE_EXTENSIONS } from '$lib/shared/consts';
-import prisma from './prisma';
+import { serverLog } from './utils';
+import { IMAGE_FILE_EXTENSIONS } from '$lib/shared/consts';
 
 export const IMAGE_REGEX = / |\.|\[|\]|\\|\/|_|:|"/g;
 
 type ExtendedImageSize = ImageSize | '';
 type ImageExtension = 'avif' | 'webp' | '';
-
-let regenerationInProgress = false;
-
-export function getRegenerationInProgress() {
-  return regenerationInProgress;
-}
 
 export async function getImage(
   album: AlbumWithArt,
@@ -184,74 +176,4 @@ export async function getAlbumArt(
   }
 
   return null;
-}
-
-export async function regenerateAlbumImageNames(album: Album[]) {
-  if (regenerationInProgress) {
-    return;
-  }
-
-  regenerationInProgress = true;
-  serverLog('Starting album art regeneration', 'info');
-
-  for (const alb of album) {
-    let dir = '';
-
-    if (alb.albumArt) {
-      const imageBuffer = await errorToNull(readFile(alb.albumArt));
-      if (imageBuffer) continue;
-
-      dir = alb.albumArt.substring(0, alb.albumArt.lastIndexOf('/'));
-      if (dir.endsWith('/Covers')) {
-        dir = dir.substring(0, dir.lastIndexOf('/Covers'));
-      }
-    } else {
-      const tracks = await prisma.track.findMany({
-        where: { albumId: alb.id },
-        take: 1
-      });
-
-      if (tracks.length === 0) {
-        continue;
-      }
-
-      const track = tracks[0];
-      dir = track.filePath.substring(0, track.filePath.lastIndexOf('/'));
-    }
-
-    const files = await readdir(dir);
-
-    const musicFile = files.find((f) => {
-      if (!isFileNameValid(f)) return false;
-      const ext = f.split('.').pop()?.toLowerCase();
-      if (!ext) return false;
-      return ALLOWED_MUSIC_FILE_EXTENSIONS.includes(ext);
-    });
-
-    if (!musicFile) continue;
-
-    const fileData = await errorToNull(parseFile(join(dir, musicFile)));
-    if (!fileData) continue;
-
-    const artist = await prisma.artist.findUnique({
-      where: { id: alb.albumArtistId }
-    });
-
-    if (!artist) continue;
-
-    const albumArtData = await getAlbumArt(dir, fileData, artist);
-    if (!albumArtData) continue;
-
-    await prisma.album.update({
-      where: { id: alb.id },
-      data: {
-        albumArt: albumArtData,
-        albumArtId: crypto.randomUUID()
-      }
-    });
-
-    serverLog(`Regenerated album art path for album: ${alb.title}`, 'info');
-  }
-  serverLog('Finished album art regeneration', 'info');
-  regenerationInProgress = false;
 }
