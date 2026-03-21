@@ -1,3 +1,9 @@
+# [1.5.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.1...v1.5.0-dev.2) (2026-03-21)
+
+### Features
+
+- add task manager with sse ([#212](https://github.com/aygreyG/music-stream-svelte/issues/212)) ([c27bdd3](https://github.com/aygreyG/music-stream-svelte/commit/c27bdd3616a170fd81f61772d96ae4d8b866cf9e))
+
 # [1.5.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.1...v1.5.0-dev.1) (2026-03-14)
 
 ### Features
