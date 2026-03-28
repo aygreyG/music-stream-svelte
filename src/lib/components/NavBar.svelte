@@ -1,15 +1,18 @@
 <script lang="ts">
-  import type { SignedInUser } from '$lib/shared/types';
-  import { fade, fly } from 'svelte/transition';
-  import RoundMenu from '~icons/ic/round-menu';
-  import RoundClose from '~icons/ic/round-close';
-  import NavigationElements from './NavigationElements.svelte';
-  import { vibrate } from '$lib/actions/vibrate';
   import { quintOut } from 'svelte/easing';
-  import AlbumImage from './AlbumImage.svelte';
+  import { fade, fly } from 'svelte/transition';
+
   import { beforeNavigate, goto } from '$app/navigation';
-  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
+  import type { SignedInUser } from '$lib/shared/types';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+
+  import RoundClose from '~icons/ic/round-close';
+  import RoundMenu from '~icons/ic/round-menu';
+
+  import AlbumImage from './AlbumImage.svelte';
+  import NavigationElements from './NavigationElements.svelte';
 
   interface Props {
     user?: SignedInUser | null;

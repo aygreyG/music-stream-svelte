@@ -1,23 +1,26 @@
 <script lang="ts">
-  import RoundVolumeUp from '~icons/ic/round-volume-up';
+  import { onMount } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import type { SvelteMediaTimeRange } from 'svelte/elements';
+  import { fade } from 'svelte/transition';
+
+  import { beforeNavigate, invalidate } from '$app/navigation';
+  import { navigating, page } from '$app/state';
+  import { vibrate } from '$lib/actions/vibrate';
+  import type { SignedInUser } from '$lib/shared/types';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+
+  import RoundKeyboardArrowUp from '~icons/ic/round-keyboard-arrow-up';
   import RoundVolumeDown from '~icons/ic/round-volume-down';
   import RoundVolumeMute from '~icons/ic/round-volume-mute';
   import RoundVolumeOff from '~icons/ic/round-volume-off';
-  import RoundKeyboardArrowUp from '~icons/ic/round-keyboard-arrow-up';
-  import type { SignedInUser } from '$lib/shared/types';
-  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import RoundVolumeUp from '~icons/ic/round-volume-up';
+
   import AlbumImage from '../AlbumImage.svelte';
-  import FullScreenPlayer from './FullScreenPlayer.svelte';
-  import Visualizer from './Visualizer.svelte';
-  import { fade } from 'svelte/transition';
-  import { quintOut } from 'svelte/easing';
-  import { onMount } from 'svelte';
-  import { vibrate } from '$lib/actions/vibrate';
-  import { beforeNavigate, invalidate } from '$app/navigation';
-  import type { SvelteMediaTimeRange } from 'svelte/elements';
-  import { navigating, page } from '$app/state';
   import Controls from './Controls.svelte';
+  import FullScreenPlayer from './FullScreenPlayer.svelte';
   import ProgressBar from './ProgressBar.svelte';
+  import Visualizer from './Visualizer.svelte';
 
   interface Props {
     user?: SignedInUser | null;

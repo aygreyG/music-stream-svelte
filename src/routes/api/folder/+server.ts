@@ -1,6 +1,7 @@
+import { error, json } from '@sveltejs/kit';
+
 import { getServerSettings } from '$lib/server/serverSettings.js';
 import { getSubFolders } from '$lib/server/utils.js';
-import { error, json } from '@sveltejs/kit';
 
 export const POST = async ({ request }) => {
   const settings = await getServerSettings();

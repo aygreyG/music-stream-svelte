@@ -1,7 +1,8 @@
 import { getServerSettings } from '$lib/server/serverSettings';
 import type { TaskDefinition } from '$lib/shared/types';
-import { completeTask, failTask, isAnyTaskRunning, startTask } from '../taskManager';
+
 import prisma from '../../prisma';
+import { completeTask, failTask, isAnyTaskRunning, startTask } from '../taskManager';
 import librarySync from './librarySync';
 
 const definition: TaskDefinition = {

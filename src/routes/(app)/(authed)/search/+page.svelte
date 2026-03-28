@@ -1,14 +1,17 @@
 <script lang="ts">
-  import RoundSearch from '~icons/ic/round-search';
-  import RoundRefresh from '~icons/ic/round-refresh';
-  import { fade, fly } from 'svelte/transition';
   import { tick } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
+
   import { vibrate } from '$lib/actions/vibrate';
-  import TrackList from './TrackList.svelte';
+
+  import RoundRefresh from '~icons/ic/round-refresh';
+  import RoundSearch from '~icons/ic/round-search';
+
+  import type { PageData } from './$types';
   import AlbumList from './AlbumList.svelte';
   import ArtistList from './ArtistList.svelte';
-  import type { PageData } from './$types';
-  import { quintOut } from 'svelte/easing';
+  import TrackList from './TrackList.svelte';
 
   interface Props {
     data: PageData;

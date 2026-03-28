@@ -1,4 +1,4 @@
-import { subscribeTasks, unsubscribeTasks, getTaskStates } from '$lib/server/tasks/taskManager';
+import { getTaskStates, subscribeTasks, unsubscribeTasks } from '$lib/server/tasks/taskManager';
 import type { TaskEvent } from '$lib/shared/types';
 
 export const GET = async () => {

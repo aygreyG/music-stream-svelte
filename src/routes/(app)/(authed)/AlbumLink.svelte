@@ -1,12 +1,14 @@
 <script lang="ts">
-  import AlbumImage from '$lib/components/AlbumImage.svelte';
-  import { observeVisibility } from '$lib/actions/observeVisibility';
   import { quintOut } from 'svelte/easing';
   import { scale } from 'svelte/transition';
-  import { vibrate } from '$lib/actions/vibrate';
-  import type { PageData } from './$types';
-  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+
   import { resolve } from '$app/paths';
+  import { observeVisibility } from '$lib/actions/observeVisibility';
+  import { vibrate } from '$lib/actions/vibrate';
+  import AlbumImage from '$lib/components/AlbumImage.svelte';
+  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+
+  import type { PageData } from './$types';
 
   const DELAY = 20;
 

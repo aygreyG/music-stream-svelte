@@ -1,5 +1,6 @@
-import prisma from '$lib/server/prisma.js';
 import { json } from '@sveltejs/kit';
+
+import prisma from '$lib/server/prisma.js';
 
 export const POST = async ({ params, request, locals }) => {
   const { id } = params;

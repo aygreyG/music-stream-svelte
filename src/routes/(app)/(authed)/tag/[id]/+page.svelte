@@ -1,9 +1,11 @@
 <script lang="ts">
-  import AlbumLink from '../../AlbumLink.svelte';
-  import RoundSearch from '~icons/ic/round-search';
   import { flip } from 'svelte/animate';
-  import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
+
+  import RoundSearch from '~icons/ic/round-search';
+
+  import AlbumLink from '../../AlbumLink.svelte';
   import type { PageData } from './$types.js';
 
   interface Props {

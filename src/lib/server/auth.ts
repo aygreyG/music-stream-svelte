@@ -1,8 +1,10 @@
-import prisma from './prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { getServerSettings } from './serverSettings';
+
 import { ROLE, type RoleType } from '$lib/shared/consts';
+
+import prisma from './prisma';
+import { getServerSettings } from './serverSettings';
 
 export const AUTH_COOKIE = 'access_token';
 const TOKEN_VALID_TIME = 7 * 24 * 60 * 60;

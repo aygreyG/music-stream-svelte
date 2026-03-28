@@ -1,10 +1,12 @@
 <script lang="ts">
-  import TagRow from './TagRow.svelte';
   import { flip } from 'svelte/animate';
-  import RoundSearch from '~icons/ic/round-search';
-  import type { PageData } from './$types';
-  import { fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import { fly } from 'svelte/transition';
+
+  import RoundSearch from '~icons/ic/round-search';
+
+  import type { PageData } from './$types';
+  import TagRow from './TagRow.svelte';
 
   interface Props {
     data: PageData;

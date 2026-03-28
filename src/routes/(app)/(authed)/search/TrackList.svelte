@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { vibrate } from '$lib/actions/vibrate';
-  import TrackRow from '$lib/components/TrackRow.svelte';
-  import type { SearchTrack } from '$lib/shared/types';
   import { untrack } from 'svelte';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fade } from 'svelte/transition';
+
+  import { enhance } from '$app/forms';
+  import { vibrate } from '$lib/actions/vibrate';
+  import TrackRow from '$lib/components/TrackRow.svelte';
+  import type { SearchTrack } from '$lib/shared/types';
+
   import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {

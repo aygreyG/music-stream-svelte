@@ -1,7 +1,8 @@
+import { json } from '@sveltejs/kit';
+
 import prisma from '$lib/server/prisma.js';
 import { ROLE } from '$lib/shared/consts.js';
 import { searchForAlbumRelease } from '$lib/shared/fetchAlbumArt.js';
-import { json } from '@sveltejs/kit';
 
 export const POST = async ({ request }) => {
   const requestData = await request.json();

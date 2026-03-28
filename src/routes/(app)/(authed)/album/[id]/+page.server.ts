@@ -1,9 +1,11 @@
+import { access, mkdir, rm, writeFile } from 'fs/promises';
+import { join } from 'path';
+
+import { error } from '@sveltejs/kit';
+
 import { getAlbumArtFileName } from '$lib/server/images.js';
 import prisma from '$lib/server/prisma.js';
 import { updateCacheKey } from '$lib/server/serverSettings.js';
-import { error } from '@sveltejs/kit';
-import { access, mkdir, rm, writeFile } from 'fs/promises';
-import { join } from 'path';
 
 export const load = async ({ locals, params, depends, setHeaders }) => {
   const { id } = params;

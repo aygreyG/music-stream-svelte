@@ -1,5 +1,6 @@
-import { handleVibrate } from '$lib/utils';
 import type { Action } from 'svelte/action';
+
+import { handleVibrate } from '$lib/utils';
 
 type VibrationOptions = {
   pattern?: number | number[];

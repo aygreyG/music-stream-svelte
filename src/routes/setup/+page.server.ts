@@ -1,11 +1,12 @@
-import { register } from '$lib/server/auth.js';
+import { fail, type Actions } from '@sveltejs/kit';
+
 import { env } from '$env/dynamic/private';
+import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma';
 import { completeServerSetup, createServerSettings } from '$lib/server/serverSettings';
-import type { FolderNode } from '$lib/shared/types.js';
-import { fail, type Actions } from '@sveltejs/kit';
 import { getSubFolders } from '$lib/server/utils';
 import { ROLE } from '$lib/shared/consts';
+import type { FolderNode } from '$lib/shared/types.js';
 
 export const load = async () => {
   const owner = await prisma.user.findFirst({

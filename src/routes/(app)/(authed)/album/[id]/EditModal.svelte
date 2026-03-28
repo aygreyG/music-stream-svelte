@@ -1,16 +1,19 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import RoundSearch from '~icons/ic/round-search';
-  import RoundFileUpload from '~icons/ic/round-file-upload';
-  import RoundRefresh from '~icons/ic/round-refresh';
+
   import { enhance } from '$app/forms';
   import { invalidate } from '$app/navigation';
   import { vibrate } from '$lib/actions/vibrate';
   import Modal from '$lib/components/Modal.svelte';
-  import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
   import type { AlbumReleaseSearchResult } from '$lib/shared/types';
-  import type { Prisma } from '../../../../../generated/prisma-client/client';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+
+  import RoundFileUpload from '~icons/ic/round-file-upload';
+  import RoundRefresh from '~icons/ic/round-refresh';
+  import RoundSearch from '~icons/ic/round-search';
+
+  import type { Prisma } from '../../../../../generated/prisma-client/client';
+  import AlbumArtFromRelease from './AlbumArtFromRelease.svelte';
 
   interface Props {
     album: Prisma.AlbumGetPayload<{

@@ -1,7 +1,8 @@
+import crypto from 'node:crypto';
+
 import type { ServerSettings } from '../../generated/prisma-client/client';
 import prisma from './prisma';
 import librarySync from './tasks/definitions/librarySync';
-import crypto from 'node:crypto';
 
 let serverSettings: ServerSettings | null = null;
 let requestAttempts = 0;

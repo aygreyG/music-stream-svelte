@@ -1,5 +1,6 @@
-import prisma from '$lib/server/prisma';
 import { error } from '@sveltejs/kit';
+
+import prisma from '$lib/server/prisma';
 
 export const load = async ({ params }) => {
   const id = params.id;

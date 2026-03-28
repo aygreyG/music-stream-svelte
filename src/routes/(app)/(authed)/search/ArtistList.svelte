@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { flip } from 'svelte/animate';
+  import { quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
+
   import { enhance } from '$app/forms';
   import { resolve } from '$app/paths';
   import { vibrate } from '$lib/actions/vibrate';
   import type { SearchArtist } from '$lib/shared/types';
-  import { flip } from 'svelte/animate';
-  import { quintOut } from 'svelte/easing';
-  import { fade, fly } from 'svelte/transition';
+
   import RoundRefresh from '~icons/ic/round-refresh';
 
   interface Props {

@@ -1,13 +1,16 @@
 <script lang="ts">
-  import RoundRefresh from '~icons/ic/round-refresh';
-  import { enhance } from '$app/forms';
-  import pickedFolder from '$lib/stores/folderPicker';
-  import Folder from './Folder.svelte';
   import { onMount } from 'svelte';
+
+  import { enhance } from '$app/forms';
   import { goto } from '$app/navigation';
-  import { vibrate } from '$lib/actions/vibrate';
-  import type { PageData } from './$types';
   import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
+  import pickedFolder from '$lib/stores/folderPicker';
+
+  import RoundRefresh from '~icons/ic/round-refresh';
+
+  import type { PageData } from './$types';
+  import Folder from './Folder.svelte';
 
   interface Props {
     data: PageData;

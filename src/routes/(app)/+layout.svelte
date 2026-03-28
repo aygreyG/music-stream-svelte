@@ -1,7 +1,9 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
+
   import AudioPlayer from '$lib/components/AudioPlayer';
   import NavBar from '$lib/components/NavBar.svelte';
-  import type { Snippet } from 'svelte';
+
   import type { PageData } from './(authed)/$types';
 
   interface Props {

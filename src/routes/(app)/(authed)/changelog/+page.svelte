@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
-  import { quintOut } from 'svelte/easing';
   import { onMount } from 'svelte';
-  import type { PageData } from './$types';
+  import { quintOut } from 'svelte/easing';
+  import { fly } from 'svelte/transition';
+
   import { vibrate } from '$lib/actions/vibrate';
+
+  import type { PageData } from './$types';
 
   interface Props {
     data: PageData;

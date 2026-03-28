@@ -1,7 +1,9 @@
+import { error } from '@sveltejs/kit';
+
 import prisma from '$lib/server/prisma.js';
 import { updateCacheKey } from '$lib/server/serverSettings';
+
 import type { Prisma } from '../../../../../generated/prisma-client/client';
-import { error } from '@sveltejs/kit';
 
 export const load = async ({ locals, params, setHeaders }) => {
   const { id } = params;

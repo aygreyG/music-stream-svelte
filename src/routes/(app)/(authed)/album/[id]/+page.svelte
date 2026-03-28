@@ -1,21 +1,24 @@
 <script lang="ts">
-  import RoundEdit from '~icons/ic/round-edit';
-  import HeartFill from '~icons/iconamoon/heart-fill';
-  import Heart from '~icons/iconamoon/heart';
-  import AlbumIcon from '~icons/iconamoon/music-album';
-  import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
   import { cubicInOut, quintOut } from 'svelte/easing';
-  import type { Prisma } from '../../../../../generated/prisma-client/client';
-  import TrackRow from '$lib/components/TrackRow.svelte';
-  import { vibrate } from '$lib/actions/vibrate';
-  import PlaylistModal from './PlaylistModal.svelte';
-  import EditModal from './EditModal.svelte';
-  import type { PageData } from './$types';
-  import { ROLE } from '$lib/shared/consts';
-  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import { fade, fly } from 'svelte/transition';
+
   import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
+  import AlbumImage from '$lib/components/AlbumImage.svelte';
+  import TrackRow from '$lib/components/TrackRow.svelte';
+  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import { ROLE } from '$lib/shared/consts';
+
+  import RoundEdit from '~icons/ic/round-edit';
+  import Heart from '~icons/iconamoon/heart';
+  import HeartFill from '~icons/iconamoon/heart-fill';
+  import AlbumIcon from '~icons/iconamoon/music-album';
+
+  import type { Prisma } from '../../../../../generated/prisma-client/client';
+  import type { PageData } from './$types';
+  import EditModal from './EditModal.svelte';
+  import PlaylistModal from './PlaylistModal.svelte';
 
   type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 

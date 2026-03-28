@@ -1,12 +1,13 @@
 <script lang="ts">
-  import RoundPlayCircle from '~icons/ic/round-play-circle';
-  import RoundPauseCircle from '~icons/ic/round-pause-circle';
-  import RoundSkipPrevious from '~icons/ic/round-skip-previous';
-  import RoundSkipNext from '~icons/ic/round-skip-next';
-  import RoundRepeat from '~icons/ic/round-repeat';
-  import RoundStop from '~icons/ic/round-stop';
   import { vibrate } from '$lib/actions/vibrate';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+
+  import RoundPauseCircle from '~icons/ic/round-pause-circle';
+  import RoundPlayCircle from '~icons/ic/round-play-circle';
+  import RoundRepeat from '~icons/ic/round-repeat';
+  import RoundSkipNext from '~icons/ic/round-skip-next';
+  import RoundSkipPrevious from '~icons/ic/round-skip-previous';
+  import RoundStop from '~icons/ic/round-stop';
 
   interface Props {
     onstop?: () => void;

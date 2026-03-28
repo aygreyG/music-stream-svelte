@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { resolve } from 'path';
+
 import { marked } from 'marked';
 
 export const load = async ({ parent }) => {

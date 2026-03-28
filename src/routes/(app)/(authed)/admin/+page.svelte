@@ -1,26 +1,29 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { fly } from 'svelte/transition';
-  import UserElement from './UserElement.svelte';
-  import { quintOut } from 'svelte/easing';
-  import { onMount, onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { flip } from 'svelte/animate';
-  import { vibrate } from '$lib/actions/vibrate';
-  import RoundRefresh from '~icons/ic/round-refresh';
-  import type { PageData } from './$types';
-  import Accordion from '$lib/components/Accordion.svelte';
-  import { resolve } from '$app/paths';
-  import type {
-    TaskEvent,
-    LogEvent,
-    TaskState,
-    LogEntry,
-    DbLogEntry,
-    TaskDefinition
-  } from '$lib/shared/types';
+  import { quintOut } from 'svelte/easing';
   import { SvelteMap } from 'svelte/reactivity';
-  import { formatDate } from '$lib/utils';
+  import { fly } from 'svelte/transition';
+
+  import { enhance } from '$app/forms';
+  import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
+  import Accordion from '$lib/components/Accordion.svelte';
   import Modal from '$lib/components/Modal.svelte';
+  import type {
+    DbLogEntry,
+    LogEntry,
+    LogEvent,
+    TaskDefinition,
+    TaskEvent,
+    TaskState
+  } from '$lib/shared/types';
+  import { formatDate } from '$lib/utils';
+
+  import RoundRefresh from '~icons/ic/round-refresh';
+
+  import type { PageData } from './$types';
+  import UserElement from './UserElement.svelte';
 
   interface Props {
     data: PageData;

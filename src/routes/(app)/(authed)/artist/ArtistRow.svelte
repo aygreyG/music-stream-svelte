@@ -1,9 +1,11 @@
 <script lang="ts">
-  import { resolve } from '$app/paths';
-  import { observeVisibility } from '$lib/actions/observeVisibility';
-  import type { Prisma } from '../../../../generated/prisma-client/client';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
+
+  import { resolve } from '$app/paths';
+  import { observeVisibility } from '$lib/actions/observeVisibility';
+
+  import type { Prisma } from '../../../../generated/prisma-client/client';
 
   type ArtistRowType = Prisma.ArtistGetPayload<{
     select: { id: true; name: true; _count: { select: { albums: true; tracks: true } } };

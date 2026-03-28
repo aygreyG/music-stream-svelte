@@ -1,5 +1,6 @@
-import { AUTH_COOKIE, login } from '$lib/server/auth';
 import { fail, redirect } from '@sveltejs/kit';
+
+import { AUTH_COOKIE, login } from '$lib/server/auth';
 
 export const load = ({ request, url }) => {
   const referer = url.searchParams.get('redirect_to') || request.headers.get('referer');

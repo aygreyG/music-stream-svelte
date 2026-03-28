@@ -1,6 +1,7 @@
+import { error, json } from '@sveltejs/kit';
+
 import definitions from '$lib/server/tasks/definitions';
 import { isAnyTaskRunning } from '$lib/server/tasks/taskManager';
-import { error, json } from '@sveltejs/kit';
 
 export const PUT = async ({ params }) => {
   const { taskId } = params;

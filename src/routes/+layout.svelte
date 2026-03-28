@@ -1,7 +1,10 @@
 <script lang="ts">
-  import { page } from '$app/state';
   import { onMount, type Snippet } from 'svelte';
+
+  import { page } from '$app/state';
+
   import '../app.css';
+
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
   import { setAudioPlayer } from '$lib/states/audioPlayer.svelte';
 

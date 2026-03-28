@@ -1,11 +1,14 @@
-import type { AlbumWithArt, ImageSize } from '$lib/shared/types';
-import { readFile, access, writeFile, readdir, mkdir } from 'fs/promises';
-import sharp from 'sharp';
-import { type IAudioMetadata } from 'music-metadata';
-import type { Artist } from '../../generated/prisma-client/client';
+import { access, mkdir, readdir, readFile, writeFile } from 'fs/promises';
 import { join } from 'path';
-import { serverLog } from './utils';
+
+import { type IAudioMetadata } from 'music-metadata';
+import sharp from 'sharp';
+
 import { IMAGE_FILE_EXTENSIONS } from '$lib/shared/consts';
+import type { AlbumWithArt, ImageSize } from '$lib/shared/types';
+
+import type { Artist } from '../../generated/prisma-client/client';
+import { serverLog } from './utils';
 
 export const IMAGE_REGEX = / |\.|\[|\]|\\|\/|_|:|"/g;
 

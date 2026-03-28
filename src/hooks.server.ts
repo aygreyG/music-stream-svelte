@@ -1,10 +1,11 @@
+import { redirect, type Handle, type ServerInit } from '@sveltejs/kit';
+
 import { env } from '$env/dynamic/private';
 import { AUTH_COOKIE, validateToken } from '$lib/server/auth';
 import { getServerSettings } from '$lib/server/serverSettings';
+import librarySync from '$lib/server/tasks/definitions/librarySync';
 import { serverLog } from '$lib/server/utils';
 import { ROLE } from '$lib/shared/consts';
-import { redirect, type Handle, type ServerInit } from '@sveltejs/kit';
-import librarySync from '$lib/server/tasks/definitions/librarySync';
 
 let startupRunning = false;
 

@@ -1,7 +1,10 @@
-import prisma from '$lib/server/prisma';
-import { error } from '@sveltejs/kit';
-import { stat } from 'fs/promises';
 import { createReadStream } from 'fs';
+import { stat } from 'fs/promises';
+
+import { error } from '@sveltejs/kit';
+
+import prisma from '$lib/server/prisma';
+
 import type { Prisma } from '../../../../../../generated/prisma-client/client';
 
 type TrackType = Prisma.TrackGetPayload<{ select: { filePath: true; id: true } }>;
@@ -60,7 +63,6 @@ export const GET = async ({ params, request, setHeaders }) => {
   const audioStat = await stat(track.filePath);
   const contentLength = audioStat.size;
 
-  let statusCode = 206;
   let start;
   let end;
 
@@ -95,7 +97,7 @@ export const GET = async ({ params, request, setHeaders }) => {
       retrievedLength = contentLength;
     }
 
-    statusCode = start !== undefined || end !== undefined ? 206 : 200;
+    const statusCode = start !== undefined || end !== undefined ? 206 : 200;
 
     if (range) {
       headers['content-range'] = `bytes ${start || 0}-${end || contentLength - 1}/${contentLength}`;

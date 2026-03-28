@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
-  import { cubicIn } from 'svelte/easing';
   import { onMount, type Snippet } from 'svelte';
+  import { cubicIn } from 'svelte/easing';
+  import { fade } from 'svelte/transition';
+
   import { vibrate } from '$lib/actions/vibrate';
+
   import RoundClose from '~icons/ic/round-close';
 
   interface Props {

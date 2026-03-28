@@ -1,6 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { page } from '$app/state';
+
   import RoundKeyboardBackspace from '~icons/ic/round-keyboard-backspace';
 </script>
 

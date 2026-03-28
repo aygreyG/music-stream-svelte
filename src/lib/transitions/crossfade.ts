@@ -1,6 +1,6 @@
 // This is used for cross page transitions
-import { crossfade as sCrossfade } from 'svelte/transition';
 import { cubicInOut } from 'svelte/easing';
+import { crossfade as sCrossfade } from 'svelte/transition';
 
 export const crossfade = sCrossfade({
   easing: cubicInOut,

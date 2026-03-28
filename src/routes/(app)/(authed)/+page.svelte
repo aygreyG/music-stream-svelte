@@ -1,12 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { beforeNavigate } from '$app/navigation';
-  import RoundSearch from '~icons/ic/round-search';
-  import AlbumLink from './AlbumLink.svelte';
-  import { fade, fly } from 'svelte/transition';
-  import type { PageData } from './$types';
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
+
+  import { beforeNavigate } from '$app/navigation';
+
+  import RoundSearch from '~icons/ic/round-search';
+
+  import type { PageData } from './$types';
+  import AlbumLink from './AlbumLink.svelte';
 
   interface Props {
     data: PageData;

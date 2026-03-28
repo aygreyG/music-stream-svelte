@@ -1,16 +1,19 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
-  import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
-  import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
-  import AlbumImage from './AlbumImage.svelte';
-  import { vibrate } from '$lib/actions/vibrate';
-  import { getReadableTime } from '$lib/utils';
-  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
-  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
-  import type { Snippet } from 'svelte';
-  import type { Prisma } from '../../generated/prisma-client/client';
+
   import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
+  import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { getReadableTime } from '$lib/utils';
+
+  import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
+  import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
+
+  import type { Prisma } from '../../generated/prisma-client/client';
+  import AlbumImage from './AlbumImage.svelte';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {

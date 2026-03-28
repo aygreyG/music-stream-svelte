@@ -1,13 +1,16 @@
 <script lang="ts">
-  import PlaylistImage from '$lib/components/PlaylistImage.svelte';
-  import { fade } from 'svelte/transition';
-  import { crossfade } from '$lib/transitions/crossfade';
   import { flip } from 'svelte/animate';
-  import TrackRow from '$lib/components/TrackRow.svelte';
+  import { fade } from 'svelte/transition';
+
   import { enhance } from '$app/forms';
-  import HeartOff from '~icons/iconamoon/heart-off';
   import { vibrate } from '$lib/actions/vibrate.js';
+  import PlaylistImage from '$lib/components/PlaylistImage.svelte';
+  import TrackRow from '$lib/components/TrackRow.svelte';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
+  import { crossfade } from '$lib/transitions/crossfade';
+
+  import HeartOff from '~icons/iconamoon/heart-off';
+
   import type { PageData } from './$types';
 
   interface Props {

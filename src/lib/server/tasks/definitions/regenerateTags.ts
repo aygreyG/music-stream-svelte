@@ -1,7 +1,8 @@
 import { parseFile } from 'music-metadata';
+
 import prisma from '../../prisma';
 import { cleanUpTags, serverLog } from '../../utils';
-import { isAnyTaskRunning, startTask, updateTask, completeTask, failTask } from '../taskManager';
+import { completeTask, failTask, isAnyTaskRunning, startTask, updateTask } from '../taskManager';
 
 const definition = {
   taskId: 'tag-regeneration',

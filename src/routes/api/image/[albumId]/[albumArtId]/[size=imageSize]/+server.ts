@@ -1,8 +1,9 @@
+import { error, redirect } from '@sveltejs/kit';
+
 import { getImage } from '$lib/server/images.js';
 import prisma from '$lib/server/prisma.js';
 import { serverLog } from '$lib/server/utils';
 import { isValidImageSize, type AlbumWithArt } from '$lib/shared/types.js';
-import { error, redirect } from '@sveltejs/kit';
 
 export const GET = async ({ params, setHeaders, url }) => {
   const { albumId, albumArtId, size } = params;

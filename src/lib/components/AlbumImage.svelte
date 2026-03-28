@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ImageSize } from '$lib/shared/types';
+
   import type { Prisma } from '../../generated/prisma-client/client';
 
   interface Props {

@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { fade, fly } from 'svelte/transition';
   import { quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
+
   import TrackRow from '$lib/components/TrackRow.svelte';
+
   import AlbumLink from '../../AlbumLink.svelte';
   import type { PageData } from './$types';
 

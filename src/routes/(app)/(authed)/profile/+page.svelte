@@ -1,21 +1,24 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { vibrate } from '$lib/actions/vibrate';
+  import type { SubmitFunction } from '@sveltejs/kit';
+  import { onMount, untrack } from 'svelte';
+  import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
+
+  import { enhance } from '$app/forms';
+  import { vibrate } from '$lib/actions/vibrate';
+  import Accordion from '$lib/components/Accordion.svelte';
+  import Modal from '$lib/components/Modal.svelte';
+  import TrackRow from '$lib/components/TrackRow.svelte';
+  import { ROLE, SCHEME_TYPES } from '$lib/shared/consts';
+  import { getReadableTime } from '$lib/utils';
+
   import RoundRefresh from '~icons/ic/round-refresh';
-  import TrashFill from '~icons/iconamoon/trash-fill';
   import History from '~icons/iconamoon/history';
   import InformationCircleFill from '~icons/iconamoon/information-circle-fill';
-  import TrackRow from '$lib/components/TrackRow.svelte';
-  import Accordion from '$lib/components/Accordion.svelte';
-  import { getReadableTime } from '$lib/utils';
-  import { flip } from 'svelte/animate';
-  import type { SubmitFunction } from '@sveltejs/kit';
+  import TrashFill from '~icons/iconamoon/trash-fill';
+
   import type { ActionData, PageData } from './$types';
-  import { onMount, untrack } from 'svelte';
-  import { ROLE, SCHEME_TYPES } from '$lib/shared/consts';
-  import Modal from '$lib/components/Modal.svelte';
 
   interface Props {
     data: PageData;

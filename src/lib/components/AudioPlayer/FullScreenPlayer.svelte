@@ -1,22 +1,28 @@
 <script lang="ts">
-  import RoundKeyboardArrowDown from '~icons/ic/round-keyboard-arrow-down';
-  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
-  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
-  import AlbumImage from '../AlbumImage.svelte';
-  import { fade, fly } from 'svelte/transition';
-  import { quintOut, cubicOut } from 'svelte/easing';
   import { onMount } from 'svelte';
-  import { vibrate } from '$lib/actions/vibrate';
+  import { cubicOut, quintOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
   import Swiper from 'swiper';
   import { EffectCoverflow } from 'swiper/modules';
+
+  import { vibrate } from '$lib/actions/vibrate';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+
+  import RoundKeyboardArrowDown from '~icons/ic/round-keyboard-arrow-down';
+  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
+
+  import AlbumImage from '../AlbumImage.svelte';
+
   import 'swiper/css';
   import 'swiper/css/effect-coverflow';
+
   import { beforeNavigate, goto } from '$app/navigation';
+  import { resolve } from '$app/paths';
+  import { handleVibrate } from '$lib/utils';
+
   import Controls from './Controls.svelte';
   import ProgressBar from './ProgressBar.svelte';
   import Visualizer from './Visualizer.svelte';
-  import { handleVibrate } from '$lib/utils';
-  import { resolve } from '$app/paths';
 
   interface Props {
     onclose: () => void;

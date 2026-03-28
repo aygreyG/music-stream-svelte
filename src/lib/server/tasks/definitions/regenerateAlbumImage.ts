@@ -1,13 +1,16 @@
-import { parseFile } from 'music-metadata';
-import type { Album } from '../../../../generated/prisma-client/client';
-import { join } from 'path';
-import { errorToNull, isFileNameValid, serverLog } from '../../utils';
-import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
-import prisma from '../../prisma';
-import { startTask, updateTask, completeTask, failTask, isAnyTaskRunning } from '../taskManager';
 import { readdir, readFile } from 'fs/promises';
-import { getAlbumArt } from '../../images';
+import { join } from 'path';
+
+import { parseFile } from 'music-metadata';
+
+import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
 import type { TaskDefinition } from '$lib/shared/types';
+
+import type { Album } from '../../../../generated/prisma-client/client';
+import { getAlbumArt } from '../../images';
+import prisma from '../../prisma';
+import { errorToNull, isFileNameValid, serverLog } from '../../utils';
+import { completeTask, failTask, isAnyTaskRunning, startTask, updateTask } from '../taskManager';
 
 const definition: TaskDefinition = {
   taskId: 'album-art-regeneration',

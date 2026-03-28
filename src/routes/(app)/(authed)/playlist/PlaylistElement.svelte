@@ -1,13 +1,16 @@
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import { crossfade } from '$lib/transitions/crossfade';
   import { fade } from 'svelte/transition';
+
+  import { enhance } from '$app/forms';
+  import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
+  import { crossfade } from '$lib/transitions/crossfade';
+
   import RoundCheckCircle from '~icons/ic/round-check-circle';
   import TrashFill from '~icons/iconamoon/trash-fill';
-  import { vibrate } from '$lib/actions/vibrate';
+
   import type { Prisma } from '../../../../generated/prisma-client/client';
-  import { resolve } from '$app/paths';
 
   interface Props {
     playlist: Prisma.PlaylistGetPayload<{

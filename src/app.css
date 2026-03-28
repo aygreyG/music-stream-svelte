@@ -4,6 +4,9 @@
 
 @config '../tailwind.config.js';
 
+@custom-variant h-md (@media (max-height: 700px));
+@custom-variant h-sm (@media (max-height: 560px));
+
 @theme inline {
   --color-primary: var(--primary, #d4c3ff);
   --color-on-primary: var(--on-primary, #4a3a72);

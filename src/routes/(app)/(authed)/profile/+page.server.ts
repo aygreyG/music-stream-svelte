@@ -1,8 +1,9 @@
+import { fail, redirect } from '@sveltejs/kit';
+import bcrypt from 'bcryptjs';
+
 import { AUTH_COOKIE } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
 import { ROLE } from '$lib/shared/consts.js';
-import { fail, redirect } from '@sveltejs/kit';
-import bcrypt from 'bcryptjs';
 
 const MAX_LISTENS = 25;
 

@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+
 import { FALLBACK_SCHEME, SCHEME_KEYS, type SCHEME_TYPES } from './shared/consts';
 import type { MaterialScheme } from './shared/types';
 import { getDarkModePreference } from './utils';

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import { onMount, type Snippet } from 'svelte';
+
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
   const audioPlayer = getAudioPlayer();
 

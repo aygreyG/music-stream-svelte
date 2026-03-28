@@ -1,19 +1,21 @@
 <script lang="ts">
-  import type { SignedInUser } from '$lib/shared/types';
-  import RoundLougout from '~icons/ic/round-logout';
-  import RoundLogin from '~icons/ic/round-login';
-  import RoundSearch from '~icons/ic/round-search';
-  import RoundAdminPanelSettings from '~icons/ic/round-admin-panel-settings';
-  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
-  import RoundNewReleases from '~icons/ic/round-new-releases';
-  import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
-  import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
-  import RoundLabel from '~icons/ic/round-label';
-  import ProfileFill from '~icons/iconamoon/profile-fill';
   import { enhance } from '$app/forms';
-  import NavigationElement from './NavigationElement.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import { ROLE } from '$lib/shared/consts';
+  import type { SignedInUser } from '$lib/shared/types';
+
+  import RoundAdminPanelSettings from '~icons/ic/round-admin-panel-settings';
+  import RoundLabel from '~icons/ic/round-label';
+  import RoundLogin from '~icons/ic/round-login';
+  import RoundLougout from '~icons/ic/round-logout';
+  import RoundNewReleases from '~icons/ic/round-new-releases';
+  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
+  import RoundSearch from '~icons/ic/round-search';
+  import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
+  import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
+  import ProfileFill from '~icons/iconamoon/profile-fill';
+
+  import NavigationElement from './NavigationElement.svelte';
 
   interface Props {
     user?: SignedInUser | null;

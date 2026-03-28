@@ -1,9 +1,10 @@
+import { fail } from '@sveltejs/kit';
+
 import { register } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
+import taskDefinitions from '$lib/server/tasks/definitions';
 import { getLogFiles, getLogZips } from '$lib/server/utils.js';
 import { ROLE } from '$lib/shared/consts.js';
-import { fail } from '@sveltejs/kit';
-import taskDefinitions from '$lib/server/tasks/definitions';
 
 export const actions = {
   create: async ({ request, locals }) => {

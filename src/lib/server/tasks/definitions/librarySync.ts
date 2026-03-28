@@ -1,13 +1,16 @@
-import type { TaskDefinition } from '$lib/shared/types';
-import prisma from '../../prisma';
-import { parseFile } from 'music-metadata';
 import { readdir, stat } from 'fs/promises';
 import { join } from 'path';
-import { getServerSettings, updateCacheKey } from '../../serverSettings';
-import { getAlbumArt } from '../../images';
-import { cleanUpTags, errorToNull, isFileNameValid, serverLog } from '../../utils';
+
+import { parseFile } from 'music-metadata';
+
 import { ALLOWED_MUSIC_FILE_EXTENSIONS } from '$lib/shared/consts';
-import { startTask, updateTask, completeTask, failTask, isAnyTaskRunning } from '../taskManager';
+import type { TaskDefinition } from '$lib/shared/types';
+
+import { getAlbumArt } from '../../images';
+import prisma from '../../prisma';
+import { getServerSettings, updateCacheKey } from '../../serverSettings';
+import { cleanUpTags, errorToNull, isFileNameValid, serverLog } from '../../utils';
+import { completeTask, failTask, isAnyTaskRunning, startTask, updateTask } from '../taskManager';
 
 let tracksCreated = 0;
 let filesProcessed = 0;

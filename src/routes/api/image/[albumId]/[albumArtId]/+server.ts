@@ -1,7 +1,9 @@
+import { readFile } from 'fs/promises';
+
+import { error, redirect } from '@sveltejs/kit';
+
 import prisma from '$lib/server/prisma.js';
 import { serverLog } from '$lib/server/utils.js';
-import { error, redirect } from '@sveltejs/kit';
-import { readFile } from 'fs/promises';
 
 export const GET = async ({ params, setHeaders }) => {
   const { albumId, albumArtId } = params;

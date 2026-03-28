@@ -1,5 +1,6 @@
-import { AUTH_COOKIE } from '$lib/server/auth';
 import { redirect, type Actions } from '@sveltejs/kit';
+
+import { AUTH_COOKIE } from '$lib/server/auth';
 
 export async function load() {
   redirect(307, '/');

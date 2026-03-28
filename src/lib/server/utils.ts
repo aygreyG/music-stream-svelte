@@ -1,12 +1,15 @@
-import type { FolderNode, LogEntry } from '$lib/shared/types';
 import { createReadStream, createWriteStream, existsSync } from 'fs';
-import { lstat, readdir, appendFile, rm, mkdir } from 'fs/promises';
+import { appendFile, lstat, mkdir, readdir, rm } from 'fs/promises';
 import { join } from 'path';
-import prisma from './prisma';
+
 import archiver from 'archiver';
+
 import { EXCLUDE_FILES_STARTING_WITH } from '$lib/shared/consts';
-import { broadcastLog, broadcastDbLog } from './logEvents';
+import type { FolderNode, LogEntry } from '$lib/shared/types';
 import { formatDate } from '$lib/utils';
+
+import { broadcastDbLog, broadcastLog } from './logEvents';
+import prisma from './prisma';
 
 const LOG_FILE = 'db/logs/<placeholder>-server.log';
 const ZIP_FILE = 'db/logs/<placeholder>-server-log.zip';

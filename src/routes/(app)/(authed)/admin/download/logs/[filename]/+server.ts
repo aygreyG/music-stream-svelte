@@ -1,6 +1,7 @@
-import { error } from '@sveltejs/kit';
 import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
+
+import { error } from '@sveltejs/kit';
 
 export const GET = async ({ params }) => {
   const { filename } = params;

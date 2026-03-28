@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { resolve } from '$app/paths';
-  import { observeVisibility } from '$lib/actions/observeVisibility';
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
+
+  import { resolve } from '$app/paths';
+  import { observeVisibility } from '$lib/actions/observeVisibility';
+
   import type { PageData } from './$types';
 
   interface Props {

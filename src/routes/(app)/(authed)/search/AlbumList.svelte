@@ -1,10 +1,13 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import AlbumLink from '../AlbumLink.svelte';
-  import { vibrate } from '$lib/actions/vibrate';
+
   import { enhance } from '$app/forms';
-  import RoundRefresh from '~icons/ic/round-refresh';
+  import { vibrate } from '$lib/actions/vibrate';
   import type { SearchAlbum } from '$lib/shared/types';
+
+  import RoundRefresh from '~icons/ic/round-refresh';
+
+  import AlbumLink from '../AlbumLink.svelte';
 
   interface Props {
     total: number;
