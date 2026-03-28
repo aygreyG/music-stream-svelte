@@ -1,3 +1,9 @@
+# [1.5.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.3...v1.5.0-dev.4) (2026-03-28)
+
+### Features
+
+- add import ordering and update dependencies ([125a96d](https://github.com/aygreyG/music-stream-svelte/commit/125a96d7124035a144119a80d4fabe5939e96301))
+
 # [1.5.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.2...v1.5.0-dev.3) (2026-03-21)
 
 ### Bug Fixes
