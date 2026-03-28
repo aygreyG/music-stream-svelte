@@ -1,3 +1,9 @@
+# [1.5.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.4...v1.5.0-dev.5) (2026-03-28)
+
+### Bug Fixes
+
+- admin page user list width ([ca3a11a](https://github.com/aygreyG/music-stream-svelte/commit/ca3a11aa5823dd1197a9f709d1de3081470b5b8b))
+
 # [1.5.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.3...v1.5.0-dev.4) (2026-03-28)
 
 ### Features
