@@ -289,7 +289,7 @@
     </div>
 
     {#if data.users}
-      <div class="flex flex-col rounded-xl">
+      <div class="mx-auto mt-2 flex w-full max-w-3xl flex-col rounded-xl">
         {#each data.users as usr, index (usr.id)}
           <div
             class={[
