@@ -8,6 +8,7 @@
     duration?: number;
     currentTime?: number;
     bufferedRanges: { start: number; end: number }[];
+    class?: string;
   }
 
   let {
@@ -16,13 +17,14 @@
     duration,
     currentTime = $bindable(0),
     prevSeekTime = $bindable(0),
-    bufferedRanges = []
+    bufferedRanges = [],
+    class: className = ''
   }: Props = $props();
 
   const audioPlayer = getAudioPlayer();
 </script>
 
-<div class="flex items-center justify-between gap-2 whitespace-nowrap sm:order-2">
+<div class={['flex items-center justify-between gap-2 whitespace-nowrap sm:order-2', className]}>
   <div class={['timer', !audioPlayer.currentTrack && 'opacity-0']}>
     {currentString}
   </div>

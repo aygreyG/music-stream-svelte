@@ -83,7 +83,7 @@
     {#if animate}
       <div
         in:fade|global={{ duration: 500, easing: cubicInOut, delay: 100 }}
-        class="absolute top-0 left-0 h-full w-full opacity-20"
+        class="absolute top-0 left-0 h-full w-full opacity-20 blur-xs"
       >
         <AlbumImage key={data.album.updatedAt.toISOString()} blur album={data.album} maxSize="s" />
       </div>

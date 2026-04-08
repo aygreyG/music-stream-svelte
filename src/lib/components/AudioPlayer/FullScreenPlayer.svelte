@@ -20,6 +20,7 @@
   import { resolve } from '$app/paths';
   import { handleVibrate } from '$lib/utils';
 
+  import MarqueeText from '../MarqueeText.svelte';
   import Controls from './Controls.svelte';
   import ProgressBar from './ProgressBar.svelte';
   import Visualizer from './Visualizer.svelte';
@@ -146,7 +147,7 @@
           goto(resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id }));
           onclose();
         }}
-        class="text-on-surface-variant line-clamp-1 max-w-30 text-sm tracking-wide"
+        class="text-on-surface-variant line-clamp-1 max-w-1/3 pl-2 text-sm tracking-wide"
         use:vibrate
         title={audioPlayer.playlistInfo.title}
       >
@@ -205,9 +206,11 @@
             in:fade|global={{ duration: 300, easing: quintOut, delay: 150 }}
             out:fade|global={{ duration: 200, easing: quintOut }}
           >
-            <h1 class="text-on-surface truncate text-2xl font-bold">
-              {audioPlayer.currentTrack.title}
-            </h1>
+            <MarqueeText indefinite speed={40} class="text-2xl">
+              <h1 class="text-on-surface text-2xl font-bold">
+                {audioPlayer.currentTrack.title}
+              </h1>
+            </MarqueeText>
             <div class="text-on-surface-variant mt-2 truncate text-lg">
               {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
                 {@const shouldHaveComma =

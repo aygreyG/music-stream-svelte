@@ -2,21 +2,24 @@
   import { onMount } from 'svelte';
   import { quintOut } from 'svelte/easing';
   import type { SvelteMediaTimeRange } from 'svelte/elements';
-  import { fade } from 'svelte/transition';
+  import { fade, slide } from 'svelte/transition';
 
-  import { beforeNavigate, invalidate } from '$app/navigation';
+  import { beforeNavigate, goto, invalidate } from '$app/navigation';
+  import { resolve } from '$app/paths';
   import { navigating, page } from '$app/state';
   import { vibrate } from '$lib/actions/vibrate';
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
   import RoundKeyboardArrowUp from '~icons/ic/round-keyboard-arrow-up';
+  import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
   import RoundVolumeDown from '~icons/ic/round-volume-down';
   import RoundVolumeMute from '~icons/ic/round-volume-mute';
   import RoundVolumeOff from '~icons/ic/round-volume-off';
   import RoundVolumeUp from '~icons/ic/round-volume-up';
 
   import AlbumImage from '../AlbumImage.svelte';
+  import MarqueeText from '../MarqueeText.svelte';
   import Controls from './Controls.svelte';
   import FullScreenPlayer from './FullScreenPlayer.svelte';
   import ProgressBar from './ProgressBar.svelte';
@@ -53,6 +56,27 @@
   let seeking = $state(false);
   let bufferedRanges: SvelteMediaTimeRange[] = $state([]);
   let fullScreenOpen = $state(false);
+  let trackInfoContainer: HTMLDivElement = $state(null!);
+  let prevContainerWidth = 0;
+
+  // Animating the width of the track info container when the track changes and the width is different than before
+  $effect.pre(() => {
+    if (!trackInfoContainer || !audioPlayer.currentTrack) return;
+    void audioPlayer.currentTrack.id;
+    prevContainerWidth = trackInfoContainer.offsetWidth;
+  });
+
+  $effect(() => {
+    if (!trackInfoContainer || !audioPlayer.currentTrack) return;
+    void audioPlayer.currentTrack.id;
+    const newWidth = trackInfoContainer.offsetWidth;
+    if (prevContainerWidth > 0 && prevContainerWidth !== newWidth) {
+      trackInfoContainer.animate(
+        [{ width: `${prevContainerWidth}px` }, { width: `${newWidth + 2}px` }],
+        { duration: 150, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+      );
+    }
+  });
 
   async function sendListeningData(trackId: string, duration: number) {
     if (duration < 0.01) return;
@@ -295,7 +319,7 @@
           class="pointer-events-none absolute bottom-0 left-0 h-32 w-full rounded-xl p-1 opacity-15 motion-reduce:hidden sm:h-full"
         />
       {/if}
-      <div class="flex h-full w-full flex-col justify-around px-2">
+      <div class="flex h-full w-full flex-col justify-between pr-2">
         <button
           onclick={() => (fullScreenOpen = true)}
           aria-label="Open full screen player"
@@ -307,7 +331,7 @@
         >
           {#if audioPlayer.currentTrack}
             {#key audioPlayer.currentTrack.id}
-              <div class="flex w-[calc(100%-2.5rem)] items-center gap-2">
+              <div class="flex min-w-0 flex-1 items-center gap-2">
                 <div
                   class="size-10 flex-none overflow-clip rounded-md"
                   in:fade|global={{ duration: 500, easing: quintOut }}
@@ -315,8 +339,8 @@
                   <AlbumImage album={audioPlayer.currentTrack.album} maxSize="s" />
                 </div>
                 <div
+                  class="flex h-10 min-w-0 flex-1 flex-col text-left"
                   in:fade|global={{ duration: 500, easing: quintOut }}
-                  class="flex h-10 w-[calc(100%-2.5rem)] shrink flex-col text-left"
                 >
                   <span
                     class="overflow-hidden font-bold text-ellipsis whitespace-nowrap"
@@ -326,7 +350,7 @@
                   </span>
                   <span class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
                     {audioPlayer.currentTrack.artists
-                      .toSorted((a, _) =>
+                      .toSorted((a) =>
                         a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1
                       )
                       .map((a) => a.name)
@@ -350,10 +374,80 @@
           {durationString}
           bind:currentTime
           bind:prevSeekTime
+          class="pl-2"
         />
-        <div class="flex items-center justify-center gap-2 sm:justify-around lg:justify-center">
-          <Controls bind:repeat onstop={cleanupAfterStop} />
-          <div class="right-0 hidden items-center gap-2 sm:flex lg:absolute" onwheel={updateVolume}>
+        <div class="flex items-center justify-center gap-2 sm:justify-between">
+          <div class="hidden h-16 w-full max-w-44 sm:block md:max-w-56 lg:max-w-72 xl:max-w-md">
+            {#if audioPlayer.currentTrack}
+              <div
+                bind:this={trackInfoContainer}
+                class="bg-surface-container/60 flex h-full w-fit max-w-full items-center gap-2 justify-self-start rounded-full p-1 pr-4 backdrop-blur-xs transition-colors duration-500"
+                transition:slide={{ axis: 'x', duration: 300, easing: quintOut }}
+              >
+                {#key audioPlayer.currentTrack.id}
+                  <a
+                    href={resolve(`/(app)/(authed)/album/[id]`, {
+                      id: audioPlayer.currentTrack.album.id
+                    })}
+                    class="aspect-square h-full flex-none overflow-clip rounded-full"
+                    title={audioPlayer.currentTrack.album.title}
+                  >
+                    <AlbumImage album={audioPlayer.currentTrack.album} maxSize="s" />
+                  </a>
+                  <div class="flex min-w-0 flex-col">
+                    {#if audioPlayer.playlistInfo}
+                      <div class="flex items-center">
+                        <RoundPlaylistPlay
+                          class="text-on-surface-variant text-sm transition-colors duration-500"
+                        />
+                        <MarqueeText class="text-xs">
+                          <a
+                            href={resolve(`/(app)/(authed)/playlist/[id]`, {
+                              id: audioPlayer.playlistInfo.id
+                            })}
+                            title={audioPlayer.playlistInfo.title}
+                            class="text-on-surface-variant pr-1 tracking-wide transition-colors duration-500 hover:underline"
+                          >
+                            {audioPlayer.playlistInfo.title}
+                          </a>
+                        </MarqueeText>
+                      </div>
+                    {/if}
+                    <MarqueeText>
+                      <a
+                        class="font-bold whitespace-nowrap hover:underline"
+                        title={audioPlayer.currentTrack.title}
+                        href={resolve(`/(app)/(authed)/album/[id]`, {
+                          id: audioPlayer.currentTrack.album.id
+                        })}
+                      >
+                        {audioPlayer.currentTrack.title}
+                      </a>
+                    </MarqueeText>
+                    <MarqueeText class="text-xs font-medium">
+                      {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                        {@const shouldHaveComma =
+                          audioPlayer.currentTrack.artists.length > 1 &&
+                          index != audioPlayer.currentTrack.artists.length - 1}
+                        <button
+                          title={artist.name}
+                          class={['whitespace-nowrap hover:underline', shouldHaveComma && 'mr-1']}
+                          onclick={() =>
+                            goto(resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id }))}
+                        >
+                          {artist.name}{#if shouldHaveComma},{/if}
+                        </button>
+                      {/each}
+                    </MarqueeText>
+                  </div>
+                {/key}
+              </div>
+            {/if}
+          </div>
+
+          <Controls class="sm:w-full" bind:repeat onstop={cleanupAfterStop} />
+
+          <div class="hidden items-center gap-2 sm:flex" onwheel={updateVolume}>
             <button
               onclick={() => {
                 if (volume === 0) {
@@ -382,7 +476,7 @@
               max="1"
               step="0.01"
               bind:value={volume}
-              class="styled-range volume-bar w-full max-w-32"
+              class="styled-range volume-bar w-full md:w-24"
               aria-label="Volume bar"
             />
           </div>
