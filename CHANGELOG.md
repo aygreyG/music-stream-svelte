@@ -1,3 +1,9 @@
+# [1.5.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.5...v1.5.0-dev.6) (2026-04-08)
+
+### Features
+
+- add marquee text component and update currently playing info design on desktop ([101ab85](https://github.com/aygreyG/music-stream-svelte/commit/101ab85c6d656e0de66e3c99d20e93a6a797689a))
+
 # [1.5.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.4...v1.5.0-dev.5) (2026-03-28)
 
 ### Bug Fixes
