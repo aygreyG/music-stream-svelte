@@ -1,3 +1,9 @@
+# [1.5.0-dev.10](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.9...v1.5.0-dev.10) (2026-04-09)
+
+### Bug Fixes
+
+- workflow user ([9349578](https://github.com/aygreyG/music-stream-svelte/commit/934957899ac33deaaec678b8da6d12879c56c283))
+
 # [1.5.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.8...v1.5.0-dev.9) (2026-04-09)
 
 ### Bug Fixes
