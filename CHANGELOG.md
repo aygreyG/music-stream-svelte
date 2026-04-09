@@ -1,3 +1,9 @@
+# [1.5.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.7...v1.5.0-dev.8) (2026-04-09)
+
+### Bug Fixes
+
+- update dependencies ([2df6625](https://github.com/aygreyG/music-stream-svelte/commit/2df66257c56cc36d926cf12730e4396cced2998d))
+
 # [1.5.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.6...v1.5.0-dev.7) (2026-04-09)
 
 ### Features
