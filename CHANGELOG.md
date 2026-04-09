@@ -1,3 +1,21 @@
+# [1.5.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.1...v1.5.0) (2026-04-09)
+
+### Bug Fixes
+
+- admin page user list width ([ca3a11a](https://github.com/aygreyG/music-stream-svelte/commit/ca3a11aa5823dd1197a9f709d1de3081470b5b8b))
+- admin task button state ([2f91c85](https://github.com/aygreyG/music-stream-svelte/commit/2f91c857f2a7db49a63a97723c11732f2a8a7216))
+- update dependencies ([2df6625](https://github.com/aygreyG/music-stream-svelte/commit/2df66257c56cc36d926cf12730e4396cced2998d))
+- update workflow job versions ([80ac062](https://github.com/aygreyG/music-stream-svelte/commit/80ac0620cb30599c2aa3811a0f842d5ffdcb09dd))
+- workflow user ([9349578](https://github.com/aygreyG/music-stream-svelte/commit/934957899ac33deaaec678b8da6d12879c56c283))
+
+### Features
+
+- add full screen player for desktop sizes ([c39c989](https://github.com/aygreyG/music-stream-svelte/commit/c39c989de6dac4a468830e660956cefe111c4bce))
+- add import ordering and update dependencies ([125a96d](https://github.com/aygreyG/music-stream-svelte/commit/125a96d7124035a144119a80d4fabe5939e96301))
+- add marquee text component and update currently playing info design on desktop ([101ab85](https://github.com/aygreyG/music-stream-svelte/commit/101ab85c6d656e0de66e3c99d20e93a6a797689a))
+- add task manager with sse ([#212](https://github.com/aygreyG/music-stream-svelte/issues/212)) ([c27bdd3](https://github.com/aygreyG/music-stream-svelte/commit/c27bdd3616a170fd81f61772d96ae4d8b866cf9e))
+- make use of tags on tracks ([#210](https://github.com/aygreyG/music-stream-svelte/issues/210)) ([e73600e](https://github.com/aygreyG/music-stream-svelte/commit/e73600e1e8a7dd5bb0f21ce918968724e03d8f31)), closes [#148](https://github.com/aygreyG/music-stream-svelte/issues/148)
+
 # [1.5.0-dev.10](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.9...v1.5.0-dev.10) (2026-04-09)
 
 ### Bug Fixes
