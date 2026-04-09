@@ -1,3 +1,9 @@
+# [1.5.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.6...v1.5.0-dev.7) (2026-04-09)
+
+### Features
+
+- add full screen player for desktop sizes ([c39c989](https://github.com/aygreyG/music-stream-svelte/commit/c39c989de6dac4a468830e660956cefe111c4bce))
+
 # [1.5.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0-dev.5...v1.5.0-dev.6) (2026-04-08)
 
 ### Features
