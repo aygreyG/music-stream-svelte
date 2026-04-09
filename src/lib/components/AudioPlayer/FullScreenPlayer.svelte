@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { cubicOut, quintOut } from 'svelte/easing';
-  import { fade, fly } from 'svelte/transition';
+  import { fade, fly, slide } from 'svelte/transition';
   import Swiper from 'swiper';
   import { EffectCoverflow } from 'swiper/modules';
 
@@ -10,6 +10,11 @@
 
   import RoundKeyboardArrowDown from '~icons/ic/round-keyboard-arrow-down';
   import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
+  import RoundQueueMusic from '~icons/ic/round-queue-music';
+  import RoundVolumeDown from '~icons/ic/round-volume-down';
+  import RoundVolumeMute from '~icons/ic/round-volume-mute';
+  import RoundVolumeOff from '~icons/ic/round-volume-off';
+  import RoundVolumeUp from '~icons/ic/round-volume-up';
 
   import AlbumImage from '../AlbumImage.svelte';
 
@@ -33,6 +38,7 @@
     currentString?: string;
     durationString?: string;
     repeat?: boolean;
+    volume?: number;
     analyser?: AnalyserNode | null;
     bufferedRanges?: { start: number; end: number }[];
   }
@@ -45,6 +51,7 @@
     currentString = '--:--',
     durationString = '--:--',
     repeat = $bindable(false),
+    volume = $bindable(0.3),
     analyser = null,
     bufferedRanges = []
   }: Props = $props();
@@ -55,6 +62,18 @@
   let swiperInstance: Swiper | null = $state(null);
   let prevSeekTime = $state(0);
   let lastPlayedIndex = $state(audioPlayer.queueContextIndex);
+  let queueListEl: HTMLDivElement | null = $state(null);
+  let prevVolume = $state(0.3);
+
+  function updateVolume(e: WheelEvent) {
+    volume = Math.max(0, Math.min(1, volume + (e.deltaY < 0 ? 0.05 : -0.05)));
+  }
+
+  function scrollToCurrentTrack(behavior: ScrollBehavior = 'smooth') {
+    if (!queueListEl) return;
+    const activeItem = queueListEl.querySelector('[data-active="true"]');
+    activeItem?.scrollIntoView({ block: 'center', behavior });
+  }
 
   onMount(() => {
     const initialIndex = audioPlayer.queueContextIndex;
@@ -100,6 +119,8 @@
       swiperInstance.slideTo(initialIndex, 0, false);
     }
 
+    tick().then(() => scrollToCurrentTrack());
+
     return () => {
       if (swiperInstance) {
         swiperInstance.destroy();
@@ -115,6 +136,13 @@
       lastPlayedIndex = targetIndex;
       swiperInstance.slideTo(targetIndex, 400);
     }
+    tick().then(() => scrollToCurrentTrack());
+  });
+
+  $effect(() => {
+    if (audioPlayer.fullScreenQueueOpen) {
+      scrollToCurrentTrack('instant');
+    }
   });
 
   beforeNavigate((navigation) => {
@@ -126,35 +154,35 @@
 </script>
 
 <div
-  class="bg-surface fixed inset-0 z-100 flex flex-col sm:hidden"
+  class="bg-surface fixed inset-0 z-100 flex flex-col"
   in:fly={{ y: 100, duration: 300, easing: cubicOut }}
   out:fly={{ y: 100, duration: 300, easing: cubicOut }}
 >
-  <Visualizer
-    {analyser}
-    class="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full opacity-15 motion-reduce:hidden"
-  />
-
-  <div
-    class={[
-      'z-10 flex items-center p-4',
-      audioPlayer.playlistInfo ? 'justify-between pl-0' : 'justify-end'
-    ]}
-  >
-    {#if audioPlayer.playlistInfo}
+  <div class="z-10 flex items-center justify-between p-4 pb-0">
+    <div class="flex items-center max-sm:max-w-1/3">
       <button
-        onclick={() => {
-          goto(resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id }));
-          onclose();
-        }}
-        class="text-on-surface-variant line-clamp-1 max-w-1/3 pl-2 text-sm tracking-wide"
+        onclick={() => (audioPlayer.fullScreenQueueOpen = !audioPlayer.fullScreenQueueOpen)}
+        class="text-on-surface-variant active:text-primary hidden p-2 text-xl transition-colors sm:flex"
+        aria-label="Toggle queue"
         use:vibrate
-        title={audioPlayer.playlistInfo.title}
       >
-        <RoundPlaylistPlay class="inline align-top text-lg" />
-        {audioPlayer.playlistInfo.title}
+        <RoundQueueMusic />
       </button>
-    {/if}
+      {#if audioPlayer.playlistInfo}
+        <button
+          onclick={() => {
+            goto(resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id }));
+            onclose();
+          }}
+          class="text-on-surface-variant line-clamp-1 text-sm tracking-wide sm:hidden"
+          use:vibrate
+          title={audioPlayer.playlistInfo.title}
+        >
+          <RoundPlaylistPlay class="inline align-top text-lg" />
+          {audioPlayer.playlistInfo.title}
+        </button>
+      {/if}
+    </div>
     <div
       class="text-on-surface absolute left-1/2 -translate-x-1/2 text-sm font-semibold tracking-wide"
     >
@@ -170,94 +198,207 @@
     </button>
   </div>
 
-  <!-- Album Art Swiper -->
-  <div class="flex flex-1 flex-col items-center justify-center px-4">
-    <div bind:this={swiperContainer} class="swiper fullscreen-swiper w-full max-w-lg">
-      <div class="swiper-wrapper items-center">
-        {#each audioPlayer.queueContext as track, index (track.id)}
-          <div class="swiper-slide">
-            <!-- Glow effect behind album art -->
-            {#if index === audioPlayer.queueContextIndex}
-              <div
-                in:fade|global={{ duration: 300, easing: quintOut, delay: 200 }}
-                out:fade|global={{ duration: 200, easing: quintOut }}
-                class="bg-primary absolute inset-0 m-auto aspect-square w-full max-w-70 scale-110 rounded-3xl opacity-40 blur-2xl sm:max-w-80"
-              ></div>
-            {/if}
-            <div
-              class={[
-                'album-slide mx-auto aspect-square w-full max-w-70 overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 sm:max-w-80',
-                index !== audioPlayer.queueContextIndex && 'scale-90 opacity-40'
-              ]}
-            >
-              <AlbumImage album={track.album} maxSize="l" />
-            </div>
-          </div>
-        {/each}
-      </div>
-    </div>
-
-    <!-- Track Info -->
-    <div class="mt-8 h-24 w-full max-w-sm px-4">
-      {#if audioPlayer.currentTrack}
-        {#key audioPlayer.currentTrack.id}
+  <div class="flex min-h-0 flex-1">
+    {#if audioPlayer.fullScreenQueueOpen}
+      <div
+        class="bg-surface z-10 hidden min-h-0 w-1/3 max-w-sm flex-none rounded-tr-xl sm:flex"
+        transition:slide={{ axis: 'x', duration: 300, easing: quintOut }}
+      >
+        <div class="flex h-full w-full flex-col pb-4 pl-4">
           <div
-            class="absolute inset-x-0 text-center"
-            in:fade|global={{ duration: 300, easing: quintOut, delay: 150 }}
-            out:fade|global={{ duration: 200, easing: quintOut }}
+            bind:this={queueListEl}
+            class="bg-surface-container/60 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto rounded-xl p-2"
           >
-            <MarqueeText indefinite speed={40} class="text-2xl">
-              <h1 class="text-on-surface text-2xl font-bold">
-                {audioPlayer.currentTrack.title}
-              </h1>
-            </MarqueeText>
-            <div class="text-on-surface-variant mt-2 truncate text-lg">
-              {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
-                {@const shouldHaveComma =
-                  audioPlayer.currentTrack.artists.length > 1 &&
-                  index != audioPlayer.currentTrack.artists.length - 1}
+            {#if audioPlayer.playlistInfo}
+              <button
+                onclick={() => {
+                  goto(
+                    resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id })
+                  );
+                  onclose();
+                }}
+                class="text-on-surface-variant line-clamp-1 flex-none text-sm tracking-wide"
+                use:vibrate
+                title={audioPlayer.playlistInfo.title}
+              >
+                <RoundPlaylistPlay class="inline align-top text-lg" />
+                {audioPlayer.playlistInfo.title}
+              </button>
+            {/if}
+            {#each audioPlayer.queueContext as track, index (track.id)}
+              {@const isActive = index === audioPlayer.queueContextIndex}
+              <button
+                data-active={isActive}
+                onclick={() => audioPlayer.playAtIndex(index)}
+                title={track.title}
+                class={[
+                  'flex items-center gap-2 rounded-xl p-2 text-left transition-colors duration-200',
+                  isActive
+                    ? 'bg-primary/15 text-primary'
+                    : 'text-on-surface hover:bg-surface-container-low'
+                ]}
+                use:vibrate
+              >
+                <div class="size-10 flex-none overflow-clip rounded-lg">
+                  <AlbumImage album={track.album} maxSize="s" />
+                </div>
+                <div
+                  class={[
+                    'flex min-w-0 flex-1 flex-col',
+                    isActive ? 'text-primary' : 'text-on-surface'
+                  ]}
+                >
+                  <span class="truncate text-sm font-bold">
+                    {track.title}
+                  </span>
+                  <span class="truncate text-xs font-medium">
+                    {track.artists
+                      .toSorted((a) => (a.name !== track.album.albumArtist.name ? 1 : -1))
+                      .map((a) => a.name)
+                      .join(', ')}
+                  </span>
+                </div>
+              </button>
+            {/each}
+          </div>
+        </div>
+      </div>
+    {/if}
+
+    <div class="flex min-w-0 flex-1 flex-col">
+      <Visualizer
+        {analyser}
+        class="pointer-events-none absolute inset-x-0 bottom-0 h-32 w-full opacity-15 motion-reduce:hidden"
+      />
+
+      <div class="flex flex-1 flex-col items-center justify-center px-4">
+        <div bind:this={swiperContainer} class="swiper fullscreen-swiper w-full max-w-lg">
+          <div class="swiper-wrapper items-center">
+            {#each audioPlayer.queueContext as track, index (track.id)}
+              <div class="swiper-slide">
+                <!-- Glow effect behind album art -->
+                {#if index === audioPlayer.queueContextIndex}
+                  <div
+                    in:fade|global={{ duration: 300, easing: quintOut, delay: 200 }}
+                    out:fade|global={{ duration: 200, easing: quintOut }}
+                    class="bg-primary absolute inset-0 m-auto aspect-square w-full max-w-70 scale-100 rounded-3xl opacity-40 blur-2xl sm:max-w-80"
+                  ></div>
+                {/if}
+                <div
+                  class={[
+                    'album-slide mx-auto aspect-square w-full max-w-70 overflow-hidden rounded-2xl shadow-2xl transition-all duration-300 sm:max-w-80',
+                    index !== audioPlayer.queueContextIndex && 'scale-90 opacity-40'
+                  ]}
+                >
+                  <AlbumImage album={track.album} />
+                </div>
+              </div>
+            {/each}
+          </div>
+        </div>
+
+        <div class="mt-8 h-24 w-full max-w-sm px-4">
+          {#if audioPlayer.currentTrack}
+            {#key audioPlayer.currentTrack.id}
+              <div
+                class="absolute inset-x-0 text-center"
+                in:fade|global={{ duration: 300, easing: quintOut, delay: 150 }}
+                out:fade|global={{ duration: 200, easing: quintOut }}
+              >
+                <MarqueeText indefinite speed={40} class="text-2xl">
+                  <h1 class="text-on-surface text-2xl font-bold">
+                    {audioPlayer.currentTrack.title}
+                  </h1>
+                </MarqueeText>
+                <div class="text-on-surface-variant mt-2 truncate text-lg">
+                  {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                    {@const shouldHaveComma =
+                      audioPlayer.currentTrack.artists.length > 1 &&
+                      index != audioPlayer.currentTrack.artists.length - 1}
+                    <button
+                      onclick={() => {
+                        goto(resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id }));
+                        onclose();
+                      }}
+                      class={[shouldHaveComma && 'mr-1']}
+                    >
+                      {artist.name}{#if shouldHaveComma},{/if}
+                    </button>
+                  {/each}
+                </div>
+
                 <button
                   onclick={() => {
-                    goto(resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id }));
+                    goto(
+                      resolve(`/(app)/(authed)/album/[id]`, {
+                        id: audioPlayer.currentTrack!.album.id
+                      })
+                    );
                     onclose();
                   }}
-                  class={[shouldHaveComma && 'mr-1']}
+                  class="text-on-surface-variant mt-1 block w-full truncate text-base"
                 >
-                  {artist.name}{#if shouldHaveComma},{/if}
+                  {audioPlayer.currentTrack.album.title}
                 </button>
-              {/each}
-            </div>
+              </div>
+            {/key}
+          {/if}
+        </div>
+      </div>
 
-            <button
-              onclick={() => {
-                goto(
-                  resolve(`/(app)/(authed)/album/[id]`, { id: audioPlayer.currentTrack!.album.id })
-                );
-                onclose();
-              }}
-              class="text-on-surface-variant mt-1 block w-full truncate text-base"
-            >
-              {audioPlayer.currentTrack.album.title}
-            </button>
-          </div>
-        {/key}
-      {/if}
+      <div class="w-full px-6 pb-2">
+        <ProgressBar
+          class="mx-auto max-w-3xl"
+          {currentString}
+          {bufferedRanges}
+          {duration}
+          {durationString}
+          bind:currentTime
+          bind:prevSeekTime
+        />
+      </div>
+
+      <div class="@container relative z-10 flex items-center justify-center pt-4 pb-12 sm:pb-8">
+        <Controls bind:repeat {onstop} />
+        <div
+          class="hidden w-24 items-center gap-2 @md:absolute @lg:right-4 @lg:flex @xl:right-12 @3xl:w-40"
+          onwheel={updateVolume}
+        >
+          <button
+            onclick={() => {
+              if (volume === 0) {
+                volume = prevVolume;
+              } else {
+                prevVolume = volume;
+                volume = 0;
+              }
+            }}
+            aria-label="Mute"
+            use:vibrate
+          >
+            {#if volume === 0}
+              <RoundVolumeOff class="text-primary text-2xl transition-colors duration-500" />
+            {:else if volume < 0.3}
+              <RoundVolumeMute class="text-primary text-2xl transition-colors duration-500" />
+            {:else if volume < 0.7}
+              <RoundVolumeDown class="text-primary text-2xl transition-colors duration-500" />
+            {:else}
+              <RoundVolumeUp class="text-primary text-2xl transition-colors duration-500" />
+            {/if}
+          </button>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            bind:value={volume}
+            class="styled-range h-4! w-24"
+            aria-label="Volume bar"
+          />
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- Progress Bar -->
-  <div class="px-6 pb-2">
-    <ProgressBar
-      {currentString}
-      {bufferedRanges}
-      {duration}
-      {durationString}
-      bind:currentTime
-      bind:prevSeekTime
-    />
-  </div>
-
-  <Controls bind:repeat {onstop} class="z-10 justify-center pt-4 pb-12" />
 </div>
 
 <style lang="postcss">

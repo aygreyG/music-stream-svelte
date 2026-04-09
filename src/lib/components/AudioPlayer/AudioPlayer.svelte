@@ -376,12 +376,12 @@
           bind:prevSeekTime
           class="pl-2"
         />
-        <div class="flex items-center justify-center gap-2 sm:justify-between">
-          <div class="hidden h-16 w-full max-w-44 sm:block md:max-w-56 lg:max-w-72 xl:max-w-md">
+        <div class="flex items-center justify-center gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr]">
+          <div class="hidden h-16 min-w-0 sm:block">
             {#if audioPlayer.currentTrack}
               <div
                 bind:this={trackInfoContainer}
-                class="bg-surface-container/60 flex h-full w-fit max-w-full items-center gap-2 justify-self-start rounded-full p-1 pr-4 backdrop-blur-xs transition-colors duration-500"
+                class="bg-surface-container/60 group flex h-full w-fit max-w-full items-center gap-2 justify-self-start rounded-full p-1 pr-4 backdrop-blur-xs transition-colors duration-500"
                 transition:slide={{ axis: 'x', duration: 300, easing: quintOut }}
               >
                 {#key audioPlayer.currentTrack.id}
@@ -398,7 +398,7 @@
                     {#if audioPlayer.playlistInfo}
                       <div class="flex items-center">
                         <RoundPlaylistPlay
-                          class="text-on-surface-variant text-sm transition-colors duration-500"
+                          class="text-on-surface-variant flex-none text-sm transition-colors duration-500"
                         />
                         <MarqueeText class="text-xs">
                           <a
@@ -441,13 +441,24 @@
                     </MarqueeText>
                   </div>
                 {/key}
+                <button
+                  onclick={() => (fullScreenOpen = true)}
+                  aria-label="Open full screen player"
+                  class="bg-surface-container text-on-surface-variant hover:text-primary absolute top-1/2 -right-3 z-10 flex -translate-y-1/2 items-center justify-center rounded-full p-1 text-xl opacity-0 transition-all duration-200 group-hover:opacity-100"
+                  use:vibrate
+                >
+                  <RoundKeyboardArrowUp />
+                </button>
               </div>
             {/if}
           </div>
 
-          <Controls class="sm:w-full" bind:repeat onstop={cleanupAfterStop} />
+          <Controls bind:repeat onstop={cleanupAfterStop} />
 
-          <div class="hidden items-center gap-2 sm:flex" onwheel={updateVolume}>
+          <div
+            class="hidden min-w-0 items-center gap-2 justify-self-end sm:flex"
+            onwheel={updateVolume}
+          >
             <button
               onclick={() => {
                 if (volume === 0) {
@@ -499,6 +510,7 @@
     {currentString}
     {durationString}
     bind:repeat
+    bind:volume
     {analyser}
     {bufferedRanges}
   />

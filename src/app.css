@@ -99,7 +99,7 @@
 
 /* Scrollbar Styles */
 ::-webkit-scrollbar {
-  @apply h-1 w-1.5;
+  @apply h-1 w-1;
 }
 
 ::-webkit-scrollbar-track {
@@ -107,11 +107,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-md bg-zinc-800;
+  @apply bg-primary rounded-md transition-colors duration-300;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-zinc-700;
+  @apply bg-primary/80;
 }
 
 @media (prefers-reduced-motion: no-preference) {

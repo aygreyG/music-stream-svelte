@@ -40,6 +40,7 @@ function createAudioPlayer() {
   let playlistInfo: PlaylistInfoType | null = $state(null);
   let queueContext: TrackType[] = $state([]);
   let queueContextIndex: number = $state(0);
+  let fullScreenQueueOpen = $state(false);
   const hasNext = $derived(queueContextIndex < queueContext.length - 1);
   const hasPrevious = $derived(queueContextIndex > 0);
 
@@ -123,6 +124,12 @@ function createAudioPlayer() {
     },
     get playlistInfo() {
       return playlistInfo;
+    },
+    get fullScreenQueueOpen() {
+      return fullScreenQueueOpen;
+    },
+    set fullScreenQueueOpen(value: boolean) {
+      fullScreenQueueOpen = value;
     }
   };
 }
