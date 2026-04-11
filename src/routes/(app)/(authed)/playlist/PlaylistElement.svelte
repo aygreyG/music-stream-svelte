@@ -5,7 +5,6 @@
   import { resolve } from '$app/paths';
   import { vibrate } from '$lib/actions/vibrate';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
-  import { crossfade } from '$lib/transitions/crossfade';
 
   import RoundCheckCircle from '~icons/ic/round-check-circle';
   import TrashFill from '~icons/iconamoon/trash-fill';
@@ -58,7 +57,6 @@
   let nameInput: HTMLInputElement | null = $state(null);
   let playlistName: string = $derived(playlist.name);
   let deleteClicked = $state(false);
-  const [send] = crossfade;
   let timeout: string | number | NodeJS.Timeout | undefined = $state();
 
   $effect(() => {
@@ -101,7 +99,6 @@
     href={resolve(`/(app)/(authed)/playlist/[id]`, { id: playlist.id })}
     class="flex h-3/4 w-full flex-none items-center justify-center px-2 pt-2"
     use:vibrate
-    out:send|global={{ key: playlist.id, duration: 300 }}
   >
     <div class="aspect-square h-full overflow-clip rounded-xl">
       <PlaylistImage {albumSet} />

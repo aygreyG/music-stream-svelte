@@ -1,14 +1,14 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
+  import SearchBar from '$lib/components/SearchBar.svelte';
 
   import RoundAdd from '~icons/ic/round-add';
   import RoundRefresh from '~icons/ic/round-refresh';
-  import RoundSearch from '~icons/ic/round-search';
 
   import type { ActionData, PageData } from './$types';
   import PlaylistElement from './PlaylistElement.svelte';
@@ -32,10 +32,7 @@
   );
 </script>
 
-<div
-  out:fade|global={{ duration: 150 }}
-  class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
->
+<div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
   <div
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
     class="p-4 pb-0 text-center text-xl font-bold"
@@ -44,23 +41,12 @@
   </div>
 
   <div
-    out:fade|global={{ duration: 250 }}
     class={[
       'flex w-full flex-col px-8 py-1 transition-shadow duration-300',
       scrolled && 'shadow-md'
     ]}
   >
-    <label class="flex w-full items-center rounded-xl backdrop-blur-md">
-      <input
-        class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
-        type="text"
-        bind:value={searchString}
-        name="search"
-        autocomplete="off"
-        placeholder="Search"
-      />
-      <RoundSearch class="absolute right-2 text-xl" />
-    </label>
+    <SearchBar bind:value={searchString} />
   </div>
 
   <div
@@ -99,7 +85,6 @@
     {#each filtered as playlist, index (playlist.id)}
       <div
         in:fly|global={{ duration: 500, delay: 30 * index + 30, easing: quintOut, x: -20 }}
-        out:fade={{ duration: 200 }}
         class="size-36 md:size-40 xl:size-52"
         animate:flip={{ duration: 200 }}
       >

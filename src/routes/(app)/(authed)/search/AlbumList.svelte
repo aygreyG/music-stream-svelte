@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
-
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
   import type { SearchAlbum } from '$lib/shared/types';
@@ -30,7 +28,6 @@
   }: Props = $props();
   let requestCanceller: (() => void) | undefined = $state();
   let loading = $state(false);
-  const duration = 250;
 
   function cancelRequest() {
     if (requestCanceller) {
@@ -48,10 +45,7 @@
   });
 </script>
 
-<div
-  out:fade|global={{ duration }}
-  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
->
+<div class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl">
   Albums:
 </div>
 <div class="flex flex-wrap items-center justify-center gap-8 p-2">

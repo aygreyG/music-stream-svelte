@@ -1,5 +1,10 @@
 <script lang="ts">
+  import type { Component } from 'svelte';
+  import type { SVGAttributes } from 'svelte/elements';
+
   import { enhance } from '$app/forms';
+  import { resolve } from '$app/paths';
+  import type { ResolvedPathname } from '$app/types';
   import { vibrate } from '$lib/actions/vibrate';
   import { ROLE } from '$lib/shared/consts';
   import type { SignedInUser } from '$lib/shared/types';
@@ -25,14 +30,14 @@
   let { user = null, onclickedelement }: Props = $props();
 
   type NavigationElementType = {
-    href: string;
+    href: ResolvedPathname;
     text: string;
-    Icon: any;
+    Icon: Component<SVGAttributes<SVGSVGElement>>;
   };
 
   const adminElements: NavigationElementType[] = [
     {
-      href: '/admin',
+      href: resolve('/admin'),
       text: 'Admin',
       Icon: RoundAdminPanelSettings
     }
@@ -40,42 +45,42 @@
 
   const loggedInElements: NavigationElementType[] = [
     {
-      href: '/profile',
+      href: resolve('/profile'),
       text: 'Profile',
       Icon: ProfileFill
     },
     {
-      href: '/search',
+      href: resolve('/search'),
       text: 'Search',
       Icon: RoundSearch
     },
     {
-      href: '/',
+      href: resolve('/'),
       text: 'Albums',
       Icon: MusicAlbumFill
     },
     {
-      href: '/artist',
+      href: resolve('/artist'),
       text: 'Artists',
       Icon: MusicArtistFill
     },
     {
-      href: '/tag',
+      href: resolve('/tag'),
       text: 'Tags',
       Icon: RoundLabel
     },
     {
-      href: '/playlist',
+      href: resolve('/playlist'),
       text: 'Playlists',
       Icon: RoundPlaylistPlay
     },
     {
-      href: '/changelog',
+      href: resolve('/changelog'),
       text: 'Changelog',
       Icon: RoundNewReleases
     },
     {
-      href: '/logout',
+      href: resolve('/logout'),
       text: 'Logout',
       Icon: RoundLougout
     }
@@ -83,7 +88,7 @@
 
   const loggedOutElements: NavigationElementType[] = [
     {
-      href: '/login',
+      href: resolve('/login'),
       text: 'Login',
       Icon: RoundLogin
     }

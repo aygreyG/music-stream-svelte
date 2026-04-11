@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
   import { enhance } from '$app/forms';
   import { resolve } from '$app/paths';
@@ -30,7 +30,6 @@
     onartistsloaded
   }: Props = $props();
 
-  const duration = 250;
   let loading = $state(false);
   let requestCanceller: (() => void) | undefined = $state();
 
@@ -72,10 +71,7 @@
   }
 </script>
 
-<div
-  out:fade|global={{ duration }}
-  class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl"
->
+<div class="my-2 bg-linear-to-r from-transparent via-zinc-600/20 px-2 text-center text-xl">
   Artists:
 </div>
 <div class="flex w-full flex-col">

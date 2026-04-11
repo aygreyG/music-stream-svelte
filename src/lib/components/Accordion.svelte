@@ -25,7 +25,7 @@
 
 <button
   class={[
-    'mt-4 flex w-full items-center justify-between rounded-t-xl bg-zinc-600/20 p-2 pl-4 text-xl font-bold transition-all hover:bg-zinc-600/30',
+    'bg-surface-container hover:bg-surface-container/60 mt-4 flex w-full items-center justify-between rounded-t-xl p-2 pl-4 text-xl font-bold transition-all',
     show ? 'shadow-md' : 'rounded-b-xl'
   ]}
   in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay }}

@@ -30,7 +30,6 @@
   let selectedScheme: (typeof SCHEME_TYPES)[number] = $state('EXPRESSIVE');
   let darkMode = $state<'true' | 'false' | 'auto'>('auto');
   let deleteClicked = $state(false);
-  let deleteTimeout: string | number | NodeJS.Timeout | undefined = $state();
   let loading = $state(false);
   let listensLoading = $state(false);
   let listenedIndex = $state(0);

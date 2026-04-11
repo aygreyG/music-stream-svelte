@@ -1,9 +1,9 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { quintOut } from 'svelte/easing';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
-  import RoundSearch from '~icons/ic/round-search';
+  import SearchBar from '$lib/components/SearchBar.svelte';
 
   import AlbumLink from '../../AlbumLink.svelte';
   import type { PageData } from './$types.js';
@@ -62,10 +62,7 @@
   }
 </script>
 
-<div
-  out:fade|global={{ duration: 250 }}
-  class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden"
->
+<div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
   <div
     class="p-4 pb-0 text-center text-xl font-bold"
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
@@ -79,18 +76,7 @@
       scrolledFromTop && 'shadow-md'
     ]}
   >
-    <label class="flex w-full items-center">
-      <input
-        class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
-        type="text"
-        bind:value={searchString}
-        oninput={onSearchInput}
-        name="search"
-        autocomplete="off"
-        placeholder="Search"
-      />
-      <RoundSearch class="absolute right-2 text-xl" />
-    </label>
+    <SearchBar bind:value={searchString} oninput={onSearchInput} />
   </div>
 
   <div

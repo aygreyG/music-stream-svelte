@@ -52,32 +52,37 @@
 
 <div
   transition:slide
-  class="ml-4 flex flex-col py-1 {level > 0 ? 'border-l-2 border-l-zinc-300/50 pl-3' : ''}"
+  class="ml-2 flex flex-col py-0.5 {level > 0 ? 'border-l-outline-variant/50 border-l-2 pl-3' : ''}"
 >
   <button
-    class="flex w-full transition-colors hover:text-zinc-400"
+    class={[
+      'flex w-full items-center gap-1.5 rounded-lg px-2 py-1 transition-colors',
+      $pickedFolder === folderNode
+        ? 'bg-primary/15 text-primary'
+        : 'text-on-surface-variant hover:text-on-surface hover:bg-zinc-600/20'
+    ]}
     {onclick}
     disabled={loading}
     use:vibrate
   >
-    <div class={[$pickedFolder === folderNode && 'text-primary']}>
+    <div class="flex-none">
       {#if loading}
-        <RoundRefresh class="h-6 w-6 animate-spin" />
+        <RoundRefresh class="h-5 w-5 animate-spin" />
       {:else if opened}
-        <FolderOpenRounded class="h-6 w-6" />
+        <FolderOpenRounded class="h-5 w-5" />
       {:else}
-        <FolderRounded class="h-6 w-6" />
+        <FolderRounded class="h-5 w-5" />
       {/if}
     </div>
-    <div
+    <span
       title="{folderNode.label}{$pickedFolder === folderNode ? ' (selected)' : ''}"
-      class="whitespace-nowrap"
+      class="truncate text-sm"
     >
-      {folderNode.label}{$pickedFolder === folderNode ? ' (selected)' : ''}
-    </div>
+      {folderNode.label}
+    </span>
   </button>
 
-  {#each folderNode.children as _, index}
+  {#each folderNode.children as node, index (node.path)}
     {#if opened}
       <Folder bind:folderNode={folderNode.children[index]} level={level + 1} />
     {/if}

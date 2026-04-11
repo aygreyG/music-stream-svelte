@@ -1,9 +1,10 @@
 <script lang="ts">
   import { tick } from 'svelte';
   import { quintOut } from 'svelte/easing';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
   import { vibrate } from '$lib/actions/vibrate';
+  import SearchBar from '$lib/components/SearchBar.svelte';
 
   import RoundRefresh from '~icons/ic/round-refresh';
   import RoundSearch from '~icons/ic/round-search';
@@ -30,7 +31,6 @@
   let container: HTMLDivElement | null = $state(null);
   let loading = $state(false);
   let timeout: NodeJS.Timeout | undefined = $state();
-  let duration = 250;
   let scrolled = $state(false);
   let startIndex = $state(0);
 
@@ -68,9 +68,8 @@
   </div>
 
   <form
-    out:fade|global={{ duration }}
     bind:this={formElement}
-    class="z-20 flex px-8 pt-1"
+    class="z-20 flex items-center gap-2 px-8 pt-1"
     onsubmit={() => {
       if (searchString && searchString !== data.query) {
         loading = true;
@@ -79,50 +78,43 @@
     data-sveltekit-replacestate
     data-sveltekit-keepfocus
   >
-    <label class="flex w-2/3 items-center border-e border-zinc-500/50">
-      <input
-        required
-        placeholder="Search"
-        class="focus-visible:ring-primary w-full rounded-s-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
-        type="text"
-        bind:value={searchString}
-        oninput={() => {
-          clearTimeout(timeout);
-          if (searchString) {
-            timeout = setTimeout(() => {
-              formElement?.requestSubmit();
-            }, 500);
-          }
-        }}
-        name="query"
-        autocomplete="off"
-      />
-    </label>
-    <label class="flex w-1/3 items-center border-e border-zinc-500/50">
-      <select
-        name="type"
-        class="focus:ring-primary focus-visible:ring-primary w-full border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus:ring-2 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
-        onchange={() => {
-          if (searchString) formElement?.requestSubmit();
-        }}
-        bind:value={type}
-      >
-        <option value="all">All</option>
-        <option value="track">Track</option>
-        <option value="album">Album</option>
-        <option value="artist">Artist</option>
-      </select>
-    </label>
+    <SearchBar
+      bind:value={searchString}
+      name="query"
+      required
+      class="flex-1"
+      oninput={() => {
+        clearTimeout(timeout);
+        if (searchString) {
+          timeout = setTimeout(() => {
+            formElement?.requestSubmit();
+          }, 500);
+        }
+      }}
+    />
+    <select
+      name="type"
+      class="bg-surface-container text-on-surface-variant hover:bg-surface-container-low focus:ring-primary/60 rounded-full border-none py-2 pr-8 pl-3 outline-hidden transition-all duration-200 focus:ring-2"
+      onchange={() => {
+        if (searchString) formElement?.requestSubmit();
+      }}
+      bind:value={type}
+    >
+      <option value="all">All</option>
+      <option value="track">Track</option>
+      <option value="album">Album</option>
+      <option value="artist">Artist</option>
+    </select>
     <button
       type="submit"
-      class="focus-visible:ring-primary flex items-center justify-center rounded-e-xl bg-zinc-600/30 px-2 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2 disabled:cursor-not-allowed disabled:text-white/20 disabled:hover:bg-zinc-600/30"
+      class="bg-primary text-on-primary focus-visible:ring-primary/60 flex shrink-0 items-center justify-center rounded-full p-2 outline-hidden transition-all duration-200 hover:brightness-110 focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100"
       disabled={!searchString || loading}
       use:vibrate={{ mute: !searchString }}
     >
       {#if loading}
-        <RoundRefresh class="animate-spin text-xl" />
+        <RoundRefresh class="animate-spin text-lg" />
       {:else}
-        <RoundSearch class="text-xl" />
+        <RoundSearch class="text-lg" />
       {/if}
     </button>
   </form>
@@ -141,7 +133,6 @@
     class="h-full w-full overflow-auto"
     bind:this={container}
     onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
-    out:fade={{ duration: 200 }}
   >
     {#if data?.success && data.total && results}
       {#if results.tracks.length > 0}

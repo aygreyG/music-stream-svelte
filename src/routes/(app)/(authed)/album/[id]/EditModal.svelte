@@ -5,6 +5,7 @@
   import { invalidate } from '$app/navigation';
   import { vibrate } from '$lib/actions/vibrate';
   import Modal from '$lib/components/Modal.svelte';
+  import SearchBar from '$lib/components/SearchBar.svelte';
   import type { AlbumReleaseSearchResult } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
@@ -122,21 +123,21 @@
       </button>
     </form>
 
-    <div class="flex w-full max-w-4xl px-6 py-1">
-      <input
-        class="focus-visible:ring-primary w-full rounded-s-xl border-none bg-zinc-600/50 py-1 text-ellipsis outline-hidden transition-all focus-visible:ring-2"
-        type="text"
+    <div class="flex w-full max-w-4xl items-center gap-2 px-6 py-1">
+      <SearchBar
+        class="flex-1"
         bind:value={albumArtQuery}
+        placeholder="Search for album art on MusicBrainz"
         onkeydown={(e) => e.key === 'Enter' && searchArt()}
       />
       <button
-        class="focus-visible:ring-primary focus-visible:bg-on-primary focus-visible:text-primary bg-primary text-on-primary flex items-center justify-center rounded-e-xl px-2 py-1 outline-hidden transition-colors focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50"
+        class="bg-primary text-on-primary focus-visible:ring-primary/60 flex shrink-0 items-center justify-center rounded-full p-2 outline-hidden transition-all duration-200 hover:brightness-110 focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100"
         onclick={searchArt}
         use:vibrate
         disabled={albumArtQuery === '' || albumArtLoading}
         title="Search for album art"
       >
-        <RoundSearch class="text-xl" />
+        <RoundSearch class="text-lg" />
       </button>
     </div>
     <div class="w-full max-w-4xl px-6 pb-2 text-xs">

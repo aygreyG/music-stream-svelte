@@ -63,9 +63,12 @@
       {/if}
 
       <div class="changelog-content max-w-none px-4">
+        <!-- These htmls are generated from the changelog markdown -->
         {#if showDev && data.fullHtml}
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           {@html data.fullHtml}
         {:else}
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           {@html data.stableHtml}
         {/if}
       </div>

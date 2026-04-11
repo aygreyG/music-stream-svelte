@@ -3,17 +3,16 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
 
-  import RoundSearch from '~icons/ic/round-search';
+  import SearchBar from '$lib/components/SearchBar.svelte';
 
   import type { PageData } from './$types';
-  import TagRow from './TagRow.svelte';
+  import TagInfo from './TagInfo.svelte';
 
   interface Props {
     data: PageData;
   }
 
   let { data }: Props = $props();
-  let scrolled = $state(false);
   let searchString = $state('');
   let scrolledFromTop = $state(false);
   let container: HTMLDivElement | null = $state(null);
@@ -23,7 +22,7 @@
   );
 </script>
 
-<div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
+<div class="@container absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
   <div
     class="p-4 pb-0 text-center text-xl font-bold"
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
@@ -32,7 +31,7 @@
   </div>
 
   {#if data.tags.length === 0}
-    <div class="p-4 pt-1 text-center text-xl font-bold">There are no tags 🫤</div>
+    <div class="p-4 pt-1 text-center text-xl font-bold">There are no tags.</div>
   {:else}
     <div
       class={[
@@ -40,30 +39,19 @@
         scrolledFromTop && 'shadow-md'
       ]}
     >
-      <label class="flex w-full items-center rounded-xl backdrop-blur-md">
-        <input
-          class="focus-visible:ring-primary w-full rounded-xl border-none bg-zinc-600/30 py-1 outline-hidden transition-all hover:bg-zinc-600/50 focus-visible:bg-zinc-600/50 focus-visible:ring-2"
-          type="text"
-          bind:value={searchString}
-          name="search"
-          autocomplete="off"
-          placeholder="Search"
-        />
-        <RoundSearch class="absolute right-2 text-xl" />
-      </label>
+      <SearchBar bind:value={searchString} />
     </div>
 
     <div
-      class="flex h-full flex-col overflow-auto pt-2 text-lg"
+      class="grid grid-cols-1 gap-3 overflow-auto p-2 @xs:grid-cols-2 @2xl:grid-cols-4 @4xl:grid-cols-5 @7xl:grid-cols-6"
       bind:this={container}
       onscroll={() => {
-        scrolled = true;
         if (container) scrolledFromTop = container.scrollTop > 0;
       }}
     >
       {#each filtered as tag, index (tag.id)}
-        <div animate:flip={{ duration: 100 }} class="flex w-full flex-col">
-          <TagRow {tag} {index} {scrolled} />
+        <div animate:flip={{ duration: 100 }}>
+          <TagInfo {tag} {index} />
         </div>
       {/each}
     </div>
