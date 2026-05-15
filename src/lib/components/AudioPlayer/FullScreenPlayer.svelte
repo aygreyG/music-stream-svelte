@@ -23,7 +23,7 @@
 
   import { beforeNavigate, goto } from '$app/navigation';
   import { resolve } from '$app/paths';
-  import { handleVibrate } from '$lib/utils';
+  import { handleVibrate, sortArtists } from '$lib/utils';
 
   import MarqueeText from '../MarqueeText.svelte';
   import Controls from './Controls.svelte';
@@ -260,8 +260,7 @@
                     {track.title}
                   </span>
                   <span class="truncate text-xs font-medium">
-                    {track.artists
-                      .toSorted((a) => (a.name !== track.album.albumArtist.name ? 1 : -1))
+                    {sortArtists(track.artists, track.album.albumArtist.name)
                       .map((a) => a.name)
                       .join(', ')}
                   </span>
@@ -319,7 +318,7 @@
                   </h1>
                 </MarqueeText>
                 <div class="text-on-surface-variant mt-2 truncate text-lg">
-                  {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                  {#each sortArtists(audioPlayer.currentTrack.artists, audioPlayer.currentTrack.album.albumArtist.name) as artist, index (artist.id)}
                     {@const shouldHaveComma =
                       audioPlayer.currentTrack.artists.length > 1 &&
                       index != audioPlayer.currentTrack.artists.length - 1}

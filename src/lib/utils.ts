@@ -83,3 +83,22 @@ export function formatDate(date: Date | string, includeMs = false) {
     }) + ms
   );
 }
+
+export function sortArtists<T extends { name: string }>(artists: T[], albumArtist?: string) {
+  const sortedArtists = artists.sort((a, b) =>
+    a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+  );
+
+  if (!albumArtist) return sortedArtists;
+
+  const albumArtistIndex = sortedArtists.findIndex(
+    (artist) => artist.name.toLowerCase() === albumArtist.toLowerCase()
+  );
+
+  if (albumArtistIndex === -1) return sortedArtists;
+
+  const [albumArtistObj] = sortedArtists.splice(albumArtistIndex, 1);
+  sortedArtists.unshift(albumArtistObj);
+
+  return sortedArtists;
+}

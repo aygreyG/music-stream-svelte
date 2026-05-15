@@ -4,6 +4,7 @@
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { sortArtists } from '$lib/utils';
 
   import RoundPlaylistAdd from '~icons/ic/round-playlist-add';
   import Heart from '~icons/iconamoon/heart';
@@ -180,7 +181,9 @@
         {track.title}
       </div>
       <div class="line-clamp-1 text-xs">
-        {track.artists.map((a) => a.name).join(', ')}
+        {sortArtists(track.artists, track.album.albumArtist.name)
+          .map((a) => a.name)
+          .join(', ')}
       </div>
     </div>
   </div>
@@ -192,7 +195,7 @@
 
 {#snippet artistsSubview()}
   <div class="flex flex-col">
-    {#each track.artists as artist (artist.id)}
+    {#each sortArtists(track.artists, track.album.albumArtist.name) as artist (artist.id)}
       <a
         href={resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id })}
         class="hover:bg-on-surface/10 flex items-center gap-3 px-3 py-2 text-sm transition-colors"

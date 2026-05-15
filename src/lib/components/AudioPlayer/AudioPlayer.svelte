@@ -10,6 +10,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { sortArtists } from '$lib/utils';
 
   import RoundKeyboardArrowUp from '~icons/ic/round-keyboard-arrow-up';
   import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
@@ -349,10 +350,10 @@
                     {audioPlayer.currentTrack.title}
                   </span>
                   <span class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
-                    {audioPlayer.currentTrack.artists
-                      .toSorted((a) =>
-                        a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1
-                      )
+                    {sortArtists(
+                      audioPlayer.currentTrack.artists,
+                      audioPlayer.currentTrack.album.albumArtist.name
+                    )
                       .map((a) => a.name)
                       .join(', ')}
                   </span>
@@ -425,7 +426,7 @@
                       </a>
                     </MarqueeText>
                     <MarqueeText class="text-xs font-medium">
-                      {#each audioPlayer.currentTrack.artists.toSorted( (a) => (a.name !== audioPlayer.currentTrack?.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+                      {#each sortArtists(audioPlayer.currentTrack.artists, audioPlayer.currentTrack.album.albumArtist.name) as artist, index (artist.id)}
                         {@const shouldHaveComma =
                           audioPlayer.currentTrack.artists.length > 1 &&
                           index != audioPlayer.currentTrack.artists.length - 1}

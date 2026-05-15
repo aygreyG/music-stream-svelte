@@ -10,7 +10,7 @@
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import { deviceInfo } from '$lib/states/deviceInfo.svelte';
-  import { getReadableTime } from '$lib/utils';
+  import { getReadableTime, sortArtists } from '$lib/utils';
 
   import RoundMoreVert from '~icons/ic/round-more-vert';
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
@@ -215,7 +215,7 @@
       {track.title}
     </button>
     <div class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
-      {#each track.artists.toSorted( (a) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+      {#each sortArtists(track.artists, track.album.albumArtist.name) as artist, index (artist.id)}
         {@const shouldHaveComma = track.artists.length > 1 && index != track.artists.length - 1}
         <a
           class={['hover:underline', shouldHaveComma && 'mr-1']}
