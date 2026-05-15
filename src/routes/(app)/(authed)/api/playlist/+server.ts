@@ -15,10 +15,12 @@ export const POST = async ({ request, locals }) => {
     return new Response('Missing name', { status: 400 });
   }
 
-  const trackExists = await prisma.track.findUnique({
-    where: { id: trackId },
-    select: { id: true }
-  });
+  const trackExists = trackId
+    ? await prisma.track.findUnique({
+        where: { id: trackId },
+        select: { id: true }
+      })
+    : null;
 
   if (trackId && !trackExists) {
     return new Response('Track not found', { status: 404 });
