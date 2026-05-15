@@ -1,3 +1,9 @@
+# [1.6.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.4...v1.6.0-dev.5) (2026-05-15)
+
+### Bug Fixes
+
+- add keys to options ([114f341](https://github.com/aygreyG/music-stream-svelte/commit/114f341957718d664fa0ec4c2d4db0f68f4fed92))
+
 # [1.6.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.3...v1.6.0-dev.4) (2026-05-15)
 
 ### Bug Fixes
