@@ -35,6 +35,7 @@
     };
     /** When true, desktop also shows a side popover for this option's submenu. */
     desktopSubmenu?: boolean;
+    key: string;
   };
 
   interface Props {
@@ -96,7 +97,7 @@
 </script>
 
 {#snippet renderOptions(compact: boolean)}
-  {#each options as option (option.label)}
+  {#each options as option (option.key)}
     {#if !option.hidden}
       {@const Icon = option.icon}
       {#if option.href}

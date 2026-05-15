@@ -78,7 +78,8 @@
         label: isFavourited ? 'Remove from favourites' : 'Add to favourites',
         icon: isFavourited ? HeartFill : Heart,
         loading: favouriteLoading,
-        onclick: toggleFavourite
+        onclick: toggleFavourite,
+        key: 'favourite'
       },
       {
         label: 'Add to playlist',
@@ -87,19 +88,22 @@
         onclick: () => {
           playlistModalOpen = true;
           onclose();
-        }
+        },
+        key: 'add-to-playlist'
       },
       {
         label: 'Remove from playlist',
         icon: HeartOff,
         hidden: !currentPlaylistId,
-        onclick: removeFromPlaylist
+        onclick: removeFromPlaylist,
+        key: 'remove-from-playlist'
       },
       {
         label: track.album.title,
         icon: MusicAlbumFill,
         hidden: track.album.id === currentAlbumId,
-        href: resolve(`/(app)/(authed)/album/[id]`, { id: track.album.id })
+        href: resolve(`/(app)/(authed)/album/[id]`, { id: track.album.id }),
+        key: `album-${track.album.id}`
       }
     ];
 
@@ -109,14 +113,16 @@
         icon: MusicArtistFill,
         submenu: { title: 'Go to artist', content: artistsSubview },
         desktopSubmenu: true,
-        onclick: () => {}
+        onclick: () => {},
+        key: 'artist-submenu'
       });
     } else {
       const trackArtist = track.artists[0];
       mo.push({
         label: trackArtist.name,
         icon: MusicArtistFill,
-        href: resolve(`/(app)/(authed)/artist/[id]`, { id: trackArtist.id })
+        href: resolve(`/(app)/(authed)/artist/[id]`, { id: trackArtist.id }),
+        key: `artist-${trackArtist.id}`
       });
     }
 
