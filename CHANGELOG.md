@@ -1,3 +1,9 @@
+# [1.6.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0...v1.6.0-dev.1) (2026-04-11)
+
+### Features
+
+- update tags, artists and setup pages ([ae52109](https://github.com/aygreyG/music-stream-svelte/commit/ae5210907e972e5f64e4cd4d3293db3c2fa66f34))
+
 # [1.5.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.4.1...v1.5.0) (2026-04-09)
 
 ### Bug Fixes
