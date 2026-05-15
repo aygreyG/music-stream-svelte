@@ -1,3 +1,9 @@
+# [1.6.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.2...v1.6.0-dev.3) (2026-05-15)
+
+### Bug Fixes
+
+- artist and tag info placeholders ([f8a3608](https://github.com/aygreyG/music-stream-svelte/commit/f8a36081d036c6e49ef9624f5b62f89dd06ef813))
+
 # [1.6.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.1...v1.6.0-dev.2) (2026-05-15)
 
 ### Features
