@@ -94,6 +94,59 @@ function createAudioPlayer() {
     playlistInfo = null;
   }
 
+  function removeFromQueue(trackId: string) {
+    const index = queueContext.findIndex((t) => t.id === trackId);
+    if (index === -1) return;
+
+    const newQueue = queueContext.filter((t) => t.id !== trackId);
+
+    if (newQueue.length === 0) {
+      stopAndClear();
+      return;
+    }
+
+    if (index === queueContextIndex) {
+      // Removed the currently playing track
+      const newIndex = Math.min(queueContextIndex, newQueue.length - 1);
+      queueContext = newQueue;
+      queueContextIndex = newIndex;
+      currentTrack = newQueue[newIndex];
+    } else {
+      queueContext = newQueue;
+      if (index < queueContextIndex) {
+        queueContextIndex--;
+      }
+    }
+  }
+
+  function addToQueue(track: TrackType) {
+    queueContext = [...queueContext, track];
+  }
+
+  function updateQueueContext(newContext: TrackType[]) {
+    if (newContext.length === 0) {
+      stopAndClear();
+      return;
+    }
+
+    if (currentTrack) {
+      const newIndex = newContext.findIndex((t) => t.id === currentTrack!.id);
+      if (newIndex !== -1) {
+        queueContext = newContext;
+        queueContextIndex = newIndex;
+      } else {
+        // Current track no longer in queue
+        const safeIndex = Math.min(queueContextIndex, newContext.length - 1);
+        queueContext = newContext;
+        queueContextIndex = safeIndex;
+        currentTrack = newContext[safeIndex];
+      }
+    } else {
+      queueContext = newContext;
+      queueContextIndex = 0;
+    }
+  }
+
   return {
     togglePlay,
     playNext,
@@ -101,6 +154,9 @@ function createAudioPlayer() {
     playAtIndex,
     playTrack,
     stopAndClear,
+    removeFromQueue,
+    addToQueue,
+    updateQueueContext,
     get paused() {
       return paused;
     },

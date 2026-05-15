@@ -1,5 +1,6 @@
 <script lang="ts">
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { deviceInfo } from '$lib/states/deviceInfo.svelte';
 
   interface Props {
     currentString: string;
@@ -43,7 +44,7 @@
           navigator &&
           'vibrate' in navigator &&
           matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-          matchMedia('(hover: none), (pointer: coarse)').matches &&
+          deviceInfo.isMobile &&
           currentTime &&
           Math.abs(currentTime - prevSeekTime) > 0.5
         ) {

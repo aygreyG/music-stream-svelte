@@ -329,6 +329,7 @@
               ? 500 + index * 30
               : Math.min(Math.abs(index - listenedIndex), index) * 30}
             track={listen.track}
+            user={data.user}
           />
         </div>
       {/each}

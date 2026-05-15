@@ -142,6 +142,7 @@
           tracks={results.tracks}
           {startIndex}
           {type}
+          user={data.user}
           ontracksloaded={(tracks) => {
             if (results?.tracks) {
               startIndex = results.tracks.length - 1;

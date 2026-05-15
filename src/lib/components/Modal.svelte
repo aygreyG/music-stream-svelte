@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount, type Snippet } from 'svelte';
-  import { cubicIn } from 'svelte/easing';
-  import { fade } from 'svelte/transition';
+  import type { Snippet } from 'svelte';
+  import { cubicIn, cubicOut } from 'svelte/easing';
+  import { fade, fly } from 'svelte/transition';
 
   import { vibrate } from '$lib/actions/vibrate';
 
@@ -14,59 +14,54 @@
   }
 
   let { title = '', children, onclose }: Props = $props();
-  let scrolled = $state(false);
-  let container: HTMLDivElement;
 
-  onMount(() => {
+  $effect(() => {
     function keyDownListener(e: KeyboardEvent) {
       if (e.key === 'Escape') {
         onclose?.();
       }
     }
-
     document.addEventListener('keydown', keyDownListener);
-
-    return () => {
-      document.removeEventListener('keydown', keyDownListener);
-    };
+    return () => document.removeEventListener('keydown', keyDownListener);
   });
 </script>
 
 <div
-  transition:fade={{ duration: 200, easing: cubicIn }}
-  class="absolute top-0 left-0 z-10 h-full w-full bg-zinc-900/40 backdrop-blur-xs"
+  transition:fade={{ duration: 200 }}
+  class="bg-surface/50 absolute inset-0 z-10 flex items-center justify-center p-4 backdrop-blur-sm sm:p-8"
   aria-modal="true"
 >
+  <!-- Backdrop -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <div class="absolute top-0 left-0 h-full w-full" onclick={() => onclose?.()}></div>
+  <div class="absolute inset-0" onclick={() => onclose?.()}></div>
+
+  <!-- Dialog -->
   <div
-    bind:this={container}
-    onscroll={() => {
-      scrolled = container.scrollTop > 0;
-    }}
-    class="bg-surface absolute top-0 left-0 m-6 flex h-[calc(100%-3rem)] w-[calc(100%-3rem)] flex-col overflow-auto rounded-xl md:m-12 md:h-[calc(100%-6rem)] md:w-[calc(100%-6rem)]"
+    in:fly={{ y: 20, duration: 250, easing: cubicOut }}
+    out:fly={{ y: 10, duration: 150, easing: cubicIn }}
+    class="bg-surface-container relative z-10 flex max-h-full w-full max-w-lg flex-col overflow-hidden rounded-2xl shadow-2xl"
   >
-    <div
-      class={[
-        'sticky top-0 left-0 z-20 flex w-full items-center justify-between',
-        scrolled && 'bg-surface/95 shadow-md backdrop-blur-xs'
-      ]}
-    >
-      <div class="text-on-surface w-full text-center text-xl font-bold">{title}</div>
+    <!-- Header -->
+    <div class="border-outline-variant/50 flex flex-none items-center gap-3 border-b px-5 py-4">
+      <h2 class="text-on-surface min-w-0 flex-1 text-lg font-semibold">{title}</h2>
       {#if onclose}
-        <div
-          class="hover:bg-surface-variant/20 flex items-center justify-center place-self-start rounded-tr-md rounded-bl-md"
+        <!-- svelte-ignore a11y_autofocus -->
+        <button
+          aria-label="Close"
+          autofocus
+          use:vibrate
+          onclick={() => onclose?.()}
+          class="text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/30 flex shrink-0 items-center justify-center rounded-full p-1 transition-colors"
         >
-          <!-- svelte-ignore a11y_autofocus -->
-          <button aria-label="Close modal" autofocus use:vibrate onclick={() => onclose?.()}>
-            <RoundClose
-              class="text-on-surface-variant hover:text-primary p-1 text-3xl transition-colors"
-            />
-          </button>
-        </div>
+          <RoundClose class="text-xl" />
+        </button>
       {/if}
     </div>
-    {@render children?.()}
+
+    <!-- Scrollable content -->
+    <div class="min-h-0 flex-1 overflow-auto">
+      {@render children?.()}
+    </div>
   </div>
 </div>

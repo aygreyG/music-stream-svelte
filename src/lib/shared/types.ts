@@ -11,6 +11,9 @@ export type SignedInUser = Prisma.UserGetPayload<{
     playlists: {
       include: { tracks: true };
     };
+    favouriteTracks: {
+      select: { id: true };
+    };
   };
 }>;
 

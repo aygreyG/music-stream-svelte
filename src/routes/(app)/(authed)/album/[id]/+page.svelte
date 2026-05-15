@@ -11,16 +11,10 @@
   import { ROLE } from '$lib/shared/consts';
 
   import RoundEdit from '~icons/ic/round-edit';
-  import Heart from '~icons/iconamoon/heart';
-  import HeartFill from '~icons/iconamoon/heart-fill';
   import AlbumIcon from '~icons/iconamoon/music-album';
 
-  import type { Prisma } from '../../../../../generated/prisma-client/client';
   import type { PageData } from './$types';
   import EditModal from './EditModal.svelte';
-  import PlaylistModal from './PlaylistModal.svelte';
-
-  type TrackType = Prisma.TrackGetPayload<{ select: { title: true; id: true } }>;
 
   interface Props {
     data: PageData;
@@ -29,8 +23,6 @@
   let { data }: Props = $props();
   let animate: boolean = $state(false);
   let editModalOpen: boolean = $state(false);
-  let playlistModalOpen: boolean = $state(false);
-  let playlistModalTrack: TrackType | undefined = $state();
   const discInfo = $derived.by(() => {
     let multipleDiscs = false;
     const discChangeIndexes: number[] = [];
@@ -56,11 +48,6 @@
   let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
   let schemeStyle = $state('');
-
-  function openPlaylistModal(track: TrackType) {
-    playlistModalTrack = track;
-    playlistModalOpen = true;
-  }
 
   $effect(() => {
     if (data.album.id) {
@@ -168,32 +155,13 @@
               showAlbumName={false}
               track={{ ...track, album: data.album }}
               delay={250 + index * 30}
-            >
-              {#snippet button()}
-                <button
-                  use:vibrate
-                  onclick={() => openPlaylistModal(track)}
-                  class="hover:text-primary flex h-full w-full items-center justify-center"
-                >
-                  {#if track.playlists.length > 0}
-                    <HeartFill class="text-2xl transition-colors" />
-                  {:else}
-                    <Heart class="text-2xl transition-colors" />
-                  {/if}
-                </button>
-              {/snippet}
-            </TrackRow>
+              user={data.user}
+              currentAlbumId={data.album.id}
+            />
           </div>
         {/each}
       </div>
     </div>
-    <PlaylistModal
-      onclose={() => (playlistModalOpen = false)}
-      open={playlistModalOpen}
-      user={data.user}
-      track={playlistModalTrack}
-    />
-
     {#if editModalOpen}
       <EditModal onclose={() => (editModalOpen = false)} album={data.album} />
     {/if}

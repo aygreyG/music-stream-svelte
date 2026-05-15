@@ -3,17 +3,25 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
 
+  import { invalidate } from '$app/navigation';
   import { resolve } from '$app/paths';
   import { vibrate } from '$lib/actions/vibrate';
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
-  import { getReadableTime } from '$lib/utils';
+  import { deviceInfo } from '$lib/states/deviceInfo.svelte';
+  import { getReadableTime, sortArtists } from '$lib/utils';
 
+  import RoundMoreVert from '~icons/ic/round-more-vert';
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
+  import RoundRefresh from '~icons/ic/round-refresh';
+  import Heart from '~icons/iconamoon/heart';
+  import HeartFill from '~icons/iconamoon/heart-fill';
 
   import type { Prisma } from '../../generated/prisma-client/client';
   import AlbumImage from './AlbumImage.svelte';
+  import TrackMenu from './TrackMenu.svelte';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {
@@ -47,6 +55,9 @@
     handleClick?: () => void;
     button?: Snippet;
     showAlbumName?: boolean;
+    user?: SignedInUser | null;
+    currentAlbumId?: string;
+    currentPlaylistId?: string;
   }
 
   const player = getAudioPlayer();
@@ -63,10 +74,39 @@
       );
     },
     button,
-    showAlbumName = true
+    showAlbumName = true,
+    user = null,
+    currentAlbumId,
+    currentPlaylistId
   }: Props = $props();
 
   let schemeStyle = $state('');
+  let menuOpen = $state(false);
+  let menuAnchor: HTMLButtonElement | null = $state(null);
+  let favouriteLoading = $state(false);
+
+  let isFavourited = $derived(user?.favouriteTracks.some((t) => t.id === track.id) ?? false);
+
+  async function toggleFavourite() {
+    if (!user) return;
+    favouriteLoading = true;
+    try {
+      const res = await fetch(`/api/favourite/${track.id}`, { method: 'POST' });
+      if (res.ok) {
+        const data = await res.json();
+        if (player.playlistInfo?.id === 'favourites') {
+          if (!data.favourited) {
+            player.removeFromQueue(track.id);
+          } else {
+            player.addToQueue(track);
+          }
+        }
+        await invalidate('load:main');
+      }
+    } finally {
+      favouriteLoading = false;
+    }
+  }
 
   $effect(() => {
     getExpressiveScheme(track.album.id, track.album.albumArtId).then((scheme) => {
@@ -76,17 +116,6 @@
 
   let indexed = $derived(index !== null);
   let hasButton = $derived(!!button);
-  let mainWidth = $derived.by(() => {
-    if (indexed && hasButton) {
-      return 'w-[calc(100%-10rem)]';
-    }
-
-    if (indexed || hasButton) {
-      return 'w-[calc(100%-8rem)]';
-    }
-
-    return 'w-[calc(100%-6rem)]';
-  });
 </script>
 
 <div
@@ -108,7 +137,8 @@
   class={[
     'group flex h-16 w-full flex-none cursor-default items-center rounded-md from-transparent via-zinc-600/10 to-transparent transition-colors select-none hover:bg-linear-to-r focus-visible:bg-linear-to-r',
     player.currentTrack?.id === track.id && 'bg-linear-to-r',
-    !indexed && 'px-4'
+    !indexed && 'px-4',
+    (!!user || hasButton) && 'pr-2'
   ]}
   style={schemeStyle}
 >
@@ -117,7 +147,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
       onclick={() => {
-        if (matchMedia('(hover: none), (pointer: coarse)').matches) {
+        if (deviceInfo.isMobile) {
           handleClick();
         }
       }}
@@ -140,7 +170,7 @@
           onclick={() => player.togglePlay()}
           use:vibrate
         >
-          <RoundPlayCircleFilled class="text-center text-3xl transition-colors" />
+          <RoundPlayCircleFilled class="text-center text-3xl" />
         </button>
       {:else}
         <button
@@ -148,7 +178,7 @@
           onclick={() => player.togglePlay()}
           use:vibrate
         >
-          <RoundPauseCircleOutline class="text-center text-3xl transition-colors" />
+          <RoundPauseCircleOutline class="text-center text-3xl" />
         </button>
       {/if}
     {:else}
@@ -157,7 +187,7 @@
         onclick={() => handleClick()}
         use:vibrate
       >
-        <RoundPlayCircleFilled class="overflow-clip text-center text-3xl transition-colors" />
+        <RoundPlayCircleFilled class="overflow-clip text-center text-3xl" />
       </button>
       <div
         class="pointer-events-none absolute top-0 left-0 z-0 h-12 w-12 overflow-hidden rounded-md group-hover:opacity-0"
@@ -172,10 +202,10 @@
     {/if}
   </div>
 
-  <div class="{mainWidth} flex-none pl-2">
+  <div class="min-w-0 flex-1 pl-2">
     <button
       onclick={() => {
-        if (matchMedia('(hover: none), (pointer: coarse)').matches) {
+        if (deviceInfo.isMobile) {
           handleClick();
         }
       }}
@@ -185,7 +215,7 @@
       {track.title}
     </button>
     <div class="overflow-hidden text-xs font-medium text-ellipsis whitespace-nowrap">
-      {#each track.artists.toSorted( (a) => (a.name !== track.album.albumArtist.name ? 1 : -1) ) as artist, index (artist.id)}
+      {#each sortArtists(track.artists, track.album.albumArtist.name) as artist, index (artist.id)}
         {@const shouldHaveComma = track.artists.length > 1 && index != track.artists.length - 1}
         <a
           class={['hover:underline', shouldHaveComma && 'mr-1']}
@@ -222,7 +252,7 @@
 
   <button
     onclick={() => {
-      if (matchMedia('(hover: none), (pointer: coarse)').matches) {
+      if (deviceInfo.isMobile) {
         handleClick();
       }
     }}
@@ -236,5 +266,51 @@
     <div class="w-8 flex-none">
       {@render button?.()}
     </div>
+  {/if}
+
+  {#if !!user}
+    <button
+      class="hidden w-8 flex-none items-center justify-center sm:flex"
+      onclick={(e) => {
+        e.stopPropagation();
+        toggleFavourite();
+      }}
+      disabled={favouriteLoading}
+      aria-label={isFavourited ? 'Remove from favourites' : 'Add to favourites'}
+      use:vibrate
+    >
+      {#if favouriteLoading}
+        <RoundRefresh class="animate-spin text-lg" />
+      {:else if isFavourited}
+        <HeartFill class="hover:text-primary text-lg transition-colors" />
+      {:else}
+        <Heart
+          class="hover:text-primary text-lg opacity-50 transition-all group-hover:opacity-100"
+        />
+      {/if}
+    </button>
+
+    <button
+      bind:this={menuAnchor}
+      class="flex w-8 flex-none items-center justify-center"
+      onclick={(e) => {
+        e.stopPropagation();
+        menuOpen = true;
+      }}
+      use:vibrate
+      aria-label="More options"
+    >
+      <RoundMoreVert class="text-lg opacity-50 transition-opacity group-hover:opacity-100" />
+    </button>
+
+    <TrackMenu
+      {track}
+      {user}
+      open={menuOpen}
+      onclose={() => (menuOpen = false)}
+      anchor={menuAnchor}
+      {currentAlbumId}
+      {currentPlaylistId}
+    />
   {/if}
 </div>
