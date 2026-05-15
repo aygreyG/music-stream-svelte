@@ -1,3 +1,9 @@
+# [1.6.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.3...v1.6.0-dev.4) (2026-05-15)
+
+### Bug Fixes
+
+- tag info height ([cc47a63](https://github.com/aygreyG/music-stream-svelte/commit/cc47a630ea26b70e2fb23d64e7b6713878274044))
+
 # [1.6.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.2...v1.6.0-dev.3) (2026-05-15)
 
 ### Bug Fixes
