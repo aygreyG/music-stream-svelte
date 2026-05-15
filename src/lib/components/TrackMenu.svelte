@@ -112,10 +112,11 @@
         onclick: () => {}
       });
     } else {
+      const trackArtist = track.artists[0];
       mo.push({
-        label: track.album.albumArtist.name,
+        label: trackArtist.name,
         icon: MusicArtistFill,
-        href: resolve(`/(app)/(authed)/artist/[id]`, { id: track.album.albumArtist.id })
+        href: resolve(`/(app)/(authed)/artist/[id]`, { id: trackArtist.id })
       });
     }
 

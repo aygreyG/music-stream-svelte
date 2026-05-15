@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 
 import prisma from '$lib/server/prisma.js';
-import { updateCacheKey } from '$lib/server/serverSettings.js';
 
 export const POST = async ({ params, locals }) => {
   const { trackId } = params;
@@ -28,8 +27,6 @@ export const POST = async ({ params, locals }) => {
       favouriteTracks: isFavourited ? { disconnect: { id: trackId } } : { connect: { id: trackId } }
     }
   });
-
-  await updateCacheKey();
 
   return json({ favourited: !isFavourited });
 };

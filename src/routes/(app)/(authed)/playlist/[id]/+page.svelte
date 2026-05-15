@@ -36,7 +36,7 @@
       {data.playlist.name}
       {#if data.playlist.tracks.length > 0}
         <div class="text-sm">
-          {data.playlist.tracks.length} tracks
+          {data.playlist.tracks.length} track{data.playlist.tracks.length !== 1 ? 's' : ''}
         </div>
       {/if}
     </div>

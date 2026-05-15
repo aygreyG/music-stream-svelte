@@ -85,7 +85,7 @@ export function formatDate(date: Date | string, includeMs = false) {
 }
 
 export function sortArtists<T extends { name: string }>(artists: T[], albumArtist?: string) {
-  const sortedArtists = artists.sort((a, b) =>
+  const sortedArtists = artists.toSorted((a, b) =>
     a.name.toLowerCase().localeCompare(b.name.toLowerCase())
   );
 

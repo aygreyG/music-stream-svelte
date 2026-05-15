@@ -15,7 +15,8 @@
   let { data, children }: Props = $props();
 
   onMount(() => {
-    initDeviceInfo();
+    const cleanup = initDeviceInfo();
+    return cleanup;
   });
 </script>
 

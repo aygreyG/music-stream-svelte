@@ -276,6 +276,7 @@
         toggleFavourite();
       }}
       disabled={favouriteLoading}
+      aria-label={isFavourited ? 'Remove from favourites' : 'Add to favourites'}
       use:vibrate
     >
       {#if favouriteLoading}
@@ -297,6 +298,7 @@
         menuOpen = true;
       }}
       use:vibrate
+      aria-label="More options"
     >
       <RoundMoreVert class="text-lg opacity-50 transition-opacity group-hover:opacity-100" />
     </button>

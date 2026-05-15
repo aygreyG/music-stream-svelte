@@ -57,12 +57,14 @@
   const isMobile = $derived(deviceInfo.isMobile);
 
   beforeNavigate((navigation) => {
-    if (activeSubmenu && open) {
-      navigation.cancel();
-      activeSubmenu = null;
-    } else if (open) {
-      navigation.cancel();
-      onclose();
+    if (navigation.type === 'popstate') {
+      if (activeSubmenu && open) {
+        navigation.cancel();
+        activeSubmenu = null;
+      } else if (open) {
+        navigation.cancel();
+        onclose();
+      }
     }
   });
 
@@ -171,6 +173,7 @@
                 class="hover:bg-on-surface/10 flex items-center justify-center rounded-lg p-1.5 transition-colors"
                 use:vibrate
                 onclick={() => (activeSubmenu = null)}
+                aria-label="Back to menu"
               >
                 <RoundChevronLeft class="text-xl" />
               </button>

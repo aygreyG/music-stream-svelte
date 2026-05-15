@@ -60,6 +60,7 @@
     class="fixed inset-0 z-50"
     transition:fade={{ duration: 200, easing: cubicIn }}
     aria-modal="true"
+    aria-label={title || 'Bottom Sheet'}
     role="dialog"
   >
     <!-- svelte-ignore a11y_no_static_element_interactions -->

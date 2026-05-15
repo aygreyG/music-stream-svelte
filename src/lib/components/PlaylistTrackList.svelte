@@ -20,7 +20,7 @@
   let togglingPlaylistId = $state<string | null>(null);
 
   async function createPlaylist() {
-    if (!newPlaylistName || !trackId) return;
+    if (!newPlaylistName || !trackId || newPlaylistLoading) return;
     newPlaylistLoading = true;
     try {
       const res = await fetch('/api/playlist', {

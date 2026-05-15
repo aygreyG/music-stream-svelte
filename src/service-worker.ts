@@ -17,7 +17,9 @@ const NON_CACHEABLE = [
   '/loading',
   '/login',
   '/logout',
-  '/profile'
+  '/profile',
+  '/favourite',
+  '/playlist'
 ];
 const CACHE_FIRST = ['/api/image'];
 const TIMEOUT_MS = 10000;

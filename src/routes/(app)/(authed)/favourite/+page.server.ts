@@ -2,7 +2,7 @@ import prisma from '$lib/server/prisma.js';
 
 import type { Prisma } from '../../../../generated/prisma-client/client';
 
-export const load = async ({ locals, setHeaders, depends }) => {
+export const load = async ({ locals, depends }) => {
   if (!locals.user) {
     return { favouriteTracks: [], albumSet: [], title: 'Favourites' };
   }
@@ -71,12 +71,6 @@ export const load = async ({ locals, setHeaders, depends }) => {
     }
 
     if (albumSet.length === 4) break;
-  }
-
-  if (locals.serverSettings?.cacheKey !== undefined) {
-    setHeaders({
-      'cache-key': locals.serverSettings.cacheKey.toString()
-    });
   }
 
   return {

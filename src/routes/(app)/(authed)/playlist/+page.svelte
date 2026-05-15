@@ -65,7 +65,11 @@
       <HeartFill class="text-primary text-3xl" />
       <div class="text-sm font-semibold">Favourites</div>
       {#if data.user?.favouriteTracks}
-        <div class="text-xs">{data.user.favouriteTracks.length} tracks</div>
+        <div class="text-xs">
+          {data.user.favouriteTracks.length} track{data.user.favouriteTracks.length !== 1
+            ? 's'
+            : ''}
+        </div>
       {/if}
     </a>
 

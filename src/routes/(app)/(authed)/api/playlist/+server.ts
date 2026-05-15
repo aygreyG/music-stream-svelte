@@ -1,7 +1,6 @@
 import { json } from '@sveltejs/kit';
 
 import prisma from '$lib/server/prisma.js';
-import { updateCacheKey } from '$lib/server/serverSettings.js';
 
 export const POST = async ({ request, locals }) => {
   if (!locals.user) {
@@ -16,6 +15,15 @@ export const POST = async ({ request, locals }) => {
     return new Response('Missing name', { status: 400 });
   }
 
+  const trackExists = await prisma.track.findUnique({
+    where: { id: trackId },
+    select: { id: true }
+  });
+
+  if (trackId && !trackExists) {
+    return new Response('Track not found', { status: 404 });
+  }
+
   const playlist = await prisma.playlist.create({
     data: {
       name,
@@ -23,8 +31,6 @@ export const POST = async ({ request, locals }) => {
       ...(trackId ? { tracks: { connect: { id: trackId } } } : {})
     }
   });
-
-  await updateCacheKey();
 
   return json({ playlist });
 };
