@@ -1,3 +1,9 @@
+# [1.6.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.1...v1.6.0-dev.2) (2026-05-15)
+
+### Features
+
+- rethink playlists ([#216](https://github.com/aygreyG/music-stream-svelte/issues/216)) ([1687c36](https://github.com/aygreyG/music-stream-svelte/commit/1687c36f281eb30b37ee7075b1c77cea7f538dbf)), closes [#123](https://github.com/aygreyG/music-stream-svelte/issues/123)
+
 # [1.6.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0...v1.6.0-dev.1) (2026-04-11)
 
 ### Features
