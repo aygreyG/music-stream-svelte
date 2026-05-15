@@ -40,7 +40,7 @@
   </a>
 {:else}
   <div
-    class="bg-surface-container min-h-15 w-full rounded-xl"
+    class="min-h-15 w-full opacity-0"
     use:observeVisibility={{ onVisible: () => (visible = true) }}
     aria-hidden="true"
   ></div>
