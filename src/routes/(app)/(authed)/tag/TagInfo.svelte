@@ -23,7 +23,7 @@
 
 {#if visible}
   <a
-    class="bg-surface-container hover:bg-surface-container/60 flex items-center gap-2 rounded-xl p-4 transition-colors"
+    class="bg-surface-container hover:bg-surface-container/60 flex h-full items-center gap-2 rounded-xl p-4 transition-colors"
     href={resolve(`/(app)/(authed)/tag/[id]`, { id: tag.id })}
     use:vibrate
     in:fly|global={{ duration: 300, easing: quintOut, x: -20, delay: cappedDelay }}
@@ -40,7 +40,7 @@
   </a>
 {:else}
   <div
-    class="min-h-15 w-full opacity-0"
+    class="h-full min-h-15 w-full opacity-0"
     use:observeVisibility={{ onVisible: () => (visible = true) }}
     aria-hidden="true"
   ></div>
