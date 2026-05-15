@@ -33,7 +33,6 @@ export const load = async ({ locals, setHeaders }) => {
   }
 
   return {
-    user: locals.user,
     playlists,
     title: 'Playlists'
   };

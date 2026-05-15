@@ -4,11 +4,13 @@
   import { fly } from 'svelte/transition';
 
   import { enhance } from '$app/forms';
+  import { resolve } from '$app/paths';
   import { vibrate } from '$lib/actions/vibrate';
   import SearchBar from '$lib/components/SearchBar.svelte';
 
   import RoundAdd from '~icons/ic/round-add';
   import RoundRefresh from '~icons/ic/round-refresh';
+  import HeartFill from '~icons/iconamoon/heart-fill';
 
   import type { ActionData, PageData } from './$types';
   import PlaylistElement from './PlaylistElement.svelte';
@@ -54,6 +56,19 @@
     bind:this={container}
     onscroll={() => (scrolled = container.scrollTop > 0)}
   >
+    <a
+      href={resolve('/(app)/(authed)/favourite')}
+      in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
+      class="bg-surface-variant/40 text-on-surface-variant flex size-36 flex-col items-center justify-center gap-2 rounded-xl md:size-40 xl:size-52"
+      use:vibrate
+    >
+      <HeartFill class="text-primary text-3xl" />
+      <div class="text-sm font-semibold">Favourites</div>
+      {#if data.user?.favouriteTracks}
+        <div class="text-xs">{data.user.favouriteTracks.length} tracks</div>
+      {/if}
+    </a>
+
     <form
       action="?/add"
       method="POST"
@@ -68,7 +83,7 @@
       }}
     >
       <button
-        in:fly|global={{ duration: 500, easing: quintOut, x: -20 }}
+        in:fly|global={{ duration: 500, easing: quintOut, x: -20, delay: 30 }}
         type="submit"
         class="bg-surface-variant/40 text-on-surface-variant flex size-36 items-center justify-center rounded-xl md:size-40 xl:size-52"
         use:vibrate
@@ -84,7 +99,7 @@
 
     {#each filtered as playlist, index (playlist.id)}
       <div
-        in:fly|global={{ duration: 500, delay: 30 * index + 30, easing: quintOut, x: -20 }}
+        in:fly|global={{ duration: 500, delay: 30 * index + 60, easing: quintOut, x: -20 }}
         class="size-36 md:size-40 xl:size-52"
         animate:flip={{ duration: 200 }}
       >

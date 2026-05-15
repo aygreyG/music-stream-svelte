@@ -1,22 +1,18 @@
-import { error } from '@sveltejs/kit';
-
 import prisma from '$lib/server/prisma.js';
 
-import type { Prisma } from '../../../../../generated/prisma-client/client';
+import type { Prisma } from '../../../../generated/prisma-client/client';
 
-export const load = async ({ locals, params, setHeaders, depends }) => {
+export const load = async ({ locals, setHeaders, depends }) => {
+  if (!locals.user) {
+    return { favouriteTracks: [], albumSet: [], title: 'Favourites' };
+  }
+
   depends('load:main');
-  const { id } = params;
 
-  const playlist = await prisma.playlist.findFirst({
-    where: {
-      userId: locals.user?.id,
-      id
-    },
+  const user = await prisma.user.findUnique({
+    where: { id: locals.user.id },
     select: {
-      id: true,
-      name: true,
-      tracks: {
+      favouriteTracks: {
         select: {
           id: true,
           title: true,
@@ -59,9 +55,7 @@ export const load = async ({ locals, params, setHeaders, depends }) => {
     }
   });
 
-  if (!playlist) {
-    return error(404, 'Playlist not found');
-  }
+  const favouriteTracks = user?.favouriteTracks ?? [];
 
   const albumSet: Prisma.AlbumGetPayload<{
     select: {
@@ -71,7 +65,7 @@ export const load = async ({ locals, params, setHeaders, depends }) => {
     };
   }>[] = [];
 
-  for (const track of playlist.tracks) {
+  for (const track of favouriteTracks) {
     if (!albumSet.find((a) => a.id === track.album.id)) {
       albumSet.push(track.album);
     }
@@ -86,8 +80,8 @@ export const load = async ({ locals, params, setHeaders, depends }) => {
   }
 
   return {
-    playlist,
+    favouriteTracks,
     albumSet,
-    title: `Playlist${playlist ? ` - ${playlist.name}` : ''}`
+    title: 'Favourites'
   };
 };

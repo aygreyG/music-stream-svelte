@@ -93,7 +93,7 @@
     if (!resp.ok) {
       console.error('Error sending listening data for: ', trackId, ', duration: ', duration);
     } else {
-      invalidate('listened');
+      invalidate('load:listened');
     }
   }
 

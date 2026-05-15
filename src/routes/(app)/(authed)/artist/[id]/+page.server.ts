@@ -54,7 +54,6 @@ export const load = async ({ locals, params, setHeaders }) => {
   }
 
   return {
-    user: locals.user,
     artist,
     title: artist.name
   };

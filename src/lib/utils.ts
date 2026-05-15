@@ -1,3 +1,5 @@
+import { deviceInfo } from '$lib/states/deviceInfo.svelte';
+
 /** Transform seconds into a human readable format
  * @param seconds - The number of seconds to transform
  * @param maxIntervals - The maximum number of intervals to display, it can be max 7 (default is 2)
@@ -52,7 +54,7 @@ export function handleVibrate(pattern: number | number[] = 200, mute = false) {
     !mute &&
     navigator &&
     matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-    matchMedia('(hover: none), (pointer: coarse)').matches &&
+    deviceInfo.isMobile &&
     'vibrate' in navigator
   ) {
     navigator.vibrate(pattern);

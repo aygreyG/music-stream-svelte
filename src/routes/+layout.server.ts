@@ -1,5 +1,5 @@
 export const load = async ({ locals, depends }) => {
-  depends('mainLayout');
+  depends('load:main');
 
   return {
     user: locals.user,

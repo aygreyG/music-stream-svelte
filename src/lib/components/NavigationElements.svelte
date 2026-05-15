@@ -16,6 +16,7 @@
   import RoundNewReleases from '~icons/ic/round-new-releases';
   import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
   import RoundSearch from '~icons/ic/round-search';
+  import HeartFill from '~icons/iconamoon/heart-fill';
   import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
   import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
   import ProfileFill from '~icons/iconamoon/profile-fill';
@@ -73,6 +74,11 @@
       href: resolve('/playlist'),
       text: 'Playlists',
       Icon: RoundPlaylistPlay
+    },
+    {
+      href: resolve('/favourite'),
+      text: 'Favourites',
+      Icon: HeartFill
     },
     {
       href: resolve('/changelog'),

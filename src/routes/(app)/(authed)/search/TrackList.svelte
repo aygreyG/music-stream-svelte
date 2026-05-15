@@ -6,7 +6,7 @@
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
   import TrackRow from '$lib/components/TrackRow.svelte';
-  import type { SearchTrack } from '$lib/shared/types';
+  import type { SearchTrack, SignedInUser } from '$lib/shared/types';
 
   import RoundRefresh from '~icons/ic/round-refresh';
 
@@ -18,6 +18,7 @@
     type: string;
     ontypechange: () => void;
     ontracksloaded: (searchTracks: SearchTrack[]) => void;
+    user?: SignedInUser | null;
   }
 
   let {
@@ -27,7 +28,8 @@
     query,
     type,
     ontypechange,
-    ontracksloaded
+    ontracksloaded,
+    user = null
   }: Props = $props();
   let requestCanceller: (() => void) | undefined = $state();
   let loading = $derived(!!requestCanceller);
@@ -49,7 +51,7 @@
       class={['w-full flex-none', index === tracks.length - 1 && 'pb-2']}
       animate:flip={{ duration: 500, easing: quintOut }}
     >
-      <TrackRow {track} delay={250 + Math.min(Math.abs(index - startIndex), index) * 30} />
+      <TrackRow {track} {user} delay={250 + Math.min(Math.abs(index - startIndex), index) * 30} />
     </div>
   {/each}
 </div>

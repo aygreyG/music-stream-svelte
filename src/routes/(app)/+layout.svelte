@@ -1,8 +1,9 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte';
+  import { onMount, type Snippet } from 'svelte';
 
   import AudioPlayer from '$lib/components/AudioPlayer';
   import NavBar from '$lib/components/NavBar.svelte';
+  import { initDeviceInfo } from '$lib/states/deviceInfo.svelte';
 
   import type { PageData } from './(authed)/$types';
 
@@ -12,13 +13,18 @@
   }
 
   let { data, children }: Props = $props();
+
+  onMount(() => {
+    initDeviceInfo();
+  });
 </script>
 
 <div class="flex h-full w-full flex-col gap-1">
   <div class="flex min-h-0 flex-1 gap-1">
     <NavBar user={data.user} />
     <div
-      class="bg-surface h-full min-w-0 flex-1 overflow-hidden rounded-xl transition-colors duration-500"
+      id="app-main-panel"
+      class="bg-surface relative h-full min-w-0 flex-1 overflow-hidden rounded-xl transition-colors duration-500"
     >
       {@render children?.()}
     </div>

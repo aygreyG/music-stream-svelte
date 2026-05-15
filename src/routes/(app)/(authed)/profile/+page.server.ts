@@ -8,7 +8,7 @@ import { ROLE } from '$lib/shared/consts.js';
 const MAX_LISTENS = 25;
 
 export const load = async ({ locals, depends }) => {
-  depends('listened');
+  depends('load:listened');
   const listens = await prisma.listened.findMany({
     where: { userId: locals.user?.id },
     select: {

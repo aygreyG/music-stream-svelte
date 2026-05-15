@@ -171,7 +171,11 @@
       {#if audioPlayer.playlistInfo}
         <button
           onclick={() => {
-            goto(resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id }));
+            const url =
+              audioPlayer.playlistInfo?.id === 'favourites'
+                ? resolve(`/(app)/(authed)/favourite`)
+                : resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id });
+            goto(url);
             onclose();
           }}
           class="text-on-surface-variant line-clamp-1 text-sm tracking-wide sm:hidden"
@@ -212,9 +216,13 @@
             {#if audioPlayer.playlistInfo}
               <button
                 onclick={() => {
-                  goto(
-                    resolve(`/(app)/(authed)/playlist/[id]`, { id: audioPlayer.playlistInfo!.id })
-                  );
+                  const url =
+                    audioPlayer.playlistInfo?.id === 'favourites'
+                      ? resolve(`/(app)/(authed)/favourite`)
+                      : resolve(`/(app)/(authed)/playlist/[id]`, {
+                          id: audioPlayer.playlistInfo!.id
+                        });
+                  goto(url);
                   onclose();
                 }}
                 class="text-on-surface-variant line-clamp-1 flex-none text-sm tracking-wide"

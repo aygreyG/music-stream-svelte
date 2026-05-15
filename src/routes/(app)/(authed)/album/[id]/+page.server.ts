@@ -28,10 +28,6 @@ export const load = async ({ locals, params, depends, setHeaders }) => {
           id: true,
           trackNumber: true,
           discNumber: true,
-          playlists: {
-            where: { userId: locals.user?.id },
-            orderBy: { createdAt: 'desc' }
-          },
           artists: { select: { id: true, name: true } },
           length: true,
           title: true
@@ -67,7 +63,6 @@ export const load = async ({ locals, params, depends, setHeaders }) => {
   });
 
   return {
-    user: locals.user,
     album,
     title: `${album.title} - ${album.albumArtist.name}`,
     tags
@@ -75,87 +70,6 @@ export const load = async ({ locals, params, depends, setHeaders }) => {
 };
 
 export const actions = {
-  addplaylist: async ({ request, locals }) => {
-    const formData = await request.formData();
-    const playlistname = formData.get('playlistname')?.toString();
-    const trackId = formData.get('trackid')?.toString();
-
-    if (!playlistname || !trackId || !locals.user) {
-      return;
-    }
-
-    const playlist = await prisma.playlist.create({
-      data: {
-        name: playlistname,
-        tracks: {
-          connect: {
-            id: trackId
-          }
-        },
-        user: {
-          connect: {
-            id: locals.user?.id
-          }
-        }
-      }
-    });
-
-    await updateCacheKey();
-
-    return {
-      playlist
-    };
-  },
-  addtoplaylist: async ({ request, locals }) => {
-    const formData = await request.formData();
-    const playlistId = formData.get('playlistid')?.toString();
-    const trackId = formData.get('trackid')?.toString();
-    const shouldRemove = formData.get('remove')?.toString() === 'true';
-
-    if (!playlistId || !trackId || !locals.user) {
-      return;
-    }
-
-    if (shouldRemove) {
-      const playlist = await prisma.playlist.update({
-        where: {
-          id: playlistId
-        },
-        data: {
-          tracks: {
-            disconnect: {
-              id: trackId
-            }
-          }
-        }
-      });
-
-      await updateCacheKey();
-
-      return {
-        playlist
-      };
-    }
-
-    const playlist = await prisma.playlist.update({
-      where: {
-        id: playlistId
-      },
-      data: {
-        tracks: {
-          connect: {
-            id: trackId
-          }
-        }
-      }
-    });
-
-    await updateCacheKey();
-
-    return {
-      playlist
-    };
-  },
   uploadart: async ({ request, params }) => {
     const { id } = params;
     const formData = await request.formData();

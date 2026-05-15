@@ -109,6 +109,9 @@ export async function validateToken(authCookie: string) {
           tracks: true
         },
         orderBy: { createdAt: 'desc' }
+      },
+      favouriteTracks: {
+        select: { id: true }
       }
     }
   });
