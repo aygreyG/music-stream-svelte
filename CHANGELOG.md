@@ -1,3 +1,9 @@
+# [1.6.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.5...v1.6.0-dev.6) (2026-06-03)
+
+### Features
+
+- add lyrics handling and resizable panels in fullscreen ([b43462e](https://github.com/aygreyG/music-stream-svelte/commit/b43462eff5ce6bbc4f32b714694bd1c2d34184db))
+
 # [1.6.0-dev.5](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.4...v1.6.0-dev.5) (2026-05-15)
 
 ### Bug Fixes
