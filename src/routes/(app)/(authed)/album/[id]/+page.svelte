@@ -4,6 +4,7 @@
   import { fade, fly } from 'svelte/transition';
 
   import { resolve } from '$app/paths';
+  import scroll from '$lib/actions/scroll.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import TrackRow from '$lib/components/TrackRow.svelte';
@@ -45,7 +46,6 @@
     };
   });
 
-  let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
   let schemeStyle = $state('');
 
@@ -137,8 +137,8 @@
 
       <div
         class="flex h-full flex-col overflow-auto"
-        bind:this={container}
-        onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
+        use:scroll
+        onscrolltopchange={(e) => (scrolled = e.detail.scrollTop > 0)}
       >
         {#each data.album.tracks as track, index (track.id)}
           {#if track.discNumber !== null && discInfo.multipleDiscs && (index === 0 || discInfo.discChangeIndexes.includes(index))}

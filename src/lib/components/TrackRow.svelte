@@ -15,13 +15,20 @@
   import RoundMoreVert from '~icons/ic/round-more-vert';
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
+  import RoundPlaylistAdd from '~icons/ic/round-playlist-add';
   import RoundRefresh from '~icons/ic/round-refresh';
   import Heart from '~icons/iconamoon/heart';
   import HeartFill from '~icons/iconamoon/heart-fill';
+  import HeartOff from '~icons/iconamoon/heart-off';
+  import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
+  import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
 
   import type { Prisma } from '../../generated/prisma-client/client';
   import AlbumImage from './AlbumImage.svelte';
-  import TrackMenu from './TrackMenu.svelte';
+  import MenuButton, { type MenuItem } from './MenuButton.svelte';
+  import PlaylistModal from './PlaylistModal.svelte';
+  import PlaylistTrackList from './PlaylistTrackList.svelte';
+  import Portal from './Portal.svelte';
 
   type TrackRowType = Prisma.TrackGetPayload<{
     select: {
@@ -81,8 +88,6 @@
   }: Props = $props();
 
   let schemeStyle = $state('');
-  let menuOpen = $state(false);
-  let menuAnchor: HTMLButtonElement | null = $state(null);
   let favouriteLoading = $state(false);
 
   let isFavourited = $derived(user?.favouriteTracks.some((t) => t.id === track.id) ?? false);
@@ -108,6 +113,31 @@
     }
   }
 
+  function handlePlaylistChange(playlistId: string, added: boolean) {
+    if (player.playlistInfo?.id === playlistId) {
+      if (added) {
+        player.addToQueue(track);
+      } else {
+        player.removeFromQueue(track.id);
+      }
+    }
+  }
+
+  async function removeFromPlaylist() {
+    if (!currentPlaylistId) return;
+    const res = await fetch(`/api/playlist/${currentPlaylistId}/track`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trackId: track.id })
+    });
+    if (res.ok) {
+      if (player.playlistInfo?.id === currentPlaylistId) {
+        player.removeFromQueue(track.id);
+      }
+      await invalidate('load:main');
+    }
+  }
+
   $effect(() => {
     getExpressiveScheme(track.album.id, track.album.albumArtId).then((scheme) => {
       schemeStyle = schemeToCSS(scheme);
@@ -116,7 +146,87 @@
 
   let indexed = $derived(index !== null);
   let hasButton = $derived(!!button);
+  let playlistModalOpen = $state(false);
+
+  let menuItems = $derived.by<MenuItem[]>(() => {
+    const sortedArtists = sortArtists(track.artists, track.album.albumArtist.name);
+
+    return [
+      {
+        label: isFavourited ? 'Remove from favourites' : 'Add to favourites',
+        icon: isFavourited ? HeartFill : Heart,
+        loading: favouriteLoading,
+        onclick: toggleFavourite,
+        key: 'favourite',
+        closeOnSelect: false
+      },
+      {
+        label: 'Add to playlist',
+        key: 'add-to-playlist',
+        subMenu: playlistSubview,
+        icon: RoundPlaylistAdd,
+        onclick: () => {
+          playlistModalOpen = true;
+        }
+      },
+      {
+        label: 'Remove from playlist',
+        key: 'remove-from-playlist',
+        icon: HeartOff,
+        onclick: removeFromPlaylist,
+        hidden: !currentPlaylistId
+      },
+      {
+        label: 'Go to artist',
+        key: 'artists',
+        subItems: sortedArtists.map((artist) => ({
+          label: artist.name,
+          href: resolve(`/(app)/(authed)/artist/[id]`, { id: artist.id }),
+          key: artist.id,
+          icon: MusicArtistFill
+        })),
+        icon: MusicArtistFill,
+        hidden: sortedArtists.length < 2
+      },
+      {
+        label: sortedArtists[0].name,
+        icon: MusicArtistFill,
+        href: resolve(`/(app)/(authed)/artist/[id]`, { id: sortedArtists[0].id }),
+        key: sortedArtists[0].id,
+        hidden: sortedArtists.length > 1
+      },
+      {
+        label: track.album.title,
+        icon: MusicAlbumFill,
+        href: resolve(`/(app)/(authed)/album/[id]`, { id: track.album.id }),
+        key: `album-${track.album.id}`,
+        hidden: track.album.id === currentAlbumId
+      }
+    ];
+  });
 </script>
+
+{#snippet trackHeader()}
+  <div class="mb-3 flex items-center gap-3">
+    <div class="size-12 flex-none overflow-clip rounded-md">
+      <AlbumImage album={track.album} maxSize="s" />
+    </div>
+    <div class="min-w-0 flex-1">
+      <div class="line-clamp-1 font-bold">
+        {track.title}
+      </div>
+      <div class="line-clamp-1 text-xs">
+        {sortArtists(track.artists, track.album.albumArtist.name)
+          .map((a) => a.name)
+          .join(', ')}
+      </div>
+    </div>
+  </div>
+{/snippet}
+
+{#snippet playlistSubview()}
+  <PlaylistTrackList {user} trackId={track.id} onplaylistchange={handlePlaylistChange} />
+{/snippet}
 
 <div
   in:fly|global={{
@@ -147,7 +257,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div
       onclick={() => {
-        if (deviceInfo.isMobile) {
+        if (deviceInfo.isMobile.current) {
           handleClick();
         }
       }}
@@ -205,7 +315,7 @@
   <div class="min-w-0 flex-1 pl-2">
     <button
       onclick={() => {
-        if (deviceInfo.isMobile) {
+        if (deviceInfo.isMobile.current) {
           handleClick();
         }
       }}
@@ -252,7 +362,7 @@
 
   <button
     onclick={() => {
-      if (deviceInfo.isMobile) {
+      if (deviceInfo.isMobile.current) {
         handleClick();
       }
     }}
@@ -290,27 +400,23 @@
       {/if}
     </button>
 
-    <button
-      bind:this={menuAnchor}
-      class="flex w-8 flex-none items-center justify-center"
-      onclick={(e) => {
-        e.stopPropagation();
-        menuOpen = true;
-      }}
-      use:vibrate
-      aria-label="More options"
+    <MenuButton
+      bottomSheetHeader={trackHeader}
+      contentProps={{ align: 'end', style: schemeStyle }}
+      items={menuItems}
     >
       <RoundMoreVert class="text-lg opacity-50 transition-opacity group-hover:opacity-100" />
-    </button>
-
-    <TrackMenu
-      {track}
-      {user}
-      open={menuOpen}
-      onclose={() => (menuOpen = false)}
-      anchor={menuAnchor}
-      {currentAlbumId}
-      {currentPlaylistId}
-    />
+    </MenuButton>
   {/if}
 </div>
+
+<Portal class="text-on-surface" style={schemeStyle}>
+  <PlaylistModal
+    open={playlistModalOpen}
+    {user}
+    trackId={track.id}
+    trackTitle={track.title}
+    onclose={() => (playlistModalOpen = false)}
+    onplaylistchange={handlePlaylistChange}
+  />
+</Portal>

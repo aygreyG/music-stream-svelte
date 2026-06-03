@@ -54,7 +54,7 @@ export function handleVibrate(pattern: number | number[] = 200, mute = false) {
     !mute &&
     navigator &&
     matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-    deviceInfo.isMobile &&
+    deviceInfo.isMobile.current &&
     'vibrate' in navigator
   ) {
     navigator.vibrate(pattern);

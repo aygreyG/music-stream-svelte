@@ -5,6 +5,7 @@
 
   import { enhance } from '$app/forms';
   import { resolve } from '$app/paths';
+  import scroll from '$lib/actions/scroll.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import SearchBar from '$lib/components/SearchBar.svelte';
 
@@ -25,7 +26,6 @@
   let searchString = $state('');
   let scrolled = $state(false);
   let loading = $state(false);
-  let container: HTMLDivElement;
 
   let filtered = $derived(
     data.playlists.filter((playlist) =>
@@ -53,8 +53,8 @@
 
   <div
     class="flex flex-wrap justify-center gap-2 overflow-auto p-2"
-    bind:this={container}
-    onscroll={() => (scrolled = container.scrollTop > 0)}
+    use:scroll
+    onscrolltopchange={(e) => (scrolled = e.detail.scrollTop > 0)}
   >
     <a
       href={resolve('/(app)/(authed)/favourite')}

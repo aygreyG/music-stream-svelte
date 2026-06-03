@@ -3,6 +3,7 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
 
+  import scroll from '$lib/actions/scroll.svelte';
   import { vibrate } from '$lib/actions/vibrate';
   import SearchBar from '$lib/components/SearchBar.svelte';
 
@@ -28,7 +29,6 @@
   // svelte-ignore state_referenced_locally
   let results = $state(data.results);
   let formElement: HTMLFormElement | null = $state(null);
-  let container: HTMLDivElement | null = $state(null);
   let loading = $state(false);
   let timeout: NodeJS.Timeout | undefined = $state();
   let scrolled = $state(false);
@@ -131,8 +131,8 @@
 
   <div
     class="h-full w-full overflow-auto"
-    bind:this={container}
-    onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
+    use:scroll
+    onscrolltopchange={(e) => (scrolled = e.detail.scrollTop > 0)}
   >
     {#if data?.success && data.total && results}
       {#if results.tracks.length > 0}

@@ -59,7 +59,7 @@
 </script>
 
 <form
-  class="mb-2 flex w-full justify-between rounded-xl border-none px-0.5"
+  class="mt-0.5 mb-2 flex w-full justify-between rounded-xl border-none px-0.5"
   onsubmit={(e) => {
     e.preventDefault();
     createPlaylist();

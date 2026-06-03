@@ -1,17 +1,24 @@
 <script lang="ts">
   import { type Snippet } from 'svelte';
   import { cubicIn, cubicOut } from 'svelte/easing';
+  import { type SvelteHTMLElements } from 'svelte/elements';
   import { fade, fly } from 'svelte/transition';
+
+  import scroll from '$lib/actions/scroll.svelte';
+
+  type DivProps = SvelteHTMLElements['div'] & {
+    onscrolltopchange?: (e: CustomEvent<{ scrollTop: number }>) => void;
+  };
 
   interface Props {
     open: boolean;
     onclose: () => void;
     title?: string;
     children?: Snippet;
-    onscroll?: (e: Event) => void;
+    containerProps?: DivProps;
   }
 
-  let { open, onclose, title = '', children, onscroll }: Props = $props();
+  let { open, onclose, title = '', children, containerProps }: Props = $props();
 
   let startY = $state(0);
   let currentY = $state(0);
@@ -88,7 +95,11 @@
       {#if title}
         <div class="px-4 pb-2 text-center text-lg font-bold">{title}</div>
       {/if}
-      <div class="max-h-[60vh] overflow-auto overscroll-contain pb-6" {onscroll}>
+      <div
+        {...containerProps}
+        use:scroll
+        class={['max-h-[60vh] overflow-auto overscroll-contain pb-6', containerProps?.class]}
+      >
         {@render children?.()}
       </div>
     </div>

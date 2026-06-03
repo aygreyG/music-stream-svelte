@@ -44,7 +44,7 @@
           navigator &&
           'vibrate' in navigator &&
           matchMedia('(prefers-reduced-motion: no-preference)').matches &&
-          deviceInfo.isMobile &&
+          deviceInfo.isMobile.current &&
           currentTime &&
           Math.abs(currentTime - prevSeekTime) > 0.5
         ) {

@@ -3,6 +3,7 @@
   import { quintOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
 
+  import scroll from '$lib/actions/scroll.svelte';
   import SearchBar from '$lib/components/SearchBar.svelte';
 
   import type { PageData } from './$types';
@@ -15,7 +16,6 @@
   let { data }: Props = $props();
   let searchString = $state('');
   let scrolledFromTop = $state(false);
-  let container: HTMLDivElement | null = $state(null);
 
   let filtered = $derived(
     data.artists.filter(
@@ -48,10 +48,8 @@
 
     <div
       class="grid grid-cols-1 items-center justify-center gap-3 overflow-auto p-2 @sm:grid-cols-2 @3xl:grid-cols-4 @5xl:grid-cols-5 @7xl:grid-cols-6"
-      bind:this={container}
-      onscroll={() => {
-        if (container) scrolledFromTop = container.scrollTop > 0;
-      }}
+      use:scroll
+      onscrolltopchange={(e) => (scrolledFromTop = e.detail.scrollTop > 0)}
     >
       {#each filtered as artist, index (artist.id)}
         <div animate:flip={{ duration: 100 }} class="h-full">

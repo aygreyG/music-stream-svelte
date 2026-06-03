@@ -21,8 +21,9 @@ const NON_CACHEABLE = [
   '/favourite',
   '/playlist'
 ];
-const CACHE_FIRST = ['/api/image'];
-const TIMEOUT_MS = 10000;
+const CACHE_FIRST = ['/api/image', '/api/lyrics'];
+const SKIP_TIMEOUT = ['/api/lyrics'];
+const TIMEOUT_MS = 15000;
 
 self.addEventListener('activate', (event: ExtendableEvent) => {
   const activate = async () => {
@@ -72,7 +73,10 @@ async function respond(event: FetchEvent): Promise<Response> {
     const controller = new AbortController();
 
     const timeoutId = setTimeout(() => {
-      controller.abort();
+      if (!SKIP_TIMEOUT.some((path) => url.pathname.startsWith(path))) {
+        console.warn('Fetch timed out, skipping:', event.request.url);
+        controller.abort();
+      }
     }, TIMEOUT_MS);
 
     const cacheKey = cachedResponse?.headers.get('cache-key');

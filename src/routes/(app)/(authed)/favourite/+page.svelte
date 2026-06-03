@@ -2,6 +2,7 @@
   import { flip } from 'svelte/animate';
   import { fade } from 'svelte/transition';
 
+  import scroll from '$lib/actions/scroll.svelte';
   import PlaylistImage from '$lib/components/PlaylistImage.svelte';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte.js';
@@ -15,7 +16,6 @@
   }
 
   let { data }: Props = $props();
-  let container: HTMLDivElement | null = $state(null);
   let scrolled = $state(false);
   const audioPlayer = getAudioPlayer();
 </script>
@@ -54,8 +54,8 @@
 
   <div
     class="flex h-full flex-col overflow-auto"
-    bind:this={container}
-    onscroll={() => (scrolled = !!container?.scrollTop && container?.scrollTop > 0)}
+    use:scroll
+    onscrolltopchange={(e) => (scrolled = e.detail.scrollTop > 0)}
   >
     {#each data.favouriteTracks as track, index (track.id)}
       <div

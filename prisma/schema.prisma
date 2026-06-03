@@ -60,6 +60,7 @@ model Track {
   playlists    Playlist[]
   favouritedBy User[]     @relation("FavouriteTracks")
   tags         Tag[]
+  lyrics       Lyrics?
 
   @@index([albumId])
   @@index([trackNumber])
@@ -67,6 +68,17 @@ model Track {
   @@index([title])
   @@index([albumId, trackNumber])
   @@index([albumId, discNumber, trackNumber])
+}
+
+model Lyrics {
+  id           String   @id @default(uuid())
+  trackId      String   @unique
+  track        Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  plainLyrics  String?
+  syncedLyrics String?
+  instrumental Boolean  @default(false)
+  source       String
+  fetchedAt    DateTime @default(now())
 }
 
 model Artist {

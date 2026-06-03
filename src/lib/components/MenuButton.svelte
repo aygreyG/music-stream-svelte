@@ -1,234 +1,274 @@
 <script lang="ts">
+  import { DropdownMenu, type WithoutChildren } from 'bits-ui';
   import type { Component, Snippet } from 'svelte';
   import { cubicOut } from 'svelte/easing';
   import type { ClassValue } from 'svelte/elements';
   import { fly } from 'svelte/transition';
 
-  import { beforeNavigate } from '$app/navigation';
+  import { goto } from '$app/navigation';
   import type { ResolvedPathname } from '$app/types';
   import { vibrate } from '$lib/actions/vibrate';
   import { deviceInfo } from '$lib/states/deviceInfo.svelte';
 
   import RoundChevronLeft from '~icons/ic/round-chevron-left';
   import RoundChevronRight from '~icons/ic/round-chevron-right';
+  import RoundMoreVert from '~icons/ic/round-more-vert';
   import RoundRefresh from '~icons/ic/round-refresh';
 
   import BottomSheet from './BottomSheet.svelte';
-  import Popover from './Popover.svelte';
   import Portal from './Portal.svelte';
 
-  export type MenuOption = {
+  export type MenuItem = {
     label: string;
+    key?: string;
     icon?: Component<{ class?: ClassValue }>;
-    hidden?: boolean;
     disabled?: boolean;
     loading?: boolean;
     onclick?: () => void | Promise<void>;
     href?: ResolvedPathname;
+    subItems?: MenuItem[];
     /**
-     * Mobile: navigates to the submenu view instead of calling onclick.
-     * Desktop: shows a side popover only when desktopSubmenu is true, otherwise calls onclick.
+     * For rendering submenu inside a bottom sheet on mobile.
      */
-    submenu?: {
-      title: string;
-      content: Snippet;
-    };
-    /** When true, desktop also shows a side popover for this option's submenu. */
-    desktopSubmenu?: boolean;
-    key: string;
+    subMenu?: Snippet;
+    closeOnSelect?: boolean;
+    hidden?: boolean;
   };
 
-  interface Props {
-    open: boolean;
-    onclose: () => void;
-    anchor?: HTMLElement | null;
-    options: MenuOption[];
-    /** Rendered above the options list in the mobile sheet. */
-    header?: Snippet;
-    style?: string;
+  interface Props extends WithoutChildren<DropdownMenu.RootProps> {
+    children?: Snippet;
+    items: MenuItem[];
+    contentProps?: WithoutChildren<DropdownMenu.ContentProps>;
+    bottomSheetHeader?: Snippet;
   }
 
-  let { open, onclose, anchor = null, options, header, style = '' }: Props = $props();
+  let { children, items, contentProps, bottomSheetHeader, ...rest }: Props = $props();
+  let bottomSheetOpen = $state(false);
+  let selectedSubMenu = $state<MenuItem | null>(null);
+  let subMenuScrollTop = $state(0);
 
-  let activeSubmenu = $state<MenuOption['submenu'] | null>(null);
-  let desktopSubmenuAnchor = $state<HTMLButtonElement | null>(null);
-  let mainPopoverEl = $state<HTMLDivElement | null>(null);
-  let scrolledFromTop = $state(false);
-
-  const isMobile = $derived(deviceInfo.isMobile);
-
-  beforeNavigate((navigation) => {
-    if (navigation.type === 'popstate') {
-      if (activeSubmenu && open) {
-        navigation.cancel();
-        activeSubmenu = null;
-      } else if (open) {
-        navigation.cancel();
-        onclose();
-      }
-    }
-  });
-
-  $effect(() => {
-    if (open) {
-      activeSubmenu = null;
-    }
-  });
-
-  async function handleOptionClick(option: MenuOption, buttonEl?: HTMLButtonElement | null) {
-    if (option.disabled || option.loading) return;
-    if (option.submenu && isMobile) {
-      activeSubmenu = option.submenu;
-    } else if (option.submenu && option.desktopSubmenu && !isMobile) {
-      // Desktop: toggle submenu popover
-      if (activeSubmenu === option.submenu) {
-        activeSubmenu = null;
-        desktopSubmenuAnchor = null;
-      } else {
-        activeSubmenu = option.submenu;
-        desktopSubmenuAnchor = buttonEl ?? null;
-      }
-    } else {
-      activeSubmenu = null;
-      desktopSubmenuAnchor = null;
-      await option.onclick?.();
-    }
+  function filterItems(items: MenuItem[]): MenuItem[] {
+    return items
+      .filter((item) => !item.hidden)
+      .map((item) => ({
+        ...item,
+        subItems: item.subItems ? filterItems(item.subItems) : undefined
+      }));
   }
+
+  let filteredItems = $derived(filterItems(items));
 </script>
 
-{#snippet renderOptions(compact: boolean)}
-  {#each options as option (option.key)}
-    {#if !option.hidden}
-      {@const Icon = option.icon}
-      {#if option.href}
-        <!-- We already make sure that only resolved paths are used -->
-        <!-- eslint-disable svelte/no-navigation-without-resolve -->
-        <a
-          href={option.href}
-          class={[
-            'flex w-full items-center gap-3 text-left',
-            compact
-              ? 'hover:bg-on-surface/10 px-4 py-2 text-sm transition-colors'
-              : 'rounded-lg px-2 py-2.5'
-          ]}
-          use:vibrate
-          onclick={() => onclose()}
-        >
-          {#if Icon}
-            <Icon class={['shrink-0', compact ? 'text-lg' : 'text-xl']} />
-          {/if}
-          <span>{option.label}</span>
-        </a>
+{#snippet menuItem(item: MenuItem)}
+  <DropdownMenu.Item
+    closeOnSelect={item.closeOnSelect ?? true}
+    disabled={item.disabled || item.loading}
+    onSelect={() => {
+      if (item.onclick) item.onclick();
+      if (item.href) goto(item.href);
+    }}
+    class="hover:bg-surface-variant/50 flex max-w-3xs cursor-pointer items-center gap-2 px-3 py-2"
+  >
+    {#if item.icon}
+      {#if item.loading}
+        <RoundRefresh class="flex-none animate-spin text-lg" />
       {:else}
-        <button
-          class={[
-            'flex w-full items-center gap-3 text-left disabled:opacity-50',
-            compact
-              ? 'hover:bg-on-surface/10 px-4 py-2 text-sm transition-colors'
-              : 'rounded-lg px-2 py-2.5'
-          ]}
-          disabled={option.disabled || option.loading}
-          use:vibrate
-          onclick={(e) => handleOptionClick(option, e.currentTarget as HTMLButtonElement)}
-        >
-          {#if option.loading}
-            <RoundRefresh class={['shrink-0 animate-spin', compact ? 'text-lg' : 'text-xl']} />
-          {:else if Icon}
-            <Icon class={['shrink-0', compact ? 'text-lg' : 'text-xl']} />
-          {/if}
-          <span>{option.label}</span>
-          {#if option.submenu && isMobile}
-            <RoundChevronRight class="ml-auto text-xl" />
-          {:else if option.submenu && option.desktopSubmenu && !isMobile}
-            <RoundChevronRight class="ml-auto text-lg" />
-          {/if}
-        </button>
+        <item.icon class="flex-none text-lg" />
       {/if}
     {/if}
-  {/each}
+    <span class="truncate">
+      {item.label}
+    </span>
+  </DropdownMenu.Item>
 {/snippet}
 
-<Portal class="text-on-surface" {style}>
-  {#if isMobile}
-    <BottomSheet
-      onscroll={(e) => {
-        const target = e.target as HTMLDivElement;
-        scrolledFromTop = target.scrollTop > 0;
-      }}
-      {open}
-      {onclose}
+{#snippet subMenu(item: MenuItem)}
+  <DropdownMenu.Sub>
+    <DropdownMenu.SubTrigger
+      class="hover:bg-surface-variant/50 data-[state=open]:bg-surface-variant/50 flex max-w-xs cursor-pointer items-center gap-2 px-3 py-2"
     >
-      <div class="relative grid place-items-center justify-items-start overflow-clip">
-        {#if activeSubmenu}
-          <div
-            class="col-start-1 col-end-1 row-start-1 row-end-1 w-full"
-            in:fly={{ x: 300, duration: 250, easing: cubicOut }}
-          >
+      {#if item.icon}
+        <item.icon class="flex-none text-lg" />
+      {/if}
+      {item.label}
+      <RoundChevronRight class="ml-auto" />
+    </DropdownMenu.SubTrigger>
+    <DropdownMenu.Portal>
+      <DropdownMenu.SubContent
+        forceMount
+        sideOffset={4}
+        style={contentProps?.style}
+        class="bg-surface-container text-on-surface overflow-clip rounded-xl"
+      >
+        {#snippet child({ open, props, wrapperProps })}
+          {#if open}
+            <div {...wrapperProps}>
+              <div {...props} transition:fly={{ y: -4, duration: 150, easing: cubicOut }}>
+                {#each item.subItems as subItem (subItem.key ?? subItem.label)}
+                  {#if subItem.subItems}
+                    {@render subMenu(subItem)}
+                  {:else}
+                    {@render menuItem(subItem)}
+                  {/if}
+                {/each}
+              </div>
+            </div>
+          {/if}
+        {/snippet}
+      </DropdownMenu.SubContent>
+    </DropdownMenu.Portal>
+  </DropdownMenu.Sub>
+{/snippet}
+
+{#snippet mobileMenuItem(item: MenuItem)}
+  <button
+    disabled={item.disabled || item.loading}
+    onclick={() => {
+      if (item.subMenu || item.subItems) {
+        selectedSubMenu = item;
+        return;
+      }
+      if (item.onclick) item.onclick();
+      if (item.href) goto(item.href);
+    }}
+    class="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left"
+    use:vibrate
+  >
+    {#if item.icon}
+      {#if item.loading}
+        <RoundRefresh class="flex-none animate-spin text-lg" />
+      {:else}
+        <item.icon class="flex-none text-lg" />
+      {/if}
+    {/if}
+    <span class="truncate">
+      {item.label}
+    </span>
+    {#if item.subMenu || item.subItems}
+      <RoundChevronRight class="ml-auto text-lg" />
+    {/if}
+  </button>
+{/snippet}
+
+{#if deviceInfo.isMobile.current}
+  <button
+    onclick={(e) => {
+      e.stopPropagation();
+      bottomSheetOpen = true;
+    }}
+    use:vibrate
+    aria-label="More options"
+  >
+    {#if children}
+      {@render children()}
+    {:else}
+      <RoundMoreVert class="text-lg" />
+    {/if}
+  </button>
+
+  <Portal style={contentProps?.style as string}>
+    <BottomSheet
+      open={bottomSheetOpen}
+      onclose={() => {
+        bottomSheetOpen = false;
+        selectedSubMenu = null;
+      }}
+      containerProps={{
+        onscrolltopchange: (e) => {
+          subMenuScrollTop = e.detail.scrollTop;
+        }
+      }}
+    >
+      <!-- svelte-ignore a11y_click_events_have_key_events -->
+      <!-- svelte-ignore a11y_no_static_element_interactions -->
+      <div
+        class="text-on-surface relative grid place-items-center justify-items-start overflow-clip"
+        onclick={(e) => e.stopPropagation()}
+      >
+        {#if selectedSubMenu}
+          {#key selectedSubMenu.key ?? selectedSubMenu.label}
             <div
-              class={[
-                'bg-surface-container sticky top-0 z-10 mb-3 flex items-center gap-2 px-4 transition-shadow',
-                scrolledFromTop && 'shadow-md'
-              ]}
+              class="col-start-1 col-end-1 row-start-1 row-end-1 w-full"
+              in:fly|global={{ x: 300, duration: 250, easing: cubicOut }}
             >
-              <button
-                class="hover:bg-on-surface/10 flex items-center justify-center rounded-lg p-1.5 transition-colors"
-                use:vibrate
-                onclick={() => (activeSubmenu = null)}
-                aria-label="Back to menu"
+              <div
+                class={[
+                  'bg-surface-container sticky top-0 z-10 flex items-center gap-2 px-4 pb-3 transition-shadow',
+                  subMenuScrollTop > 0 && 'shadow-md'
+                ]}
               >
-                <RoundChevronLeft class="text-xl" />
-              </button>
-              <div class="font-semibold">{activeSubmenu.title}</div>
+                <button
+                  class="flex items-center justify-center"
+                  use:vibrate
+                  onclick={() => (selectedSubMenu = null)}
+                  aria-label="Back to menu"
+                >
+                  <RoundChevronLeft class="text-xl" />
+                </button>
+                <div class="font-semibold">{selectedSubMenu.label}</div>
+              </div>
+
+              <div class="px-4">
+                {#if selectedSubMenu.subMenu}
+                  {@render selectedSubMenu.subMenu()}
+                {:else if selectedSubMenu.subItems}
+                  {#each selectedSubMenu.subItems as subItem (subItem.key ?? subItem.label)}
+                    {@render mobileMenuItem(subItem)}
+                  {/each}
+                {/if}
+              </div>
             </div>
-            <div class="px-4">
-              {@render activeSubmenu.content()}
-            </div>
-          </div>
+          {/key}
         {:else}
           <div
             class="col-start-1 col-end-1 row-start-1 row-end-1 w-full px-4"
             in:fly={{ x: -300, duration: 250, easing: cubicOut }}
           >
-            {@render header?.()}
-            <div class="flex flex-col">
-              {@render renderOptions(false)}
-            </div>
+            {@render bottomSheetHeader?.()}
+
+            {#each filteredItems as item (item.key ?? item.label)}
+              {@render mobileMenuItem(item)}
+            {/each}
           </div>
         {/if}
       </div>
     </BottomSheet>
-  {:else}
-    <div bind:this={mainPopoverEl}>
-      <Popover
-        {open}
-        onclose={() => {
-          activeSubmenu = null;
-          desktopSubmenuAnchor = null;
-          onclose();
-        }}
-        {anchor}
+  </Portal>
+{:else}
+  <DropdownMenu.Root {...rest}>
+    <DropdownMenu.Trigger>
+      {#if children}
+        {@render children()}
+      {:else}
+        <RoundMoreVert class="text-lg" />
+      {/if}
+    </DropdownMenu.Trigger>
+
+    <DropdownMenu.Portal>
+      <DropdownMenu.Content
+        {...contentProps}
+        class={[
+          'bg-surface-container text-on-surface overflow-clip rounded-xl',
+          contentProps?.class
+        ]}
+        forceMount
       >
-        <div class="flex flex-col">
-          {@render renderOptions(true)}
-        </div>
-      </Popover>
-    </div>
-    {#if activeSubmenu && desktopSubmenuAnchor}
-      <Popover
-        open={true}
-        onclose={() => {
-          activeSubmenu = null;
-          desktopSubmenuAnchor = null;
-        }}
-        anchor={desktopSubmenuAnchor}
-        side="right"
-        offset={{ top: -20 }}
-        excludeFromClickOutside={mainPopoverEl}
-      >
-        <div class="flex flex-col">
-          {@render activeSubmenu.content()}
-        </div>
-      </Popover>
-    {/if}
-  {/if}
-</Portal>
+        {#snippet child({ open, props, wrapperProps })}
+          {#if open}
+            <div {...wrapperProps}>
+              <div {...props} transition:fly={{ y: -4, duration: 150, easing: cubicOut }}>
+                {#each filteredItems as item (item.key ?? item.label)}
+                  {#if item.subItems}
+                    {@render subMenu(item)}
+                  {:else}
+                    {@render menuItem(item)}
+                  {/if}
+                {/each}
+              </div>
+            </div>
+          {/if}
+        {/snippet}
+      </DropdownMenu.Content>
+    </DropdownMenu.Portal>
+  </DropdownMenu.Root>
+{/if}
