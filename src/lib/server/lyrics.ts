@@ -14,6 +14,8 @@ interface LrclibSearchResult {
 
 const LRCLIB_BASE = 'https://lrclib.net/api';
 
+const inFlightRequests = new Map<string, Promise<LyricsResult>>();
+
 async function searchLrclib(
   title: string,
   artistName: string,
@@ -119,6 +121,20 @@ export async function getLyricsForTrack(trackId: string, force = false): Promise
     }
   }
 
+  const existing = inFlightRequests.get(trackId);
+  if (existing) return existing;
+
+  const promise = fetchLyricsFromApi(trackId);
+  inFlightRequests.set(trackId, promise);
+
+  try {
+    return await promise;
+  } finally {
+    inFlightRequests.delete(trackId);
+  }
+}
+
+async function fetchLyricsFromApi(trackId: string): Promise<LyricsResult> {
   const track = await prisma.track.findUnique({
     where: { id: trackId },
     select: {

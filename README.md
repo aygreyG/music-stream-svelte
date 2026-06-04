@@ -49,6 +49,7 @@ A self-hosted music streaming service built with SvelteKit that allows you to st
 - Playlists
 - Search
 - Album covers through [MusicBrainz API](https://musicbrainz.org/doc/MusicBrainz_API)
+- Lyrics (synced and plain) through [lrclib.net](https://lrclib.net/)
 
 ---
 
