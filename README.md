@@ -17,21 +17,14 @@
 
 A self-hosted music streaming service built with SvelteKit that allows you to stream the music stored on your computer/home server to any device with a browser. 🎶
 
-<img width="179" height="409" alt="Screenshot 2026-02-23 at 19-51-38 Albums Svelte Music Streamer" src="https://github.com/user-attachments/assets/3a984ccc-52d4-42e3-8fec-ac3e923e73cd" />
-
-<img width="633" height="409" alt="Screenshot 2026-02-23 at 19-46-38 I°_°I - Caravan Palace Svelte Music Streamer" src="https://github.com/user-attachments/assets/d09febf0-6f98-4a29-9239-51dc15194014" />
-
-<br />
-
-<img width="633" height="409" alt="Screenshot 2026-02-23 at 19-52-30 Albums Svelte Music Streamer" src="https://github.com/user-attachments/assets/c50f8e10-88ce-47ed-88d6-166dff5c2f33" />
-
-<img width="179" height="409" alt="Screenshot 2026-02-23 at 19-50-49 Born To Die - Lana Del Rey Svelte Music Streamer" src="https://github.com/user-attachments/assets/254f61e1-af1f-4be2-a6b3-3325bbf80496" />
-
-<br />
-
-<img width="179" height="409" alt="Screenshot 2026-02-23 at 19-50-03 Kid A - Radiohead Svelte Music Streamer" src="https://github.com/user-attachments/assets/6eeb3aae-0d3e-4291-ae48-0b13723c3687" />
-
-<img width="633" height="409" alt="Screenshot 2026-02-23 at 20-02-43 Playlists Svelte Music Streamer" src="https://github.com/user-attachments/assets/e1edb1bc-7984-417f-8a62-061eff7de526" />
+<p align="center">
+  <img width="auto" height="400" alt="Screen Shot 2026-06-04 at 22 23 42" src="https://github.com/user-attachments/assets/31a5f97d-5cf4-46a4-ab2e-04e41a977866" />
+  <img width="auto" height="400" alt="Screen Shot 2026-06-04 at 22 17 29" src="https://github.com/user-attachments/assets/79c58b85-5a30-47e9-bfef-7c4f004cf6a8" />
+</p>
+<p align="center">
+  <img width="auto" height="400" alt="Screen Shot 2026-06-04 at 22 18 14" src="https://github.com/user-attachments/assets/f3b53427-7388-4c22-8910-85daee638527" />
+  <img width="auto" height="400" alt="Screen Shot 2026-06-04 at 22 24 08" src="https://github.com/user-attachments/assets/697c56dc-c6df-4d61-98a2-c2750dfdf92a" />
+</p>
 
 ---
 
