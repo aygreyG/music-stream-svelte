@@ -9,6 +9,7 @@
   import { vibrate } from '$lib/actions/vibrate';
   import Accordion from '$lib/components/Accordion.svelte';
   import Modal from '$lib/components/Modal.svelte';
+  import Portal from '$lib/components/Portal.svelte';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { ROLE, SCHEME_TYPES } from '$lib/shared/consts';
   import { getReadableTime } from '$lib/utils';
@@ -256,7 +257,7 @@
     {#if data.user?.role !== ROLE.OWNER}
       <div
         in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 300 }}
-        class="mt-4 flex w-full items-center justify-between rounded-xl bg-zinc-600/20 py-2 pr-2 pl-4"
+        class="bg-surface-container mt-4 flex w-full items-center justify-between rounded-xl py-2 pr-2 pl-4"
       >
         <div class="text-center text-xl font-bold">Delete account</div>
 
@@ -272,36 +273,6 @@
       </div>
     {/if}
   </div>
-
-  {#if deleteClicked}
-    <Modal title="Are you sure?" onclose={() => (deleteClicked = false)}>
-      <div class="flex h-full flex-col items-center justify-center gap-10 p-6">
-        <div class="rounded-xl bg-rose-600/10 p-4 text-center text-sm font-bold text-rose-600">
-          <InformationCircleFill class="inline align-top text-base" />
-          This action cannot be undone and will delete all your data, including your listening history!
-        </div>
-
-        <div class="flex w-full items-center justify-center gap-4 max-sm:flex-col">
-          <form method="POST" action="?/delete">
-            <button
-              type="submit"
-              class="rounded-3xl bg-rose-600 px-4 py-2 font-semibold text-white transition-all"
-              use:vibrate
-            >
-              Yes, delete my account
-            </button>
-          </form>
-          <button
-            class="bg-primary text-on-primary rounded-3xl px-4 py-2 font-semibold transition-all"
-            onclick={() => (deleteClicked = false)}
-            use:vibrate
-          >
-            No, keep my account
-          </button>
-        </div>
-      </div>
-    </Modal>
-  {/if}
 
   {#if data.listens.length > 0}
     <div
@@ -363,3 +334,35 @@
     {/if}
   {/if}
 </div>
+
+{#if deleteClicked}
+  <Portal>
+    <Modal title="Are you sure?" onclose={() => (deleteClicked = false)}>
+      <div class="flex h-full flex-col items-center justify-center gap-10 p-6">
+        <div class="rounded-xl bg-rose-600/10 p-4 text-center text-sm font-bold text-rose-600">
+          <InformationCircleFill class="inline align-top text-base" />
+          This action cannot be undone and will delete all your data, including your listening history!
+        </div>
+
+        <div class="flex w-full items-center justify-center gap-4 max-sm:flex-col">
+          <form method="POST" action="?/delete">
+            <button
+              type="submit"
+              class="rounded-3xl bg-rose-600 px-4 py-2 font-semibold text-white transition-all"
+              use:vibrate
+            >
+              Yes, delete my account
+            </button>
+          </form>
+          <button
+            class="bg-primary text-on-primary rounded-3xl px-4 py-2 font-semibold transition-all"
+            onclick={() => (deleteClicked = false)}
+            use:vibrate
+          >
+            No, keep my account
+          </button>
+        </div>
+      </div>
+    </Modal>
+  </Portal>
+{/if}
