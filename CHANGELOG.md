@@ -1,3 +1,9 @@
+# [1.6.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.7...v1.6.0-dev.8) (2026-06-04)
+
+### Features
+
+- update screenshots in README ([a61f0f6](https://github.com/aygreyG/music-stream-svelte/commit/a61f0f6cf86a181ad38b99fe2f76137cb3902301))
+
 # [1.6.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.6...v1.6.0-dev.7) (2026-06-04)
 
 ### Features
