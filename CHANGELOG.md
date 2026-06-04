@@ -1,3 +1,20 @@
+# [1.6.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0...v1.6.0) (2026-06-04)
+
+### Bug Fixes
+
+- add keys to options ([114f341](https://github.com/aygreyG/music-stream-svelte/commit/114f341957718d664fa0ec4c2d4db0f68f4fed92))
+- artist and tag info placeholders ([f8a3608](https://github.com/aygreyG/music-stream-svelte/commit/f8a36081d036c6e49ef9624f5b62f89dd06ef813))
+- profile page delete account button ([fbbfdc3](https://github.com/aygreyG/music-stream-svelte/commit/fbbfdc353a4b42e945570fb8641a98f687ca780c))
+- tag info height ([cc47a63](https://github.com/aygreyG/music-stream-svelte/commit/cc47a630ea26b70e2fb23d64e7b6713878274044))
+
+### Features
+
+- add lyrics fetching task for admins ([8e493cf](https://github.com/aygreyG/music-stream-svelte/commit/8e493cfad1d89259c8f3eddc5fdbcc3d2a8d118e))
+- add lyrics handling and resizable panels in fullscreen ([b43462e](https://github.com/aygreyG/music-stream-svelte/commit/b43462eff5ce6bbc4f32b714694bd1c2d34184db))
+- rethink playlists ([#216](https://github.com/aygreyG/music-stream-svelte/issues/216)) ([1687c36](https://github.com/aygreyG/music-stream-svelte/commit/1687c36f281eb30b37ee7075b1c77cea7f538dbf)), closes [#123](https://github.com/aygreyG/music-stream-svelte/issues/123)
+- update screenshots in README ([a61f0f6](https://github.com/aygreyG/music-stream-svelte/commit/a61f0f6cf86a181ad38b99fe2f76137cb3902301))
+- update tags, artists and setup pages ([ae52109](https://github.com/aygreyG/music-stream-svelte/commit/ae5210907e972e5f64e4cd4d3293db3c2fa66f34))
+
 # [1.6.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.8...v1.6.0-dev.9) (2026-06-04)
 
 ### Bug Fixes
