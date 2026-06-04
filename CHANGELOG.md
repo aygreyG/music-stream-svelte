@@ -1,3 +1,9 @@
+# [1.6.0-dev.7](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.6...v1.6.0-dev.7) (2026-06-04)
+
+### Features
+
+- add lyrics fetching task for admins ([8e493cf](https://github.com/aygreyG/music-stream-svelte/commit/8e493cfad1d89259c8f3eddc5fdbcc3d2a8d118e))
+
 # [1.6.0-dev.6](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.5...v1.6.0-dev.6) (2026-06-03)
 
 ### Features
