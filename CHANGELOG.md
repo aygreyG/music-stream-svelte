@@ -1,3 +1,9 @@
+# [1.6.0-dev.9](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.8...v1.6.0-dev.9) (2026-06-04)
+
+### Bug Fixes
+
+- profile page delete account button ([fbbfdc3](https://github.com/aygreyG/music-stream-svelte/commit/fbbfdc353a4b42e945570fb8641a98f687ca780c))
+
 # [1.6.0-dev.8](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0-dev.7...v1.6.0-dev.8) (2026-06-04)
 
 ### Features
