@@ -295,7 +295,7 @@
       ontimeupdate={(e) => {
         if (seeking) return;
         const diff = e.currentTarget.currentTime - previousTime;
-        if (diff < 2 && diff > 0) {
+        if (diff < 2 && diff > 0 && !audioPlayer.paused) {
           listenedDuration += diff;
           if (
             // Only send in a second if we are on the profile page

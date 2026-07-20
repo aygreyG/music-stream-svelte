@@ -7,6 +7,7 @@
   ```javascript
   import RoundPlaylistAdd from '~icons/ic/round-playlist-add';
   ```
+- Don't overcomment code, only comment when it adds meaning.
 
 # Svelte MCP Server
 
