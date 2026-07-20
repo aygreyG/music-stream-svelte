@@ -1,3 +1,9 @@
+# [1.7.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0-dev.2...v1.7.0-dev.3) (2026-07-20)
+
+### Bug Fixes
+
+- wrong cursor usage for listening history ([5400f26](https://github.com/aygreyG/music-stream-svelte/commit/5400f26b60f917e8062fd0ad4d901f076725e899))
+
 # [1.7.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0-dev.1...v1.7.0-dev.2) (2026-07-20)
 
 ### Bug Fixes
