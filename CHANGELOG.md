@@ -1,3 +1,13 @@
+# [1.7.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0...v1.7.0-dev.1) (2026-07-20)
+
+### Bug Fixes
+
+- listening data is sent twice on pause ([b6920b5](https://github.com/aygreyG/music-stream-svelte/commit/b6920b5806c49a8fa5ccec0e87c067f31bf731e7)), closes [#202](https://github.com/aygreyG/music-stream-svelte/issues/202)
+
+### Features
+
+- reimplement listening history with migration ([1bb5384](https://github.com/aygreyG/music-stream-svelte/commit/1bb5384c92d839e5c0decfaedba21fef7966c5d7))
+
 # [1.6.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.5.0...v1.6.0) (2026-06-04)
 
 ### Bug Fixes
