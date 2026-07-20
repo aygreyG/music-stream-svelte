@@ -44,9 +44,16 @@
   let extraSessions = $state.raw<Session[]>([]);
 
   let sessions = $derived.by<Session[]>(() => {
-    const existingIds = new Set(data.sessions.map((s) => s.id));
-    const kept = extraSessions.filter((s: Session) => !existingIds.has(s.id));
-    return [...data.sessions, ...kept].sort((a, b) => b.endedAt.getTime() - a.endedAt.getTime());
+    // set is only used to filter out duplicate sessions
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
+    const seen = new Set<string>();
+    return [...data.sessions, ...extraSessions]
+      .filter((s: Session) => {
+        if (seen.has(s.id)) return false;
+        seen.add(s.id);
+        return true;
+      })
+      .sort((a, b) => b.endedAt.getTime() - a.endedAt.getTime() || b.id.localeCompare(a.id));
   });
 
   let loadedSessionCount = $derived(sessions.length);
@@ -354,7 +361,12 @@
       {#each groupedSessions as group, groupIndex (group.label)}
         <div
           class="bg-surface sticky top-0 z-20 mx-2 pt-2 text-sm font-bold"
-          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 460 + groupIndex * 80 }}
+          in:fly|global={{
+            duration: 500,
+            x: -20,
+            easing: quintOut,
+            delay: Math.min(460 + groupIndex * 80, 1000)
+          }}
         >
           <button
             type="button"
@@ -422,11 +434,7 @@
         class="flex items-center justify-center p-2"
         use:enhance={handleSessionSubmit}
       >
-        <input
-          type="hidden"
-          name="cursor"
-          value={sessions[sessions.length - 1].endedAt.toISOString()}
-        />
+        <input type="hidden" name="cursorId" value={sessions[sessions.length - 1].id} />
         <button
           class="bg-surface-container hover:bg-surface-container/60 relative rounded-full px-6 py-2 font-semibold transition-colors"
           type="submit"

@@ -47,7 +47,7 @@ export const load = async ({ locals, depends }) => {
     prisma.listeningSession.findMany({
       where: { userId: locals.user?.id },
       select: sessionSelect,
-      orderBy: { endedAt: 'desc' },
+      orderBy: [{ endedAt: 'desc' }, { id: 'desc' }],
       take: SESSIONS_PER_PAGE
     }),
     prisma.listeningSession.count({ where: { userId: locals.user?.id } }),
@@ -169,15 +169,13 @@ export const actions = {
   },
   getSessions: async ({ locals, request }) => {
     const formData = await request.formData();
-    const cursor = formData.get('cursor')?.toString();
+    const cursorId = formData.get('cursorId')?.toString();
 
     const sessions = await prisma.listeningSession.findMany({
-      where: {
-        userId: locals.user?.id,
-        ...(cursor ? { endedAt: { lt: new Date(cursor) } } : {})
-      },
+      ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : {}),
+      where: { userId: locals.user?.id },
       select: sessionSelect,
-      orderBy: { endedAt: 'desc' },
+      orderBy: [{ endedAt: 'desc' }, { id: 'desc' }],
       take: SESSIONS_PER_PAGE
     });
 
