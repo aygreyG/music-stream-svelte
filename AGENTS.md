@@ -1,3 +1,15 @@
+# General
+
+- This is a Svelte 5 and SvelteKit repository. Ensure that all code adheres to the Svelte 5 and SvelteKit standards.
+- Do not automatically stage changes to git unless explicitly instructed to do so. Same goes for committing changes.
+- For icons use iconify, the preferred icon libraries are: iconamoon, ic. Preferably use the iconamoon set, but if an icon is not available, use the ic set with rounded icons. Before choosing an icon check whether it was already used in the project, if yes use the same icon set.
+  Example import:
+  ```javascript
+  import RoundPlaylistAdd from '~icons/ic/round-playlist-add';
+  ```
+
+# Svelte MCP Server
+
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
 
 ## Available MCP Tools:

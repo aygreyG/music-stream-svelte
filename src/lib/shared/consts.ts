@@ -12,6 +12,9 @@ const ALLOWED_MUSIC_FILE_EXTENSIONS = ['flac', 'wav', 'mp3'];
 const EXCLUDE_FILES_STARTING_WITH = ['.', '_'];
 const IMAGE_FILE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 
+const SESSION_TIMEOUT_MS = 60 * 60 * 1000;
+const SESSIONS_PER_PAGE = 30;
+
 const SCHEME_TYPES = [
   'CONTENT',
   'EXPRESSIVE',
@@ -91,7 +94,9 @@ export {
   IMAGE_FILE_EXTENSIONS,
   SCHEME_TYPES,
   SCHEME_KEYS,
-  FALLBACK_SCHEME
+  FALLBACK_SCHEME,
+  SESSION_TIMEOUT_MS,
+  SESSIONS_PER_PAGE
 };
 
 export type { RoleType };

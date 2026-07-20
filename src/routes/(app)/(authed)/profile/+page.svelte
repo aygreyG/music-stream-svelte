@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { SubmitFunction } from '@sveltejs/kit';
-  import { onMount, untrack } from 'svelte';
-  import { flip } from 'svelte/animate';
+  import { onMount } from 'svelte';
   import { quintOut } from 'svelte/easing';
-  import { fly } from 'svelte/transition';
+  import { SvelteSet } from 'svelte/reactivity';
+  import { fly, slide } from 'svelte/transition';
 
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate';
@@ -12,8 +12,11 @@
   import Portal from '$lib/components/Portal.svelte';
   import TrackRow from '$lib/components/TrackRow.svelte';
   import { ROLE, SCHEME_TYPES } from '$lib/shared/consts';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import { getReadableTime } from '$lib/utils';
 
+  import RoundArrowDropUp from '~icons/ic/round-arrow-drop-up';
+  import RoundCalendarToday from '~icons/ic/round-calendar-today';
   import RoundRefresh from '~icons/ic/round-refresh';
   import History from '~icons/iconamoon/history';
   import InformationCircleFill from '~icons/iconamoon/information-circle-fill';
@@ -32,34 +35,88 @@
   let darkMode = $state<'true' | 'false' | 'auto'>('auto');
   let deleteClicked = $state(false);
   let loading = $state(false);
-  let listensLoading = $state(false);
-  let listenedIndex = $state(0);
-  // this has to be a state to make sure it does not get overwritten when data changes and there were older listens loaded
-  // svelte-ignore state_referenced_locally
-  let listens = $state([...data.listens]);
+  let sessionsLoading = $state(false);
+  let collapsedGroups = new SvelteSet<string>();
+  let mounted = $state(false);
+  type Session = (typeof data.sessions)[number];
+  type GroupedSessions = { label: string; sessions: Session[] }[];
 
-  // Update listens when data changes but untracking listens array to prevent infinite loop
-  $effect(() => {
-    if (data.listens) {
-      let tmpListens = [
-        ...untrack(() => listens.filter((el) => !data.listens.find((v) => v.id === el.id))),
-        ...data.listens
-      ];
-      untrack(() => {
-        listens = tmpListens.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-      });
-    }
+  let extraSessions = $state.raw<Session[]>([]);
+
+  let sessions = $derived.by<Session[]>(() => {
+    const existingIds = new Set(data.sessions.map((s) => s.id));
+    const kept = extraSessions.filter((s: Session) => !existingIds.has(s.id));
+    return [...data.sessions, ...kept].sort((a, b) => b.endedAt.getTime() - a.endedAt.getTime());
   });
 
-  const handleListenSubmit: SubmitFunction = () => {
-    listensLoading = true;
+  let loadedSessionCount = $derived(sessions.length);
+
+  function getDayLabel(date: Date): string {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const target = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const diffDays = Math.floor((today.getTime() - target.getTime()) / 86400000);
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    return date.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  function formatTime(date: Date): string {
+    return date.toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+
+  let groupedSessions = $derived.by<GroupedSessions>(() => {
+    const groups: GroupedSessions = [];
+    let currentLabel = '';
+
+    for (const session of sessions) {
+      const label = getDayLabel(session.startedAt);
+      if (label !== currentLabel) {
+        currentLabel = label;
+        groups.push({ label, sessions: [] });
+      }
+      groups[groups.length - 1].sessions.push(session);
+    }
+
+    return groups;
+  });
+
+  const audioPlayer = getAudioPlayer();
+
+  let latestPlayEventId = $derived.by<string | null>(() => {
+    const currentTrackId = audioPlayer.currentTrack?.id;
+    if (!currentTrackId) return null;
+
+    // groupedSessions preserves sessions order (endedAt desc); iterate sessions directly.
+    for (const session of sessions) {
+      for (const event of session.events) {
+        if (event.track.id === currentTrackId) {
+          return event.id;
+        }
+      }
+    }
+
+    return null;
+  });
+
+  const handleSessionSubmit: SubmitFunction = () => {
+    sessionsLoading = true;
     return async ({ update, result }) => {
       await update();
-      listensLoading = false;
+      sessionsLoading = false;
 
-      if (result.type === 'success' && result.data?.listens && result.data.listens.length > 0) {
-        listenedIndex = listens.length;
-        listens = [...listens, ...result.data.listens];
+      if (result.type === 'success' && result.data?.sessions && result.data.sessions.length > 0) {
+        extraSessions = [...extraSessions, ...result.data.sessions];
       }
     };
   };
@@ -73,6 +130,8 @@
     } else {
       darkMode = 'auto';
     }
+
+    mounted = true;
   });
 </script>
 
@@ -274,17 +333,17 @@
     {/if}
   </div>
 
-  {#if data.listens.length > 0}
+  {#if sessions.length > 0}
     <div
       class="mt-6 flex items-center gap-1 px-2 text-center text-xl font-bold"
-      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 400 }}
     >
       <History class="text-base" />
       Listening history
     </div>
     <div
       class="mb-4 gap-1 px-2 text-center font-bold text-balance"
-      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
+      in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 430 }}
     >
       Total listening time: {data.totalListeningTime
         ? getReadableTime(data.totalListeningTime)
@@ -292,40 +351,94 @@
     </div>
 
     <div class="flex w-full max-w-3xl flex-none flex-col pb-2">
-      {#each listens as listen, index (listen.id)}
-        <div class="w-full flex-none overflow-clip" animate:flip={{ duration: 200 }}>
-          <TrackRow
-            listenedInformation={{ lastListened: listen.updatedAt, listened: listen.listeningTime }}
-            delay={listenedIndex === 0
-              ? 500 + index * 30
-              : Math.min(Math.abs(index - listenedIndex), index) * 30}
-            track={listen.track}
-            user={data.user}
-          />
+      {#each groupedSessions as group, groupIndex (group.label)}
+        <div
+          class="bg-surface sticky top-0 z-20 mx-2 pt-2 text-sm font-bold"
+          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 460 + groupIndex * 80 }}
+        >
+          <button
+            type="button"
+            class="bg-surface-container hover:bg-surface-container/80 mb-1 flex w-full items-center gap-2 rounded-lg pr-2 pl-4 transition-colors"
+            onclick={() => {
+              if (collapsedGroups.has(group.label)) {
+                collapsedGroups.delete(group.label);
+              } else {
+                collapsedGroups.add(group.label);
+              }
+            }}
+            use:vibrate
+          >
+            <RoundCalendarToday class="text-on-surface-variant text-base" />
+            <span class="flex-1 text-left">{group.label}</span>
+            <RoundArrowDropUp
+              class={[
+                'text-on-surface text-3xl transition-transform duration-300',
+                collapsedGroups.has(group.label) && 'rotate-180'
+              ]}
+            />
+          </button>
         </div>
+
+        {#if !collapsedGroups.has(group.label)}
+          {@const groupBaseDelay = !mounted ? 510 + groupIndex * 80 : 0}
+          <div transition:slide={{ duration: 500, easing: quintOut }}>
+            {#each group.sessions as session, sessionIndex (session.id)}
+              {@const isMigrated = session.startedAt.getTime() === session.endedAt.getTime()}
+              <div
+                in:fly|global={{
+                  duration: 500,
+                  x: -20,
+                  easing: quintOut,
+                  delay: groupBaseDelay + sessionIndex * 40
+                }}
+              >
+                <div class="text-on-surface-variant px-4 py-1 text-xs font-medium">
+                  {formatTime(session.startedAt)} - {formatTime(session.endedAt)}
+                </div>
+                {#each session.events as event, eventIndex (event.id)}
+                  <TrackRow
+                    delay={groupBaseDelay + 20 + sessionIndex * 40 + eventIndex * 25}
+                    listenedInformation={{
+                      lastListened: event.startedAt,
+                      listened: event.listenedDuration
+                    }}
+                    track={event.track}
+                    showPlayState={event.id === latestPlayEventId}
+                    {isMigrated}
+                    user={data.user}
+                  />
+                {/each}
+              </div>
+            {/each}
+          </div>
+        {/if}
       {/each}
     </div>
 
-    {#if listens.length < data.totalListens}
+    {#if loadedSessionCount < data.totalSessions}
       <form
         method="POST"
-        action="?/getListens"
+        action="?/getSessions"
         class="flex items-center justify-center p-2"
-        use:enhance={handleListenSubmit}
+        use:enhance={handleSessionSubmit}
       >
-        <input type="hidden" name="from" value={listens.length} />
+        <input
+          type="hidden"
+          name="cursor"
+          value={sessions[sessions.length - 1].endedAt.toISOString()}
+        />
         <button
-          class="rounded-md bg-zinc-600/20 px-4 py-1 font-semibold transition-colors hover:bg-zinc-600/50"
+          class="bg-surface-container hover:bg-surface-container/60 relative rounded-full px-6 py-2 font-semibold transition-colors"
           type="submit"
           use:vibrate
-          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 500 }}
-          disabled={listensLoading}
+          in:fly|global={{ duration: 500, x: -20, easing: quintOut, delay: 800 }}
+          disabled={sessionsLoading}
         >
-          <div class={[listensLoading && 'opacity-0']}>
-            Load more ({data.totalListens - listens.length} left)
+          <div class={[sessionsLoading && 'opacity-0']}>
+            Load more ({data.totalSessions - loadedSessionCount} left)
           </div>
-          {#if listensLoading}
-            <div class="absolute top-1 left-1/2 -translate-x-1/2">
+          {#if sessionsLoading}
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
               <RoundRefresh class="animate-spin text-xl" />
             </div>
           {/if}

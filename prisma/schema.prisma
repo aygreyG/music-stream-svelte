@@ -18,9 +18,9 @@ model User {
   password        String
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
-  listened        Listened[]
-  playlists       Playlist[]
-  favouriteTracks Track[]    @relation("FavouriteTracks")
+  playlists         Playlist[]
+  favouriteTracks   Track[]            @relation("FavouriteTracks")
+  sessions          ListeningSession[]
 
   @@index([id, username])
 }
@@ -56,11 +56,11 @@ model Track {
   albumId      String
   album        Album      @relation(fields: [albumId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   artists      Artist[]
-  listened     Listened[]
-  playlists    Playlist[]
-  favouritedBy User[]     @relation("FavouriteTracks")
-  tags         Tag[]
-  lyrics       Lyrics?
+  listeningEvents ListeningEvent[]
+  playlists       Playlist[]
+  favouritedBy    User[]     @relation("FavouriteTracks")
+  tags            Tag[]
+  lyrics          Lyrics?
 
   @@index([albumId])
   @@index([trackNumber])
@@ -89,20 +89,6 @@ model Artist {
   updatedAt DateTime @updatedAt
   tracks    Track[]
   albums    Album[]
-}
-
-model Listened {
-  id            String   @id @default(uuid())
-  listeningTime Float    @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  userId        String
-  trackId       String
-  track         Track    @relation(fields: [trackId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@unique([userId, trackId])
-  @@index([updatedAt])
 }
 
 model Playlist {
@@ -152,4 +138,27 @@ model Log {
   createdAt DateTime @default(now())
   level     String
   message   String
+}
+
+model ListeningSession {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startedAt DateTime         @default(now())
+  endedAt   DateTime         @default(now())
+  events    ListeningEvent[]
+
+  @@index([userId, endedAt])
+}
+
+model ListeningEvent {
+  id               String           @id @default(uuid())
+  sessionId        String
+  session          ListeningSession @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  trackId          String
+  track            Track            @relation(fields: [trackId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  startedAt        DateTime
+  listenedDuration Float            @default(0)
+
+  @@index([sessionId])
 }

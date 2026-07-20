@@ -12,6 +12,7 @@
   import { deviceInfo } from '$lib/states/deviceInfo.svelte';
   import { getReadableTime, sortArtists } from '$lib/utils';
 
+  import RoundArchive from '~icons/ic/round-archive';
   import RoundMoreVert from '~icons/ic/round-more-vert';
   import RoundPauseCircleOutline from '~icons/ic/round-pause-circle-outline';
   import RoundPlayCircleFilled from '~icons/ic/round-play-circle-filled';
@@ -62,6 +63,8 @@
     handleClick?: () => void;
     button?: Snippet;
     showAlbumName?: boolean;
+    showPlayState?: boolean;
+    isMigrated?: boolean;
     user?: SignedInUser | null;
     currentAlbumId?: string;
     currentPlaylistId?: string;
@@ -82,6 +85,8 @@
     },
     button,
     showAlbumName = true,
+    showPlayState = true,
+    isMigrated = false,
     user = null,
     currentAlbumId,
     currentPlaylistId
@@ -246,7 +251,7 @@
   use:vibrate
   class={[
     'group flex h-16 w-full flex-none cursor-default items-center rounded-md from-transparent via-zinc-600/10 to-transparent transition-colors select-none hover:bg-linear-to-r focus-visible:bg-linear-to-r',
-    player.currentTrack?.id === track.id && 'bg-linear-to-r',
+    showPlayState && player.currentTrack?.id === track.id && 'bg-linear-to-r',
     !indexed && 'px-4',
     (!!user || hasButton) && 'pr-2'
   ]}
@@ -273,7 +278,7 @@
   {/if}
 
   <div class="flex size-12 flex-none items-center justify-center">
-    {#if player.currentTrack?.id === track.id}
+    {#if showPlayState && player.currentTrack?.id === track.id}
       {#if player.paused}
         <button
           class="text-primary/70 hover:text-primary z-10 flex items-center justify-center"
@@ -345,11 +350,20 @@
       {/if}
     </div>
     {#if listenedInformation.lastListened}
-      <!-- TODO: Make sure it is always readable and does not wrap
-           Issue: https://github.com/aygreyG/music-stream-svelte/issues/124
-      -->
       <div class="flex w-full justify-between text-xs font-medium whitespace-nowrap">
-        <div>{listenedInformation.lastListened.toLocaleString()}</div>
+        <div class="flex items-center gap-1">
+          {listenedInformation.lastListened.toLocaleString(undefined, {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          })}
+          {#if isMigrated}
+            <span title="Migrated from previous listening history">
+              <RoundArchive class="text-on-surface-variant text-sm" />
+            </span>
+          {/if}
+        </div>
         <div
           class="translate-x-14 overflow-hidden text-ellipsis"
           title={getReadableTime(listenedInformation.listened)}

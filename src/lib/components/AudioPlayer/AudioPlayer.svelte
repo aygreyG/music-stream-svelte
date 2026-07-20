@@ -54,6 +54,7 @@
   let listenedDuration = $state(0);
   let previousTime = $state(0);
   let previousTrackId: string;
+  let trackStartedAt: string;
   let seeking = $state(false);
   let bufferedRanges: SvelteMediaTimeRange[] = $state([]);
   let fullScreenOpen = $state(false);
@@ -79,15 +80,16 @@
     }
   });
 
-  async function sendListeningData(trackId: string, duration: number) {
-    if (duration < 0.01) return;
+  async function sendListeningData(trackId: string, duration: number, startedAt: string) {
+    if (duration < 0.1) return;
     const resp = await fetch(`/api/listened/${trackId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        duration: duration.toPrecision(3)
+        duration: duration.toPrecision(3),
+        startedAt
       })
     });
 
@@ -181,17 +183,19 @@
 
       if (!previousTrackId) {
         previousTrackId = audioPlayer.currentTrack.id;
-      } else if (previousTrackId !== audioPlayer.currentTrack.id && listenedDuration > 0.01) {
-        sendListeningData(previousTrackId, listenedDuration);
+        trackStartedAt = new Date().toISOString();
+      } else if (previousTrackId !== audioPlayer.currentTrack.id && listenedDuration > 0.1) {
+        sendListeningData(previousTrackId, listenedDuration, trackStartedAt);
         previousTrackId = audioPlayer.currentTrack.id;
         listenedDuration = 0;
+        trackStartedAt = new Date().toISOString();
       }
     }
   });
 
   $effect(() => {
     if (audioPlayer.paused && listenedDuration > 0 && audioPlayer.currentTrack) {
-      sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
+      sendListeningData(audioPlayer.currentTrack.id, listenedDuration, trackStartedAt);
       listenedDuration = 0;
     }
   });
@@ -229,6 +233,7 @@
     duration = undefined;
     player = null;
     previousTrackId = '';
+    trackStartedAt = '';
     prevSeekTime = 0;
     listenedDuration = 0;
     seeking = false;
@@ -259,7 +264,7 @@
 
   beforeNavigate((navigation) => {
     if (navigation.type === 'leave' && listenedDuration > 0.5) {
-      sendListeningData(previousTrackId, listenedDuration);
+      sendListeningData(previousTrackId, listenedDuration, trackStartedAt);
       listenedDuration = 0;
       navigation.cancel();
     }
@@ -302,7 +307,7 @@
             navigating.to === null &&
             audioPlayer.currentTrack
           ) {
-            sendListeningData(audioPlayer.currentTrack.id, listenedDuration);
+            sendListeningData(audioPlayer.currentTrack.id, listenedDuration, trackStartedAt);
             listenedDuration = 0;
           }
         }

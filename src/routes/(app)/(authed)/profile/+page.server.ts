@@ -3,58 +3,65 @@ import bcrypt from 'bcryptjs';
 
 import { AUTH_COOKIE } from '$lib/server/auth.js';
 import prisma from '$lib/server/prisma.js';
-import { ROLE } from '$lib/shared/consts.js';
+import { ROLE, SESSIONS_PER_PAGE } from '$lib/shared/consts.js';
 
-const MAX_LISTENS = 25;
+const trackSelect = {
+  id: true,
+  title: true,
+  length: true,
+  trackNumber: true,
+  artists: { select: { name: true, id: true } },
+  album: {
+    select: {
+      id: true,
+      title: true,
+      albumArtist: { select: { name: true, id: true } },
+      albumArtId: true,
+      albumArt: true,
+      tracks: {
+        select: { id: true, title: true, artists: { select: { name: true, id: true } } }
+      }
+    }
+  }
+} as const;
+
+const sessionSelect = {
+  id: true,
+  startedAt: true,
+  endedAt: true,
+  events: {
+    select: {
+      id: true,
+      startedAt: true,
+      listenedDuration: true,
+      track: { select: trackSelect }
+    },
+    orderBy: { startedAt: 'desc' as const }
+  }
+};
 
 export const load = async ({ locals, depends }) => {
   depends('load:listened');
-  const listens = await prisma.listened.findMany({
-    where: { userId: locals.user?.id },
-    select: {
-      id: true,
-      updatedAt: true,
-      listeningTime: true,
-      track: {
-        select: {
-          id: true,
-          title: true,
-          length: true,
-          trackNumber: true,
-          artists: { select: { name: true, id: true } },
-          album: {
-            select: {
-              id: true,
-              title: true,
-              albumArtist: { select: { name: true, id: true } },
-              albumArtId: true,
-              albumArt: true,
-              tracks: {
-                select: { id: true, title: true, artists: { select: { name: true, id: true } } }
-              }
-            }
-          }
-        }
-      }
-    },
-    orderBy: {
-      updatedAt: 'desc'
-    },
-    take: MAX_LISTENS
-  });
 
-  const totalListens = await prisma.listened.count({ where: { userId: locals.user?.id } });
-
-  const totalListeningTime = await prisma.listened.aggregate({
-    where: { userId: locals.user?.id },
-    _sum: { listeningTime: true }
-  });
+  const [sessions, totalSessions, totalListeningTimeResult] = await Promise.all([
+    prisma.listeningSession.findMany({
+      where: { userId: locals.user?.id },
+      select: sessionSelect,
+      orderBy: { endedAt: 'desc' },
+      take: SESSIONS_PER_PAGE
+    }),
+    prisma.listeningSession.count({ where: { userId: locals.user?.id } }),
+    prisma.listeningEvent.aggregate({
+      where: { session: { userId: locals.user?.id } },
+      _sum: { listenedDuration: true }
+    })
+  ]);
 
   return {
     title: 'Profile',
-    listens,
-    totalListens,
-    totalListeningTime: totalListeningTime._sum.listeningTime
+    sessions,
+    totalSessions,
+    totalListeningTime: totalListeningTimeResult._sum.listenedDuration
   };
 };
 
@@ -160,47 +167,20 @@ export const actions = {
 
     return redirect(303, '/login');
   },
-  getListens: async ({ locals, request }) => {
+  getSessions: async ({ locals, request }) => {
     const formData = await request.formData();
-    const skip = formData.get('from')?.toString();
+    const cursor = formData.get('cursor')?.toString();
 
-    const listens = await prisma.listened.findMany({
-      where: { userId: locals.user?.id },
-      skip: skip ? parseInt(skip) : 0,
-      select: {
-        id: true,
-        updatedAt: true,
-        listeningTime: true,
-        track: {
-          select: {
-            id: true,
-            title: true,
-            length: true,
-            trackNumber: true,
-            artists: { select: { name: true, id: true } },
-            album: {
-              select: {
-                id: true,
-                title: true,
-                albumArtist: { select: { name: true, id: true } },
-                albumArtId: true,
-                albumArt: true,
-                tracks: {
-                  select: { id: true, title: true, artists: { select: { name: true, id: true } } }
-                }
-              }
-            }
-          }
-        }
+    const sessions = await prisma.listeningSession.findMany({
+      where: {
+        userId: locals.user?.id,
+        ...(cursor ? { endedAt: { lt: new Date(cursor) } } : {})
       },
-      orderBy: {
-        updatedAt: 'desc'
-      },
-      take: MAX_LISTENS
+      select: sessionSelect,
+      orderBy: { endedAt: 'desc' },
+      take: SESSIONS_PER_PAGE
     });
 
-    return {
-      listens
-    };
+    return { sessions };
   }
 };
