@@ -416,7 +416,7 @@
 
     <MenuButton
       bottomSheetHeader={trackHeader}
-      contentProps={{ align: 'end', style: schemeStyle }}
+      contentProps={{ align: 'end', style: schemeStyle, class: 'z-40' }}
       items={menuItems}
     >
       <RoundMoreVert class="text-lg opacity-50 transition-opacity group-hover:opacity-100" />
