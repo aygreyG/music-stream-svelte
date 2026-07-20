@@ -1,3 +1,9 @@
+# [1.7.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0-dev.1...v1.7.0-dev.2) (2026-07-20)
+
+### Bug Fixes
+
+- listening data being above track row dropdown ([73d6541](https://github.com/aygreyG/music-stream-svelte/commit/73d654128ff43e4f1e04788fbc2b48aadbae0cd4))
+
 # [1.7.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0...v1.7.0-dev.1) (2026-07-20)
 
 ### Bug Fixes
