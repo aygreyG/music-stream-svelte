@@ -1,3 +1,9 @@
+# [1.8.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0...v1.8.0-dev.1) (2026-08-01)
+
+### Features
+
+- add user changeable delay to track lyrics ([1bdb28d](https://github.com/aygreyG/music-stream-svelte/commit/1bdb28d440638faa16fc6d8af9e079f085dabc1d))
+
 # [1.7.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0...v1.7.0) (2026-08-01)
 
 ### Bug Fixes
