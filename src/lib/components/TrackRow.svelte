@@ -360,7 +360,7 @@
           })}
           {#if isMigrated}
             <span title="Migrated from previous listening history">
-              <RoundArchive class="text-on-surface-variant text-sm" />
+              <RoundArchive class="text-sm" />
             </span>
           {/if}
         </div>
