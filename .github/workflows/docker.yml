@@ -37,7 +37,8 @@ jobs:
       - name: Prepare stable release
         if: github.event_name == 'workflow_dispatch'
         run: |
-          git checkout -B release
+          git fetch origin main
+          git checkout -B release origin/main
           git push --force origin release
 
       - name: Set up Node

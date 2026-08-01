@@ -21,6 +21,7 @@ model User {
   playlists         Playlist[]
   favouriteTracks   Track[]            @relation("FavouriteTracks")
   sessions          ListeningSession[]
+  lyricsDelays      UserTrackLyricsDelay[]
 
   @@index([id, username])
 }
@@ -61,6 +62,7 @@ model Track {
   favouritedBy    User[]     @relation("FavouriteTracks")
   tags            Tag[]
   lyrics          Lyrics?
+  lyricsDelays    UserTrackLyricsDelay[]
 
   @@index([albumId])
   @@index([trackNumber])
@@ -79,6 +81,16 @@ model Lyrics {
   instrumental Boolean  @default(false)
   source       String
   fetchedAt    DateTime @default(now())
+}
+
+model UserTrackLyricsDelay {
+  userId  String
+  trackId String
+  delay   Float
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track   Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@id([userId, trackId])
 }
 
 model Artist {

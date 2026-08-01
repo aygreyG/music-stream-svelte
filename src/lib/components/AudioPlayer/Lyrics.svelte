@@ -1,12 +1,16 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { fade } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
+  import { fade, scale } from 'svelte/transition';
 
   import { vibrate } from '$lib/actions/vibrate';
   import { getActiveLrcIndex, parseLrc, type LrcLine } from '$lib/shared/lrc';
 
+  import RoundArrowDropDown from '~icons/ic/round-arrow-drop-down';
+  import RoundArrowDropUp from '~icons/ic/round-arrow-drop-up';
   import RoundMusicNote from '~icons/ic/round-music-note';
   import RoundRefresh from '~icons/ic/round-refresh';
+  import RoundRestartAlt from '~icons/ic/round-restart-alt';
 
   interface Props {
     trackId: string | null;
@@ -21,8 +25,11 @@
   let status: Status = $state('idle');
   let plainLyrics: string | null = $state(null);
   let lrcLines: LrcLine[] = $state([]);
+  let delay = $state(0);
   let isSynced = $derived(lrcLines.length > 0);
-  let activeIndex = $derived(isSynced ? getActiveLrcIndex(lrcLines, currentTime) : -1);
+  let adjustedTime = $derived(currentTime + delay);
+  let activeIndex = $derived(isSynced ? getActiveLrcIndex(lrcLines, adjustedTime) : -1);
+  let delayLabel = $derived(delay === 0 ? '0s' : `${delay > 0 ? '+' : ''}${delay.toFixed(1)}s`);
 
   let lyricsContainer: HTMLDivElement | null = $state(null);
   let lineEls: HTMLElement[] = $state([]);
@@ -34,6 +41,26 @@
   );
 
   let _abortCtrl: AbortController | null = null;
+  let _saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function setDelay(value: number) {
+    delay = Math.round(value * 10) / 10;
+    const id = trackId;
+    if (!id) return;
+    clearTimeout(_saveTimer ?? undefined);
+    // ponytail: debounce bursts of ±0.1 taps
+    _saveTimer = setTimeout(() => {
+      fetch(`/api/lyrics/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ delay })
+      });
+    }, 300);
+  }
+
+  function nudgeDelay(delta: number) {
+    setDelay(delay + delta);
+  }
 
   async function fetchLyrics(force: boolean) {
     const id = trackId;
@@ -48,6 +75,7 @@
     status = 'loading';
     plainLyrics = null;
     lrcLines = [];
+    delay = 0;
 
     const params = force ? '?force=true' : '';
 
@@ -61,6 +89,7 @@
       if (!res.ok) throw new Error(`${res.status}`);
 
       const data = await res.json();
+      delay = Number(data.delay) || 0;
       if (data.instrumental) {
         status = 'instrumental';
         return;
@@ -85,11 +114,13 @@
     const id = trackId;
     lastScrolledIdx = -1;
     prevAutoScroll = false;
+    clearTimeout(_saveTimer ?? undefined);
 
     if (!id) {
       status = 'idle';
       plainLyrics = null;
       lrcLines = [];
+      delay = 0;
       return;
     }
 
@@ -97,6 +128,7 @@
 
     return () => {
       _abortCtrl?.abort();
+      clearTimeout(_saveTimer ?? undefined);
     };
   });
 
@@ -134,6 +166,46 @@
   >
     <RoundRefresh />
   </button>
+{/if}
+
+{#if isSynced}
+  <div class="absolute left-1/2 z-10 -translate-x-1/2 max-sm:-bottom-4 sm:bottom-5">
+    <div class="bg-surface-container flex items-center rounded-full p-1">
+      <button
+        onclick={() => nudgeDelay(-0.1)}
+        class="bg-surface-variant text-primary flex size-9 items-center justify-center rounded-l-4xl rounded-r-xl text-3xl transition-all"
+        aria-label="Delay lyrics by 0.1 seconds"
+        use:vibrate
+      >
+        <RoundArrowDropDown />
+      </button>
+      <span
+        class="text-on-surface min-w-12 text-center text-sm font-semibold tabular-nums select-none"
+        aria-live="polite"
+      >
+        {delayLabel}
+      </span>
+      <button
+        onclick={() => nudgeDelay(0.1)}
+        class="bg-surface-variant text-primary flex size-9 items-center justify-center rounded-l-xl rounded-r-4xl text-3xl transition-all"
+        aria-label="Advance lyrics by 0.1 seconds"
+        use:vibrate
+      >
+        <RoundArrowDropUp />
+      </button>
+    </div>
+    {#if delay !== 0}
+      <button
+        onclick={() => setDelay(0)}
+        class="bg-surface-variant text-on-surface-variant hover:text-primary absolute top-1/2 left-full ml-1.5 flex size-9 -translate-y-1/2 items-center justify-center rounded-full text-lg transition-all"
+        aria-label="Reset lyrics delay"
+        use:vibrate
+        transition:scale={{ duration: 150, easing: cubicOut }}
+      >
+        <RoundRestartAlt />
+      </button>
+    {/if}
+  </div>
 {/if}
 
 <div
@@ -175,7 +247,7 @@
     </div>
   {:else if status === 'found'}
     {#if isSynced}
-      <div class="flex flex-col gap-1 py-8">
+      <div class="flex flex-col gap-1 py-8 pb-14">
         {#each lrcLines as line, i (i)}
           {@const isActive = i === activeIndex}
           {@const isPast = i < activeIndex}
@@ -196,7 +268,7 @@
             {@const duration = Math.max(0.1, nextTime - line.time)}
             {@const shortBreak = duration < 2}
             {@const progress = isActive
-              ? Math.min(1, Math.max(0, (currentTime - line.time) / duration))
+              ? Math.min(1, Math.max(0, (adjustedTime - line.time) / duration))
               : isPast
                 ? 1
                 : 0}
