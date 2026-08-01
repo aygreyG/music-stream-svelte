@@ -1,3 +1,9 @@
+# [1.7.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2026-08-01)
+
+### Bug Fixes
+
+- update migrate icon ([04d33e7](https://github.com/aygreyG/music-stream-svelte/commit/04d33e75a2cd38edc6c6e2267427103ef217b5e9))
+
 # [1.7.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0-dev.2...v1.7.0-dev.3) (2026-07-20)
 
 ### Bug Fixes
