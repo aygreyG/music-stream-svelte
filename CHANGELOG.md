@@ -1,3 +1,16 @@
+# [1.7.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.6.0...v1.7.0) (2026-08-01)
+
+### Bug Fixes
+
+- listening data being above track row dropdown ([73d6541](https://github.com/aygreyG/music-stream-svelte/commit/73d654128ff43e4f1e04788fbc2b48aadbae0cd4))
+- listening data is sent twice on pause ([b6920b5](https://github.com/aygreyG/music-stream-svelte/commit/b6920b5806c49a8fa5ccec0e87c067f31bf731e7)), closes [#202](https://github.com/aygreyG/music-stream-svelte/issues/202)
+- update migrate icon ([04d33e7](https://github.com/aygreyG/music-stream-svelte/commit/04d33e75a2cd38edc6c6e2267427103ef217b5e9))
+- wrong cursor usage for listening history ([5400f26](https://github.com/aygreyG/music-stream-svelte/commit/5400f26b60f917e8062fd0ad4d901f076725e899))
+
+### Features
+
+- reimplement listening history with migration ([1bb5384](https://github.com/aygreyG/music-stream-svelte/commit/1bb5384c92d839e5c0decfaedba21fef7966c5d7))
+
 # [1.7.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2026-08-01)
 
 ### Bug Fixes
