@@ -8,6 +8,12 @@
   import { resolve } from '$app/paths';
   import { navigating, page } from '$app/state';
   import { vibrate } from '$lib/actions/vibrate';
+  import {
+    isIgnorablePlayError,
+    mediaErrorDetail,
+    resetPlaybackErrorToast,
+    showPlaybackErrorToast
+  } from '$lib/playbackErrors';
   import type { SignedInUser } from '$lib/shared/types';
   import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
   import { sortArtists } from '$lib/utils';
@@ -112,17 +118,37 @@
     return false;
   }
 
+  function handlePlayRejection(e: unknown) {
+    if (isIgnorablePlayError(e)) return;
+    handlePlaybackError(e instanceof Error ? e.message : 'Play failed');
+  }
+
   function onEnded() {
     if (repeat) {
       if (player) {
         player.currentTime = 0;
         prevSeekTime = 0;
-        player.play();
+        player.play().catch(handlePlayRejection);
       }
     } else {
       audioPlayer.playNext();
     }
   }
+
+  function handlePlaybackError(detail: string) {
+    if (!audioPlayer.currentTrack) return;
+    audioPlayer.paused = true;
+    showPlaybackErrorToast(audioPlayer.currentTrack, detail);
+  }
+
+  function onAudioError() {
+    if (player) handlePlaybackError(mediaErrorDetail(player));
+  }
+
+  $effect(() => {
+    void audioPlayer.currentTrack?.id;
+    resetPlaybackErrorToast();
+  });
 
   function updateVolume(e: WheelEvent) {
     volume = Math.max(0, Math.min(1, volume + (e.deltaY < 0 ? 0.05 : -0.05)));
@@ -274,7 +300,7 @@
     if (audioPlayer.paused && player && audioPlayer.currentTrack) {
       player.pause();
     } else if (player && audioPlayer.currentTrack) {
-      player.play();
+      player.play().catch(handlePlayRejection);
     }
   });
 </script>
@@ -290,6 +316,8 @@
       bind:volume
       autoplay={true}
       onended={onEnded}
+      onerror={onAudioError}
+      onplaying={resetPlaybackErrorToast}
       onseeking={() => (seeking = true)}
       onseeked={() => (seeking = false)}
       ontimeupdate={(e) => {
@@ -298,9 +326,9 @@
         if (diff < 2 && diff > 0 && !audioPlayer.paused) {
           listenedDuration += diff;
           if (
-            // Only send in a second if we are on the profile page
+            // Only send in a second if we are on the history page
             ((listenedDuration > 1 &&
-              page.url.pathname === '/profile' &&
+              page.url.pathname === '/history' &&
               !isSlowConnection() &&
               navigating.to === null) ||
               listenedDuration > 8) &&

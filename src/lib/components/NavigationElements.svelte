@@ -17,18 +17,30 @@
   import RoundPlaylistPlay from '~icons/ic/round-playlist-play';
   import RoundSearch from '~icons/ic/round-search';
   import HeartFill from '~icons/iconamoon/heart-fill';
+  import HistoryFill from '~icons/iconamoon/history-fill';
   import MusicAlbumFill from '~icons/iconamoon/music-album-fill';
   import MusicArtistFill from '~icons/iconamoon/music-artist-fill';
-  import ProfileFill from '~icons/iconamoon/profile-fill';
+  import SettingsFill from '~icons/iconamoon/settings-fill';
 
   import NavigationElement from './NavigationElement.svelte';
 
   interface Props {
     user?: SignedInUser | null;
     onclickedelement?: () => void;
+    variant?: 'primary' | 'utility';
+    appVersion?: string;
+    stretch?: boolean;
   }
 
-  let { user = null, onclickedelement }: Props = $props();
+  let {
+    user = null,
+    onclickedelement,
+    variant = 'primary',
+    appVersion,
+    stretch = false
+  }: Props = $props();
+
+  const changelogHref = resolve('/changelog');
 
   type NavigationElementType = {
     href: ResolvedPathname;
@@ -44,26 +56,21 @@
     }
   ];
 
-  const loggedInElements: NavigationElementType[] = [
-    {
-      href: resolve('/profile'),
-      text: 'Profile',
-      Icon: ProfileFill
-    },
+  const primaryElements: NavigationElementType[] = [
     {
       href: resolve('/search'),
       text: 'Search',
       Icon: RoundSearch
     },
     {
-      href: resolve('/'),
-      text: 'Albums',
-      Icon: MusicAlbumFill
-    },
-    {
       href: resolve('/artist'),
       text: 'Artists',
       Icon: MusicArtistFill
+    },
+    {
+      href: resolve('/'),
+      text: 'Albums',
+      Icon: MusicAlbumFill
     },
     {
       href: resolve('/tag'),
@@ -79,16 +86,24 @@
       href: resolve('/favourite'),
       text: 'Favourites',
       Icon: HeartFill
+    }
+  ];
+
+  const utilityElements: NavigationElementType[] = [
+    {
+      href: resolve('/history'),
+      text: 'Listening history',
+      Icon: HistoryFill
     },
     {
-      href: resolve('/changelog'),
+      href: changelogHref,
       text: 'Changelog',
       Icon: RoundNewReleases
     },
     {
-      href: resolve('/logout'),
-      text: 'Logout',
-      Icon: RoundLougout
+      href: resolve('/settings'),
+      text: 'Settings',
+      Icon: SettingsFill
     }
   ];
 
@@ -101,28 +116,48 @@
   ];
 </script>
 
-{#if user}
-  {#if user.role === ROLE.ADMIN || user.role === ROLE.OWNER}
-    {#each adminElements as el (el.href)}
-      <NavigationElement {onclickedelement} {...el} />
-    {/each}
-  {/if}
-  {#each loggedInElements as el (el.href)}
-    {#if el.href === '/logout'}
-      <form class="block" method="POST" action="/logout" use:enhance>
-        <button
-          class="flex items-center gap-2 rounded-2xl px-16 py-2 text-2xl font-bold transition-colors sm:px-4 sm:text-base"
-          onclick={() => onclickedelement?.()}
-          type="submit"
-          use:vibrate
-        >
-          <el.Icon />
-          {el.text}
-        </button>
-      </form>
-    {:else}
-      <NavigationElement {onclickedelement} {...el} />
+{#if variant === 'utility'}
+  {#if user}
+    {#if user.role === ROLE.ADMIN || user.role === ROLE.OWNER}
+      {#each adminElements as el (el.href)}
+        <NavigationElement
+          {onclickedelement}
+          iconOnly
+          class={stretch ? 'min-w-0 flex-1' : undefined}
+          {...el}
+        />
+      {/each}
     {/if}
+    {#each utilityElements as el (el.href)}
+      <NavigationElement
+        {onclickedelement}
+        iconOnly
+        class={stretch ? 'min-w-0 flex-1' : undefined}
+        {...el}
+        subtext={el.href === changelogHref ? appVersion : undefined}
+      />
+    {/each}
+    <form
+      class={stretch ? 'min-w-0 flex-1' : 'min-w-0 flex-none'}
+      method="POST"
+      action="/logout"
+      use:enhance
+    >
+      <button
+        class="hover:bg-on-surface-variant/15 flex w-full items-center justify-center rounded-full p-3 text-2xl transition-colors active:scale-95 sm:p-1.5 sm:text-base"
+        onclick={() => onclickedelement?.()}
+        aria-label="Logout"
+        title="Logout"
+        type="submit"
+        use:vibrate
+      >
+        <RoundLougout />
+      </button>
+    </form>
+  {/if}
+{:else if user}
+  {#each primaryElements as el (el.href)}
+    <NavigationElement {onclickedelement} {...el} />
   {/each}
 {:else}
   {#each loggedOutElements as el (el.href)}

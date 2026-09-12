@@ -12,9 +12,10 @@
 
   interface Props {
     user?: SignedInUser | null;
+    appVersion?: string;
   }
 
-  let { user = null }: Props = $props();
+  let { user = null, appVersion }: Props = $props();
   let open: boolean = $state(false);
 
   beforeNavigate((navigation) => {
@@ -30,13 +31,18 @@
     class="bg-surface flex h-full w-full flex-col gap-2 overflow-y-auto rounded-xl p-4 transition-colors duration-500"
   >
     <NavigationElements {user} />
+    {#if user}
+      <div class="border-outline-variant/40 mt-auto flex w-full items-center gap-0.5 border-t pt-2">
+        <NavigationElements variant="utility" stretch {user} {appVersion} />
+      </div>
+    {/if}
   </div>
 </div>
 
 <div
   class="bg-surface-variant absolute top-24 -right-1 z-50 flex items-center justify-center rounded-s-xl shadow-md backdrop-blur-md transition-colors duration-300 sm:hidden"
 >
-  <button use:vibrate onclick={() => (open = !open)}>
+  <button use:vibrate onclick={() => (open = !open)} aria-label={open ? 'Close menu' : 'Open menu'}>
     {#if open}
       <RoundClose
         class="text-on-surface-variant hover:text-primary active:text-primary text-4xl transition-colors duration-500"
@@ -56,11 +62,22 @@
   ]}
 >
   {#if open}
-    <div
-      class="flex h-full flex-col items-stretch justify-center"
-      transition:fade|global={{ duration: 200 }}
-    >
-      <NavigationElements onclickedelement={() => (open = false)} {user} />
+    <div class="flex h-full w-full flex-col" transition:fade|global={{ duration: 200 }}>
+      <div class="flex flex-1 flex-col items-center justify-center overflow-clip">
+        <div class="flex flex-col items-stretch">
+          <NavigationElements onclickedelement={() => (open = false)} {user} />
+        </div>
+      </div>
+      {#if user}
+        <div class="border-outline-variant/40 flex items-center justify-center gap-1 border-t p-4">
+          <NavigationElements
+            variant="utility"
+            onclickedelement={() => (open = false)}
+            {user}
+            {appVersion}
+          />
+        </div>
+      {/if}
     </div>
   {/if}
 </div>

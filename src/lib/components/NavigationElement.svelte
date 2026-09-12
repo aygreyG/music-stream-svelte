@@ -11,25 +11,52 @@
     text: string;
     Icon: Component<SVGAttributes<SVGSVGElement>>;
     onclickedelement?: () => void;
+    iconOnly?: boolean;
+    subtext?: string;
+    class?: string;
   }
 
-  let { href, text, Icon, onclickedelement }: Props = $props();
+  let {
+    href,
+    text,
+    Icon,
+    onclickedelement,
+    iconOnly = false,
+    subtext,
+    class: className = ''
+  }: Props = $props();
 
   let currentPage = $derived(page.url.pathname);
+  let active = $derived(currentPage.replaceAll('/', '') === href.replaceAll('/', ''));
 </script>
 
-<div>
+<div class={className}>
   <a
     onclick={() => onclickedelement?.()}
     class={[
-      'flex items-center gap-2 rounded-2xl px-16 py-2 text-2xl font-bold transition-colors sm:px-4 sm:text-base',
-      currentPage.replaceAll('/', '') === href.replaceAll('/', '') && 'bg-primary text-on-primary'
+      'relative flex items-center transition-colors',
+      iconOnly &&
+        'w-full justify-center rounded-full p-3 text-2xl active:scale-95 sm:p-1.5 sm:text-base',
+      iconOnly && !active && 'hover:bg-on-surface-variant/15',
+      !iconOnly && 'gap-2 rounded-2xl px-16 py-2 text-2xl font-bold sm:px-4 sm:text-base',
+      active && 'bg-primary text-on-primary'
     ]}
-    // eslint-disable-next-line svelte/no-navigation-without-resolve
     {href}
+    aria-label={iconOnly ? text : undefined}
+    title={iconOnly ? text : undefined}
     use:vibrate
   >
     <Icon />
-    {text}
+    {#if iconOnly}
+      {#if subtext}
+        <span
+          class="bg-surface-variant text-on-surface-variant absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-1 text-[0.4em] leading-tight font-bold whitespace-nowrap shadow-sm sm:bottom-1"
+        >
+          {subtext}
+        </span>
+      {/if}
+    {:else}
+      {text}
+    {/if}
   </a>
 </div>

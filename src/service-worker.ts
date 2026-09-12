@@ -8,7 +8,7 @@ import { build, files, version } from '$service-worker';
 declare let self: ServiceWorkerGlobalScope;
 
 const CACHE_NAME = `cache-${version}`;
-const ASSETS = [...build, ...files];
+const ASSET_SET = new Set([...build, ...files]);
 const NON_CACHEABLE = [
   '/admin',
   '/api/admin',
@@ -17,37 +17,32 @@ const NON_CACHEABLE = [
   '/loading',
   '/login',
   '/logout',
-  '/profile',
+  '/settings',
+  '/history',
   '/favourite',
   '/playlist'
 ];
-const CACHE_FIRST = ['/api/image', '/api/lyrics'];
-const SKIP_TIMEOUT = ['/api/lyrics'];
+const NO_TIMEOUT = ['/api/lyrics'];
 const TIMEOUT_MS = 15000;
+
+const matches = (paths: string[], pathname: string) =>
+  paths.some((path) => pathname === path || pathname.startsWith(`${path}/`));
 
 self.addEventListener('activate', (event: ExtendableEvent) => {
   const activate = async () => {
-    // Remove old caches
     const keys = await caches.keys();
-    await Promise.all(
-      keys.map((key) => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
-        }
-      })
-    );
+    await Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)));
+    await self.clients.claim();
   };
 
   event.waitUntil(activate());
 });
 
 self.addEventListener('install', (event: ExtendableEvent) => {
-  self.skipWaiting();
-
   const cacheAssets = async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
-      await cache.addAll(ASSETS);
+      await cache.addAll([...ASSET_SET]);
     } catch (error) {
       console.error('Failed to cache assets:', error);
     }
@@ -57,55 +52,43 @@ self.addEventListener('install', (event: ExtendableEvent) => {
 });
 
 async function respond(event: FetchEvent): Promise<Response> {
-  try {
-    const url = new URL(event.request.url);
-    const cache = await caches.open(CACHE_NAME);
-    const cachedResponse = await cache.match(event.request);
+  const url = new URL(event.request.url);
+  let cachedResponse: Response | undefined;
 
-    if (
-      ASSETS.includes(url.pathname) ||
-      (CACHE_FIRST.some((path) => url.pathname.startsWith(path)) && cachedResponse)
-    ) {
-      console.log('Serving from cache:', event.request.url);
-      return cachedResponse!;
+  try {
+    const cache = await caches.open(CACHE_NAME);
+    cachedResponse = await cache.match(event.request);
+
+    if (cachedResponse && ASSET_SET.has(url.pathname)) {
+      return cachedResponse;
     }
 
-    const controller = new AbortController();
-
-    const timeoutId = setTimeout(() => {
-      if (!SKIP_TIMEOUT.some((path) => url.pathname.startsWith(path))) {
-        console.warn('Fetch timed out, skipping:', event.request.url);
-        controller.abort();
-      }
-    }, TIMEOUT_MS);
-
-    const cacheKey = cachedResponse?.headers.get('cache-key');
-
     const headers = new Headers(event.request.headers);
+    const cacheKey = cachedResponse?.headers.get('cache-key');
     if (cacheKey) {
       headers.set('cache-key', cacheKey);
     }
 
-    const response = await fetch(event.request, {
-      signal: controller.signal,
-      headers
-    });
+    const signal = matches(NO_TIMEOUT, url.pathname) ? undefined : AbortSignal.timeout(TIMEOUT_MS);
+
+    const response = await fetch(event.request, { signal, headers });
 
     if (response.status === 304) {
-      console.log('Serving from cache:', event.request.url);
       return cachedResponse!;
-    } else {
-      const newCacheKey = response.headers.get('cache-key');
-      if (newCacheKey) {
-        cache.put(event.request, response.clone());
-      }
     }
 
-    clearTimeout(timeoutId);
+    if (response.headers.get('cache-key')) {
+      await cache.put(event.request, response.clone());
+    }
 
     return response;
   } catch (error) {
     console.error('Service worker error:', error);
+
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
     return new Response('Network error', {
       status: 503,
       statusText: 'Service Unavailable',
@@ -122,9 +105,8 @@ self.addEventListener('fetch', (event: FetchEvent) => {
 
   const url = new URL(event.request.url);
 
-  // Skip non-cacheable paths
-  if (NON_CACHEABLE.some((path) => url.pathname.startsWith(path))) return;
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
+  if (matches(NON_CACHEABLE, url.pathname)) return;
 
   event.respondWith(respond(event));
 });

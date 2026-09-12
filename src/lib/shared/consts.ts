@@ -15,6 +15,12 @@ const IMAGE_FILE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'avif'];
 const SESSION_TIMEOUT_MS = 60 * 60 * 1000;
 const SESSIONS_PER_PAGE = 30;
 
+const VIBRATION_PATTERNS = {
+  TAP: 10,
+  CONFIRM: [30, 40, 80],
+  ERROR: [50, 100, 50]
+};
+
 const SCHEME_TYPES = [
   'CONTENT',
   'EXPRESSIVE',
@@ -96,7 +102,8 @@ export {
   SCHEME_KEYS,
   FALLBACK_SCHEME,
   SESSION_TIMEOUT_MS,
-  SESSIONS_PER_PAGE
+  SESSIONS_PER_PAGE,
+  VIBRATION_PATTERNS
 };
 
 export type { RoleType };

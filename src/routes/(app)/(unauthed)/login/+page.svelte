@@ -1,6 +1,8 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
   import { vibrate } from '$lib/actions/vibrate.js';
+  import { VIBRATION_PATTERNS } from '$lib/shared/consts';
+  import { handleVibrate } from '$lib/utils';
 
   import RoundRefresh from '~icons/ic/round-refresh';
 
@@ -25,9 +27,11 @@
     action="?&redirect_to={data.redirectTo ?? ''}"
     use:enhance={() => {
       loading = true;
-      return async ({ update }) => {
+      return async ({ result, update }) => {
         await update({ reset: false });
         loading = false;
+        const failed = result.type === 'failure' || result.type === 'error';
+        handleVibrate(failed ? VIBRATION_PATTERNS.ERROR : VIBRATION_PATTERNS.CONFIRM);
       };
     }}
   >

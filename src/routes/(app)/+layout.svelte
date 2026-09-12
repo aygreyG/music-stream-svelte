@@ -22,7 +22,7 @@
 
 <div class="flex h-full w-full flex-col gap-1">
   <div class="flex min-h-0 flex-1 gap-1">
-    <NavBar user={data.user} />
+    <NavBar user={data.user} appVersion={data.APP_VERSION} />
     <div
       id="app-main-panel"
       class="bg-surface relative h-full min-w-0 flex-1 overflow-hidden rounded-xl transition-colors duration-500"

@@ -65,15 +65,18 @@
   let swiperContainer: HTMLDivElement | null = $state(null);
   let swiperInstance: Swiper | null = $state(null);
   let verticalSwiperEl: HTMLDivElement | null = $state(null);
-  let verticalSwiper: Swiper | null = null; // non-reactive; only read inside effects/callbacks
+  let verticalSwiper: Swiper | null = null;
+  let verticalProgress = $state(0);
+  let clampedProgress = $derived(Math.min(1, Math.max(0, verticalProgress)) || 0);
+  let settling = $state(false);
   let prevSeekTime = $state(0);
   let lastPlayedIndex = $state(audioPlayer.queueContextIndex);
   let queueListEl: HTMLDivElement | null = $state(null);
   let prevVolume = $state(0.3);
 
   // Lyrics panel state
-  let lyricsOpen = $state(false); // desktop right panel
-  let mobileLyricsView = $state(false); // mobile: true = lyrics slide visible
+  let lyricsOpen = $state(false);
+  let mobileLyricsView = $state(false);
 
   let queuePane = $state<PaneAPI>();
   let lyricsPane = $state<PaneAPI>();
@@ -168,7 +171,17 @@
         spaceBetween: 50,
         noSwipingSelector: '.lyrics-scroll-zone',
         on: {
+          progress: (_sw, progress) => {
+            verticalProgress = progress;
+          },
+          touchStart: () => {
+            settling = false;
+          },
+          touchEnd: () => {
+            settling = true;
+          },
           slideChangeTransitionEnd: (sw) => {
+            settling = false;
             const isLyrics = sw.activeIndex === 1;
             if (isLyrics !== mobileLyricsView) {
               mobileLyricsView = isLyrics;
@@ -385,29 +398,26 @@
               class="bg-surface/50 absolute left-1 z-10 flex flex-col items-center justify-center gap-2 self-center rounded-full p-2 backdrop-blur-md sm:hidden"
             >
               <button
-                onclick={() => (mobileLyricsView = false)}
-                class={[
-                  'flex-none rounded-full transition-all duration-300',
-                  !mobileLyricsView ? 'bg-primary h-5 w-1.5' : 'bg-on-surface/30 size-1.5'
-                ]}
+                onclick={() => {
+                  settling = true;
+                  mobileLyricsView = false;
+                }}
+                style="--a: {1 - clampedProgress}"
+                class={['dot w-1.5 flex-none rounded-full', settling && 'dot-settle']}
                 aria-label="Show album art"
               ></button>
               <button
-                onclick={() => (mobileLyricsView = true)}
-                class={[
-                  'flex-none rounded-full transition-all duration-300',
-                  mobileLyricsView ? 'bg-primary h-5 w-1.5' : 'bg-on-surface/30 size-1.5'
-                ]}
+                onclick={() => {
+                  settling = true;
+                  mobileLyricsView = true;
+                }}
+                style="--a: {clampedProgress}"
+                class={['dot w-1.5 flex-none rounded-full', settling && 'dot-settle']}
                 aria-label="Show lyrics"
               ></button>
             </div>
 
             <div class="relative min-w-0 flex-1">
-              <!--
-              Vertical Swiper on mobile (album art ↔ lyrics); plain div on desktop.
-              aspect-[1.4] matches slidesPerView:1.4 so the container height equals the
-              active slide.
-            -->
               <div
                 bind:this={verticalSwiperEl}
                 role="region"
@@ -644,5 +654,20 @@
     flex-shrink: 0;
     width: 100%;
     position: relative;
+  }
+
+  .dot {
+    height: calc(0.375rem + 0.875rem * var(--a));
+    background-color: color-mix(
+      in oklab,
+      var(--primary, #d4c3ff) calc(var(--a) * 100%),
+      color-mix(in oklab, var(--on-surface, #f1dfff) 30%, transparent)
+    );
+  }
+
+  .dot-settle {
+    transition:
+      height 280ms ease,
+      background-color 280ms ease;
   }
 </style>
