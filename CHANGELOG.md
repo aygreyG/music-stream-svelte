@@ -1,3 +1,9 @@
+# [1.8.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2026-09-12)
+
+### Features
+
+- add basic error handling, update navbar and improve visualizer ([d6b62d6](https://github.com/aygreyG/music-stream-svelte/commit/d6b62d64d5fb97a4f1eb73cbbd4e7ae3e79d9ebf))
+
 # [1.8.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.7.0...v1.8.0-dev.1) (2026-08-01)
 
 ### Features
