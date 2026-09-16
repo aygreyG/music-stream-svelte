@@ -54,6 +54,34 @@ export function isValidImageSize(size: string): size is ImageSize {
   return ['s', 'm', 'l'].includes(size);
 }
 
+export type RankedItem = {
+  id: string;
+  name: string;
+  plays: number;
+  listeningTime: number;
+  artist?: string;
+  artistId?: string | null;
+  album?: string;
+  albumId?: string;
+  albumArtId?: string | null;
+};
+
+export type RankedTrack = RankedItem & {
+  artist: string;
+  artistId: string | null;
+  album: string;
+  albumId: string;
+  albumArtId: string | null;
+};
+
+export type RankedArtist = RankedItem;
+
+export type RankedAlbum = RankedItem & {
+  artist: string;
+  artistId: string;
+  albumArtId: string | null;
+};
+
 export type AlbumWithArt = Album & { albumArt: string };
 export type AlbumWithArtist = Album & { albumArtist: Artist };
 

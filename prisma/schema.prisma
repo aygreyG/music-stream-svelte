@@ -173,4 +173,5 @@ model ListeningEvent {
   listenedDuration Float            @default(0)
 
   @@index([sessionId])
+  @@index([startedAt])
 }

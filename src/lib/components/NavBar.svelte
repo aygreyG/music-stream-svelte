@@ -42,7 +42,12 @@
 <div
   class="bg-surface-variant absolute top-24 -right-1 z-50 flex items-center justify-center rounded-s-xl shadow-md backdrop-blur-md transition-colors duration-300 sm:hidden"
 >
-  <button use:vibrate onclick={() => (open = !open)} aria-label={open ? 'Close menu' : 'Open menu'}>
+  <button
+    class="aspect-square h-auto shrink-0"
+    use:vibrate
+    onclick={() => (open = !open)}
+    aria-label={open ? 'Close menu' : 'Open menu'}
+  >
     {#if open}
       <RoundClose
         class="text-on-surface-variant hover:text-primary active:text-primary text-4xl transition-colors duration-500"

@@ -10,6 +10,7 @@
   import type { SignedInUser } from '$lib/shared/types';
 
   import RoundAdminPanelSettings from '~icons/ic/round-admin-panel-settings';
+  import RoundInsights from '~icons/ic/round-insights';
   import RoundLabel from '~icons/ic/round-label';
   import RoundLogin from '~icons/ic/round-login';
   import RoundLougout from '~icons/ic/round-logout';
@@ -91,6 +92,11 @@
 
   const utilityElements: NavigationElementType[] = [
     {
+      href: resolve('/analytics'),
+      text: 'Analytics',
+      Icon: RoundInsights
+    },
+    {
       href: resolve('/history'),
       text: 'Listening history',
       Icon: HistoryFill
@@ -144,7 +150,7 @@
       use:enhance
     >
       <button
-        class="hover:bg-on-surface-variant/15 flex w-full items-center justify-center rounded-full p-3 text-2xl transition-colors active:scale-95 sm:p-1.5 sm:text-base"
+        class="hover:bg-on-surface-variant/15 flex aspect-square h-auto w-full shrink-0 items-center justify-center rounded-full p-3 text-2xl transition-colors active:scale-95 sm:p-0 sm:text-sm"
         onclick={() => onclickedelement?.()}
         aria-label="Logout"
         title="Logout"

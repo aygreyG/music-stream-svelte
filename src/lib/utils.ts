@@ -1,5 +1,15 @@
 import { deviceInfo } from '$lib/states/deviceInfo.svelte';
 
+/** Transform seconds into a compact duration, e.g. "2h 5m" or "42 min" */
+export function getCompactDuration(seconds: number) {
+  if (!seconds) return '0 min';
+  const minutes = Math.round(seconds / 60);
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes ? `${hours}h ${remainingMinutes}m` : `${hours}h`;
+}
+
 /** Transform seconds into a human readable format
  * @param seconds - The number of seconds to transform
  * @param maxIntervals - The maximum number of intervals to display, it can be max 7 (default is 2)

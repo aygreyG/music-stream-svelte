@@ -7,7 +7,10 @@
   import '../app.css';
 
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
+  import { FALLBACK_SCHEME } from '$lib/shared/consts';
+  import type { MaterialScheme } from '$lib/shared/types';
   import { setAudioPlayer } from '$lib/states/audioPlayer.svelte';
+  import { getDarkModePreference } from '$lib/utils';
 
   const audioPlayer = setAudioPlayer();
 
@@ -16,7 +19,9 @@
   }
 
   let { children }: Props = $props();
-  let schemeStyle = $state('');
+  let scheme = $state<MaterialScheme | null>(null);
+  let schemeStyle = $derived(scheme ? schemeToCSS(scheme) : '');
+  let themeColor = $derived(scheme?.surfaceContainer ?? FALLBACK_SCHEME.surfaceContainer);
 
   async function detectSWUpdate() {
     if (!('serviceWorker' in navigator)) return;
@@ -38,18 +43,24 @@
 
   onMount(() => {
     detectSWUpdate();
+    document.documentElement.style.colorScheme = getDarkModePreference() ? 'dark' : 'light';
   });
 
   $effect(() => {
     const track = audioPlayer.currentTrack;
-    getExpressiveScheme(track?.album.id || '', track?.album.albumArtId || '').then((scheme) => {
-      schemeStyle = schemeToCSS(scheme);
+    let cancelled = false;
+    getExpressiveScheme(track?.album.id || '', track?.album.albumArtId || '').then((nextScheme) => {
+      if (!cancelled) scheme = nextScheme;
     });
+    return () => {
+      cancelled = true;
+    };
   });
 </script>
 
 <svelte:head>
   <title>{page.data.title ? page.data.title + ' | ' : ''}Svelte Music Streamer</title>
+  <meta name="theme-color" content={themeColor} />
 </svelte:head>
 
 <div

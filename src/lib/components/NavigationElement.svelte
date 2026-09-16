@@ -36,7 +36,7 @@
     class={[
       'relative flex items-center transition-colors',
       iconOnly &&
-        'w-full justify-center rounded-full p-3 text-2xl active:scale-95 sm:p-1.5 sm:text-base',
+        'aspect-square h-auto w-full shrink-0 justify-center rounded-full p-3 text-2xl active:scale-95 sm:p-0 sm:text-sm',
       iconOnly && !active && 'hover:bg-on-surface-variant/15',
       !iconOnly && 'gap-2 rounded-2xl px-16 py-2 text-2xl font-bold sm:px-4 sm:text-base',
       active && 'bg-primary text-on-primary'
