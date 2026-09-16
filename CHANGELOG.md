@@ -1,3 +1,9 @@
+# [1.9.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.8.0...v1.9.0) (2026-09-16)
+
+### Features
+
+- add listening analytics page ([87ee8a0](https://github.com/aygreyG/music-stream-svelte/commit/87ee8a05f91baf0386c75940a57cb5031818e8f6))
+
 # [1.9.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.8.0...v1.9.0-dev.1) (2026-09-16)
 
 ### Features
