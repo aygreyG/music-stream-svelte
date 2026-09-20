@@ -1,4 +1,9 @@
-import { getListeningAnalytics, getListeningSummary } from '$lib/server/listeningStats.js';
+import {
+  getListeningAnalytics,
+  getListeningSummary,
+  nonMigratedSessionWhere,
+  type RankingMetric
+} from '$lib/server/listeningStats.js';
 import prisma from '$lib/server/prisma.js';
 
 import type { PageServerLoad } from './$types';
@@ -20,7 +25,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
   const firstEvent = await prisma.listeningEvent.findFirst({
-    where: { session: { userId } },
+    where: { session: nonMigratedSessionWhere(userId) },
     orderBy: { startedAt: 'asc' },
     select: { startedAt: true }
   });
@@ -44,6 +49,8 @@ export const load: PageServerLoad = async ({ locals, url }) => {
     month = requestedMonth;
   }
   const view = url.searchParams.get('view') === 'year' ? 'year' : 'month';
+  const metric: RankingMetric =
+    url.searchParams.get('metric') === 'plays' ? 'plays' : 'listeningTime';
   const selectedRange = view === 'year' ? { year } : { year, month };
   const availablePeriods: { year: number; month: number }[] = [];
 
@@ -56,7 +63,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   }
 
   const [analytics, previousSummary] = await Promise.all([
-    getListeningAnalytics(userId, selectedRange),
+    getListeningAnalytics(userId, selectedRange, metric),
     getListeningSummary(userId, previousRange(view, year, month))
   ]);
 
@@ -64,7 +71,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
   const monthLabel = shortMonthFormatter.format(new Date(year, month - 1));
 
   return {
-    period: { ...selectedRange, view },
+    period: { ...selectedRange, view, metric },
     availablePeriods,
     ...analytics,
     previousSummary,

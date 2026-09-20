@@ -1,12 +1,21 @@
 import prisma from '$lib/server/prisma.js';
 import type { RankedAlbum, RankedArtist, RankedTrack } from '$lib/shared/types';
 
+import type { Prisma } from '../../generated/prisma-client/client';
+
 const rankingLimit = 10;
-const trackRankingLimit = 50;
 
 export type AnalyticsRange = { year: number; month?: number };
+export type RankingMetric = 'plays' | 'listeningTime';
 
 type DayStats = { date: string; plays: number; listeningTime: number };
+
+export function nonMigratedSessionWhere(userId: string): Prisma.ListeningSessionWhereInput {
+  return {
+    userId,
+    NOT: { startedAt: { equals: prisma.listeningSession.fields.endedAt } }
+  };
+}
 
 function getRange({ year, month }: AnalyticsRange) {
   if (month) {
@@ -33,33 +42,39 @@ function addPlay<T extends { plays: number; listeningTime: number }>(
 
 function sortRanked<T extends { plays: number; listeningTime: number; name: string }>(
   items: Iterable<T>,
+  metric: RankingMetric,
   limit = rankingLimit
 ) {
   return [...items]
-    .toSorted(
-      (a, b) =>
-        b.plays - a.plays || b.listeningTime - a.listeningTime || a.name.localeCompare(b.name)
-    )
+    .toSorted((a, b) => {
+      const primary = metric === 'plays' ? b.plays - a.plays : b.listeningTime - a.listeningTime;
+      const secondary = metric === 'plays' ? b.listeningTime - a.listeningTime : b.plays - a.plays;
+      return primary || secondary || a.name.localeCompare(b.name);
+    })
     .slice(0, limit);
 }
 
 export async function getListeningSummary(userId: string, range: AnalyticsRange) {
   const { start, end } = getRange(range);
   const result = await prisma.listeningEvent.aggregate({
-    where: { startedAt: { gte: start, lt: end }, session: { userId } },
+    where: { startedAt: { gte: start, lt: end }, session: nonMigratedSessionWhere(userId) },
     _count: true,
     _sum: { listenedDuration: true }
   });
   return { plays: result._count, listeningTime: result._sum.listenedDuration ?? 0 };
 }
 
-export async function getListeningAnalytics(userId: string, range: AnalyticsRange) {
+export async function getListeningAnalytics(
+  userId: string,
+  range: AnalyticsRange,
+  metric: RankingMetric
+) {
   const { start, end } = getRange(range);
   // aggregated in memory; switch to SQL rollups if this gets slow
   const events = await prisma.listeningEvent.findMany({
     where: {
       startedAt: { gte: start, lt: end },
-      session: { userId }
+      session: nonMigratedSessionWhere(userId)
     },
     select: {
       startedAt: true,
@@ -150,9 +165,9 @@ export async function getListeningAnalytics(userId: string, range: AnalyticsRang
       uniqueArtists: artists.size,
       uniqueAlbums: albums.size
     },
-    topTracks: sortRanked(tracks.values(), trackRankingLimit),
-    topArtists: sortRanked(artists.values()),
-    topAlbums: sortRanked(albums.values()),
+    topTracks: sortRanked(tracks.values(), metric),
+    topArtists: sortRanked(artists.values(), metric),
+    topAlbums: sortRanked(albums.values(), metric),
     heatmap,
     monthlyBreakdown: monthly
   };

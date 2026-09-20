@@ -2,6 +2,7 @@
   import { slide } from 'svelte/transition';
 
   import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import { getExpressiveScheme, schemeToCSS } from '$lib/materialColors';
   import { getCompactDuration } from '$lib/utils';
@@ -26,7 +27,7 @@
   }
 
   let { data }: Props = $props();
-  let trackMetric: TrackMetric = $state('listeningTime');
+  let trackMetric = $derived(data.period.metric);
   let schemeStyles = $state<string[]>([]);
   let selectedDate = $state<string | null>(null);
 
@@ -70,12 +71,11 @@
     }
     return years.toReversed();
   });
-  let monthQuery = $derived(analyticsQuery('month', data.period.year, selectedMonth));
-  let yearQuery = $derived(analyticsQuery('year', data.period.year));
+  let monthQuery = $derived(analyticsQuery('month', data.period.year, trackMetric, selectedMonth));
+  let yearQuery = $derived(analyticsQuery('year', data.period.year, trackMetric));
   let monthlyMaximum = $derived(
     Math.max(...data.monthlyBreakdown.map((month) => month[trackMetric]), 1)
   );
-  let sortedTracks = $derived(data.topTracks.toSorted((a, b) => b[trackMetric] - a[trackMetric]));
   let heatmapMaximum = $derived(Math.max(...data.heatmap.map((day) => day[trackMetric]), 1));
   let heatmapCells = $derived.by(() => {
     const first = data.heatmap[0];
@@ -113,8 +113,8 @@
     }
     return peak;
   });
-  let featured = $derived(sortedTracks[0]);
-  let otherTracks = $derived(sortedTracks.slice(1, 10));
+  let featured = $derived(data.topTracks[0]);
+  let otherTracks = $derived(data.topTracks.slice(1));
   let rankedLists = $derived([
     {
       title: 'Top artists',
@@ -145,9 +145,19 @@
     return monthFormatter.format(new Date(period.year, period.month - 1));
   }
 
-  function analyticsQuery(view: 'month' | 'year', year: number, month?: number) {
-    if (view === 'month' && month) return `view=${view}&year=${year}&month=${month}`;
-    return `view=${view}&year=${year}`;
+  function analyticsQuery(
+    view: PageData['period']['view'],
+    year: number,
+    metric: TrackMetric,
+    month?: number
+  ) {
+    const params = [`view=${view}`, `year=${year}`, `metric=${metric}`];
+    if (view === 'month' && month) params.push(`month=${month}`);
+    return params.join('&');
+  }
+
+  function metricQuery(metric: TrackMetric) {
+    return analyticsQuery(data.period.view, data.period.year, metric, selectedMonth);
   }
 
   function formatDate(value: string) {
@@ -182,7 +192,7 @@
   }
 
   $effect(() => {
-    const tracks = sortedTracks.slice(0, 3);
+    const tracks = data.topTracks.slice(0, 3);
     let cancelled = false;
 
     Promise.all(
@@ -205,6 +215,7 @@
 
 {#snippet viewTab(view: 'month' | 'year', query: string, label: string)}
   <a
+    use:vibrate
     class={[
       'flex-1 rounded-xl px-4 py-2 text-center text-sm font-semibold transition-colors @lg:flex-none',
       data.period.view === view ? 'bg-primary text-on-primary' : 'hover:bg-surface-container-low'
@@ -226,11 +237,11 @@
 {/snippet}
 
 {#snippet metricButton(metric: TrackMetric, label: string)}
-  <button
-    type="button"
+  <a
+    use:vibrate
     class={['rounded-lg px-2 py-1', trackMetric === metric && 'bg-primary text-on-primary']}
-    aria-pressed={trackMetric === metric}
-    onclick={() => (trackMetric = metric)}>{label}</button
+    aria-current={trackMetric === metric ? 'page' : undefined}
+    href={resolve(`/analytics?${metricQuery(metric)}` as '/analytics')}>{label}</a
   >
 {/snippet}
 
@@ -257,22 +268,28 @@
             {@render viewTab('month', monthQuery, 'Month')}
             {@render viewTab('year', yearQuery, 'Year')}
           </div>
-          {#if data.period.view === 'month'}
-            <form
-              method="GET"
-              class="bg-surface-container grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-2 rounded-3xl p-1 @lg:flex @lg:w-auto"
+          <form
+            method="GET"
+            class={[
+              'bg-surface-container grid w-full items-center gap-2 rounded-3xl p-1 @lg:flex @lg:w-auto',
+              data.period.view === 'month'
+                ? 'grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]'
+                : 'grid-cols-[minmax(0,1fr)_auto]'
+            ]}
+          >
+            <input type="hidden" name="view" value={data.period.view} />
+            <input type="hidden" name="metric" value={trackMetric} />
+            <select
+              name="year"
+              aria-label="Analytics year"
+              class="bg-primary-container text-on-primary-container focus-visible:ring-primary w-full min-w-0 rounded-2xl border-none px-3 py-2 text-sm font-semibold outline-hidden focus-visible:ring-2 @lg:w-32"
+              value={data.period.year}
             >
-              <input type="hidden" name="view" value="month" />
-              <select
-                name="year"
-                aria-label="Analytics year"
-                class="bg-primary-container text-on-primary-container focus-visible:ring-primary w-full min-w-0 rounded-2xl border-none px-3 py-2 text-sm font-semibold outline-hidden focus-visible:ring-2 @lg:w-32"
-                value={data.period.year}
-              >
-                {#each availableYears as year (year)}
-                  <option value={year}>{year}</option>
-                {/each}
-              </select>
+              {#each availableYears as year (year)}
+                <option value={year}>{year}</option>
+              {/each}
+            </select>
+            {#if data.period.view === 'month'}
               <select
                 name="month"
                 aria-label="Analytics month"
@@ -283,12 +300,13 @@
                   <option value={period.month}>{periodLabel(period)}</option>
                 {/each}
               </select>
-              <button
-                class="bg-primary text-on-primary rounded-2xl px-4 py-2 text-sm font-bold"
-                type="submit">Apply</button
-              >
-            </form>
-          {/if}
+            {/if}
+            <button
+              use:vibrate
+              class="bg-primary text-on-primary rounded-2xl px-4 py-2 text-sm font-bold"
+              type="submit">Apply</button
+            >
+          </form>
         </div>
       </div>
     </header>
@@ -319,7 +337,7 @@
           <div
             class="bg-surface-container-low flex rounded-xl p-1 text-xs font-semibold"
             role="group"
-            aria-label="Metric used for the summary, heatmap, and featured rankings"
+            aria-label="Metric used for the summary, heatmap, and rankings"
           >
             <span class="text-on-surface-variant px-2 py-1">Rank by</span>
             {@render metricButton('listeningTime', 'Listening time')}
@@ -428,6 +446,7 @@
                 {@const dayDuration = getCompactDuration(day.listeningTime)}
                 <button
                   type="button"
+                  use:vibrate
                   class={heatCellClass(heatLevel(value), selectedDay?.date === day.date)}
                   title={`${dayDate} · ${dayPlays} plays · ${dayDuration}`}
                   aria-label={`${dayDate}, ${dayPlays} plays, ${dayDuration}`}
@@ -472,7 +491,10 @@
         </div>
         <div class="relative z-10 mb-4 flex items-center justify-between gap-3">
           <h2 id="featured-heading" class="flex items-center gap-2 text-lg font-bold">
-            <RoundMusicNote class="text-primary transition-colors duration-700 ease-in-out" /> Most listened
+            <RoundMusicNote class="text-primary transition-colors duration-700 ease-in-out" /> Most {trackMetric ===
+            'listeningTime'
+              ? 'Listened'
+              : 'Played'}
           </h2>
         </div>
         {#if featured}
@@ -500,6 +522,7 @@
               >
                 {#if featured.artistId}
                   <a
+                    use:vibrate
                     class="hover:underline"
                     href={resolve(`/(app)/(authed)/artist/[id]`, { id: featured.artistId })}
                     >{featured.artist}</a
@@ -513,6 +536,7 @@
               >
                 {#if featured.albumId}
                   <a
+                    use:vibrate
                     class="hover:underline"
                     href={resolve(`/(app)/(authed)/album/[id]`, { id: featured.albumId })}
                     >{featured.album}</a
@@ -563,7 +587,7 @@
           {#if list.items.length}
             <ol class="divide-on-surface-variant/10 divide-y">
               {#each list.items as item, index (item.id)}
-                <RankedRow {item} kind={list.kind} {index} />
+                <RankedRow {item} kind={list.kind} {index} metric={trackMetric} />
               {/each}
             </ol>
           {:else}

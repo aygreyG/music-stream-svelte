@@ -1,5 +1,6 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
+  import { vibrate } from '$lib/actions/vibrate';
   import AlbumImage from '$lib/components/AlbumImage.svelte';
   import type { RankedItem } from '$lib/shared/types';
   import { getCompactDuration } from '$lib/utils';
@@ -41,11 +42,13 @@
   <div class="min-w-0 flex-1">
     {#if kind === 'artist'}
       <a
+        use:vibrate
         class="text-on-surface hover:text-primary block truncate font-semibold hover:underline"
         href={resolve(`/(app)/(authed)/artist/[id]`, { id: item.id })}>{item.name}</a
       >
     {:else if kind === 'album'}
       <a
+        use:vibrate
         class="text-on-surface hover:text-primary block truncate font-semibold hover:underline"
         href={resolve(`/(app)/(authed)/album/[id]`, { id: item.id })}>{item.name}</a
       >
@@ -56,6 +59,7 @@
       <div class="text-on-surface-variant flex min-w-0 gap-1 text-sm">
         {#if item.artistId}
           <a
+            use:vibrate
             class="min-w-0 truncate hover:underline"
             href={resolve(`/(app)/(authed)/artist/[id]`, { id: item.artistId })}>{item.artist}</a
           >
@@ -65,6 +69,7 @@
         <span aria-hidden="true">·</span>
         {#if item.albumId}
           <a
+            use:vibrate
             class="min-w-0 truncate hover:underline"
             href={resolve(`/(app)/(authed)/album/[id]`, { id: item.albumId })}>{item.album}</a
           >
@@ -74,6 +79,7 @@
       </div>
     {:else if item.artistId}
       <a
+        use:vibrate
         class="text-on-surface-variant block truncate text-sm hover:underline"
         href={resolve(`/(app)/(authed)/artist/[id]`, { id: item.artistId })}>{item.artist}</a
       >
