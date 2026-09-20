@@ -425,7 +425,7 @@
         </div>
         <div class="overflow-x-auto pb-1">
           <div
-            class="mb-1 grid min-w-max auto-cols-[0.75rem] grid-flow-col gap-1 px-1 sm:auto-cols-[0.9rem]"
+            class="mb-1 grid min-w-max auto-cols-3 grid-flow-col gap-1 px-1 sm:auto-cols-[0.9rem]"
             aria-hidden="true"
           >
             {#each heatmapMonths as month (month.column)}
@@ -436,7 +436,7 @@
             {/each}
           </div>
           <div
-            class="grid min-w-max auto-cols-[0.75rem] grid-flow-col grid-rows-7 gap-1 p-1 sm:auto-cols-[0.9rem]"
+            class="grid min-w-max auto-cols-3 grid-flow-col grid-rows-7 gap-1 p-1 sm:auto-cols-[0.9rem]"
           >
             {#each heatmapCells as day, index (day?.date ?? `empty-${index}`)}
               {#if day}
