@@ -2,7 +2,7 @@ import { createReadStream, createWriteStream, existsSync } from 'fs';
 import { appendFile, lstat, mkdir, readdir, rm } from 'fs/promises';
 import { join } from 'path';
 
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 
 import { EXCLUDE_FILES_STARTING_WITH } from '$lib/shared/consts';
 import type { FolderNode, LogEntry } from '$lib/shared/types';
@@ -91,7 +91,7 @@ export async function serverLog(message: string | object, level: LogLevel = 'inf
   if (logFiles.length > MAX_LOG_FILES) {
     try {
       const filesToZip = logFiles.slice(0, logFiles.length - 1);
-      const archive = archiver('zip', { zlib: { level: 9 } });
+      const archive = new ZipArchive({ zlib: { level: 9 } });
       const fromTo = filesToZip.map((f) => f.replace('-server.log', '')).sort();
       const output = createWriteStream(
         ZIP_FILE.replace('<placeholder>', `${fromTo[0]}-${fromTo[fromTo.length - 1]}`)

@@ -66,7 +66,7 @@
         />
       </div>
     {:else}
-      <div class="text-center text-xl px-4">There are no tracks in this playlist.</div>
+      <div class="px-4 text-center text-xl">There are no tracks in this playlist.</div>
     {/each}
   </div>
 </div>

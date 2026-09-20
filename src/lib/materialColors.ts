@@ -27,8 +27,7 @@ function buildScheme(
   const hct = mcu.Hct.fromInt(sourceArgb);
   const isDark = getDarkModePreference();
   const schemeType = localStorage.getItem('schemeType') as
-    | (typeof SCHEME_TYPES)[number]
-    | 'EXPRESSIVE';
+    (typeof SCHEME_TYPES)[number] | 'EXPRESSIVE';
 
   let selectedSchemeType = mcu.SchemeExpressive;
 

@@ -231,8 +231,7 @@ export type DbLogEntry = {
 };
 
 export type TaskEvent =
-  | { type: 'snapshot'; tasks: TaskState[] }
-  | { type: 'update'; task: TaskState };
+  { type: 'snapshot'; tasks: TaskState[] } | { type: 'update'; task: TaskState };
 
 export type LogEvent =
   | { type: 'snapshot'; logs: LogEntry[]; dbLogs: DbLogEntry[] }
