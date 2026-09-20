@@ -1,3 +1,9 @@
+## [1.9.1-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.9.0...v1.9.1-dev.1) (2026-09-20)
+
+### Bug Fixes
+
+- skewed analytics and rank by switch ([9f53ebf](https://github.com/aygreyG/music-stream-svelte/commit/9f53ebfe1b43f0d1c08098a6d8144bbe6bbee1db)), closes [#220](https://github.com/aygreyG/music-stream-svelte/issues/220) [#219](https://github.com/aygreyG/music-stream-svelte/issues/219) [#218](https://github.com/aygreyG/music-stream-svelte/issues/218)
+
 # [1.9.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.8.0...v1.9.0) (2026-09-16)
 
 ### Features
