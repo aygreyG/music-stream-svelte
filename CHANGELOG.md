@@ -1,3 +1,9 @@
+# [1.10.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.10.0-dev.3...v1.10.0-dev.4) (2026-09-26)
+
+### Bug Fixes
+
+- use tailwind mask ([f478ab7](https://github.com/aygreyG/music-stream-svelte/commit/f478ab7141244abb2b01a2f3e6c1999b32c8f509))
+
 # [1.10.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.10.0-dev.2...v1.10.0-dev.3) (2026-09-26)
 
 ### Features
