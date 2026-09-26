@@ -1,16 +1,20 @@
 <script lang="ts">
-  import { tick } from 'svelte';
+  import { tick, type Component } from 'svelte';
   import { cubicOut } from 'svelte/easing';
+  import type { SVGAttributes } from 'svelte/elements';
   import { fade, scale } from 'svelte/transition';
 
   import { vibrate } from '$lib/actions/vibrate';
   import { getActiveLrcIndex, parseLrc, type LrcLine } from '$lib/shared/lrc';
+  import { getAudioPlayer } from '$lib/states/audioPlayer.svelte';
 
   import RoundArrowDropDown from '~icons/ic/round-arrow-drop-down';
   import RoundArrowDropUp from '~icons/ic/round-arrow-drop-up';
   import RoundMusicNote from '~icons/ic/round-music-note';
   import RoundRefresh from '~icons/ic/round-refresh';
   import RoundRestartAlt from '~icons/ic/round-restart-alt';
+  import Music1Fill from '~icons/iconamoon/music-1-fill';
+  import Music2Fill from '~icons/iconamoon/music-2-fill';
 
   interface Props {
     trackId: string | null;
@@ -19,6 +23,8 @@
   }
 
   let { trackId, currentTime, autoScroll = true }: Props = $props();
+
+  const audioPlayer = getAudioPlayer();
 
   type Status = 'idle' | 'loading' | 'found' | 'instrumental' | 'not_found' | 'error';
 
@@ -39,6 +45,55 @@
   let lastLyricIndex = $derived(
     lrcLines.length - 1 - lrcLines.toReversed().findIndex((l) => l.text)
   );
+
+  interface FloatGlyph {
+    id: string;
+    icon: Component<SVGAttributes<SVGSVGElement>>;
+    /** Literal Tailwind classes so the compiler picks up the arbitrary values. */
+    classes: string;
+  }
+
+  // One floating note each; the custom properties drive the motion defined in the keyframes below.
+  const FLOAT_GLYPHS: FloatGlyph[] = [
+    {
+      id: 'left-outer',
+      icon: Music1Fill,
+      classes:
+        'text-primary/60 text-base [--float-from-x:-4rem] [--float-to-x:-5.5rem] [--float-rise:3rem] [--float-scale:0.8] [--float-opacity:0.45] [--float-sway:0.4rem] [--float-tilt:-12deg] [--float-duration:4.2s] [--float-delay:-2.6s]'
+    },
+    {
+      id: 'left-inner',
+      icon: Music2Fill,
+      classes:
+        'text-primary/80 text-xl [--float-from-x:-2.5rem] [--float-to-x:-2rem] [--float-rise:3.5rem] [--float-scale:1] [--float-opacity:0.55] [--float-sway:0.5rem] [--float-tilt:14deg] [--float-duration:3.6s] [--float-delay:-0.9s]'
+    },
+    {
+      id: 'center-left',
+      icon: Music1Fill,
+      classes:
+        'text-primary text-2xl [--float-from-x:-1rem] [--float-to-x:-1.75rem] [--float-rise:4rem] [--float-scale:1.1] [--float-opacity:0.65] [--float-sway:0.35rem] [--float-tilt:-10deg] [--float-duration:4.8s] [--float-delay:-3.4s]'
+    },
+    {
+      id: 'center-right',
+      icon: Music2Fill,
+      classes:
+        'text-primary text-xl [--float-from-x:1rem] [--float-to-x:1.75rem] [--float-rise:3.25rem] [--float-scale:0.95] [--float-opacity:0.55] [--float-sway:0.45rem] [--float-tilt:12deg] [--float-duration:3.9s] [--float-delay:-1.8s]'
+    },
+    {
+      id: 'right-inner',
+      icon: Music1Fill,
+      classes:
+        'text-primary/80 text-2xl [--float-from-x:2.5rem] [--float-to-x:3.5rem] [--float-rise:3.75rem] [--float-scale:1.05] [--float-opacity:0.5] [--float-sway:0.55rem] [--float-tilt:-15deg] [--float-duration:4.5s] [--float-delay:-4.1s]'
+    },
+    {
+      id: 'right-outer',
+      icon: Music2Fill,
+      classes:
+        'text-primary/60 text-base [--float-from-x:4rem] [--float-to-x:5.5rem] [--float-rise:2.75rem] [--float-scale:0.75] [--float-opacity:0.45] [--float-sway:0.3rem] [--float-tilt:10deg] [--float-duration:3.4s] [--float-delay:-0.2s]'
+    }
+  ];
+
+  const SHORT_BREAK_GLYPHS = FLOAT_GLYPHS.slice(1, 4);
 
   let _abortCtrl: AbortController | null = null;
   let _saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -242,7 +297,10 @@
     </div>
   {:else if status === 'instrumental'}
     <div class="flex h-full flex-col items-center justify-center gap-3 text-center">
-      <RoundMusicNote class="text-on-surface/30 text-5xl" />
+      <div class="relative [--float-rise-mult:1.8]">
+        {@render floatGlyphLayer(FLOAT_GLYPHS)}
+        <RoundMusicNote class="text-on-surface/30 text-5xl" />
+      </div>
       <p class="text-on-surface-variant text-sm">This track is instrumental.</p>
     </div>
   {:else if status === 'found'}
@@ -266,33 +324,46 @@
           {:else if i > firstLyricIndex && i < lastLyricIndex}
             {@const nextTime = lrcLines[i + 1]?.time ?? line.time + 5}
             {@const duration = Math.max(0.1, nextTime - line.time)}
-            {@const shortBreak = duration < 2}
+            {@const shortBreak = duration < 2.5}
             {@const progress = isActive
               ? Math.min(1, Math.max(0, (adjustedTime - line.time) / duration))
               : isPast
                 ? 1
                 : 0}
-            <div bind:this={lineEls[i]} class="flex justify-center py-3">
-              <div
-                class={[
-                  'overflow-hidden rounded-full transition-all duration-300',
-                  shortBreak ? 'h-0.5 w-16' : 'h-1 w-28',
-                  isActive && 'bg-on-surface/50 scale-105',
-                  !isActive && isPast && 'bg-on-surface/20',
-                  !isActive && !isPast && 'bg-on-surface/30'
-                ]}
-              >
-                {#if progress > 0}
+            {#if duration >= 1}
+              <div bind:this={lineEls[i]} class="relative flex justify-center py-3">
+                {#if isActive}
                   <div
                     class={[
-                      'h-full rounded-full transition-all duration-75',
-                      isActive ? 'bg-primary' : 'bg-transparent'
+                      'bg-primary/15 pointer-events-none absolute top-1/2 left-1/2 h-3 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full blur-md motion-reduce:animate-none',
+                      shortBreak ? 'w-20' : 'w-32',
+                      audioPlayer.paused && 'float-paused'
                     ]}
-                    style:width="{progress * 100}%"
+                    aria-hidden="true"
                   ></div>
+                  {@render floatGlyphLayer(shortBreak ? SHORT_BREAK_GLYPHS : FLOAT_GLYPHS)}
                 {/if}
+                <div
+                  class={[
+                    'relative overflow-hidden rounded-full transition-all duration-300',
+                    shortBreak ? 'h-0.5 w-16' : 'h-1 w-28',
+                    isActive && 'bg-on-surface/50 scale-105',
+                    !isActive && isPast && 'bg-on-surface/20',
+                    !isActive && !isPast && 'bg-on-surface/30'
+                  ]}
+                >
+                  {#if progress > 0}
+                    <div
+                      class={[
+                        'h-full rounded-full transition-all duration-75',
+                        isActive ? 'bg-primary' : 'bg-transparent'
+                      ]}
+                      style:width="{progress * 100}%"
+                    ></div>
+                  {/if}
+                </div>
               </div>
-            </div>
+            {/if}
           {/if}
         {/each}
       </div>
@@ -312,3 +383,88 @@
     {/if}
   {/if}
 </div>
+
+{#snippet floatGlyphLayer(glyphs: FloatGlyph[])}
+  <div
+    class={[
+      'pointer-events-none absolute inset-0 transition-opacity duration-500',
+      audioPlayer.paused && 'float-paused opacity-0'
+    ]}
+    aria-hidden="true"
+  >
+    <div class="absolute inset-0" in:fade={{ duration: 250 }} out:fade={{ duration: 350 }}>
+      {#each glyphs as glyph (glyph.id)}
+        {@const Icon = glyph.icon}
+        <span class={['float-glyph absolute bottom-1/2 left-1/2', glyph.classes]}>
+          <span class="float-glyph-sway"><Icon /></span>
+        </span>
+      {/each}
+    </div>
+  </div>
+{/snippet}
+
+<style>
+  .float-glyph {
+    animation: float-rise var(--float-duration, 3.8s) ease-out infinite;
+    animation-delay: var(--float-delay, 0s);
+  }
+
+  .float-glyph-sway {
+    display: inline-block;
+    animation: float-sway calc(var(--float-duration, 3.8s) * 0.5) ease-in-out infinite alternate;
+    animation-delay: var(--float-delay, 0s);
+  }
+
+  /* animation-play-state is not inherited, so every animated layer has to be paused */
+  .float-paused,
+  .float-paused .float-glyph,
+  .float-paused .float-glyph-sway {
+    animation-play-state: paused;
+  }
+
+  @keyframes float-rise {
+    0% {
+      opacity: 0;
+      transform: translate3d(var(--float-from-x, 0), 0.5rem, 0)
+        scale(calc(var(--float-scale, 1) * 0.5));
+    }
+
+    20%,
+    55% {
+      opacity: var(--float-opacity, 0.6);
+    }
+
+    100% {
+      opacity: 0;
+      transform: translate3d(
+          var(--float-to-x, 0),
+          calc(-1 * var(--float-rise, 3rem) * var(--float-rise-mult, 1)),
+          0
+        )
+        scale(var(--float-scale, 1));
+    }
+  }
+
+  @keyframes float-sway {
+    from {
+      transform: translateX(calc(-1 * var(--float-sway, 0.4rem)))
+        rotate(calc(-1 * var(--float-tilt, 10deg)));
+    }
+
+    to {
+      transform: translateX(var(--float-sway, 0.4rem)) rotate(var(--float-tilt, 10deg));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .float-glyph,
+    .float-glyph-sway {
+      animation: none;
+    }
+
+    .float-glyph {
+      opacity: var(--float-opacity, 0.6);
+      transform: translateX(var(--float-from-x, 0));
+    }
+  }
+</style>

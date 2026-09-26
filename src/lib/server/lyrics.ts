@@ -13,6 +13,7 @@ interface LrclibSearchResult {
 }
 
 const LRCLIB_BASE = 'https://lrclib.net/api';
+const MAX_DURATION_DIFF_SECONDS = 3;
 
 const inFlightRequests = new Map<string, Promise<LyricsResult>>();
 
@@ -46,13 +47,16 @@ async function searchLrclib(
     const results: LrclibSearchResult[] = await res.json();
     if (!results.length) return null;
 
-    const scored = results.map((r) => {
+    const matchingDurationResults = results.filter(
+      (r) => Math.abs(r.duration - duration) <= MAX_DURATION_DIFF_SECONDS
+    );
+    if (!matchingDurationResults.length) return null;
+
+    const scored = matchingDurationResults.map((r) => {
       let score = 0;
 
       const durDiff = Math.abs(r.duration - duration);
-      if (durDiff <= 3) {
-        score += Math.max(0, 30 - durDiff * 10);
-      }
+      score += 30 - durDiff * 10;
 
       const rAlbum = (r.albumName || '').toLowerCase();
       const tAlbum = albumName.toLowerCase();

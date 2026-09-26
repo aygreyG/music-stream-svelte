@@ -18,7 +18,8 @@ function parseTimestamp(minutes: string, seconds: string, hundredths?: string): 
 
 /**
  * Parse an LRC string into timed lyric lines, sorted ascending by time.
- * Empty-text lines are included (instrumental gaps). Metadata tags are ignored.
+ * Empty-text lines are included as instrumental gaps, with consecutive gaps merged.
+ * Metadata tags are ignored.
  * Handles multi-timestamp lines like [00:10.00][00:20.00]Hello.
  */
 export function parseLrc(lrc: string): LrcLine[] {
@@ -48,7 +49,10 @@ export function parseLrc(lrc: string): LrcLine[] {
     }
   }
 
-  return lines.sort((a, b) => a.time - b.time);
+  const sortedLines = lines.sort((a, b) => a.time - b.time);
+  return sortedLines.filter(
+    (line, index) => line.text !== '' || index === 0 || sortedLines[index - 1].text !== ''
+  );
 }
 
 /**
