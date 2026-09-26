@@ -505,7 +505,7 @@
           }}
           <div class="relative z-10 flex min-w-0 flex-col gap-4 sm:flex-row sm:gap-5 lg:flex-col">
             <div
-              class="size-28 flex-none overflow-hidden rounded-xl sm:size-44 lg:aspect-square lg:h-auto lg:max-h-80 lg:w-full lg:mask-[linear-gradient(to_bottom,black_0%,black_68%,transparent_100%)] lg:[-webkit-mask-image:linear-gradient(to_bottom,black_0%,black_68%,transparent_100%)] lg:[&_img]:object-top"
+              class="size-28 flex-none overflow-hidden rounded-xl sm:size-44 lg:aspect-square lg:h-auto lg:max-h-80 lg:w-full lg:rounded-b-none lg:mask-b-from-60% lg:mask-b-to-98% lg:[&_img]:object-top"
             >
               <AlbumImage album={featuredAlbum} maxSize="l" />
             </div>
