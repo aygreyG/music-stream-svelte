@@ -220,6 +220,10 @@
   });
 
   $effect(() => {
+    navigator.mediaSession.playbackState = audioPlayer.paused ? 'paused' : 'playing';
+  });
+
+  $effect(() => {
     if (audioPlayer.paused && listenedDuration > 0 && audioPlayer.currentTrack) {
       sendListeningData(audioPlayer.currentTrack.id, listenedDuration, trackStartedAt);
       listenedDuration = 0;
