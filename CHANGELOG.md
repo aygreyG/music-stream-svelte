@@ -1,3 +1,9 @@
+# [1.10.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.9.1...v1.10.0-dev.1) (2026-09-26)
+
+### Features
+
+- add different list options ([8106977](https://github.com/aygreyG/music-stream-svelte/commit/81069779ff8c040065ac6a6efa110287763baee7)), closes [#41](https://github.com/aygreyG/music-stream-svelte/issues/41)
+
 ## [1.9.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.9.0...v1.9.1) (2026-09-20)
 
 ### Bug Fixes
