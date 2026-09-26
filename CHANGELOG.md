@@ -1,3 +1,15 @@
+# [1.10.0](https://github.com/aygreyG/music-stream-svelte/compare/v1.9.1...v1.10.0) (2026-09-26)
+
+### Bug Fixes
+
+- use tailwind mask ([f478ab7](https://github.com/aygreyG/music-stream-svelte/commit/f478ab7141244abb2b01a2f3e6c1999b32c8f509))
+
+### Features
+
+- add break animation to lyrics and update lyrics matching ([f74f913](https://github.com/aygreyG/music-stream-svelte/commit/f74f91331126bb7aacf475926ec5c4d8dcc0a650))
+- add different list options ([8106977](https://github.com/aygreyG/music-stream-svelte/commit/81069779ff8c040065ac6a6efa110287763baee7)), closes [#41](https://github.com/aygreyG/music-stream-svelte/issues/41)
+- update media session playback state based on audio player status ([b10c50a](https://github.com/aygreyG/music-stream-svelte/commit/b10c50aa22db7186d19ca49f8685ce00fe18c643))
+
 # [1.10.0-dev.4](https://github.com/aygreyG/music-stream-svelte/compare/v1.10.0-dev.3...v1.10.0-dev.4) (2026-09-26)
 
 ### Bug Fixes
