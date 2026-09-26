@@ -1,3 +1,9 @@
+# [1.10.0-dev.3](https://github.com/aygreyG/music-stream-svelte/compare/v1.10.0-dev.2...v1.10.0-dev.3) (2026-09-26)
+
+### Features
+
+- update media session playback state based on audio player status ([b10c50a](https://github.com/aygreyG/music-stream-svelte/commit/b10c50aa22db7186d19ca49f8685ce00fe18c643))
+
 # [1.10.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.10.0-dev.1...v1.10.0-dev.2) (2026-09-26)
 
 ### Features
