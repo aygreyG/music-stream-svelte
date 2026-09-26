@@ -1,3 +1,9 @@
+# [1.10.0-dev.2](https://github.com/aygreyG/music-stream-svelte/compare/v1.10.0-dev.1...v1.10.0-dev.2) (2026-09-26)
+
+### Features
+
+- add break animation to lyrics and update lyrics matching ([f74f913](https://github.com/aygreyG/music-stream-svelte/commit/f74f91331126bb7aacf475926ec5c4d8dcc0a650))
+
 # [1.10.0-dev.1](https://github.com/aygreyG/music-stream-svelte/compare/v1.9.1...v1.10.0-dev.1) (2026-09-26)
 
 ### Features
