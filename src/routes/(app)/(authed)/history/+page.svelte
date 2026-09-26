@@ -124,8 +124,8 @@
 
 <div class="flex h-full w-full flex-col items-center overflow-auto">
   <div
-    class="mt-6 flex items-center gap-1 px-2 text-center text-xl font-bold"
-    in:fly|global={{ duration: 500, x: -20, easing: quintOut }}
+    class="flex items-center gap-1 p-2 text-center text-xl font-bold"
+    in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
   >
     <History class="text-base" />
     Listening history

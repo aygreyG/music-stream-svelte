@@ -64,7 +64,7 @@
 
 <div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
   <div
-    class="p-4 pb-0 text-center text-xl font-bold"
+    class="px-4 py-2 text-center text-xl font-bold"
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
   >
     {data.tag.name}

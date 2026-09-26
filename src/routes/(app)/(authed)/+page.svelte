@@ -5,7 +5,11 @@
   import { fly } from 'svelte/transition';
 
   import { beforeNavigate } from '$app/navigation';
+  import { vibrate } from '$lib/actions/vibrate';
   import SearchBar from '$lib/components/SearchBar.svelte';
+
+  import RoundGridView from '~icons/ic/round-grid-view';
+  import RoundViewList from '~icons/ic/round-view-list';
 
   import type { PageData } from './$types';
   import AlbumLink from './AlbumLink.svelte';
@@ -16,23 +20,19 @@
 
   let { data }: Props = $props();
   let container: HTMLDivElement | null = $state(null);
-  let firstVisibleElement: number = $state(0);
-  let foundScroll = $state(false);
-  let scrolled = $state(false);
-  let scrolledFromTop = $state(false);
   let searchString = $state('');
   let debouncedSearch = $state('');
+  let view = $state<'grid' | 'list'>('grid');
+  let scrolledFromTop = $state(false);
   let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
 
   let filtered = $derived(
     data.albums.filter((album) => {
-      if (!debouncedSearch) {
-        return true;
-      }
-
+      const query = debouncedSearch.trim().toLowerCase();
       return (
-        album.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        album.albumArtist.name.toLowerCase().includes(debouncedSearch.toLowerCase())
+        !query ||
+        album.title.toLowerCase().includes(query) ||
+        album.albumArtist.name.toLowerCase().includes(query)
       );
     })
   );
@@ -41,87 +41,129 @@
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
       debouncedSearch = searchString;
+      resetScroll();
     }, 250);
   }
 
-  function updateVisibleElements() {
-    if (!container) return;
-    let first;
-    for (const child of container.children) {
-      const rect = child.getBoundingClientRect();
-      if (
-        rect.bottom >= 0 &&
-        rect.bottom <= window.innerHeight &&
-        (!scrolled || (scrolled && rect.top >= 0 && rect.top <= window.innerHeight))
-      ) {
-        first = parseInt(child.id);
-        break;
-      }
-    }
-
-    if (first) {
-      firstVisibleElement = first;
-    }
+  function resetScroll() {
+    scrolledFromTop = false;
+    if (container) container.scrollTop = 0;
   }
 
-  onMount(async () => {
-    const scroll = localStorage.getItem('dashboard-scroll');
-    if (scroll && container) {
-      container.scrollTop = parseInt(scroll);
-      foundScroll = true;
-    }
-    updateVisibleElements();
+  function setView(nextView: 'grid' | 'list') {
+    if (view === nextView) return;
+    view = nextView;
+    resetScroll();
+    if (typeof localStorage !== 'undefined') localStorage.setItem('dashboard-album-view', nextView);
+  }
+
+  function onScroll() {
+    if (!container) return;
+    scrolledFromTop = container.scrollTop > 0;
+  }
+
+  function attachContainer(node: HTMLDivElement) {
+    container = node;
+    return () => {
+      if (container === node) container = null;
+    };
+  }
+
+  onMount(() => {
+    const savedView = localStorage.getItem('dashboard-album-view');
+    if (savedView === 'grid' || savedView === 'list') view = savedView;
+    const savedScroll = Number.parseInt(localStorage.getItem('dashboard-scroll') ?? '0', 10);
+    const scrollRestoreFrame = requestAnimationFrame(() => {
+      if (!container) return;
+      container.scrollTop = Number.isNaN(savedScroll) ? 0 : savedScroll;
+      onScroll();
+    });
+    return () => {
+      cancelAnimationFrame(scrollRestoreFrame);
+      clearTimeout(debounceTimeout);
+    };
   });
 
   beforeNavigate(() => {
-    if (container) {
-      localStorage.setItem('dashboard-scroll', container.scrollTop.toString() || '0');
-    }
+    if (container) localStorage.setItem('dashboard-scroll', String(container.scrollTop));
   });
 </script>
 
-<div class="absolute top-0 left-0 flex h-full w-full flex-col overflow-hidden">
+<div class="bg-surface absolute inset-0 flex flex-col overflow-hidden">
   <div
-    class="p-4 pb-0 text-center text-xl font-bold"
+    class="flex items-center justify-center px-5 py-2 sm:px-8"
     in:fly|global={{ duration: 500, y: -10, easing: quintOut }}
   >
-    Albums
+    <div class="text-center text-xl font-bold">Albums</div>
+    <div
+      class="bg-surface-container absolute top-2 right-2 flex rounded-full p-1 text-sm"
+      role="group"
+      aria-label="Album view"
+    >
+      <button
+        class={[
+          'grid size-6 place-items-center rounded-full transition-colors',
+          view === 'grid' && 'bg-primary-container text-on-primary-container',
+          view === 'list' && 'hover:text-primary text-on-surface-variant'
+        ]}
+        aria-label="Grid view"
+        aria-pressed={view === 'grid'}
+        onclick={() => setView('grid')}
+        use:vibrate
+      >
+        <RoundGridView />
+      </button>
+      <button
+        class={[
+          'grid size-6 place-items-center rounded-full transition-colors',
+          view === 'list' && 'bg-primary-container text-on-primary-container',
+          view === 'grid' && 'hover:text-primary text-on-surface-variant'
+        ]}
+        aria-label="List view"
+        aria-pressed={view === 'list'}
+        onclick={() => setView('list')}
+        use:vibrate
+      >
+        <RoundViewList />
+      </button>
+    </div>
   </div>
 
   <div
     class={[
-      'z-20 flex w-full flex-col px-8 py-1 transition-shadow duration-300',
+      'flex w-full flex-col px-8 py-1 transition-shadow duration-300',
       scrolledFromTop && 'shadow-md'
     ]}
   >
-    <SearchBar bind:value={searchString} oninput={onSearchInput} />
+    <SearchBar bind:value={searchString} oninput={onSearchInput} placeholder="Search" />
   </div>
 
   <div
-    class="flex flex-wrap items-center justify-center gap-8 overflow-auto p-2"
-    bind:this={container}
-    onscroll={() => {
-      if (!container) return;
-
-      updateVisibleElements();
-
-      if (!foundScroll) {
-        foundScroll = true;
-        return;
-      }
-
-      scrolled = true;
-      scrolledFromTop = container.scrollTop > 0;
-    }}
+    class="@container min-h-0 overflow-auto overscroll-contain px-5 pt-2 pb-8 sm:px-8"
+    {@attach attachContainer}
+    onscroll={onScroll}
   >
-    {#each filtered as album, index (album.id)}
-      <div
-        animate:flip={{ duration: 200 }}
-        class="size-36 overflow-hidden rounded-xl md:size-40 xl:size-52"
-        id={index.toString()}
-      >
-        <AlbumLink {album} {index} first={firstVisibleElement} />
+    <div
+      class={[
+        'mx-auto grid w-full max-w-[1800px] justify-center',
+        view === 'grid'
+          ? 'grid-cols-[repeat(auto-fill,minmax(min(100%,clamp(120px,18vw,220px)),1fr))] gap-4 @md:gap-6'
+          : 'grid-cols-1 gap-2'
+      ]}
+    >
+      {#each filtered as album (album.id)}
+        <div
+          animate:flip={{ easing: quintOut, duration: 150 }}
+          class={['min-w-0', view === 'list' ? 'h-18.5' : 'aspect-square']}
+        >
+          <AlbumLink {album} {view} />
+        </div>
+      {/each}
+    </div>
+    {#if filtered.length === 0}
+      <div class="text-on-surface-variant grid h-40 place-items-center text-center">
+        No albums found
       </div>
-    {/each}
+    {/if}
   </div>
 </div>

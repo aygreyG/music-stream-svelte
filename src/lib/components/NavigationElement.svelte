@@ -50,7 +50,7 @@
     {#if iconOnly}
       {#if subtext}
         <span
-          class="bg-surface-variant text-on-surface-variant absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-1 text-[0.4em] leading-tight font-bold whitespace-nowrap shadow-sm sm:bottom-1"
+          class="bg-surface-variant/80 text-on-surface-variant absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full px-1 text-[0.4em] leading-tight font-bold whitespace-nowrap shadow-sm backdrop-blur-xs sm:bottom-1"
         >
           {subtext}
         </span>
